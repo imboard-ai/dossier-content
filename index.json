@@ -84,6 +84,12 @@
       "path": "tal-liberio/development/architecture-patterns.ds.md"
     },
     {
+      "name": "tal-liberio/development/config-schema-check",
+      "title": "Config Schema Check",
+      "version": "1.0.0",
+      "path": "tal-liberio/development/config-schema-check.ds.md"
+    },
+    {
       "name": "tal-liberio/development/onboarding-friction",
       "title": "Onboarding Friction Assessment",
       "version": "1.0.0",
