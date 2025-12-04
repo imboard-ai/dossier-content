@@ -88,6 +88,12 @@
       "title": "Onboarding Friction Assessment",
       "version": "1.0.0",
       "path": "tal-liberio/development/onboarding-friction.ds.md"
+    },
+    {
+      "name": "tal-liberio/setup/validate-project-config",
+      "title": "Validate Project Configuration",
+      "version": "1.0.0",
+      "path": "tal-liberio/setup/validate-project-config.ds.md"
     }
   ],
   "updated_at": "2025-12-04T09:10:00Z"
