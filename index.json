@@ -72,6 +72,12 @@
       "path": "imboard-ai/development/test-coverage-gap-analysis.ds.md"
     },
     {
+      "name": "tal-liberio/development/api-compatibility-check",
+      "title": "API Compatibility Check",
+      "version": "1.0.0",
+      "path": "tal-liberio/development/api-compatibility-check.ds.md"
+    },
+    {
       "name": "tal-liberio/development/onboarding-friction",
       "title": "Onboarding Friction Assessment",
       "version": "1.0.0",
