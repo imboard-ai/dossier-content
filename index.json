@@ -70,12 +70,6 @@
         "testing"
       ],
       "path": "imboard-ai/development/test-coverage-gap-analysis.ds.md"
-    },
-    {
-      "name": "yuvaldim/test/test-dossier",
-      "title": "Test Dossier",
-      "version": "1.0.0",
-      "path": "yuvaldim/test/test-dossier.ds.md"
     }
   ],
   "updated_at": "2025-12-04T09:10:00Z"
