@@ -1,0 +1,12 @@
+{
+  "dossiers": [
+    {
+      "name": "getting-started/hello",
+      "title": "Hello World Dossier",
+      "version": "1.0.0",
+      "category": ["tutorial"],
+      "path": "getting-started/hello.ds.md"
+    }
+  ],
+  "updated_at": "2025-12-04T00:00:00Z"
+}
