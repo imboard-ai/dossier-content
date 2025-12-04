@@ -4,50 +4,78 @@
       "name": "getting-started/hello",
       "title": "Hello World Dossier",
       "version": "1.0.0",
-      "category": ["tutorial"],
+      "category": [
+        "tutorial"
+      ],
       "path": "getting-started/hello.ds.md"
     },
     {
       "name": "imboard-ai/development/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
       "version": "1.0.0",
-      "category": ["development", "git", "workflow"],
+      "category": [
+        "development",
+        "git",
+        "workflow"
+      ],
       "path": "imboard-ai/development/add-git-worktree-support.ds.md"
     },
     {
       "name": "imboard-ai/development/code-refactoring-abstraction",
       "title": "Code Refactoring & Abstraction Analysis",
       "version": "1.0.0",
-      "category": ["development", "refactoring"],
+      "category": [
+        "development",
+        "refactoring"
+      ],
       "path": "imboard-ai/development/code-refactoring-abstraction.ds.md"
     },
     {
       "name": "imboard-ai/development/project-exploration",
       "title": "Project Exploration",
       "version": "1.0.0",
-      "category": ["development", "workflow"],
+      "category": [
+        "development",
+        "workflow"
+      ],
       "path": "imboard-ai/development/project-exploration.ds.md"
     },
     {
       "name": "imboard-ai/development/setup-issue-workflow",
       "title": "Setup Issue Workflow",
       "version": "1.0.0",
-      "category": ["development", "workflow"],
+      "category": [
+        "development",
+        "workflow"
+      ],
       "path": "imboard-ai/development/setup-issue-workflow.ds.md"
     },
     {
       "name": "imboard-ai/development/setup-react-library",
       "title": "Setup React Component Library",
       "version": "1.0.0",
-      "category": ["development", "react", "frontend"],
+      "category": [
+        "development",
+        "react",
+        "frontend"
+      ],
       "path": "imboard-ai/development/setup-react-library.ds.md"
     },
     {
       "name": "imboard-ai/development/test-coverage-gap-analysis",
       "title": "Test Coverage Gap Analysis",
       "version": "1.0.0",
-      "category": ["development", "testing"],
+      "category": [
+        "development",
+        "testing"
+      ],
       "path": "imboard-ai/development/test-coverage-gap-analysis.ds.md"
+    },
+    {
+      "name": "yuvaldim/test/test-dossier",
+      "title": "Test Dossier",
+      "version": "1.0.0",
+      "path": "yuvaldim/test/test-dossier.ds.md"
     }
   ],
   "updated_at": "2025-12-04T09:10:00Z"
