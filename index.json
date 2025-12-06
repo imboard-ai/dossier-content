@@ -37,6 +37,12 @@
       "path": "imboard-ai/development/git-project-review/architecture-patterns-test.ds.md"
     },
     {
+      "name": "imboard-ai/development/git-project-review/onboarding-friction",
+      "title": "Onboarding Friction Assessment",
+      "version": "1.0.0",
+      "path": "imboard-ai/development/git-project-review/onboarding-friction.ds.md"
+    },
+    {
       "name": "imboard-ai/development/project-exploration",
       "title": "Project Exploration",
       "version": "1.0.0",
