@@ -90,6 +90,12 @@
       "path": "imboard-ai/development/test-coverage-gap-analysis.ds.md"
     },
     {
+      "name": "imboard-ai/meta/create-dossier",
+      "title": "Create New Dossier",
+      "version": "1.0.0",
+      "path": "imboard-ai/meta/create-dossier.ds.md"
+    },
+    {
       "name": "tal-liberio/development/api-compatibility-check",
       "title": "API Compatibility Check",
       "version": "1.0.0",
