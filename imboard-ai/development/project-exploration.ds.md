@@ -1,44 +1,25 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "title": "Project Exploration",
-  "version": "1.0.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2025-11-30",
-  "objective": "Map a project's structure (routes, controllers, models, types) to enable onboarding, refactoring, and gap analysis. Generates both human-readable Markdown and machine-readable JSON outputs.",
-  "category": [
-    "development"
-  ],
-  "tags": [
-    "project-mapping",
-    "onboarding",
-    "refactoring",
-    "api-discovery",
-    "codebase-analysis",
-    "documentation"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "risk_factors": [
-    "modifies_files"
-  ],
-  "destructive_operations": [
-    "Creates output files in specified directory (project-map.md, project-map.json, changelog.md)"
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "b765c7223b53bf1911ec9f39d60463c80794c73d439e303a70a4612aaf10a467"
-  },
-  "signature": {
-    "algorithm": "ECDSA-SHA-256",
-    "signature": "MEQCIBANO4ulGq+zBr6JyWA830ZvUCkP7ffwCTesmSeqTfzzAiBO/hRPV5yH7mEioSH4iMAmmeTkPOPXrnQxVTkbb91mmA==",
-    "public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqIbQGqW1Jdh97TxQ5ZvnSVvvOcN5NWhfWwXRAaDDuKK1pv8F+kz+uo1W8bNn+8ObgdOBecFTFizkRa/g+QJ8kA==",
-    "key_id": "arn:aws:kms:us-east-1:942039714848:key/d9ccd3fc-b190-49fd-83f7-e94df6620c1d",
-    "signed_at": "2025-11-30T11:35:56.304Z"
-  }
-}
 ---
+authors:
+- name: Yuval Dimnik <yuval.dimnik@gmail.com>
+checksum:
+  algorithm: sha256
+  hash: 0b589c434aaa749432b4f0613ff9cc04ab031436a101882e7832d67243329664
+name: project-exploration
+objective: Map a project's structure (routes, controllers, models, types) to enable
+  onboarding, refactoring, and gap analysis. Generates both human-readable Markdown
+  and machine-readable JSON outputs.
+schema_version: 1.0.0
+signature:
+  algorithm: ed25519
+  public_key: rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=
+  signature: XAPM9vm5oLeu3p7LPNTL80nAWON37y6i8+ShmkfmDQfmAzdtm47RUvjmVY6R04PzB/a4+f/90a9jKGjWy3+RBw==
+  signed_by: Yuval Dimnik <yuval.dimnik@gmail.com>
+  timestamp: '2025-12-07T06:27:52.168419+00:00'
+status: draft
+title: Project Exploration
+version: 1.0.0
+---
+
 # Project Exploration
 
 ## Table of Contents
