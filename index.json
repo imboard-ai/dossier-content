@@ -58,10 +58,6 @@
       "name": "imboard-ai/development/project-exploration",
       "title": "Project Exploration",
       "version": "1.0.0",
-      "category": [
-        "development",
-        "workflow"
-      ],
       "path": "imboard-ai/development/project-exploration.ds.md"
     },
     {
