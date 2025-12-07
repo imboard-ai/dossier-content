@@ -55,6 +55,12 @@
       "path": "imboard-ai/development/git/add-git-worktree-support.ds.md"
     },
     {
+      "name": "imboard-ai/development/git/setup-issue-workflow",
+      "title": "Setup Issue Workflow",
+      "version": "1.0.0",
+      "path": "imboard-ai/development/git/setup-issue-workflow.ds.md"
+    },
+    {
       "name": "imboard-ai/development/project-exploration",
       "title": "Project Exploration",
       "version": "1.0.0",
