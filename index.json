@@ -61,6 +61,12 @@
       "path": "imboard-ai/development/git/setup-issue-workflow.ds.md"
     },
     {
+      "name": "imboard-ai/development/ops/runbook-generator",
+      "title": "Runbook & Ops Checklist Generator",
+      "version": "1.0.0",
+      "path": "imboard-ai/development/ops/runbook-generator.ds.md"
+    },
+    {
       "name": "imboard-ai/development/project-exploration",
       "title": "Project Exploration",
       "version": "1.0.0",
