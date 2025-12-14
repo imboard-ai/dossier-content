@@ -73,6 +73,12 @@
       "path": "imboard-ai/development/refactoring/code-refactoring-abstraction.ds.md"
     },
     {
+      "name": "imboard-ai/development/release/release-notes-generator",
+      "title": "Release Notes Generator",
+      "version": "1.0.0",
+      "path": "imboard-ai/development/release/release-notes-generator.ds.md"
+    },
+    {
       "name": "imboard-ai/development/setup-issue-workflow",
       "title": "Setup Issue Workflow",
       "version": "1.0.0",
