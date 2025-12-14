@@ -3,7 +3,7 @@ authors:
 - name: Yuval Dimnik <yuval.dimnik@gmail.com>
 checksum:
   algorithm: sha256
-  hash: e41f3d08e617d12a60e44640146457c67ca6c6120fb978a3c86e6fb95096cef3
+  hash: a06ba7e9e0f588e9882db80af69789191f30fea4fc35a0dcb5b0ecd0ec895c4a
 name: create-dossier
 objective: Guide an agent to create well-structured dossier markdown files that other
   agents will execute successfully
@@ -11,12 +11,12 @@ schema_version: 1.0.0
 signature:
   algorithm: ed25519
   public_key: rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=
-  signature: C2rvRnm40m2k5QGm69O9dAt+okWdR4MLvoxWet5oCEqenEzgI9jfdlbGuX4RKY2YPflZV2TU42xRdgc8HEX/CQ==
+  signature: 97uhpDfXGjhdo+cEd6ElyaSJQwRciO0Ia7HdI6oSSaqO2gglXafB5UYvYYrgG6sekI1ctF//HJYci6O8NKFRCg==
   signed_by: Yuval Dimnik <yuval.dimnik@gmail.com>
-  timestamp: '2025-12-14T15:13:29.059762+00:00'
+  timestamp: '2025-12-14T15:17:28.617175+00:00'
 status: draft
 title: Create New Dossier
-version: 1.0.1
+version: 1.0.2
 ---
 
 # Create New Dossier
@@ -277,7 +277,18 @@ Audit all dependencies and produce a prioritized report of security vulnerabilit
 
 ## After You Write the File
 
-Save the dossier as a `.md` file (not `.ds.md`). Then provide the user these next steps:
+Save the dossier as a `.md` file (not `.ds.md`). Then:
+
+1. **Discover namespace info** - Run these commands to determine the best namespace:
+   - `dossier list` - See existing dossiers and their namespace patterns
+   - `dossier whoami` - Get the user's available org(s)
+
+2. **Suggest namespace** - Based on the list output, recommend a namespace that:
+   - Uses an org from `whoami` (the user can only publish to their orgs)
+   - Follows existing category patterns (e.g., `development/testing/`, `development/security/`)
+   - Groups related dossiers together
+
+3. **Provide CLI commands** with the discovered values filled in:
 
 ```
 File saved to: [path]
@@ -289,7 +300,7 @@ Next steps to publish this dossier:
      --name "[dossier-slug]" \
      --title "[Dossier Title]" \
      --objective "[What it accomplishes]" \
-     --author "[Name] <[email]>" \
+     --author "[Name from whoami] <[email]>" \
      --sign --signed-by "[Name] <[email]>" \
      -o [output.ds.md]
 
@@ -298,7 +309,7 @@ Next steps to publish this dossier:
 
 3. Publish (optional):
    dossier publish [output.ds.md] \
-     --namespace "[org]/[category]" \
+     --namespace "[suggested-namespace]" \
      --changelog "[Version description]"
 ```
 
