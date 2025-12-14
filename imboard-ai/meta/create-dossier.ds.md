@@ -3,7 +3,7 @@ authors:
 - name: Yuval Dimnik <yuval.dimnik@gmail.com>
 checksum:
   algorithm: sha256
-  hash: a5d1444e92775879ff73a77a2c62fae0683c2e8b4d284ba1aaa9bb7ece9ff683
+  hash: e41f3d08e617d12a60e44640146457c67ca6c6120fb978a3c86e6fb95096cef3
 name: create-dossier
 objective: Guide an agent to create well-structured dossier markdown files that other
   agents will execute successfully
@@ -11,12 +11,12 @@ schema_version: 1.0.0
 signature:
   algorithm: ed25519
   public_key: rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=
-  signature: VyyqRpPuTYcAgd2Jt0Ej0tFZ4xcwA0nexFL01NiqucPo/bOYoetwPpfZZiO2qziGxT2JBp4JTFFlcVQolen7Aw==
+  signature: C2rvRnm40m2k5QGm69O9dAt+okWdR4MLvoxWet5oCEqenEzgI9jfdlbGuX4RKY2YPflZV2TU42xRdgc8HEX/CQ==
   signed_by: Yuval Dimnik <yuval.dimnik@gmail.com>
-  timestamp: '2025-12-06T15:11:35.389345+00:00'
+  timestamp: '2025-12-14T15:13:29.059762+00:00'
 status: draft
 title: Create New Dossier
-version: 1.0.0
+version: 1.0.1
 ---
 
 # Create New Dossier
@@ -285,7 +285,7 @@ File saved to: [path]
 Next steps to publish this dossier:
 
 1. Create (adds metadata + signature):
-   dossier create [your-file.md] \
+   dossier from-file [your-file.md] \
      --name "[dossier-slug]" \
      --title "[Dossier Title]" \
      --objective "[What it accomplishes]" \
