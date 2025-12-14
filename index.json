@@ -134,6 +134,12 @@
       "path": "imboard-ai/development/testing/test-coverage-gap-analysis.ds.md"
     },
     {
+      "name": "imboard-ai/development/testing/test-gap-analysis",
+      "title": "Test Gap Analysis",
+      "version": "1.0.0",
+      "path": "imboard-ai/development/testing/test-gap-analysis.ds.md"
+    },
+    {
       "name": "imboard-ai/meta/create-dossier",
       "title": "Create New Dossier",
       "version": "1.0.2",
