@@ -31,6 +31,12 @@
       "path": "imboard-ai/development/code-refactoring-abstraction.ds.md"
     },
     {
+      "name": "imboard-ai/development/docs/docs-drift-check",
+      "title": "Docs/README Drift Check",
+      "version": "1.0.0",
+      "path": "imboard-ai/development/docs/docs-drift-check.ds.md"
+    },
+    {
       "name": "imboard-ai/development/git-project-review/architecture-patterns-test",
       "title": "Architecture & Pattern Consistency",
       "version": "1.0.0",
