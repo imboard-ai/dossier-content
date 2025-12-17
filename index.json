@@ -61,6 +61,13 @@
       "path": "imboard-ai/development/git/add-git-worktree-support.ds.md"
     },
     {
+      "name": "imboard-ai/development/git/add-git-worktree-support/git",
+      "title": "Add Git Worktree Support to Project",
+      "version": "1.0.1",
+      "path": "imboard-ai/development/git/add-git-worktree-support/git.ds.md",
+      "description": "Can create and remove a test worktree"
+    },
+    {
       "name": "imboard-ai/development/git/setup-issue-workflow",
       "title": "Setup Issue Workflow",
       "version": "1.0.0",
