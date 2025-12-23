@@ -28,12 +28,6 @@
       "path": "imboard-ai/development/git-project-review/onboarding-friction.ds.md"
     },
     {
-      "name": "imboard-ai/development/git-project-review/readme-reality-check",
-      "title": "README Reality Check",
-      "version": "1.0.0",
-      "path": "imboard-ai/development/git-project-review/readme-reality-check.ds.md"
-    },
-    {
       "name": "imboard-ai/development/git/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
       "version": "1.0.0",
