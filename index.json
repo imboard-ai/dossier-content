@@ -10,17 +10,6 @@
       "path": "getting-started/hello.ds.md"
     },
     {
-      "name": "imboard-ai/development/add-git-worktree-support",
-      "title": "Add Git Worktree Support to Project",
-      "version": "1.0.0",
-      "category": [
-        "development",
-        "git",
-        "workflow"
-      ],
-      "path": "imboard-ai/development/add-git-worktree-support.ds.md"
-    },
-    {
       "name": "imboard-ai/development/code-refactoring-abstraction",
       "title": "Code Refactoring & Abstraction Analysis",
       "version": "1.0.0",
