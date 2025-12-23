@@ -76,16 +76,6 @@
       "path": "imboard-ai/development/security/dependency-vulnerability-report.ds.md"
     },
     {
-      "name": "imboard-ai/development/setup-issue-workflow",
-      "title": "Setup Issue Workflow",
-      "version": "1.0.0",
-      "category": [
-        "development",
-        "workflow"
-      ],
-      "path": "imboard-ai/development/setup-issue-workflow.ds.md"
-    },
-    {
       "name": "imboard-ai/development/setup-react-library",
       "title": "Setup React Component Library",
       "version": "1.0.0",
