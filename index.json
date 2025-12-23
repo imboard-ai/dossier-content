@@ -10,16 +10,6 @@
       "path": "getting-started/hello.ds.md"
     },
     {
-      "name": "imboard-ai/development/code-refactoring-abstraction",
-      "title": "Code Refactoring & Abstraction Analysis",
-      "version": "1.0.0",
-      "category": [
-        "development",
-        "refactoring"
-      ],
-      "path": "imboard-ai/development/code-refactoring-abstraction.ds.md"
-    },
-    {
       "name": "imboard-ai/development/docs/docs-drift-check",
       "title": "Docs/README Drift Check",
       "version": "1.0.0",
