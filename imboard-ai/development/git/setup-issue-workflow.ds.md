@@ -3,18 +3,18 @@ authors:
 - name: Yuval Dimnik <yuval.dimnik@gmail.com>
 checksum:
   algorithm: sha256
-  hash: 1d499eb35feb239776ef52f791f77380703e59718993aa2eef88bc426cc41ccc
+  hash: f97bc0be6ca3ec92bd386992c75ecd004a52acf98aedb61b145ac640177e934c
 name: setup-issue-workflow
 objective: Create a workflow for GitHub issues that fetches issue details, creates
-  appropriately named branches, sets up git worktrees, and generates PLANNING.md files
-  for structured development
+  appropriately named branches, optionally sets up git worktrees, and generates planning
+  files for structured development
 schema_version: 1.0.0
 signature:
   algorithm: ed25519
   public_key: rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=
-  signature: r06cktM+V2EDSB2EqYB9l18D7dmSt+WtUr2coeq1/Q9qntiQJ+9m3hntY8r5mK1jNOquR1trcfhRqGMiYbZeBQ==
+  signature: y7UlXEQNilCW/NMu7G0P0DSsylX38wHS84uNgoK/vM3Cxskk3iZNdWMIzdoZXQOJoG3eoapJuW92E1QxC7P5Dw==
   signed_by: Yuval Dimnik <yuval.dimnik@gmail.com>
-  timestamp: '2025-12-07T06:36:07.194861+00:00'
+  timestamp: '2025-12-23T20:29:25.105866+00:00'
 status: draft
 title: Setup Issue Workflow
 version: 1.0.0
@@ -24,7 +24,7 @@ version: 1.0.0
 
 ## Objective
 
-Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, sets up git worktrees, and generates PLANNING.md files for structured development.
+Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees, and generates planning files for structured development.
 
 ## Prerequisites
 
@@ -144,7 +144,31 @@ Generate the branch name:
    - `bug/123-fix-login-redirect-issue`
    - `feature/456-add-user-dashboard`
 
-### Step 5: Discover Worktree Location
+### Step 5: Choose Workflow Mode
+
+Ask the user where they want to work on this issue:
+
+```
+? Where do you want to work on this issue?
+  1) Create a git worktree (recommended for parallel work)
+  2) Current directory (just create branch and planning file here)
+  3) Custom location (specify your own path)
+Choice (1-3):
+```
+
+If user chooses option 3, prompt for the path:
+```
+? Enter the path where you want to work:
+```
+
+Based on the choice:
+- **Option 1 (Worktree)**: Continue with Step 6 (Discover Worktree Location)
+- **Option 2 (Current directory)**: Skip to Step 7 (Create Git Branch) with checkout
+- **Option 3 (Custom path)**: Skip to Step 7 (Create Git Branch), then create/navigate to custom path
+
+### Step 6: Discover Worktree Location (Worktree Mode Only)
+
+**Skip this step if user chose option 2 or 3.**
 
 Follow the discovery process from "Context to Gather" section:
 
@@ -156,12 +180,20 @@ Follow the discovery process from "Context to Gather" section:
 3. **Check for nested worktrees directory** pattern
 4. **If unclear**: Ask user for location
 
-### Step 6: Create Git Branch
+### Step 7: Create Git Branch
 
-Create the branch (without checking it out - the worktree will handle checkout):
+**For Worktree mode (option 1)**:
+Create the branch without checking it out (the worktree will handle checkout):
 
 ```bash
 git branch <branch-name>
+```
+
+**For Current directory or Custom path mode (options 2 or 3)**:
+Create and checkout the branch:
+
+```bash
+git checkout -b <branch-name>
 ```
 
 Verify branch was created:
@@ -169,9 +201,9 @@ Verify branch was created:
 git branch --list <branch-name>
 ```
 
-**Note**: We only create the branch here; `git worktree add` in the next step will check it out in the worktree directory.
+### Step 8: Create Git Worktree (Worktree Mode Only)
 
-### Step 7: Create Git Worktree
+**Skip this step if user chose option 2 or 3.**
 
 ```bash
 git worktree add <worktree-path> <branch-name>
@@ -184,9 +216,20 @@ Verify worktree was created:
 git worktree list
 ```
 
-### Step 8: Generate PLANNING.md
+**For Custom path mode (option 3)**:
+If the custom path doesn't exist, create it:
+```bash
+mkdir -p <custom-path>
+```
 
-Create the PLANNING.md file in the worktree root with this structure:
+### Step 9: Generate Planning File
+
+Create the planning file using the format `PLANNING-{issue-number}-{slug}.md`:
+
+**Location based on workflow mode:**
+- **Worktree mode**: Create in worktree root
+- **Current directory mode**: Create in current directory
+- **Custom path mode**: Create in the custom path specified
 
 ```markdown
 # Issue #<NUMBER>: <TITLE>
@@ -222,10 +265,11 @@ Create the PLANNING.md file in the worktree root with this structure:
 - Issue: #<NUMBER>
 ```
 
-### Step 9: Display Results
+### Step 10: Display Results
 
-Show a summary of what was created:
+Show a summary based on the workflow mode chosen:
 
+**For Worktree mode:**
 ```
 Issue workflow setup complete!
 
@@ -233,13 +277,53 @@ Issue:      #<NUMBER> - <TITLE>
 Type:       <bug|feature>
 Branch:     <branch-name>
 Worktree:   <worktree-path>
-Planning:   <worktree-path>/PLANNING.md
+Planning:   <worktree-path>/PLANNING-<NUMBER>-<slug>.md
 
 Next steps:
 1. Navigate to the worktree:
    cd <worktree-path>
 
-2. Review and update PLANNING.md with your implementation plan
+2. Review and update the planning file with your implementation plan
+
+3. Start working on the issue!
+
+4. When done, create a PR:
+   gh pr create --title "<title>" --body "Closes #<NUMBER>"
+```
+
+**For Current directory mode:**
+```
+Issue workflow setup complete!
+
+Issue:      #<NUMBER> - <TITLE>
+Type:       <bug|feature>
+Branch:     <branch-name> (checked out)
+Planning:   ./PLANNING-<NUMBER>-<slug>.md
+
+Next steps:
+1. Review and update the planning file with your implementation plan
+
+2. Start working on the issue!
+
+3. When done, create a PR:
+   gh pr create --title "<title>" --body "Closes #<NUMBER>"
+```
+
+**For Custom path mode:**
+```
+Issue workflow setup complete!
+
+Issue:      #<NUMBER> - <TITLE>
+Type:       <bug|feature>
+Branch:     <branch-name> (checked out)
+Location:   <custom-path>
+Planning:   <custom-path>/PLANNING-<NUMBER>-<slug>.md
+
+Next steps:
+1. Navigate to your workspace:
+   cd <custom-path>
+
+2. Review and update the planning file with your implementation plan
 
 3. Start working on the issue!
 
@@ -249,13 +333,26 @@ Next steps:
 
 ## Validation
 
+**All modes:**
 - [ ] Issue details were successfully fetched from GitHub
 - [ ] Branch name follows the convention: `{type}/{number}-{slug}`
 - [ ] Git branch was created successfully
-- [ ] Git worktree was created at the correct location
-- [ ] PLANNING.md was created in the worktree root
-- [ ] PLANNING.md contains all required sections
+- [ ] Planning file (PLANNING-{number}-{slug}.md) was created
+- [ ] Planning file contains all required sections
 - [ ] User was shown clear next steps
+
+**Worktree mode only:**
+- [ ] Git worktree was created at the correct location
+- [ ] Planning file is in the worktree root
+
+**Current directory mode only:**
+- [ ] Branch was checked out
+- [ ] Planning file is in current directory
+
+**Custom path mode only:**
+- [ ] Branch was checked out
+- [ ] Custom directory was created (if needed)
+- [ ] Planning file is in the custom path
 
 ## Troubleshooting
 
@@ -274,13 +371,20 @@ Next steps:
 **Issue**: Worktree path already in use
 **Solution**: Check `git worktree list` and choose a different location
 
-## Example
+## Examples
+
+### Example 1: Worktree Mode
 
 For issue #42 with title "Add user preferences page" and "feature" label:
 
 **Input**:
 ```
 ? GitHub issue number: 42
+? Where do you want to work on this issue?
+  1) Create a git worktree (recommended for parallel work)
+  2) Current directory (just create branch and planning file here)
+  3) Custom location (specify your own path)
+Choice: 1
 ```
 
 **Output**:
@@ -291,13 +395,13 @@ Issue:      #42 - Add user preferences page
 Type:       feature
 Branch:     feature/42-add-user-preferences-page
 Worktree:   ../feature-42-add-user-preferences-page
-Planning:   ../feature-42-add-user-preferences-page/PLANNING.md
+Planning:   ../feature-42-add-user-preferences-page/PLANNING-42-add-user-preferences-page.md
 
 Next steps:
 1. Navigate to the worktree:
    cd ../feature-42-add-user-preferences-page
 
-2. Review and update PLANNING.md with your implementation plan
+2. Review and update the planning file with your implementation plan
 
 3. Start working on the issue!
 
@@ -305,11 +409,46 @@ Next steps:
    gh pr create --title "Add user preferences page" --body "Closes #42"
 ```
 
+### Example 2: Current Directory Mode
+
+For issue #99 with title "Fix login button" and "bug" label:
+
+**Input**:
+```
+? GitHub issue number: 99
+? Where do you want to work on this issue?
+  1) Create a git worktree (recommended for parallel work)
+  2) Current directory (just create branch and planning file here)
+  3) Custom location (specify your own path)
+Choice: 2
+```
+
+**Output**:
+```
+Issue workflow setup complete!
+
+Issue:      #99 - Fix login button
+Type:       bug
+Branch:     bug/99-fix-login-button (checked out)
+Planning:   ./PLANNING-99-fix-login-button.md
+
+Next steps:
+1. Review and update the planning file with your implementation plan
+
+2. Start working on the issue!
+
+3. When done, create a PR:
+   gh pr create --title "Fix login button" --body "Closes #99"
+```
+
 ## Notes
 
 - This workflow assumes a GitHub-based repository
-- The worktree approach allows working on multiple issues simultaneously
-- PLANNING.md helps maintain focus and track progress
+- Three workflow modes are available:
+  - **Worktree mode**: Best for working on multiple issues simultaneously
+  - **Current directory mode**: Simplest option, works in place
+  - **Custom path mode**: For users with their own directory structure
+- The planning file (PLANNING-{number}-{slug}.md) helps maintain focus and track progress
 - Consider adding this workflow to your `.claude.md` for easy access
 
 ## References
