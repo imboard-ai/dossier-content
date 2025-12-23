@@ -87,16 +87,6 @@
       "path": "imboard-ai/development/setup-react-library.ds.md"
     },
     {
-      "name": "imboard-ai/development/test-coverage-gap-analysis",
-      "title": "Test Coverage Gap Analysis",
-      "version": "1.0.0",
-      "category": [
-        "development",
-        "testing"
-      ],
-      "path": "imboard-ai/development/test-coverage-gap-analysis.ds.md"
-    },
-    {
       "name": "imboard-ai/development/testing/test-coverage-gap-analysis",
       "title": "Test Coverage Gap Analysis",
       "version": "1.0.0",
