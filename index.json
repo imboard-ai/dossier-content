@@ -37,7 +37,12 @@
       "name": "imboard-ai/development/git/setup-issue-workflow",
       "title": "Setup Issue Workflow",
       "version": "1.0.0",
-      "path": "imboard-ai/development/git/setup-issue-workflow.ds.md"
+      "path": "imboard-ai/development/git/setup-issue-workflow.ds.md",
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
     },
     {
       "name": "imboard-ai/development/ops/runbook-generator",
