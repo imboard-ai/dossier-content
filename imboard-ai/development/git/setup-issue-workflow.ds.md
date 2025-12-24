@@ -1,23 +1,15 @@
 ---
+schema_version: "1.0.0"
+name: setup-issue-workflow
+title: Setup Issue Workflow
+version: "1.1.0"
+status: stable
+objective: Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup, and generates planning files for structured development
 authors:
-- name: Yuval Dimnik <yuval.dimnik@gmail.com>
+  - name: Yuval Dimnik <yuval.dimnik@gmail.com>
 checksum:
   algorithm: sha256
-  hash: f97bc0be6ca3ec92bd386992c75ecd004a52acf98aedb61b145ac640177e934c
-name: setup-issue-workflow
-objective: Create a workflow for GitHub issues that fetches issue details, creates
-  appropriately named branches, optionally sets up git worktrees, and generates planning
-  files for structured development
-schema_version: 1.0.0
-signature:
-  algorithm: ed25519
-  public_key: rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=
-  signature: y7UlXEQNilCW/NMu7G0P0DSsylX38wHS84uNgoK/vM3Cxskk3iZNdWMIzdoZXQOJoG3eoapJuW92E1QxC7P5Dw==
-  signed_by: Yuval Dimnik <yuval.dimnik@gmail.com>
-  timestamp: '2025-12-23T20:29:25.105866+00:00'
-status: draft
-title: Setup Issue Workflow
-version: 1.0.0
+  hash: d462bfd498d7e314f0f9f3b3946a5ade9c9fc68b3aa55f730eba66c6302822cb
 ---
 
 # Setup Issue Workflow
@@ -222,6 +214,32 @@ If the custom path doesn't exist, create it:
 mkdir -p <custom-path>
 ```
 
+### Step 8.5: Warm Up Worktree (Worktree Mode Only)
+
+**Skip this step if user chose option 2 or 3.**
+
+Run the warm-worktree workflow to prepare the development environment:
+
+```bash
+dossier run imboard-ai/development/git/warm-worktree
+```
+
+This workflow will:
+1. **Copy .env files** from the source worktree (main) to the new worktree
+2. **Install dependencies** (npm, pip, etc. - auto-detected)
+3. **Run build** to verify it compiles
+4. **Run tests** (user choice: skip, smoke, or full)
+5. **Verify servers** can start (start, check, stop)
+
+Progress and results are tracked in `<worktree-path>/WARMUP-STATUS.md`.
+
+**Note:** This file is automatically excluded from git commits.
+
+**On Failure:**
+- The status file will contain error details and suggested fixes
+- The LLM agent should analyze errors and propose solutions
+- User can choose to fix issues, continue anyway, or abort
+
 ### Step 9: Generate Planning File
 
 Create the planning file using the format `PLANNING-{issue-number}-{slug}.md`:
@@ -278,6 +296,14 @@ Type:       <bug|feature>
 Branch:     <branch-name>
 Worktree:   <worktree-path>
 Planning:   <worktree-path>/PLANNING-<NUMBER>-<slug>.md
+Warmup:     <worktree-path>/WARMUP-STATUS.md
+
+Environment Status:
+- .env files: ✅ Copied (3 files)
+- Dependencies: ✅ Installed
+- Build: ✅ Passed
+- Tests: ⏸️ Skipped (user choice)
+- Servers: ✅ Verified
 
 Next steps:
 1. Navigate to the worktree:
@@ -343,6 +369,8 @@ Next steps:
 
 **Worktree mode only:**
 - [ ] Git worktree was created at the correct location
+- [ ] Warmup workflow completed (check WARMUP-STATUS.md)
+- [ ] Environment is ready (deps installed, build passed)
 - [ ] Planning file is in the worktree root
 
 **Current directory mode only:**
