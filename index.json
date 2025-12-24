@@ -66,6 +66,27 @@
       ]
     },
     {
+      "name": "imboard-ai/development/git/warm-worktree",
+      "title": "Warm Worktree",
+      "version": "1.0.0",
+      "path": "imboard-ai/development/git/warm-worktree.ds.md",
+      "category": [
+        "development",
+        "git"
+      ],
+      "tags": [
+        "worktree",
+        "setup",
+        "environment",
+        "dependencies"
+      ],
+      "authors": [
+        {
+          "name": "Dossier Community"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/development/ops/runbook-generator",
       "title": "Runbook & Ops Checklist Generator",
       "version": "1.0.0",
