@@ -137,6 +137,18 @@
       ]
     },
     {
+      "name": "imboard-ai/skills/finish-issue",
+      "title": "Finish Issue Workflow",
+      "version": "1.0.0",
+      "path": "imboard-ai/skills/finish-issue.ds.md",
+      "description": "Prepare a GitHub issue branch for PR with quality checks, cleanup, and review recommendations. Use when user says \"finish issue\", \"ready for PR\", \"prepare for review\", \"submit PR\", \"create PR\", \"finalize issue\", or \"wrap up\".",
+      "authors": [
+        {
+          "name": "Dossier Community"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/start-issue",
       "title": "Start Issue Workflow",
       "version": "1.0.0",
