@@ -104,6 +104,18 @@
       "path": "imboard-ai/meta/create-dossier.ds.md"
     },
     {
+      "name": "imboard-ai/skills/dossier-discovery",
+      "title": "Dossier Discovery",
+      "version": "1.0.0",
+      "path": "imboard-ai/skills/dossier-discovery.ds.md",
+      "description": "Proactively search the dossier registry when users request multi-step tasks. Triggers on setup, deployment, migration, onboarding, CI/CD, or refactoring tasks. NOT triggered by simple questions, single file edits, or quick lookups.",
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/start-issue",
       "title": "Start Issue Workflow",
       "version": "1.0.0",
