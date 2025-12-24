@@ -104,6 +104,18 @@
       "path": "imboard-ai/meta/create-dossier.ds.md"
     },
     {
+      "name": "imboard-ai/skills/today-summary",
+      "title": "Today's Work Summary",
+      "version": "1.0.0",
+      "path": "imboard-ai/skills/today-summary.ds.md",
+      "description": "Summarize today's work based on git commits and file changes. Use when user asks \"what did I do today\", \"daily summary\", \"today's progress\", or \"end of day report\".",
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "tal-liberio/development/api-compatibility-check",
       "title": "API Compatibility Check",
       "version": "1.0.0",
