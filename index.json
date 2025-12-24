@@ -104,6 +104,18 @@
       "path": "imboard-ai/meta/create-dossier.ds.md"
     },
     {
+      "name": "imboard-ai/skills/start-issue",
+      "title": "Start Issue Workflow",
+      "version": "1.0.0",
+      "path": "imboard-ai/skills/start-issue.ds.md",
+      "description": "Set up a GitHub issue for development with branch, worktree, and planning doc. Use when user says \"start issue\", \"work on issue",
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/today-summary",
       "title": "Today's Work Summary",
       "version": "1.0.0",
