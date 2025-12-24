@@ -34,6 +34,27 @@
       "path": "imboard-ai/development/git/add-git-worktree-support.ds.md"
     },
     {
+      "name": "imboard-ai/development/git/finish-issue-workflow",
+      "title": "Finish Issue Workflow",
+      "version": "1.0.0",
+      "path": "imboard-ai/development/git/finish-issue-workflow.ds.md",
+      "category": [
+        "development",
+        "git"
+      ],
+      "tags": [
+        "finish-issue",
+        "pull-request",
+        "code-review",
+        "quality-checks"
+      ],
+      "authors": [
+        {
+          "name": "Dossier Community"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/development/git/setup-issue-workflow",
       "title": "Setup Issue Workflow",
       "version": "1.0.0",
