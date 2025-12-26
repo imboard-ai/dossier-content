@@ -3,61 +3,73 @@ authors:
 - name: Yuval Dimnik
 checksum:
   algorithm: sha256
-  hash: 80931ddd8f731e0c2cae40c386ece89522026eef38e717615b713db37526b8ca
-description: Proactively search the dossier registry when users request multi-step
-  tasks. Triggers on setup, deployment, migration, onboarding, CI/CD, or refactoring
-  tasks. NOT triggered by simple questions, single file edits, or quick lookups.
+  hash: b16a6743beab45b74cf49cbfdbbdd8ca7988752da294637694533e99d03a1566
+description: 'Run `dossier list --json` at START of workflow tasks (setup, deploy,
+  migrate, refactor, CI/CD). Once per conversation. Output ''Dossier check: [result]''
+  after running. Skip if you see this marker in conversation history.'
 name: dossier-discovery
 objective: Find and suggest relevant dossier workflows for complex tasks
 schema_version: 1.0.0
 status: draft
 title: Dossier Discovery
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Dossier Discovery
 
-Proactively search the dossier registry when users request tasks that might have existing workflows.
+## DECISION TREE
 
-## When to Trigger
+```
+Is this a workflow task (setup, deploy, migrate, refactor, CI/CD)?
+|-- NO --> Skip this skill
++-- YES --> Is "Dossier check:" visible in conversation history above?
+            |-- YES --> Skip, already checked
+            +-- NO --> Run this command NOW:
+                       dossier list --json
+```
 
-**DO trigger on tasks that sound like workflows:**
-- Setup/configuration tasks ("set up a new React project", "configure CI/CD")
-- Deployment/migration tasks ("deploy to production", "migrate database")
-- Onboarding/initialization ("initialize the repo", "set up development environment")
-- CI/CD setup ("add GitHub Actions", "set up testing pipeline")
-- Refactoring operations ("refactor the authentication system")
-- Project reviews ("review code architecture", "check test coverage")
+## After Running Command
 
-**DO NOT trigger on:**
-- Simple questions ("what does this function do?")
-- Single file edits ("fix the typo in README")
-- Quick lookups ("find where X is defined")
-- Explicit dossier commands (user already knows about dossiers)
+**MUST output this marker** (enables tracking for rest of conversation):
 
-## Steps
+```
+Dossier check: [X matching dossiers found] or [no matches]
+```
 
-1. When a workflow-like task is detected, fetch available dossiers:
-   ```bash
-   dossier list --json
-   ```
+If matches found, list them and ask user which to run.
+If no matches, state this and proceed with the task.
 
-2. Parse the JSON response and extract dossier metadata:
-   - `name`: Full dossier path (e.g., "imboard-ai/development/setup-react-library")
-   - `title`: Human-readable title
-   - `description`: What the dossier does (if available)
-   - `category`: Category tags
+---
 
-3. Compare the user's task against dossier titles, descriptions, and names to find matches.
+## Matching Workflow Tasks
 
-4. Based on match quality, respond accordingly:
+Trigger this skill for:
+- Setup/configuration ("set up X", "configure Y", "create workflow")
+- Deployment/migration ("deploy", "migrate", "release")
+- CI/CD ("add pipeline", "set up tests", "automate")
+- Refactoring ("refactor X", "restructure", "reorganize")
+- Multi-step workflows ("workflow for X", "process for Y")
+
+## NOT Workflow Tasks (skip)
+
+Do NOT trigger for:
+- Questions ("what does X do?", "how does Y work?")
+- Single file edits ("fix typo", "update line 42")
+- Quick lookups ("find X", "where is Y defined")
+- Explicit dossier commands (user already running a dossier)
+
+---
+
+## Handling Results
 
 ### Good Match Found
 
 If a dossier closely matches the user's intent:
 
 ```
-Found a dossier that matches your task: {name}
+Dossier check: 1 matching dossier found
+
+Found: {name}
 "{title}"
 
 Run it? (y/n)
@@ -68,26 +80,12 @@ If user says yes, run:
 dossier run {name}
 ```
 
-### Partial Match Found
-
-If a dossier is related but not exact:
-
-```
-Found a similar dossier: {name}
-"{title}"
-
-Options:
-1. Run it as-is
-2. Use as a reference and proceed manually
-3. Skip, proceed without dossier
-```
-
 ### Multiple Matches Found
 
 If several dossiers might be relevant:
 
 ```
-Found {count} potentially relevant dossiers:
+Dossier check: {count} matching dossiers found
 
 1. {name1} - "{title1}"
 2. {name2} - "{title2}"
@@ -98,9 +96,11 @@ Which would you like to run? (1-{count}, or 'skip' to proceed manually)
 
 ### No Match Found
 
-Proceed with the task normally without mentioning dossiers.
+```
+Dossier check: no matches
+```
 
-After completing a complex task that had no matching dossier, optionally suggest:
+Proceed with the task normally. After completing a complex workflow, optionally suggest:
 
 ```
 This workflow might be useful to save as a dossier for future use.
@@ -111,6 +111,8 @@ If yes, run:
 ```bash
 dossier run imboard-ai/meta/create-dossier
 ```
+
+---
 
 ## Search Priority
 
@@ -123,13 +125,13 @@ When matching dossiers to tasks:
 ## Examples
 
 **User:** "Help me set up a new React component library"
-**Action:** Search dossiers, find "imboard-ai/development/setup-react-library", suggest running it.
+**Action:** Run `dossier list --json`, find "imboard-ai/development/setup-react-library", output marker, suggest running it.
 
 **User:** "What's in the package.json?"
-**Action:** Do NOT search dossiers - this is a simple lookup.
+**Action:** Skip - this is a simple lookup, not a workflow task.
 
-**User:** "Review the test coverage in this project"
-**Action:** Search dossiers, find "imboard-ai/development/testing/test-coverage-gap-analysis", suggest running it.
+**User:** "Create a workflow to sync my git worktrees"
+**Action:** Run `dossier list --json`, find git-related dossiers, output marker, suggest relevant ones.
 
 **User:** "Fix the bug on line 42"
-**Action:** Do NOT search dossiers - this is a single file edit.
+**Action:** Skip - this is a single file edit, not a workflow task.
