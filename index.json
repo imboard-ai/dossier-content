@@ -148,9 +148,9 @@
     {
       "name": "imboard-ai/skills/dossier-discovery",
       "title": "Dossier Discovery",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "path": "imboard-ai/skills/dossier-discovery.ds.md",
-      "description": "Proactively search the dossier registry when users request multi-step tasks. Triggers on setup, deployment, migration, onboarding, CI/CD, or refactoring tasks. NOT triggered by simple questions, single file edits, or quick lookups.",
+      "description": "Run `dossier list --json` at START of workflow tasks (setup, deploy, migrate, refactor, CI/CD). Once per conversation. Output 'Dossier check: [result]' after running. Skip if you see this marker in conversation history.",
       "authors": [
         {
           "name": "Yuval Dimnik"
