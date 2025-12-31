@@ -1,15 +1,17 @@
 ---
-schema_version: "1.0.0"
-name: setup-issue-workflow
-title: Setup Issue Workflow
-version: "1.1.0"
-status: stable
-objective: Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup, and generates planning files for structured development
 authors:
-  - name: Yuval Dimnik <yuval.dimnik@gmail.com>
+- name: Yuval Dimnik <yuval.dimnik@gmail.com>
 checksum:
   algorithm: sha256
-  hash: d462bfd498d7e314f0f9f3b3946a5ade9c9fc68b3aa55f730eba66c6302822cb
+  hash: 084680cf98bb5244282a7a0454c207717241622a18ecd9ba5f8d5bba9e5d85d9
+name: setup-issue-workflow
+objective: Create a workflow for GitHub issues that fetches issue details, creates
+  appropriately named branches, optionally sets up git worktrees with environment
+  warmup, and generates planning files for structured development
+schema_version: 1.0.0
+status: stable
+title: Setup Issue Workflow
+version: 1.2.0
 ---
 
 # Setup Issue Workflow
@@ -214,15 +216,21 @@ If the custom path doesn't exist, create it:
 mkdir -p <custom-path>
 ```
 
-### Step 8.5: Warm Up Worktree (Worktree Mode Only)
+### Step 8.5: Warm Up Worktree [REQUIRED for Worktree Mode]
 
-**Skip this step if user chose option 2 or 3.**
+**Skip this step ONLY if user chose option 2 or 3.**
+
+> **⚠️ MANDATORY STEP**: For worktree mode, you MUST run this warmup workflow before proceeding to Step 9. DO NOT skip this step or proceed without completing the warmup. The worktree is NOT ready for development until this step completes.
 
 Run the warm-worktree workflow to prepare the development environment:
 
 ```bash
 dossier run imboard-ai/development/git/warm-worktree
 ```
+
+When running the warmup workflow, you must provide:
+- **source_worktree**: The main worktree path (where .env files exist)
+- **target_worktree**: The newly created worktree path
 
 This workflow will:
 1. **Copy .env files** from the source worktree (main) to the new worktree
@@ -235,10 +243,17 @@ Progress and results are tracked in `<worktree-path>/WARMUP-STATUS.md`.
 
 **Note:** This file is automatically excluded from git commits.
 
+**Completion Criteria:**
+- The `WARMUP-STATUS.md` file MUST exist in the worktree
+- The file MUST show status as `COMPLETED` or `FAILED` (not `IN_PROGRESS`)
+- If `FAILED`, the agent should analyze errors and help the user decide whether to fix, continue anyway, or abort
+
 **On Failure:**
 - The status file will contain error details and suggested fixes
 - The LLM agent should analyze errors and propose solutions
 - User can choose to fix issues, continue anyway, or abort
+
+**DO NOT proceed to Step 9 until this warmup is complete.**
 
 ### Step 9: Generate Planning File
 
@@ -367,11 +382,16 @@ Next steps:
 - [ ] Planning file contains all required sections
 - [ ] User was shown clear next steps
 
-**Worktree mode only:**
+**Worktree mode only (ALL required before showing success):**
 - [ ] Git worktree was created at the correct location
-- [ ] Warmup workflow completed (check WARMUP-STATUS.md)
-- [ ] Environment is ready (deps installed, build passed)
+- [ ] **WARMUP-STATUS.md exists** in the worktree root
+- [ ] **Warmup workflow was executed** via `dossier run imboard-ai/development/git/warm-worktree`
+- [ ] WARMUP-STATUS.md shows final status (COMPLETED or FAILED, not IN_PROGRESS)
+- [ ] .env files were copied from source to target worktree
+- [ ] Dependencies were installed
+- [ ] Build was attempted (pass or fail noted)
 - [ ] Planning file is in the worktree root
+- [ ] Final summary includes Environment Status section with warmup results
 
 **Current directory mode only:**
 - [ ] Branch was checked out
