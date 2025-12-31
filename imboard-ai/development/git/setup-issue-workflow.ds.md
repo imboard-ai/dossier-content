@@ -3,7 +3,7 @@ authors:
 - name: Yuval Dimnik <yuval.dimnik@gmail.com>
 checksum:
   algorithm: sha256
-  hash: 084680cf98bb5244282a7a0454c207717241622a18ecd9ba5f8d5bba9e5d85d9
+  hash: 267b7c1ca5d5a6a242151ab052a4e4328bf2d4d611814020bee0e269884cffc5
 name: setup-issue-workflow
 objective: Create a workflow for GitHub issues that fetches issue details, creates
   appropriately named branches, optionally sets up git worktrees with environment
@@ -37,51 +37,42 @@ Collect the GitHub issue number from user input. Then fetch:
 - Issue body/description
 - Issue assignees (optional)
 
-### 2. Worktree Location Discovery
+### 2. Worktree Location
 
-Discover where to create the worktree using this priority order:
+**Default pattern**: Create worktrees in a `worktrees/` subdirectory under the repository root.
 
-1. **Check documentation first** (avoid trial-and-error):
-   - Look in `WORKTREES.md`, `.claude.md`, `agents.md`, `README.md`, `CONTRIBUTING.md` for worktree instructions
-   - These files should have explicit guidance on worktree location patterns
-   - **Critical**: Some repos use nested main worktree (e.g., `repo/main/`) where worktrees should be siblings to `main/`, not to `repo/`
+```
+<repo-root>/
+├── worktrees/
+│   ├── feature-42-add-dashboard/
+│   ├── bug-99-fix-login/
+│   └── feature-123-new-feature/
+├── src/
+├── package.json
+└── ...
+```
 
-2. **Check for sibling worktrees** (most common pattern):
-   ```bash
-   git worktree list
-   ```
+**Why this pattern:**
+- Deterministic - no need to run `git worktree list` to find folders
+- Organized - all worktrees in one place
+- Clean - doesn't clutter parent directory with sibling folders
 
-   Example output for flat structure:
-   ```
-   /home/user/projects/dossier     abc1234 [main]
-   /home/user/projects/cli-work    def5678 [cli-work]
-   /home/user/projects/feature-42  ghi9012 [feature/42-add-dashboard]
-   ```
+**Path construction:**
+```
+<repo-root>/worktrees/<type>-<issue-number>-<slugified-title>/
+```
 
-   Example output for nested main worktree:
-   ```
-   /home/user/projects/monorepo/main        abc1234 [main]
-   /home/user/projects/monorepo/cli-work    def5678 [cli-work]
-   /home/user/projects/monorepo/feature-42  ghi9012 [feature/42-add-dashboard]
-   ```
+Example for branch `feature/42-add-user-preferences`:
+```
+/home/user/projects/myrepo/worktrees/feature-42-add-user-preferences/
+```
 
-   **Analysis strategy**:
-   - Get the main worktree path (look for `[main]` or `[master]` branch)
-   - Check if main worktree ends with `/main/` or `/master/` - indicates nested structure
-   - If nested: worktrees are siblings to the nested main directory
-   - If flat: worktrees are siblings to the repository root
-   - For branch `bug/123-fix-login`:
-     - Nested: `monorepo/bug-123-fix-login/` (sibling to `monorepo/main/`)
-     - Flat: `bug-123-fix-login/` (sibling to repository root)
-
-3. **Check for nested worktrees directory**:
-   - Look for `../worktrees/` or `.worktrees/` patterns in existing worktrees
-   - If found, use that directory
-
-4. **If unclear**: Prompt user:
-   ```
-   ? Where should I create the worktree? (e.g., ../feature-123):
-   ```
+**First-time setup:**
+If the `worktrees/` directory doesn't exist, create it and ensure it's git-ignored:
+```bash
+mkdir -p worktrees
+echo "worktrees/" >> .gitignore
+```
 
 ## Actions to Perform
 
@@ -160,19 +151,30 @@ Based on the choice:
 - **Option 2 (Current directory)**: Skip to Step 7 (Create Git Branch) with checkout
 - **Option 3 (Custom path)**: Skip to Step 7 (Create Git Branch), then create/navigate to custom path
 
-### Step 6: Discover Worktree Location (Worktree Mode Only)
+### Step 6: Setup Worktree Directory (Worktree Mode Only)
 
 **Skip this step if user chose option 2 or 3.**
 
-Follow the discovery process from "Context to Gather" section:
+Create the worktree in the `worktrees/` subdirectory:
 
-1. **Check documentation first**: Look in `WORKTREES.md`, `.claude.md`, etc. for explicit instructions
-2. **Analyze `git worktree list`** output:
-   - Check if main worktree path ends with `/main/` or `/master/` (nested structure)
-   - If nested: create worktree as sibling to main (e.g., `../bug-123/` next to `../main/`)
-   - If flat: create worktree as sibling to repo root
-3. **Check for nested worktrees directory** pattern
-4. **If unclear**: Ask user for location
+1. **Check if `worktrees/` directory exists**:
+   ```bash
+   ls -d worktrees 2>/dev/null
+   ```
+
+2. **If it doesn't exist, create it and add to .gitignore**:
+   ```bash
+   mkdir -p worktrees
+   # Add to .gitignore if not already present
+   grep -q "^worktrees/$" .gitignore 2>/dev/null || echo "worktrees/" >> .gitignore
+   ```
+
+3. **Construct the worktree path**:
+   ```
+   worktrees/<type>-<issue-number>-<slugified-title>
+   ```
+
+   Example: `worktrees/feature-42-add-user-preferences`
 
 ### Step 7: Create Git Branch
 
@@ -199,8 +201,15 @@ git branch --list <branch-name>
 
 **Skip this step if user chose option 2 or 3.**
 
+Create the worktree using the path from Step 6:
+
 ```bash
-git worktree add <worktree-path> <branch-name>
+git worktree add worktrees/<type>-<issue-number>-<slug> <branch-name>
+```
+
+Example:
+```bash
+git worktree add worktrees/feature-42-add-user-preferences feature/42-add-user-preferences
 ```
 
 This command checks out the branch in the new worktree directory.
@@ -229,8 +238,8 @@ dossier run imboard-ai/development/git/warm-worktree
 ```
 
 When running the warmup workflow, you must provide:
-- **source_worktree**: The main worktree path (where .env files exist)
-- **target_worktree**: The newly created worktree path
+- **source_worktree**: The repository root (where .env files exist)
+- **target_worktree**: The newly created worktree path (e.g., `worktrees/feature-42-...`)
 
 This workflow will:
 1. **Copy .env files** from the source worktree (main) to the new worktree
@@ -309,9 +318,9 @@ Issue workflow setup complete!
 Issue:      #<NUMBER> - <TITLE>
 Type:       <bug|feature>
 Branch:     <branch-name>
-Worktree:   <worktree-path>
-Planning:   <worktree-path>/PLANNING-<NUMBER>-<slug>.md
-Warmup:     <worktree-path>/WARMUP-STATUS.md
+Worktree:   worktrees/<type>-<number>-<slug>
+Planning:   worktrees/<type>-<number>-<slug>/PLANNING-<NUMBER>-<slug>.md
+Warmup:     worktrees/<type>-<number>-<slug>/WARMUP-STATUS.md
 
 Environment Status:
 - .env files: ✅ Copied (3 files)
@@ -322,7 +331,7 @@ Environment Status:
 
 Next steps:
 1. Navigate to the worktree:
-   cd <worktree-path>
+   cd worktrees/<type>-<number>-<slug>
 
 2. Review and update the planning file with your implementation plan
 
@@ -383,7 +392,8 @@ Next steps:
 - [ ] User was shown clear next steps
 
 **Worktree mode only (ALL required before showing success):**
-- [ ] Git worktree was created at the correct location
+- [ ] `worktrees/` directory exists and is in `.gitignore`
+- [ ] Git worktree was created at `worktrees/<type>-<number>-<slug>`
 - [ ] **WARMUP-STATUS.md exists** in the worktree root
 - [ ] **Warmup workflow was executed** via `dossier run imboard-ai/development/git/warm-worktree`
 - [ ] WARMUP-STATUS.md shows final status (COMPLETED or FAILED, not IN_PROGRESS)
@@ -442,12 +452,20 @@ Issue workflow setup complete!
 Issue:      #42 - Add user preferences page
 Type:       feature
 Branch:     feature/42-add-user-preferences-page
-Worktree:   ../feature-42-add-user-preferences-page
-Planning:   ../feature-42-add-user-preferences-page/PLANNING-42-add-user-preferences-page.md
+Worktree:   worktrees/feature-42-add-user-preferences-page
+Planning:   worktrees/feature-42-add-user-preferences-page/PLANNING-42-add-user-preferences-page.md
+Warmup:     worktrees/feature-42-add-user-preferences-page/WARMUP-STATUS.md
+
+Environment Status:
+- .env files: ✅ Copied (2 files)
+- Dependencies: ✅ Installed
+- Build: ✅ Passed
+- Tests: ⏸️ Skipped (user choice)
+- Servers: ✅ Verified
 
 Next steps:
 1. Navigate to the worktree:
-   cd ../feature-42-add-user-preferences-page
+   cd worktrees/feature-42-add-user-preferences-page
 
 2. Review and update the planning file with your implementation plan
 
