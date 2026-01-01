@@ -3,7 +3,7 @@ authors:
 - name: Yuval Dimnik <yuval.dimnik@gmail.com>
 checksum:
   algorithm: sha256
-  hash: 267b7c1ca5d5a6a242151ab052a4e4328bf2d4d611814020bee0e269884cffc5
+  hash: 5006d30925938d64179dbe1030c76d7f206145896bcff3464ce08d3b6d4ef265
 name: setup-issue-workflow
 objective: Create a workflow for GitHub issues that fetches issue details, creates
   appropriately named branches, optionally sets up git worktrees with environment
@@ -11,7 +11,7 @@ objective: Create a workflow for GitHub issues that fetches issue details, creat
 schema_version: 1.0.0
 status: stable
 title: Setup Issue Workflow
-version: 1.2.0
+version: 1.3.0
 ---
 
 # Setup Issue Workflow
@@ -39,39 +39,56 @@ Collect the GitHub issue number from user input. Then fetch:
 
 ### 2. Worktree Location
 
-**Default pattern**: Create worktrees in a `worktrees/` subdirectory under the repository root.
+**Default pattern**: Create worktrees in a `worktrees/` subdirectory **INSIDE** the repository root.
 
+> **⚠️ CRITICAL**: The `worktrees/` directory must be INSIDE the repository, NOT as a sibling to it. This allows users to find worktrees with a simple `ls worktrees/` from within the repo.
+
+**Correct structure** (worktrees INSIDE repo):
 ```
-<repo-root>/
-├── worktrees/
-│   ├── feature-42-add-dashboard/
-│   ├── bug-99-fix-login/
-│   └── feature-123-new-feature/
-├── src/
-├── package.json
-└── ...
+/home/user/projects/myrepo/                              <- repo root
+/home/user/projects/myrepo/worktrees/                    <- worktrees dir INSIDE repo
+/home/user/projects/myrepo/worktrees/feature-42-.../     <- each worktree
+/home/user/projects/myrepo/worktrees/bug-99-.../
+/home/user/projects/myrepo/src/
+/home/user/projects/myrepo/package.json
+```
+
+**WRONG structure** (worktrees OUTSIDE repo - DO NOT DO THIS):
+```
+/home/user/projects/myrepo/                              <- repo root
+/home/user/projects/worktrees/                           <- WRONG! Outside repo
+/home/user/projects/worktrees/feature-42-.../            <- WRONG! Can't find with ls
 ```
 
 **Why this pattern:**
-- Deterministic - no need to run `git worktree list` to find folders
-- Organized - all worktrees in one place
+- Deterministic - `ls worktrees/` from repo shows all worktrees
+- No need to run `git worktree list` to find folders
+- Organized - all worktrees in one place inside the repo
 - Clean - doesn't clutter parent directory with sibling folders
 
 **Path construction:**
-```
-<repo-root>/worktrees/<type>-<issue-number>-<slugified-title>/
+```bash
+# Get the repo root first
+REPO_ROOT=$(git rev-parse --show-toplevel)
+
+# Worktree path is INSIDE the repo
+$REPO_ROOT/worktrees/<type>-<issue-number>-<slugified-title>/
 ```
 
-Example for branch `feature/42-add-user-preferences`:
+**Concrete example:**
+If repo is at `/home/user/projects/imboard-monorepo/` and branch is `feature/42-add-user-preferences`:
 ```
-/home/user/projects/myrepo/worktrees/feature-42-add-user-preferences/
+/home/user/projects/imboard-monorepo/worktrees/feature-42-add-user-preferences/
 ```
 
 **First-time setup:**
-If the `worktrees/` directory doesn't exist, create it and ensure it's git-ignored:
+If the `worktrees/` directory doesn't exist, create it INSIDE the repo and ensure it's git-ignored:
 ```bash
+# Make sure you're in the repo root
+cd $(git rev-parse --show-toplevel)
 mkdir -p worktrees
-echo "worktrees/" >> .gitignore
+# Add to .gitignore if not already present
+grep -q "^worktrees/$" .gitignore 2>/dev/null || echo "worktrees/" >> .gitignore
 ```
 
 ## Actions to Perform
@@ -155,26 +172,36 @@ Based on the choice:
 
 **Skip this step if user chose option 2 or 3.**
 
-Create the worktree in the `worktrees/` subdirectory:
+Create the worktree in the `worktrees/` subdirectory **INSIDE the repository root**.
 
-1. **Check if `worktrees/` directory exists**:
+1. **Get the repository root**:
    ```bash
-   ls -d worktrees 2>/dev/null
+   REPO_ROOT=$(git rev-parse --show-toplevel)
    ```
 
-2. **If it doesn't exist, create it and add to .gitignore**:
+2. **Check if `worktrees/` directory exists inside the repo**:
    ```bash
-   mkdir -p worktrees
+   ls -d "$REPO_ROOT/worktrees" 2>/dev/null
+   ```
+
+3. **If it doesn't exist, create it and add to .gitignore**:
+   ```bash
+   mkdir -p "$REPO_ROOT/worktrees"
    # Add to .gitignore if not already present
-   grep -q "^worktrees/$" .gitignore 2>/dev/null || echo "worktrees/" >> .gitignore
+   grep -q "^worktrees/$" "$REPO_ROOT/.gitignore" 2>/dev/null || echo "worktrees/" >> "$REPO_ROOT/.gitignore"
    ```
 
-3. **Construct the worktree path**:
+4. **Construct the worktree path (MUST be inside repo)**:
    ```
-   worktrees/<type>-<issue-number>-<slugified-title>
+   $REPO_ROOT/worktrees/<type>-<issue-number>-<slugified-title>
    ```
 
-   Example: `worktrees/feature-42-add-user-preferences`
+   Example: If `REPO_ROOT=/home/user/projects/imboard-monorepo`:
+   ```
+   /home/user/projects/imboard-monorepo/worktrees/feature-42-add-user-preferences
+   ```
+
+> **⚠️ WARNING**: Do NOT create the worktree as a sibling to the repo (e.g., `../worktrees/`). It MUST be inside the repo at `$REPO_ROOT/worktrees/`.
 
 ### Step 7: Create Git Branch
 
@@ -201,22 +228,25 @@ git branch --list <branch-name>
 
 **Skip this step if user chose option 2 or 3.**
 
-Create the worktree using the path from Step 6:
+Create the worktree using the path from Step 6 (**INSIDE the repo**):
 
 ```bash
-git worktree add worktrees/<type>-<issue-number>-<slug> <branch-name>
+# Use absolute path to ensure worktree is inside repo
+git worktree add "$REPO_ROOT/worktrees/<type>-<issue-number>-<slug>" <branch-name>
 ```
 
-Example:
+Example (repo at `/home/user/projects/imboard-monorepo`):
 ```bash
-git worktree add worktrees/feature-42-add-user-preferences feature/42-add-user-preferences
+git worktree add /home/user/projects/imboard-monorepo/worktrees/feature-42-add-user-preferences feature/42-add-user-preferences
 ```
 
 This command checks out the branch in the new worktree directory.
 
-Verify worktree was created:
+Verify worktree was created **inside the repo**:
 ```bash
 git worktree list
+# Should show path like: /home/user/projects/imboard-monorepo/worktrees/feature-42-...
+# NOT like: /home/user/projects/worktrees/feature-42-... (WRONG - outside repo!)
 ```
 
 **For Custom path mode (option 3)**:
