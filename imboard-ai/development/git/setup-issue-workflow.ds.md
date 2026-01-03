@@ -3,7 +3,7 @@ authors:
 - name: Yuval Dimnik <yuval.dimnik@gmail.com>
 checksum:
   algorithm: sha256
-  hash: 5006d30925938d64179dbe1030c76d7f206145896bcff3464ce08d3b6d4ef265
+  hash: 48c89ef739d5becd1ddc24a741a6f6043daba1a6159f4c6875f537deb23f1b74
 name: setup-issue-workflow
 objective: Create a workflow for GitHub issues that fetches issue details, creates
   appropriately named branches, optionally sets up git worktrees with environment
@@ -11,7 +11,7 @@ objective: Create a workflow for GitHub issues that fetches issue details, creat
 schema_version: 1.0.0
 status: stable
 title: Setup Issue Workflow
-version: 1.3.0
+version: 1.4.0
 ---
 
 # Setup Issue Workflow
@@ -153,24 +153,92 @@ Ask the user where they want to work on this issue:
 ```
 ? Where do you want to work on this issue?
   1) Create a git worktree (recommended for parallel work)
-  2) Current directory (just create branch and planning file here)
-  3) Custom location (specify your own path)
-Choice (1-3):
+  2) Repurpose existing worktree (fastest - skips npm install)
+  3) Current directory (just create branch and planning file here)
+  4) Custom location (specify your own path)
+Choice (1-4):
 ```
 
-If user chooses option 3, prompt for the path:
+If user chooses option 2, show existing worktrees and prompt for selection (see Step 5.5).
+
+If user chooses option 4, prompt for the path:
 ```
 ? Enter the path where you want to work:
 ```
 
 Based on the choice:
-- **Option 1 (Worktree)**: Continue with Step 6 (Discover Worktree Location)
-- **Option 2 (Current directory)**: Skip to Step 7 (Create Git Branch) with checkout
-- **Option 3 (Custom path)**: Skip to Step 7 (Create Git Branch), then create/navigate to custom path
+- **Option 1 (New Worktree)**: Continue with Step 6 (Setup Worktree Directory)
+- **Option 2 (Repurpose)**: Continue with Step 5.5 (Repurpose Existing Worktree)
+- **Option 3 (Current directory)**: Skip to Step 7 (Create Git Branch) with checkout
+- **Option 4 (Custom path)**: Skip to Step 7 (Create Git Branch), then create/navigate to custom path
 
-### Step 6: Setup Worktree Directory (Worktree Mode Only)
+### Step 5.5: Repurpose Existing Worktree (Option 2 Only)
 
-**Skip this step if user chose option 2 or 3.**
+**Skip this step unless user chose option 2.**
+
+> **⚡ FAST PATH**: This option reuses an existing worktree's node_modules, .env files, and build artifacts. It takes ~10 seconds instead of ~15 minutes.
+
+1. **List existing worktrees**:
+   ```bash
+   REPO_ROOT=$(git rev-parse --show-toplevel)
+   ls -d "$REPO_ROOT/worktrees"/*/ 2>/dev/null | xargs -I {} basename {}
+   ```
+
+2. **If no worktrees exist**, inform user and fall back to option 1:
+   ```
+   No existing worktrees found. Creating a new one instead.
+   ```
+   Then continue with Step 6.
+
+3. **Prompt user to select a worktree**:
+   ```
+   ? Select worktree to repurpose:
+     1) feature-3-refactor-shared-metadata
+     2) bug-42-fix-login
+     3) feature-50-add-dashboard
+   Choice (1-3):
+   ```
+
+4. **Navigate to the selected worktree and switch branch**:
+   ```bash
+   cd "$REPO_ROOT/worktrees/<selected-worktree>"
+   git fetch origin
+   git checkout -b <new-branch-name> origin/main
+   ```
+
+5. **Rename the worktree directory**:
+   ```bash
+   cd "$REPO_ROOT/worktrees"
+   mv <old-worktree-name> <new-worktree-name>
+   ```
+
+   Where `<new-worktree-name>` follows the pattern: `<type>-<issue-number>-<slugified-title>`
+
+6. **Fix git's internal worktree tracking**:
+   ```bash
+   git worktree repair
+   ```
+
+7. **Clean up stale files** (optional but recommended):
+   ```bash
+   cd "$REPO_ROOT/worktrees/<new-worktree-name>"
+   git status  # Check for uncommitted files from previous work
+   # If there are stale files, ask user whether to discard them
+   ```
+
+8. **Skip warm-worktree**: Since node_modules, .env files, and build artifacts already exist, skip Step 8.5 entirely.
+
+9. **Continue to Step 9** (Generate Planning File).
+
+**Verification for repurpose mode:**
+- [ ] Worktree was successfully switched to new branch
+- [ ] Directory was renamed to match new issue
+- [ ] `git worktree repair` completed without errors
+- [ ] `git worktree list` shows correct path and branch
+
+### Step 6: Setup Worktree Directory (New Worktree Mode Only)
+
+**Skip this step if user chose option 2, 3, or 4.**
 
 Create the worktree in the `worktrees/` subdirectory **INSIDE the repository root**.
 
@@ -205,14 +273,16 @@ Create the worktree in the `worktrees/` subdirectory **INSIDE the repository roo
 
 ### Step 7: Create Git Branch
 
-**For Worktree mode (option 1)**:
+**Skip this step if user chose option 2 (Repurpose)** - branch creation is handled in Step 5.5.
+
+**For New Worktree mode (option 1)**:
 Create the branch without checking it out (the worktree will handle checkout):
 
 ```bash
 git branch <branch-name>
 ```
 
-**For Current directory or Custom path mode (options 2 or 3)**:
+**For Current directory or Custom path mode (options 3 or 4)**:
 Create and checkout the branch:
 
 ```bash
@@ -224,9 +294,9 @@ Verify branch was created:
 git branch --list <branch-name>
 ```
 
-### Step 8: Create Git Worktree (Worktree Mode Only)
+### Step 8: Create Git Worktree (New Worktree Mode Only)
 
-**Skip this step if user chose option 2 or 3.**
+**Skip this step if user chose option 2, 3, or 4.**
 
 Create the worktree using the path from Step 6 (**INSIDE the repo**):
 
@@ -249,15 +319,17 @@ git worktree list
 # NOT like: /home/user/projects/worktrees/feature-42-... (WRONG - outside repo!)
 ```
 
-**For Custom path mode (option 3)**:
+**For Custom path mode (option 4)**:
 If the custom path doesn't exist, create it:
 ```bash
 mkdir -p <custom-path>
 ```
 
-### Step 8.5: Warm Up Worktree [REQUIRED for Worktree Mode]
+### Step 8.5: Warm Up Worktree [REQUIRED for New Worktree Mode]
 
-**Skip this step ONLY if user chose option 2 or 3.**
+**Skip this step if user chose option 2 (Repurpose), 3 (Current directory), or 4 (Custom path).**
+
+> **Note**: Option 2 (Repurpose) skips this because the existing worktree already has node_modules, .env files, and build artifacts.
 
 > **⚠️ MANDATORY STEP**: For worktree mode, you MUST run this warmup workflow before proceeding to Step 9. DO NOT skip this step or proceed without completing the warmup. The worktree is NOT ready for development until this step completes.
 
@@ -433,6 +505,15 @@ Next steps:
 - [ ] Planning file is in the worktree root
 - [ ] Final summary includes Environment Status section with warmup results
 
+**Repurpose worktree mode only:**
+- [ ] Existing worktree was listed and user selected one
+- [ ] New branch was created from origin/main
+- [ ] Worktree directory was renamed to match new issue
+- [ ] `git worktree repair` completed successfully
+- [ ] Stale files were handled (discarded or user acknowledged)
+- [ ] Planning file is in the repurposed worktree
+- [ ] Warm-up was skipped (dependencies already present)
+
 **Current directory mode only:**
 - [ ] Branch was checked out
 - [ ] Planning file is in current directory
@@ -505,18 +586,24 @@ Next steps:
    gh pr create --title "Add user preferences page" --body "Closes #42"
 ```
 
-### Example 2: Current Directory Mode
+### Example 2: Repurpose Worktree Mode (Fastest)
 
-For issue #99 with title "Fix login button" and "bug" label:
+For issue #99 with title "Fix login button" and "bug" label, repurposing an existing worktree:
 
 **Input**:
 ```
 ? GitHub issue number: 99
 ? Where do you want to work on this issue?
   1) Create a git worktree (recommended for parallel work)
-  2) Current directory (just create branch and planning file here)
-  3) Custom location (specify your own path)
+  2) Repurpose existing worktree (fastest - skips npm install)
+  3) Current directory (just create branch and planning file here)
+  4) Custom location (specify your own path)
 Choice: 2
+
+? Select worktree to repurpose:
+  1) feature-3-refactor-shared-metadata
+  2) feature-50-add-dashboard
+Choice: 1
 ```
 
 **Output**:
@@ -525,8 +612,51 @@ Issue workflow setup complete!
 
 Issue:      #99 - Fix login button
 Type:       bug
-Branch:     bug/99-fix-login-button (checked out)
-Planning:   ./PLANNING-99-fix-login-button.md
+Branch:     bug/99-fix-login-button
+Worktree:   worktrees/bug-99-fix-login-button (repurposed)
+Planning:   worktrees/bug-99-fix-login-button/PLANNING-99-fix-login-button.md
+
+Environment Status:
+- Repurposed from: feature-3-refactor-shared-metadata
+- node_modules: ✅ Preserved
+- .env files: ✅ Preserved
+- Warm-up: ⏭️ Skipped (not needed)
+
+Next steps:
+1. Navigate to the worktree:
+   cd worktrees/bug-99-fix-login-button
+
+2. Review and update the planning file with your implementation plan
+
+3. Start working on the issue!
+
+4. When done, create a PR:
+   gh pr create --title "Fix login button" --body "Closes #99"
+```
+
+### Example 3: Current Directory Mode
+
+For issue #101 with title "Update readme" and "feature" label:
+
+**Input**:
+```
+? GitHub issue number: 101
+? Where do you want to work on this issue?
+  1) Create a git worktree (recommended for parallel work)
+  2) Repurpose existing worktree (fastest - skips npm install)
+  3) Current directory (just create branch and planning file here)
+  4) Custom location (specify your own path)
+Choice: 3
+```
+
+**Output**:
+```
+Issue workflow setup complete!
+
+Issue:      #101 - Update readme
+Type:       feature
+Branch:     feature/101-update-readme (checked out)
+Planning:   ./PLANNING-101-update-readme.md
 
 Next steps:
 1. Review and update the planning file with your implementation plan
@@ -534,14 +664,15 @@ Next steps:
 2. Start working on the issue!
 
 3. When done, create a PR:
-   gh pr create --title "Fix login button" --body "Closes #99"
+   gh pr create --title "Update readme" --body "Closes #101"
 ```
 
 ## Notes
 
 - This workflow assumes a GitHub-based repository
-- Three workflow modes are available:
-  - **Worktree mode**: Best for working on multiple issues simultaneously
+- Four workflow modes are available:
+  - **New Worktree mode**: Best for working on multiple issues simultaneously (requires warm-up)
+  - **Repurpose Worktree mode**: Fastest option (~10 seconds) - reuses existing worktree's dependencies
   - **Current directory mode**: Simplest option, works in place
   - **Custom path mode**: For users with their own directory structure
 - The planning file (PLANNING-{number}-{slug}.md) helps maintain focus and track progress
