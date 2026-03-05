@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "status": "Draft",
   "last_updated": "2026-03-05",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6dc460b02aa6a05cbf26d71e53e1f01813c029fdf75cf0aa60281ca717f98487"
+    "hash": "f804f3f1756225b4b4498c86d79787b13579ffa10541d800d1313e1f745a9637"
   }
 }
 ---
@@ -74,7 +74,26 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
 ### Phase 1: Setup
 
 1. Extract the issue number from user input
-2. **Claim the issue** — make it visible that work is in progress:
+2. **Pre-flight: clean stale worktrees.** Previous runs may have left zombie worktrees that lock branches (especially `main`). This causes "branch is checked out in another worktree" errors.
+   ```bash
+   git worktree list
+   ```
+   For each worktree listed:
+   - If it checks out `main` but is NOT the repo root → it's stale. Remove it:
+     ```bash
+     git worktree remove <path> --force
+     ```
+   - If its branch was already merged and deleted on remote → it's stale. Remove it:
+     ```bash
+     git worktree remove <path>
+     ```
+   - Run `git worktree prune` to clean up any broken references
+   After cleanup, verify `main` is not locked:
+   ```bash
+   git worktree list | grep -w main
+   ```
+   Only the repo root (or its bare checkout) should show `main`.
+3. **Claim the issue** — make it visible that work is in progress:
    ```bash
    # Ensure the label exists
    gh label create "in-progress" --color "FBCA04" --description "Actively being worked on" --force
@@ -84,25 +103,25 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    gh issue comment <number> --body "$(cat <<'EOF'
    **Agent pickup** — work started.
    - **Initiated by**: $(gh api user --jq '.login')
-   - **Agent**: Claude (full-cycle-issue workflow v1.3.0)
+   - **Agent**: Claude (full-cycle-issue workflow v1.5.0)
    - **Branch**: (will update after setup)
    - **Started**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
    EOF
    )"
    ```
-3. **Record the original working directory** — you will return here after merge
-4. Run the setup workflow:
+4. **Record the original working directory** — you will return here after merge
+5. Run the setup workflow:
    ```bash
    ai-dossier run imboard-ai/development/git/setup-issue-workflow
    ```
-5. Provide the issue number when prompted
-6. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated.
-7. Note the worktree path and branch name from the setup output
-8. `cd` into the worktree directory — **all subsequent work happens here**
-9. Update the issue comment with the branch name:
-   ```bash
-   gh issue comment <number> --body "Branch: \`<branch-name>\` | Worktree: \`<worktree-path>\`"
-   ```
+6. Provide the issue number when prompted
+7. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated.
+8. Note the worktree path and branch name from the setup output
+9. `cd` into the worktree directory — **all subsequent work happens here**
+10. Update the issue comment with the branch name:
+    ```bash
+    gh issue comment <number> --body "Branch: \`<branch-name>\` | Worktree: \`<worktree-path>\`"
+    ```
 
 ### Phase 2: Understand & Plan
 
