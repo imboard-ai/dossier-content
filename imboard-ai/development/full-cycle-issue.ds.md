@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "status": "Draft",
   "last_updated": "2026-03-05",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "4b4d4a402aafe8318453664216b0e91d151a2b766bf145a426ff0071102339e8"
+    "hash": "00476583a266960626454960c8b9e65ef9adc7603da3cc78a9acbd74d05d7919"
   }
 }
 ---
@@ -74,15 +74,35 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
 ### Phase 1: Setup
 
 1. Extract the issue number from user input
-2. **Record the original working directory** — you will return here after merge
-3. Run the setup workflow:
+2. **Claim the issue** — make it visible that work is in progress:
+   ```bash
+   # Ensure the label exists
+   gh label create "in-progress" --color "FBCA04" --description "Actively being worked on" --force
+   # Assign to current user and label
+   gh issue edit <number> --add-label "in-progress" --add-assignee "@me"
+   # Post agent context comment
+   gh issue comment <number> --body "$(cat <<'EOF'
+   **Agent pickup** — work started.
+   - **Initiated by**: $(gh api user --jq '.login')
+   - **Agent**: Claude (full-cycle-issue workflow v1.3.0)
+   - **Branch**: (will update after setup)
+   - **Started**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+   EOF
+   )"
+   ```
+3. **Record the original working directory** — you will return here after merge
+4. Run the setup workflow:
    ```bash
    ai-dossier run imboard-ai/development/git/setup-issue-workflow
    ```
-4. Provide the issue number when prompted
-5. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated.
-6. Note the worktree path from the setup output
-7. `cd` into the worktree directory — **all subsequent work happens here**
+5. Provide the issue number when prompted
+6. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated.
+7. Note the worktree path and branch name from the setup output
+8. `cd` into the worktree directory — **all subsequent work happens here**
+9. Update the issue comment with the branch name:
+   ```bash
+   gh issue comment <number> --body "Branch: \`<branch-name>\` | Worktree: \`<worktree-path>\`"
+   ```
 
 ### Phase 2: Understand & Plan
 
@@ -255,6 +275,10 @@ Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 s
    - No CI or all pass: proceed
    - Fails: fix (max 2 attempts), then ask user
 2. Merge: `gh pr merge <pr-number> --squash --delete-branch`
+3. Clean up issue labels (the `Closes #<number>` in the PR body auto-closes the issue; remove the in-progress label):
+   ```bash
+   gh issue edit <number> --remove-label "in-progress"
+   ```
 
 ### Phase 9: Teardown
 
