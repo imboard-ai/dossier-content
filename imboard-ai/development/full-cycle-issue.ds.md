@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "status": "Draft",
   "last_updated": "2026-03-05",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6841329b521e0d669bb5a071095043a61dd38888b0039df1814192a563a19c18"
+    "hash": "4b4d4a402aafe8318453664216b0e91d151a2b766bf145a426ff0071102339e8"
   }
 }
 ---
@@ -142,9 +142,13 @@ EOF
 
 ### Phase 7: Parallel Review
 
-Run 5 focused review agents **in parallel** using the Agent tool. Pass each agent the list of changed files from `git diff main...HEAD --name-only`.
+**CRITICAL: You must still be `cd`'d into the worktree directory for this phase.** The review agents need to read files and apply fixes. If the worktree is gone, you cannot review. Do NOT proceed to Phase 8 (Merge) or Phase 9 (Teardown) until this phase completes.
 
-Launch all 5 simultaneously:
+Run `pwd` to confirm you are in the worktree. If not, `cd` back into it.
+
+Get the changed files list: `git diff main...HEAD --name-only`
+
+Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 simultaneously:
 
 #### Agent 1: DRY Review
 
@@ -222,8 +226,13 @@ Launch all 5 simultaneously:
 
 #### After All Agents Complete
 
+**Store the review results** — you will need them for the final report in Phase 10. Track:
+- `review_fixed`: list of findings that were auto-fixed (file, line, what was fixed)
+- `review_issues`: list of GH issues created (issue number, title, finding count)
+- `review_clean`: list of categories with zero findings
+
 1. **Collect** all findings from the 5 agents
-2. **Auto-fix** findings marked as auto-fixable — the fix must be unambiguous and must not change public API or behavior
+2. **Auto-fix** findings marked as auto-fixable — you are still in the worktree, so use the Edit tool directly. The fix must be unambiguous and must not change public API or behavior.
 3. **Re-run tests** after fixes to ensure nothing broke
 4. **Commit** if any fixes were applied:
    ```
@@ -236,9 +245,11 @@ Launch all 5 simultaneously:
    ```bash
    gh issue create --title "Review: <Category> findings from <branch>" --label "review:<category>" --body "<findings>"
    ```
-   Skip categories with zero remaining findings.
+   Skip categories with zero remaining findings. Record each created issue number.
 
 ### Phase 8: Merge
+
+**Prerequisite: Phase 7 (Review) must be fully complete** — all agents finished, fixes committed, issues created.
 
 1. Check CI: `gh pr checks <pr-number> --watch`
    - No CI or all pass: proceed
@@ -246,6 +257,8 @@ Launch all 5 simultaneously:
 2. Merge: `gh pr merge <pr-number> --squash --delete-branch`
 
 ### Phase 9: Teardown
+
+**Prerequisite: Phase 8 (Merge) must be complete.** Do not tear down the worktree before the PR is merged.
 
 1. `cd` back to the **original working directory** (recorded in Phase 1)
 2. Remove the worktree:
@@ -259,13 +272,43 @@ Launch all 5 simultaneously:
 
 ### Phase 10: Report
 
+Print a single consolidated report. This is the **only** summary the user sees — include everything.
+
 ```
-Done. Issue #<number> merged via PR #<pr-number>.
-Branch: <branch-name>
-Changes: <1-2 sentence summary>
-Tests: <created N new tests / ran N existing tests — all pass>
-Review: <N auto-fixes applied, N issues created>
-Worktree cleaned up.
+## Full Cycle Complete
+
+**Issue**: #<number> — <title>
+**PR**: #<pr-number> (merged, squashed)
+**Branch**: <branch-name>
+
+### Changes
+<1-3 sentence summary of what was implemented>
+
+### Tests
+- <created N new test files / ran N existing test files>
+- All passing
+
+### Review Results
+
+**Auto-fixed** (<N> fixes applied, committed as <hash>):
+- <file>:<line> — <what was fixed>
+- <file>:<line> — <what was fixed>
+
+**Follow-up issues created** (<N> issues):
+- #<issue> — <title> (<N> findings)
+- #<issue> — <title> (<N> findings)
+
+**Clean categories** (no findings):
+- <list categories with zero findings>
+
+### Cleanup
+Worktree removed. Back in original directory.
+```
+
+If there were no review findings at all, replace the Review Results section with:
+```
+### Review Results
+All 5 reviews passed clean — no findings.
 ```
 
 ## Validation
