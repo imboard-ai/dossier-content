@@ -168,29 +168,6 @@
       "path": "imboard-ai/development/testing/test-gap-analysis.ds.md"
     },
     {
-      "name": "imboard-ai/full-cycle-issue",
-      "title": "Full Cycle Issue Workflow",
-      "version": "99.0.0",
-      "path": "imboard-ai/full-cycle-issue.ds.md",
-      "category": [
-        "development"
-      ],
-      "tags": [
-        "github",
-        "issues",
-        "workflow",
-        "autonomous",
-        "full-cycle",
-        "pr",
-        "merge"
-      ],
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "imboard-ai/meta/create-dossier",
       "title": "Create New Dossier",
       "version": "1.0.2",
