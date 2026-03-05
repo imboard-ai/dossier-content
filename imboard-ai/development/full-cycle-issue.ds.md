@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "status": "Draft",
   "last_updated": "2026-03-05",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, commit, push, PR, review, and merge with zero unnecessary interruptions",
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "84f0abdde34fd90e58c01c63428b9168b8be5dc1345b31601cedf7b9ef0fca50"
+    "hash": "08da6827578d352e5c1f37c660f11191b8a3b8c507983d5ae8217fcdd0534d58"
   }
 }
 ---
@@ -74,12 +74,14 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
 ### Phase 1: Setup
 
 1. Extract the issue number from user input
-2. Run the setup workflow:
+2. **Record the original working directory** — you will return here after merge
+3. Run the setup workflow:
    ```bash
    ai-dossier run imboard-ai/development/git/setup-issue-workflow
    ```
-3. Provide the issue number when prompted
-4. `cd` into the worktree directory
+4. Provide the issue number when prompted
+5. Note the worktree path from the setup output
+6. `cd` into the worktree directory — **all subsequent work happens here**
 
 ### Phase 2: Understand & Plan
 
@@ -138,12 +140,25 @@ EOF
    - Fails: fix (max 2 attempts), then ask user
 2. Merge: `gh pr merge <pr-number> --squash --delete-branch`
 
-### Phase 8: Report
+### Phase 8: Teardown
+
+1. `cd` back to the **original working directory** (recorded in Phase 1)
+2. Remove the worktree:
+   ```bash
+   git worktree remove <worktree-path>
+   ```
+3. If the local branch still exists, delete it:
+   ```bash
+   git branch -d <branch-name>
+   ```
+
+### Phase 9: Report
 
 ```
 Done. Issue #<number> merged via PR #<pr-number>.
 Branch: <branch-name>
 Changes: <1-2 sentence summary>
+Worktree cleaned up.
 ```
 
 ## Validation
@@ -156,6 +171,8 @@ Changes: <1-2 sentence summary>
 - [ ] PR created linking to issue
 - [ ] Review run and fixes applied
 - [ ] PR merged
+- [ ] Worktree removed
+- [ ] Returned to original working directory
 
 ## Troubleshooting
 
