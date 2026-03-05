@@ -5,17 +5,17 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "ec6a7a63e1aaed6f1eb7c39ba5ef98bfb73351aa24f3650c640a07a4413bd1b9"
-  },
   "description": "Set up a GitHub issue for development with branch, worktree, and planning doc. Use when user says \"start issue\", \"work on issue\"",
   "name": "start-issue",
   "objective": "Set up a GitHub issue for development with proper branch, worktree, and planning documentation",
   "dossier_schema_version": "1.0.0",
   "status": "Draft",
   "title": "Start Issue Workflow",
-  "version": "1.1.0"
+  "version": "1.1.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "ec6a7a63e1aaed6f1eb7c39ba5ef98bfb73351aa24f3650c640a07a4413bd1b9"
+  }
 }
 ---
 
