@@ -3,9 +3,9 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "status": "Draft",
-  "last_updated": "2026-03-05",
+  "last_updated": "2026-03-06",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
   "category": [
     "development"
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "66b28fbc5c6d80358bf60a5fbbbf8826c59e92e58644b935df716d3250de611b"
+    "hash": "29ce4ab3e1bc8e5dbed27c72f1b1da74e58b52ef98a12f85572b22f5e58aaadc"
   }
 }
 ---
@@ -102,8 +102,7 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    # Post agent context comment
    gh issue comment <number> --body "$(cat <<'EOF'
    **Agent pickup** — work started.
-   - **Initiated by**: $(gh api user --jq '.login')
-   - **Agent**: Claude (full-cycle-issue workflow v1.5.0)
+   - **Agent**: Claude (full-cycle-issue workflow v2.1.0)
    - **Branch**: (will update after setup)
    - **Started**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
    EOF
@@ -145,6 +144,11 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
 1. Implement the solution following existing code patterns
 2. Keep changes minimal and focused
 3. Do not add tests inline — Phase 4 handles testing separately
+4. **Before building**, run the project's auto-fixer to avoid lint iteration loops:
+   - Node.js with biome: `npx biome check --write .`
+   - Node.js with eslint: `npx eslint --fix .`
+   - Python with ruff: `ruff check --fix .`
+   - Or whatever the project's `lint:fix` script is (check package.json / Makefile)
 
 ### Phase 4: Test
 
@@ -156,7 +160,11 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    - Follow existing test patterns and conventions in the repo
    - Place tests where the project convention expects them (e.g., `__tests__/`, `*.test.ts`, `*.spec.ts`)
 4. **Run the full test suite** to catch regressions (e.g., `npm test`)
-5. Fix any regressions caused by your changes (max 2 attempts)
+5. **If tests fail**, check whether they are **pre-existing failures** by running the same tests on the base branch:
+   ```bash
+   git stash && git checkout main && npm test 2>&1 | tail -5 && git checkout - && git stash pop
+   ```
+   If the same tests fail on main, they are pre-existing — ignore them and proceed. Only fix failures caused by your changes (max 2 attempts).
 
 ### Phase 5: Commit & Push
 
@@ -332,8 +340,9 @@ Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 s
 
 3. **All checks green** — merge:
    ```bash
-   gh pr merge <pr-number> --squash --delete-branch
+   gh pr merge <pr-number> --squash
    ```
+   Do NOT use `--delete-branch` here — it fails when merging from a worktree because it tries to checkout the base branch locally. The remote branch is cleaned up by GitHub when the PR is merged with "delete branch on merge" repo setting, and the local branch is cleaned up in Phase 9.
 
 4. Clean up issue labels (the `Closes #<number>` in the PR body auto-closes the issue; remove the in-progress label):
    ```bash
@@ -351,7 +360,11 @@ Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 s
    ```
 3. If the local branch still exists, delete it:
    ```bash
-   git branch -d <branch-name>
+   git branch -d <branch-name> 2>/dev/null || git branch -D <branch-name>
+   ```
+4. Clean up the remote branch if it still exists:
+   ```bash
+   git push origin --delete <branch-name> 2>/dev/null || true
    ```
 
 ### Phase 10: Report
@@ -417,3 +430,5 @@ All 5 reviews passed clean — no findings.
 **Merge conflicts**: Ask user — needs human judgment
 **Vague issue**: Ask ONE clarifying question, then proceed
 **No test framework detected**: Default to vitest (Node.js) or pytest (Python); install if needed
+**`--delete-branch` fails in worktree**: This is expected — do not use `--delete-branch` with `gh pr merge` when working from a worktree. Clean up branches in Phase 9 instead.
+**Pre-existing test failures**: Run tests on the base branch to confirm. Only fix failures caused by your changes.
