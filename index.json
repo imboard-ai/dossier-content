@@ -255,20 +255,6 @@
       ]
     },
     {
-      "name": "imboard-ai/test-cdn-warning",
-      "title": "Test CDN Warning",
-      "version": "1.0.0",
-      "path": "imboard-ai/test-cdn-warning.ds.md",
-      "category": [
-        "test"
-      ],
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "tal-liberio/development/api-compatibility-check",
       "title": "API Compatibility Check",
       "version": "1.0.0",
