@@ -15,6 +15,13 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "c0e957fe7e3c6bcc071a9e5a3d3cc08ce5e83e20528837bc7d7600d157946bc9"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "OHQxcznatzmb+oQXlkZboITwNx5x3q3gVN2iAVrR9lMyrDd2hLwmW0GylTKVAhKf9/diecLAhB6kau0T8/yuBw==",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEANvCyj7RG85NwvvB5AozhC8Oep2DnwY4X3YC1fY/8E9E=\n-----END PUBLIC KEY-----\n",
+    "signed_at": "2026-03-05T14:48:46.390Z",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
