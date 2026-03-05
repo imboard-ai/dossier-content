@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "08da6827578d352e5c1f37c660f11191b8a3b8c507983d5ae8217fcdd0534d58"
+    "hash": "97b45c395ef3ccdf849156584cff2102757926ae98ba90c1e5556cd3e6662e9f"
   }
 }
 ---
@@ -80,8 +80,9 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    ai-dossier run imboard-ai/development/git/setup-issue-workflow
    ```
 4. Provide the issue number when prompted
-5. Note the worktree path from the setup output
-6. `cd` into the worktree directory — **all subsequent work happens here**
+5. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated.
+6. Note the worktree path from the setup output
+7. `cd` into the worktree directory — **all subsequent work happens here**
 
 ### Phase 2: Understand & Plan
 
