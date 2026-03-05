@@ -1,3 +1,32 @@
+---dossier
+{
+  "dossier_schema_version": "1.0.0",
+  "name": "warm-worktree",
+  "title": "Warm Worktree",
+  "version": "1.1.0",
+  "status": "Stable",
+  "objective": "Prepare a fresh git worktree for development by copying environment files, installing dependencies, running builds, verifying tests, and checking that servers can start.",
+  "authors": [
+    {
+      "name": "Dossier Community"
+    }
+  ],
+  "risk_level": "low",
+  "category": [
+    "development",
+    "git"
+  ],
+  "tags": [
+    "worktree",
+    "setup",
+    "environment",
+    "dependencies"
+  ],
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "9284706d0199dfd672d2a91687d6dd35d0abe9353562930971cf97ad015a0425"
+  }
+}
 ---
 schema_version: "1.0.0"
 name: warm-worktree
@@ -26,7 +55,6 @@ tags:
 estimated_duration:
   min_minutes: 1
   max_minutes: 10
----
 
 # Warm Worktree
 
@@ -41,7 +69,6 @@ Prepare a fresh git worktree for development by setting up the environment, inst
 
 - `WARMUP-STATUS.md` file in target worktree tracking progress and any issues
 
----
 
 ## Step 1: Create Status File
 
@@ -77,7 +104,6 @@ echo "WARMUP-STATUS.md" >> <target_worktree>/.git/info/exclude
 
 Update this file after each step completes.
 
----
 
 ## Step 2: Copy .env Files
 
@@ -146,7 +172,6 @@ Could not copy the following files:
 - Ensure parent directories exist in target worktree
 ```
 
----
 
 ## Step 3: Install Dependencies
 
@@ -207,7 +232,6 @@ Update status file:
 
 Add error details and suggested fix to Errors section.
 
----
 
 ## Step 4: Run Build
 
@@ -256,7 +280,6 @@ Capture error output. Analyze for common issues:
 
 Update status file with error and suggested fix.
 
----
 
 ## Step 5: Run Tests (User Choice)
 
@@ -325,7 +348,6 @@ Update status file:
 | Tests | ⚠️ Failed | 1m 30s | Baseline failures (see errors) |
 ```
 
----
 
 ## Step 6: Verify Servers
 
@@ -387,7 +409,6 @@ Update status file:
 | Servers | ❌ Failed | 30s | See errors below |
 ```
 
----
 
 ## Step 7: Final Report
 
@@ -436,7 +457,7 @@ Failed:
 
 2. Re-run warmup after fixing:
    ```bash
-   dossier run imboard-ai/development/git/warm-worktree
+   ai-dossier run imboard-ai/development/git/warm-worktree
    ```
 
 ## Options
@@ -448,7 +469,6 @@ Failed:
 
 Update status: `**Status:** FAILED`
 
----
 
 ## Notes
 
