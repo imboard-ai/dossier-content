@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "status": "Draft",
   "last_updated": "2026-03-05",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "00476583a266960626454960c8b9e65ef9adc7603da3cc78a9acbd74d05d7919"
+    "hash": "6dc460b02aa6a05cbf26d71e53e1f01813c029fdf75cf0aa60281ca717f98487"
   }
 }
 ---
@@ -267,15 +267,47 @@ Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 s
    ```
    Skip categories with zero remaining findings. Record each created issue number.
 
-### Phase 8: Merge
+### Phase 8: Wait for CI & Merge
 
 **Prerequisite: Phase 7 (Review) must be fully complete** — all agents finished, fixes committed, issues created.
 
-1. Check CI: `gh pr checks <pr-number> --watch`
-   - No CI or all pass: proceed
-   - Fails: fix (max 2 attempts), then ask user
-2. Merge: `gh pr merge <pr-number> --squash --delete-branch`
-3. Clean up issue labels (the `Closes #<number>` in the PR body auto-closes the issue; remove the in-progress label):
+1. **Wait for CI to complete**. Do NOT merge until all checks pass.
+   ```bash
+   gh pr checks <pr-number> --watch --fail-fast
+   ```
+   This blocks until all checks finish. If the command is not available or times out, poll manually:
+   ```bash
+   gh pr checks <pr-number>
+   ```
+   Repeat every 30 seconds until all checks show `pass` or `fail`.
+
+2. **If CI fails** — diagnose and fix (max 2 attempts):
+   a. Identify which job failed:
+      ```bash
+      gh pr checks <pr-number>
+      ```
+   b. Get the failed run ID and view its logs:
+      ```bash
+      gh run view <run-id> --log-failed
+      ```
+   c. Read the failure output, identify the root cause, fix the code
+   d. Run the failing command locally first (e.g., `npm run lint`, `npm test`) to confirm the fix
+   e. Commit and push:
+      ```bash
+      git add <files> && git commit -m "fix: CI failure — <what was wrong>
+
+      Co-Authored-By: Claude <noreply@anthropic.com>"
+      git push
+      ```
+   f. Wait for CI again (go back to step 1)
+   g. If CI fails after 2 fix attempts, ask the user — do not merge a red build
+
+3. **All checks green** — merge:
+   ```bash
+   gh pr merge <pr-number> --squash --delete-branch
+   ```
+
+4. Clean up issue labels (the `Closes #<number>` in the PR body auto-closes the issue; remove the in-progress label):
    ```bash
    gh issue edit <number> --remove-label "in-progress"
    ```
