@@ -1,9 +1,9 @@
 ---dossier
 {
-  "dossier_schema_version": "1.0.0",
+  "dossier_schema_version": "2.0.0",
   "name": "test-version-bug",
   "title": "Test Version Bug",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "objective": "Test if publish blocks all versions",
   "authors": [{"name": "test"}],
   "category": ["test"],
