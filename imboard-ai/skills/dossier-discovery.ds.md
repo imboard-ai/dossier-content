@@ -1,18 +1,22 @@
----
-authors:
-- name: Yuval Dimnik
-checksum:
-  algorithm: sha256
-  hash: b16a6743beab45b74cf49cbfdbbdd8ca7988752da294637694533e99d03a1566
-description: 'Run `dossier list --json` at START of workflow tasks (setup, deploy,
-  migrate, refactor, CI/CD). Once per conversation. Output ''Dossier check: [result]''
-  after running. Skip if you see this marker in conversation history.'
-name: dossier-discovery
-objective: Find and suggest relevant dossier workflows for complex tasks
-schema_version: 1.0.0
-status: draft
-title: Dossier Discovery
-version: 1.1.0
+---dossier
+{
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
+  ],
+  "description": "Run `ai-dossier list --json` at START of workflow tasks (setup, deploy, migrate, refactor, CI/CD). Once per conversation. Output 'Dossier check: [result]' after running. Skip if you see this marker in conversation history.",
+  "name": "dossier-discovery",
+  "objective": "Find and suggest relevant dossier workflows for complex tasks",
+  "dossier_schema_version": "1.0.0",
+  "status": "Draft",
+  "title": "Dossier Discovery",
+  "version": "1.2.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "4dd49a0b99d8d1158db2293600fbdd026bbb8f2d18ff802ac801ecbd5970a02e"
+  }
+}
 ---
 
 # Dossier Discovery
@@ -25,7 +29,7 @@ Is this a workflow task (setup, deploy, migrate, refactor, CI/CD)?
 +-- YES --> Is "Dossier check:" visible in conversation history above?
             |-- YES --> Skip, already checked
             +-- NO --> Run this command NOW:
-                       dossier list --json
+                       ai-dossier list --json
 ```
 
 ## After Running Command
@@ -77,7 +81,7 @@ Run it? (y/n)
 
 If user says yes, run:
 ```bash
-dossier run {name}
+ai-dossier run {name}
 ```
 
 ### Multiple Matches Found
@@ -109,7 +113,7 @@ Would you like to create one? (y/n)
 
 If yes, run:
 ```bash
-dossier run imboard-ai/meta/create-dossier
+ai-dossier run imboard-ai/meta/create-dossier
 ```
 
 ---
@@ -125,13 +129,13 @@ When matching dossiers to tasks:
 ## Examples
 
 **User:** "Help me set up a new React component library"
-**Action:** Run `dossier list --json`, find "imboard-ai/development/setup-react-library", output marker, suggest running it.
+**Action:** Run `ai-dossier list --json`, find "imboard-ai/development/setup-react-library", output marker, suggest running it.
 
 **User:** "What's in the package.json?"
 **Action:** Skip - this is a simple lookup, not a workflow task.
 
 **User:** "Create a workflow to sync my git worktrees"
-**Action:** Run `dossier list --json`, find git-related dossiers, output marker, suggest relevant ones.
+**Action:** Run `ai-dossier list --json`, find git-related dossiers, output marker, suggest relevant ones.
 
 **User:** "Fix the bug on line 42"
 **Action:** Skip - this is a single file edit, not a workflow task.
