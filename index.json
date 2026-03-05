@@ -255,6 +255,20 @@
       ]
     },
     {
+      "name": "imboard-ai/test-version-bug",
+      "title": "Test Version Bug",
+      "version": "1.0.0",
+      "path": "imboard-ai/test-version-bug.ds.md",
+      "category": [
+        "test"
+      ],
+      "authors": [
+        {
+          "name": "test"
+        }
+      ]
+    },
+    {
       "name": "tal-liberio/development/api-compatibility-check",
       "title": "API Compatibility Check",
       "version": "1.0.0",
