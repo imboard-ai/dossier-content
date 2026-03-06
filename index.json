@@ -10,28 +10,6 @@
       "path": "getting-started/hello.ds.md"
     },
     {
-      "name": "imboard-ai/batch-issues",
-      "title": "Batch Issue Orchestration",
-      "version": "1.0.0",
-      "path": "imboard-ai/batch-issues.ds.md",
-      "category": [
-        "development"
-      ],
-      "tags": [
-        "github",
-        "issues",
-        "batch",
-        "parallel",
-        "orchestration",
-        "autonomous"
-      ],
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "imboard-ai/development/docs/docs-drift-check",
       "title": "Docs/README Drift Check",
       "version": "1.0.0",
