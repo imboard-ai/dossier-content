@@ -196,7 +196,7 @@
     {
       "name": "imboard-ai/full-cycle-issue-skill",
       "title": "Full Cycle Issue",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "path": "imboard-ai/full-cycle-issue-skill.ds.md",
       "description": "Full autopilot: setup, implement, test, commit, push, PR, parallel review, merge. Use when user says 'full cycle issue', 'auto issue', 'autopilot issue'",
       "category": [
