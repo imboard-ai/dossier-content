@@ -173,7 +173,7 @@
     {
       "name": "imboard-ai/full-cycle-issue",
       "title": "Full Cycle Issue Workflow",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "path": "imboard-ai/full-cycle-issue.ds.md",
       "category": [
         "development"
