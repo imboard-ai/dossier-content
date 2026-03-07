@@ -60,17 +60,6 @@
       ]
     },
     {
-      "name": "imboard-ai/development/git/setup-issue-workflow",
-      "title": "Setup Issue Workflow",
-      "version": "1.6.0",
-      "path": "imboard-ai/development/git/setup-issue-workflow.ds.md",
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "imboard-ai/development/git/warm-worktree",
       "title": "Warm Worktree",
       "version": "1.1.0",
