@@ -454,6 +454,21 @@
       ]
     },
     {
+      "name": "imboard-ai/git/start-issue-skill",
+      "title": "Start Issue Workflow",
+      "version": "1.1.0",
+      "path": "imboard-ai/git/start-issue-skill.ds.md",
+      "description": "Set up a GitHub issue for development with branch, worktree, and planning doc. Use when user says \"start issue\", \"work on issue\"",
+      "category": [
+        "skills"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/test-coverage-gap-analysis",
       "title": "Test Coverage Gap Analysis",
       "version": "1.0.0",
