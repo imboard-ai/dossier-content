@@ -405,6 +405,20 @@
       ]
     },
     {
+      "name": "imboard-ai/git/test-coverage-gap-analysis",
+      "title": "Test Coverage Gap Analysis",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/test-coverage-gap-analysis.ds.md",
+      "category": [
+        "development"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/warm-worktree",
       "title": "Warm Worktree",
       "version": "1.1.0",
