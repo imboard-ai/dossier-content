@@ -250,6 +250,20 @@
       ]
     },
     {
+      "name": "imboard-ai/git/architecture-patterns-review",
+      "title": "Architecture & Pattern Consistency",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/architecture-patterns-review.ds.md",
+      "category": [
+        "development"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/batch-issues",
       "title": "Batch Issue Orchestration",
       "version": "2.0.0",
