@@ -3,9 +3,9 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "status": "Draft",
-  "last_updated": "2026-03-06",
+  "last_updated": "2026-03-07",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
   "category": [
     "development"
@@ -41,15 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6c05d5443b297fb6455f9fd62d8208112504e54e169450e9adecbd35ee2bbe31"
-  },
-  "signature": {
-    "algorithm": "ECDSA-SHA-256",
-    "signature": "MEUCIQCGeg0poBu5FWpbc+eojPj34Iy8ywTAYgRijK9R8fh21gIgAIWM4hoU+RMiAyTeh8gAu/ZDgsMZgiYZT2SdjpPrKOY=",
-    "public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqIbQGqW1Jdh97TxQ5ZvnSVvvOcN5NWhfWwXRAaDDuKK1pv8F+kz+uo1W8bNn+8ObgdOBecFTFizkRa/g+QJ8kA==",
-    "key_id": "arn:aws:kms:us-east-1:942039714848:key/d9ccd3fc-b190-49fd-83f7-e94df6620c1d",
-    "signed_at": "2026-03-06T08:37:08.112Z",
-    "signed_by": "(not specified)"
+    "hash": "db6182ed2863574f2141fbc24fd324075e7b1438c35fb7f3766f65862dc3f426"
   }
 }
 ---
@@ -110,7 +102,7 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    # Post agent context comment
    gh issue comment <number> --body "$(cat <<'EOF'
    **Agent pickup** — work started.
-   - **Agent**: Claude (full-cycle-issue workflow v2.2.0)
+   - **Agent**: Claude (full-cycle-issue workflow v2.3.0)
    - **Branch**: (will update after setup)
    - **Started**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
    EOF
@@ -195,16 +187,17 @@ Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 s
 > 3. Flag duplicated logic (>5 similar lines), reimplemented helpers, or missed utility reuse
 > 4. Check if anything was reimplemented that's available in project dependencies
 >
-> For each finding report: file, lines, issue, severity, and classification:
-> - **Fix now** (default): You can fix this. Even if non-trivial. Even if it predates this PR.
->   If you spotted it, fix it. Examples: refactoring duplicated code, adding error handling,
->   fixing a security issue, adding missing validation, improving a name, extracting a constant,
->   updating stale docs, cleaning up lint issues in touched files, adding missing tests.
-> - **Escalate**: Genuinely needs human input — architectural choice, product/business decision,
->   unclear tradeoff, or requires a new strategy that hasn't been decided yet.
->   This should be rare (<5% of findings).
+> **Classification — almost everything is "Fix now":**
+> - **Fix now** (default): Fix it yourself. Bugs, wrong text, missing validation, bad names,
+>   missing error handling, code duplication, doc inaccuracies — fix them all. No matter how
+>   non-trivial. If you can write the code to fix it, it's "Fix now".
+> - **Escalate**: ONLY when the fix would change user-facing behavior in ways you cannot test,
+>   OR requires a product/business decision (e.g., "should we deprecate this API?", "should
+>   this be a breaking change?"). Refactoring suggestions, code style preferences, "consider
+>   doing X differently" — these are NEVER escalations. Either fix them or skip them.
 >
-> Default to "Fix now". There is no "out of scope" — if you see it, own it.
+> Default to "Fix now". When in doubt, fix it. Do NOT escalate code quality findings,
+> documentation gaps, type improvements, or anything you can resolve with code changes.
 > If none found, report "No DRY violations found."
 
 #### Agent 2: Security Review
@@ -220,16 +213,17 @@ Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 s
 > - Missing input validation at system boundaries
 > - OWASP Top 10
 >
-> For each finding report: file, lines, issue, severity, and classification:
-> - **Fix now** (default): You can fix this. Even if non-trivial. Even if it predates this PR.
->   If you spotted it, fix it. Examples: refactoring duplicated code, adding error handling,
->   fixing a security issue, adding missing validation, improving a name, extracting a constant,
->   updating stale docs, cleaning up lint issues in touched files, adding missing tests.
-> - **Escalate**: Genuinely needs human input — architectural choice, product/business decision,
->   unclear tradeoff, or requires a new strategy that hasn't been decided yet.
->   This should be rare (<5% of findings).
+> **Classification — almost everything is "Fix now":**
+> - **Fix now** (default): Fix it yourself. Bugs, wrong text, missing validation, bad names,
+>   missing error handling, code duplication, doc inaccuracies — fix them all. No matter how
+>   non-trivial. If you can write the code to fix it, it's "Fix now".
+> - **Escalate**: ONLY when the fix would change user-facing behavior in ways you cannot test,
+>   OR requires a product/business decision (e.g., "should we deprecate this API?", "should
+>   this be a breaking change?"). Refactoring suggestions, code style preferences, "consider
+>   doing X differently" — these are NEVER escalations. Either fix them or skip them.
 >
-> Default to "Fix now". There is no "out of scope" — if you see it, own it.
+> Default to "Fix now". When in doubt, fix it. Do NOT escalate code quality findings,
+> documentation gaps, type improvements, or anything you can resolve with code changes.
 > If none found, report "No security issues found."
 
 #### Agent 3: Supportability Review
@@ -242,16 +236,17 @@ Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 s
 > - Error handling: Are errors caught with useful context, or do they bubble as cryptic stack traces?
 > - Failure modes: What happens when external calls fail? Is there graceful degradation?
 >
-> For each finding report: file, lines, issue, severity, and classification:
-> - **Fix now** (default): You can fix this. Even if non-trivial. Even if it predates this PR.
->   If you spotted it, fix it. Examples: refactoring duplicated code, adding error handling,
->   fixing a security issue, adding missing validation, improving a name, extracting a constant,
->   updating stale docs, cleaning up lint issues in touched files, adding missing tests.
-> - **Escalate**: Genuinely needs human input — architectural choice, product/business decision,
->   unclear tradeoff, or requires a new strategy that hasn't been decided yet.
->   This should be rare (<5% of findings).
+> **Classification — almost everything is "Fix now":**
+> - **Fix now** (default): Fix it yourself. Bugs, wrong text, missing validation, bad names,
+>   missing error handling, code duplication, doc inaccuracies — fix them all. No matter how
+>   non-trivial. If you can write the code to fix it, it's "Fix now".
+> - **Escalate**: ONLY when the fix would change user-facing behavior in ways you cannot test,
+>   OR requires a product/business decision (e.g., "should we deprecate this API?", "should
+>   this be a breaking change?"). Refactoring suggestions, code style preferences, "consider
+>   doing X differently" — these are NEVER escalations. Either fix them or skip them.
 >
-> Default to "Fix now". There is no "out of scope" — if you see it, own it.
+> Default to "Fix now". When in doubt, fix it. Do NOT escalate code quality findings,
+> documentation gaps, type improvements, or anything you can resolve with code changes.
 > If none found, report "No supportability issues found."
 
 #### Agent 4: Maintainability Review
@@ -268,16 +263,17 @@ Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 s
 > - Leftover console.log / debugger statements
 > - TODO/FIXME/HACK without issue references
 >
-> For each finding report: file, lines, issue, severity, and classification:
-> - **Fix now** (default): You can fix this. Even if non-trivial. Even if it predates this PR.
->   If you spotted it, fix it. Examples: refactoring duplicated code, adding error handling,
->   fixing a security issue, adding missing validation, improving a name, extracting a constant,
->   updating stale docs, cleaning up lint issues in touched files, adding missing tests.
-> - **Escalate**: Genuinely needs human input — architectural choice, product/business decision,
->   unclear tradeoff, or requires a new strategy that hasn't been decided yet.
->   This should be rare (<5% of findings).
+> **Classification — almost everything is "Fix now":**
+> - **Fix now** (default): Fix it yourself. Bugs, wrong text, missing validation, bad names,
+>   missing error handling, code duplication, doc inaccuracies — fix them all. No matter how
+>   non-trivial. If you can write the code to fix it, it's "Fix now".
+> - **Escalate**: ONLY when the fix would change user-facing behavior in ways you cannot test,
+>   OR requires a product/business decision (e.g., "should we deprecate this API?", "should
+>   this be a breaking change?"). Refactoring suggestions, code style preferences, "consider
+>   doing X differently" — these are NEVER escalations. Either fix them or skip them.
 >
-> Default to "Fix now". There is no "out of scope" — if you see it, own it.
+> Default to "Fix now". When in doubt, fix it. Do NOT escalate code quality findings,
+> documentation gaps, type improvements, or anything you can resolve with code changes.
 > If none found, report "No maintainability issues found."
 
 #### Agent 5: Documentation Review
@@ -291,16 +287,17 @@ Run 5 focused review agents **in parallel** using the Agent tool. Launch all 5 s
 > 4. **API surface**: If public APIs changed, are type definitions / JSDoc / OpenAPI specs updated?
 > 5. **Examples**: Do code examples in docs still work?
 >
-> For each finding report: file, lines, issue, severity, and classification:
-> - **Fix now** (default): You can fix this. Even if non-trivial. Even if it predates this PR.
->   If you spotted it, fix it. Examples: refactoring duplicated code, adding error handling,
->   fixing a security issue, adding missing validation, improving a name, extracting a constant,
->   updating stale docs, cleaning up lint issues in touched files, adding missing tests.
-> - **Escalate**: Genuinely needs human input — architectural choice, product/business decision,
->   unclear tradeoff, or requires a new strategy that hasn't been decided yet.
->   This should be rare (<5% of findings).
+> **Classification — almost everything is "Fix now":**
+> - **Fix now** (default): Fix it yourself. Bugs, wrong text, missing validation, bad names,
+>   missing error handling, code duplication, doc inaccuracies — fix them all. No matter how
+>   non-trivial. If you can write the code to fix it, it's "Fix now".
+> - **Escalate**: ONLY when the fix would change user-facing behavior in ways you cannot test,
+>   OR requires a product/business decision (e.g., "should we deprecate this API?", "should
+>   this be a breaking change?"). Refactoring suggestions, code style preferences, "consider
+>   doing X differently" — these are NEVER escalations. Either fix them or skip them.
 >
-> Default to "Fix now". There is no "out of scope" — if you see it, own it.
+> Default to "Fix now". When in doubt, fix it. Do NOT escalate code quality findings,
+> documentation gaps, type improvements, or anything you can resolve with code changes.
 > If none found, report "No documentation issues found."
 
 #### After All Agents Complete
@@ -353,19 +350,23 @@ EOF
 
 #### Create GH Issues for Escalated Findings
 
-After the PR is created, handle any Escalate findings from Phase 5:
+After the PR is created, handle any Escalate findings from Phase 5.
 
-- **For Escalate findings only**: Create GH issues — one per finding (not per category), with full context:
+**Hard cap: at most 1 escalated issue per PR.** If you have more than 1, you are escalating too aggressively — pick only the single most impactful one that genuinely requires human judgment. Drop the rest.
+
+Remember: refactoring suggestions, code quality improvements, documentation gaps, type fixes, and minor bugs are NEVER escalations — fix them in-place or skip them.
+
+- **For the single Escalate finding** (if any): Create one GH issue with full context:
   ```bash
   gh issue create --title "<concise title>" --label "review" --body "$(cat <<'EOF'
   **Source**: PR #<pr-number>, found during review of <branch>
   **File**: <file>:<lines>
   **Issue**: <description>
-  **Why escalated**: <why this needs human judgment>
+  **Why escalated**: <why this needs human judgment — must be a product/business decision or untestable behavior change>
   EOF
   )"
   ```
-- If there are zero Escalate findings, create no GH issues at all.
+- If there are zero Escalate findings (the common case), create no GH issues at all.
 
 ### Phase 8: Wait for CI & Merge
 
@@ -455,9 +456,8 @@ Print a single consolidated report. This is the **only** summary the user sees �
 - <file>:<line> — <what was fixed>
 - <file>:<line> — <what was fixed>
 
-**Escalated** (<N> issues created — needed human judgment):
-- #<issue> — <title> — why escalated
-- #<issue> — <title> — why escalated
+**Escalated** (0 or 1 issue created — needed human judgment):
+- #<issue> — <title> — why escalated (or "None")
 
 **Clean categories** (no findings):
 - <list categories with zero findings>
@@ -483,7 +483,7 @@ All 5 reviews passed clean — no findings.
 - [ ] Tests re-run after review fixes
 - [ ] Committed with conventional commit message (implementation + review fixes together)
 - [ ] PR created linking to issue
-- [ ] GH issues created only for Escalated findings (if any)
+- [ ] At most 1 GH issue created for escalated finding (if any)
 - [ ] PR merged
 - [ ] Worktree removed
 - [ ] Returned to original working directory
