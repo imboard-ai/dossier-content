@@ -630,18 +630,6 @@
       ]
     },
     {
-      "name": "imboard-ai/start-issue",
-      "title": "Start Issue Workflow",
-      "version": "1.1.0",
-      "path": "imboard-ai/start-issue.ds.md",
-      "description": "Set up a GitHub issue for development with branch, worktree, and planning doc. Use when user says \"start issue\", \"work on issue\"",
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "tal-liberio/development/api-compatibility-check",
       "title": "API Compatibility Check",
       "version": "1.0.0",
