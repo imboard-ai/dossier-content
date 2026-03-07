@@ -10,12 +10,6 @@
       "path": "getting-started/hello.ds.md"
     },
     {
-      "name": "imboard-ai/development/docs/docs-drift-check",
-      "title": "Docs/README Drift Check",
-      "version": "1.0.0",
-      "path": "imboard-ai/development/docs/docs-drift-check.ds.md"
-    },
-    {
       "name": "imboard-ai/development/ops/runbook-generator",
       "title": "Runbook & Ops Checklist Generator",
       "version": "1.0.0",
