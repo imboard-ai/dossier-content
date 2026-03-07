@@ -304,6 +304,20 @@
       ]
     },
     {
+      "name": "imboard-ai/git/docs-drift-check",
+      "title": "Docs/README Drift Check",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/docs-drift-check.ds.md",
+      "category": [
+        "development"
+      ],
+      "authors": [
+        {
+          "name": "yuvaldim"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/finish-issue-workflow",
       "title": "Finish Issue Workflow",
       "version": "1.0.0",
