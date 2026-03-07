@@ -22,12 +22,6 @@
       "path": "imboard-ai/development/ops/runbook-generator.ds.md"
     },
     {
-      "name": "imboard-ai/development/refactoring/code-refactoring-abstraction",
-      "title": "Code Refactoring & Abstraction Analysis",
-      "version": "1.0.0",
-      "path": "imboard-ai/development/refactoring/code-refactoring-abstraction.ds.md"
-    },
-    {
       "name": "imboard-ai/development/release/release-notes-generator",
       "title": "Release Notes Generator",
       "version": "1.0.0",
