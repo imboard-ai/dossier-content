@@ -517,6 +517,20 @@
       ]
     },
     {
+      "name": "imboard-ai/security/dependency-vulnerability-report",
+      "title": "Dependency Drift & Vulnerability Report",
+      "version": "1.0.0",
+      "path": "imboard-ai/security/dependency-vulnerability-report.ds.md",
+      "category": [
+        "security"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/security/scan-markdown-security",
       "title": "Markdown Security Scanner",
       "version": "2.0.0",
