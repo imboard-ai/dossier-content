@@ -674,18 +674,6 @@
       ]
     },
     {
-      "name": "imboard-ai/skills/dossier-discovery",
-      "title": "Dossier Discovery",
-      "version": "1.2.0",
-      "path": "imboard-ai/skills/dossier-discovery.ds.md",
-      "description": "Run `ai-dossier list --json` at START of workflow tasks (setup, deploy, migrate, refactor, CI/CD). Once per conversation. Output 'Dossier check: [result]' after running. Skip if you see this marker in conversation history.",
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "imboard-ai/skills/today-summary",
       "title": "Today's Work Summary",
       "version": "1.0.0",
