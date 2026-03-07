@@ -266,9 +266,19 @@
     {
       "name": "imboard-ai/security/scan-markdown-security",
       "title": "Markdown Security Scanner",
-      "version": "1.1.0",
+      "version": "2.0.0",
       "path": "imboard-ai/security/scan-markdown-security.ds.md",
-      "description": "Scan markdown files for prompt injection, agent hijacking, data exfiltration, XSS, malicious URLs, unicode attacks, and supply chain threats. Trigger on 'scan for security', 'audit skill', 'check dossier safety'.\n",
+      "category": [
+        "security"
+      ],
+      "tags": [
+        "security",
+        "scanning",
+        "prompt-injection",
+        "xss",
+        "markdown",
+        "skill-audit"
+      ],
       "authors": [
         {
           "name": "Yuval Dimnik"
