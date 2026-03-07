@@ -16,17 +16,6 @@
       "path": "imboard-ai/development/release/release-notes-generator.ds.md"
     },
     {
-      "name": "imboard-ai/development/setup-react-library",
-      "title": "Setup React Component Library",
-      "version": "1.0.0",
-      "category": [
-        "development",
-        "react",
-        "frontend"
-      ],
-      "path": "imboard-ai/development/setup-react-library.ds.md"
-    },
-    {
       "name": "imboard-ai/git/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
       "version": "1.0.0",
