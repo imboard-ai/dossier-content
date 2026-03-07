@@ -318,6 +318,21 @@
       ]
     },
     {
+      "name": "imboard-ai/git/finish-issue-skill",
+      "title": "Finish Issue Workflow",
+      "version": "1.1.0",
+      "path": "imboard-ai/git/finish-issue-skill.ds.md",
+      "description": "Prepare a GitHub issue branch for PR with quality checks, cleanup, and review recommendations. Use when user says \"finish issue\", \"ready for PR\", \"prepare for review\", \"submit PR\", \"create PR\", \"finalize issue\", or \"wrap up\".",
+      "category": [
+        "skills"
+      ],
+      "authors": [
+        {
+          "name": "Dossier Community"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/finish-issue-workflow",
       "title": "Finish Issue Workflow",
       "version": "1.0.0",
