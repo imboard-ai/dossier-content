@@ -348,6 +348,20 @@
       ]
     },
     {
+      "name": "imboard-ai/git/project-exploration",
+      "title": "Project Exploration",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/project-exploration.ds.md",
+      "category": [
+        "development"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/setup-issue-workflow",
       "title": "Setup Issue Workflow",
       "version": "1.6.0",
