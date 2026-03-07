@@ -236,6 +236,20 @@
       ]
     },
     {
+      "name": "imboard-ai/git/add-git-worktree-support",
+      "title": "Add Git Worktree Support to Project",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/add-git-worktree-support.ds.md",
+      "category": [
+        "development"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/finish-issue-workflow",
       "title": "Finish Issue Workflow",
       "version": "1.0.0",
