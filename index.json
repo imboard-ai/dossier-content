@@ -236,6 +236,27 @@
       ]
     },
     {
+      "name": "imboard-ai/git/finish-issue-workflow",
+      "title": "Finish Issue Workflow",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/finish-issue-workflow.ds.md",
+      "category": [
+        "development",
+        "git"
+      ],
+      "tags": [
+        "finish-issue",
+        "pull-request",
+        "code-review",
+        "quality-checks"
+      ],
+      "authors": [
+        {
+          "name": "Dossier Community"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/full-cycle-issue",
       "title": "Full Cycle Issue Workflow",
       "version": "2.5.0",
