@@ -344,6 +344,27 @@
       ]
     },
     {
+      "name": "imboard-ai/git/worktree-pool",
+      "title": "Worktree Pool",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/worktree-pool.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "worktree",
+        "pool",
+        "git",
+        "pre-warm",
+        "performance"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/meta/create-dossier",
       "title": "Create New Dossier",
       "version": "1.0.2",
