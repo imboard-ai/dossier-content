@@ -334,6 +334,20 @@
       ]
     },
     {
+      "name": "imboard-ai/git/onboarding-friction-review",
+      "title": "Onboarding Friction Assessment",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/onboarding-friction-review.ds.md",
+      "category": [
+        "development"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/setup-issue-workflow",
       "title": "Setup Issue Workflow",
       "version": "1.6.0",
