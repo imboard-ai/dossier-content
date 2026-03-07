@@ -264,6 +264,28 @@
       ]
     },
     {
+      "name": "imboard-ai/security/scan-markdown-security",
+      "title": "Markdown Security Scanner",
+      "version": "1.0.0",
+      "path": "imboard-ai/security/scan-markdown-security.ds.md",
+      "category": [
+        "security"
+      ],
+      "tags": [
+        "security",
+        "scanning",
+        "prompt-injection",
+        "xss",
+        "markdown",
+        "skill-audit"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/dossier-discovery",
       "title": "Dossier Discovery",
       "version": "1.2.0",
