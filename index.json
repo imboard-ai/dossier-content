@@ -236,6 +236,29 @@
       ]
     },
     {
+      "name": "imboard-ai/git/full-cycle-issue",
+      "title": "Full Cycle Issue Workflow",
+      "version": "2.5.0",
+      "path": "imboard-ai/git/full-cycle-issue.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "github",
+        "issues",
+        "workflow",
+        "autonomous",
+        "full-cycle",
+        "pr",
+        "merge"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/meta/create-dossier",
       "title": "Create New Dossier",
       "version": "1.0.2",
