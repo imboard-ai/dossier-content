@@ -171,6 +171,27 @@
       "path": "imboard-ai/development/testing/test-gap-analysis.ds.md"
     },
     {
+      "name": "imboard-ai/development/worktree-pool",
+      "title": "Worktree Pool",
+      "version": "1.0.0",
+      "path": "imboard-ai/development/worktree-pool.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "worktree",
+        "pool",
+        "git",
+        "pre-warm",
+        "performance"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/full-cycle-issue",
       "title": "Full Cycle Issue Workflow",
       "version": "2.4.0",
