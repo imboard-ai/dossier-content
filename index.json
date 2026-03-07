@@ -34,32 +34,6 @@
       "path": "imboard-ai/development/ops/runbook-generator.ds.md"
     },
     {
-      "name": "imboard-ai/development/orchestration/batch-issues",
-      "title": "Batch Issue Orchestration",
-      "version": "2.0.0",
-      "path": "imboard-ai/development/orchestration/batch-issues.ds.md",
-      "category": [
-        "development",
-        "orchestration"
-      ],
-      "tags": [
-        "github",
-        "issues",
-        "batch",
-        "parallel",
-        "sequential",
-        "epic",
-        "orchestration",
-        "autonomous",
-        "agent-friendly"
-      ],
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "imboard-ai/development/project-exploration",
       "title": "Project Exploration",
       "version": "1.0.0",
