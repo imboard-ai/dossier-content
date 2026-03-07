@@ -290,6 +290,20 @@
       ]
     },
     {
+      "name": "imboard-ai/git/code-refactoring-abstraction",
+      "title": "Code Refactoring & Abstraction Analysis",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/code-refactoring-abstraction.ds.md",
+      "category": [
+        "development"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/finish-issue-workflow",
       "title": "Finish Issue Workflow",
       "version": "1.0.0",
