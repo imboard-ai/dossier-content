@@ -250,6 +250,32 @@
       ]
     },
     {
+      "name": "imboard-ai/git/batch-issues",
+      "title": "Batch Issue Orchestration",
+      "version": "2.0.0",
+      "path": "imboard-ai/git/batch-issues.ds.md",
+      "category": [
+        "development",
+        "orchestration"
+      ],
+      "tags": [
+        "github",
+        "issues",
+        "batch",
+        "parallel",
+        "sequential",
+        "epic",
+        "orchestration",
+        "autonomous",
+        "agent-friendly"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/finish-issue-workflow",
       "title": "Finish Issue Workflow",
       "version": "1.0.0",
