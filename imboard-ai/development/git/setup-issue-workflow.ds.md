@@ -3,9 +3,9 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "status": "Stable",
-  "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup, and generates planning files for structured development",
+  "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
   "authors": [
     {
       "name": "Yuval Dimnik"
@@ -13,23 +13,10 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "720b008118ed43c7d9f54b2f58e7b3b8ada0d7b6b9545463355a47cc97e547ba"
+    "hash": "bebe4b0633d4e750ffd6b3df02b0142150f2cec14f3cf125d7f9e59f4e9ee9e3"
   }
 }
 ---
-authors:
-- name: Yuval Dimnik <yuval.dimnik@gmail.com>
-checksum:
-  algorithm: sha256
-  hash: 48c89ef739d5becd1ddc24a741a6f6043daba1a6159f4c6875f537deb23f1b74
-name: setup-issue-workflow
-objective: Create a workflow for GitHub issues that fetches issue details, creates
-  appropriately named branches, optionally sets up git worktrees with environment
-  warmup, and generates planning files for structured development
-schema_version: 1.0.0
-status: stable
-title: Setup Issue Workflow
-version: 1.4.0
 
 # Setup Issue Workflow
 
@@ -184,10 +171,35 @@ If user chooses option 4, prompt for the path:
 ```
 
 Based on the choice:
-- **Option 1 (New Worktree)**: Continue with Step 6 (Setup Worktree Directory)
+- **Option 1 (New Worktree)**: Continue with Step 5.1 (Check Worktree Pool)
 - **Option 2 (Repurpose)**: Continue with Step 5.5 (Repurpose Existing Worktree)
 - **Option 3 (Current directory)**: Skip to Step 7 (Create Git Branch) with checkout
 - **Option 4 (Custom path)**: Skip to Step 7 (Create Git Branch), then create/navigate to custom path
+
+### Step 5.1: Check Worktree Pool (Option 1 Only)
+
+**Skip this step unless user chose option 1.**
+
+Before creating a cold worktree, check if a pre-warmed worktree pool is available. Pool worktrees already have `node_modules`, `.env` files, and build artifacts — claiming one takes ~2 seconds vs ~3-5 minutes for a cold start.
+
+1. **Check if the pool is configured and has warm worktrees**:
+   ```bash
+   npx worktree-pool status 2>/dev/null
+   ```
+   If the command fails (pool not installed or not configured), skip to Step 6 (cold worktree creation).
+
+2. **If pool has warm worktrees available** (status shows `Warm: ≥ 1`):
+   ```bash
+   CLAIMED_PATH=$(npx worktree-pool claim --issue <ISSUE_NUMBER> --branch <branch-name> 2>/dev/null)
+   ```
+   - If claim succeeds (exit code 0), `CLAIMED_PATH` contains the absolute path to the ready worktree.
+   - The worktree is already on the correct branch with `node_modules`, `.env` files, and build artifacts.
+   - **Skip Steps 6, 7, 8, and 8.5 entirely** — go directly to Step 9 (Generate Planning File) using `CLAIMED_PATH` as the worktree path.
+   - Print: `⚡ Claimed pre-warmed worktree from pool (instant setup)`
+
+3. **If pool is empty or claim fails**:
+   - Print: `Pool empty or unavailable — creating cold worktree...`
+   - Continue with Step 6 (normal cold worktree creation).
 
 ### Step 5.5: Repurpose Existing Worktree (Option 2 Only)
 
@@ -255,7 +267,7 @@ Based on the choice:
 
 ### Step 6: Setup Worktree Directory (New Worktree Mode Only)
 
-**Skip this step if user chose option 2, 3, or 4.**
+**Skip this step if user chose option 2, 3, or 4, or if a pool worktree was claimed in Step 5.1.**
 
 Create the worktree in the `worktrees/` subdirectory **INSIDE the repository root**.
 
@@ -290,7 +302,7 @@ Create the worktree in the `worktrees/` subdirectory **INSIDE the repository roo
 
 ### Step 7: Create Git Branch
 
-**Skip this step if user chose option 2 (Repurpose)** - branch creation is handled in Step 5.5.
+**Skip this step if user chose option 2 (Repurpose) or if a pool worktree was claimed in Step 5.1.**
 
 **For New Worktree mode (option 1)**:
 Create the branch without checking it out (the worktree will handle checkout):
@@ -313,7 +325,7 @@ git branch --list <branch-name>
 
 ### Step 8: Create Git Worktree (New Worktree Mode Only)
 
-**Skip this step if user chose option 2, 3, or 4.**
+**Skip this step if user chose option 2, 3, or 4, or if a pool worktree was claimed in Step 5.1.**
 
 Create the worktree using the path from Step 6 (**INSIDE the repo**):
 
@@ -344,9 +356,9 @@ mkdir -p <custom-path>
 
 ### Step 8.5: Warm Up Worktree [REQUIRED for New Worktree Mode]
 
-**Skip this step if user chose option 2 (Repurpose), 3 (Current directory), or 4 (Custom path).**
+**Skip this step if user chose option 2 (Repurpose), 3 (Current directory), 4 (Custom path), or if a pool worktree was claimed in Step 5.1.**
 
-> **Note**: Option 2 (Repurpose) skips this because the existing worktree already has node_modules, .env files, and build artifacts.
+> **Note**: Option 2 (Repurpose) and pool-claimed worktrees skip this because they already have node_modules, .env files, and build artifacts.
 
 > **⚠️ MANDATORY STEP**: For worktree mode, you MUST run this warmup workflow before proceeding to Step 9. DO NOT skip this step or proceed without completing the warmup. The worktree is NOT ready for development until this step completes.
 
@@ -388,7 +400,7 @@ Progress and results are tracked in `<worktree-path>/WARMUP-STATUS.md`.
 Create the planning file using the format `PLANNING-{issue-number}-{slug}.md`:
 
 **Location based on workflow mode:**
-- **Worktree mode**: Create in worktree root
+- **Worktree mode** (including pool-claimed): Create in worktree root
 - **Current directory mode**: Create in current directory
 - **Custom path mode**: Create in the custom path specified
 
@@ -430,7 +442,35 @@ Create the planning file using the format `PLANNING-{issue-number}-{slug}.md`:
 
 Show a summary based on the workflow mode chosen:
 
-**For Worktree mode:**
+**For Worktree mode (pool-claimed):**
+```
+Issue workflow setup complete!
+
+Issue:      #<NUMBER> - <TITLE>
+Type:       <bug|feature>
+Branch:     <branch-name>
+Worktree:   <worktree-path> (claimed from pool)
+Planning:   <worktree-path>/PLANNING-<NUMBER>-<slug>.md
+
+Environment Status:
+- Pool claim: ⚡ Instant (~2 seconds)
+- node_modules: ✅ Pre-installed
+- .env files: ✅ Pre-copied
+- Build: ✅ Pre-built
+
+Next steps:
+1. Navigate to the worktree:
+   cd <worktree-path>
+
+2. Review and update the planning file with your implementation plan
+
+3. Start working on the issue!
+
+4. When done, create a PR:
+   gh pr create --title "<title>" --body "Closes #<NUMBER>"
+```
+
+**For Worktree mode (cold — no pool):**
 ```
 Issue workflow setup complete!
 
@@ -510,7 +550,13 @@ Next steps:
 - [ ] Planning file contains all required sections
 - [ ] User was shown clear next steps
 
-**Worktree mode only (ALL required before showing success):**
+**Worktree mode — pool-claimed (ALL required before showing success):**
+- [ ] `npx worktree-pool status` was checked
+- [ ] `npx worktree-pool claim` succeeded and returned a path
+- [ ] Steps 6-8.5 were skipped (pool worktree is pre-warmed)
+- [ ] Planning file is in the claimed worktree root
+
+**Worktree mode — cold (ALL required before showing success):**
 - [ ] `worktrees/` directory exists and is in `.gitignore`
 - [ ] Git worktree was created at `worktrees/<type>-<number>-<slug>`
 - [ ] **WARMUP-STATUS.md exists** in the worktree root
@@ -557,24 +603,75 @@ Next steps:
 **Issue**: Worktree path already in use
 **Solution**: Check `git worktree list` and choose a different location
 
+**Issue**: `npx worktree-pool` command not found
+**Solution**: The worktree pool package is not installed. This is optional — the workflow falls back to cold worktree creation automatically.
+
+**Issue**: Pool claim fails (no warm worktrees)
+**Solution**: Run `npx worktree-pool replenish` to pre-warm spares, or let the workflow fall back to cold creation.
+
 ## Examples
 
-### Example 1: Worktree Mode
+### Example 1: Worktree Mode (Pool Claim — Instant)
 
-For issue #42 with title "Add user preferences page" and "feature" label:
+For issue #42 with title "Add user preferences page" and "feature" label, with a pre-warmed pool available:
 
 **Input**:
 ```
 ? GitHub issue number: 42
 ? Where do you want to work on this issue?
   1) Create a git worktree (recommended for parallel work)
-  2) Current directory (just create branch and planning file here)
-  3) Custom location (specify your own path)
+  2) Repurpose existing worktree (fastest - skips npm install)
+  3) Current directory (just create branch and planning file here)
+  4) Custom location (specify your own path)
 Choice: 1
 ```
 
 **Output**:
 ```
+⚡ Claimed pre-warmed worktree from pool (instant setup)
+
+Issue workflow setup complete!
+
+Issue:      #42 - Add user preferences page
+Type:       feature
+Branch:     feature/42-add-user-preferences-page
+Worktree:   worktrees/feature-42-add-user-preferences-page (claimed from pool)
+Planning:   worktrees/feature-42-add-user-preferences-page/PLANNING-42-add-user-preferences-page.md
+
+Environment Status:
+- Pool claim: ⚡ Instant (~2 seconds)
+- node_modules: ✅ Pre-installed
+- .env files: ✅ Pre-copied
+- Build: ✅ Pre-built
+
+Next steps:
+1. Navigate to the worktree:
+   cd worktrees/feature-42-add-user-preferences-page
+
+2. Review and update the planning file with your implementation plan
+
+3. Start working on the issue!
+
+4. When done, create a PR:
+   gh pr create --title "Add user preferences page" --body "Closes #42"
+```
+
+### Example 2: Worktree Mode (Cold — No Pool)
+
+For issue #42 with title "Add user preferences page" and "feature" label, with no pool available:
+
+**Input**:
+```
+? GitHub issue number: 42
+? Where do you want to work on this issue?
+  1) Create a git worktree (recommended for parallel work)
+Choice: 1
+```
+
+**Output**:
+```
+Pool empty or unavailable — creating cold worktree...
+
 Issue workflow setup complete!
 
 Issue:      #42 - Add user preferences page
@@ -603,7 +700,7 @@ Next steps:
    gh pr create --title "Add user preferences page" --body "Closes #42"
 ```
 
-### Example 2: Repurpose Worktree Mode (Fastest)
+### Example 3: Repurpose Worktree Mode (Fastest)
 
 For issue #99 with title "Fix login button" and "bug" label, repurposing an existing worktree:
 
@@ -651,7 +748,7 @@ Next steps:
    gh pr create --title "Fix login button" --body "Closes #99"
 ```
 
-### Example 3: Current Directory Mode
+### Example 4: Current Directory Mode
 
 For issue #101 with title "Update readme" and "feature" label:
 
@@ -688,11 +785,12 @@ Next steps:
 
 - This workflow assumes a GitHub-based repository
 - Four workflow modes are available:
-  - **New Worktree mode**: Best for working on multiple issues simultaneously (requires warm-up)
-  - **Repurpose Worktree mode**: Fastest option (~10 seconds) - reuses existing worktree's dependencies
+  - **New Worktree mode**: Best for working on multiple issues simultaneously. Automatically checks the worktree pool first for instant setup (~2s); falls back to cold worktree creation (~3-5min) if no pool is available.
+  - **Repurpose Worktree mode**: Fast option (~10 seconds) - reuses existing worktree's dependencies
   - **Current directory mode**: Simplest option, works in place
   - **Custom path mode**: For users with their own directory structure
 - The planning file (PLANNING-{number}-{slug}.md) helps maintain focus and track progress
+- To pre-warm pool worktrees: `npx worktree-pool replenish --count N`
 - Consider adding this workflow to your `.claude.md` for easy access
 
 ## References
