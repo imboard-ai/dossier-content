@@ -45,12 +45,6 @@
       "path": "imboard-ai/development/setup-react-library.ds.md"
     },
     {
-      "name": "imboard-ai/development/testing/test-gap-analysis",
-      "title": "Test Gap Analysis",
-      "version": "1.0.0",
-      "path": "imboard-ai/development/testing/test-gap-analysis.ds.md"
-    },
-    {
       "name": "imboard-ai/git/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
       "version": "1.0.0",
