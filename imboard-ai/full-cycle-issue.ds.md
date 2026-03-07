@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "status": "Draft",
   "last_updated": "2026-03-07",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e17fa064fee7d0e79c5cc1981a79f6366c63b70dd7fb84dea124ceb6b4b58433"
+    "hash": "2a63a1e534bb67dbd7316c498a436f95973b3a4c7fa426fa538e9aa2d49f711e"
   }
 }
 ---
@@ -102,7 +102,7 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    # Post agent context comment
    gh issue comment <number> --body "$(cat <<'EOF'
    **Agent pickup** — work started.
-   - **Agent**: Claude (full-cycle-issue workflow v2.4.0)
+   - **Agent**: Claude (full-cycle-issue workflow v2.5.0)
    - **Branch**: (will update after setup)
    - **Started**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
    EOF
@@ -114,10 +114,11 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    ai-dossier run imboard-ai/development/git/setup-issue-workflow
    ```
 6. Provide the issue number when prompted
-7. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated.
+7. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated. The setup workflow will automatically try the worktree pool first for instant setup; if no pool is available it falls back to cold worktree creation.
 8. Note the worktree path and branch name from the setup output
-9. `cd` into the worktree directory — **all subsequent work happens here**
-10. **Verify you are in a worktree.** This is a hard gate — do NOT proceed without passing it.
+9. **Record whether the worktree was claimed from the pool** — check the setup output for "Claimed pre-warmed worktree from pool". You will need this in Phase 9 to decide whether to return the worktree to the pool.
+10. `cd` into the worktree directory — **all subsequent work happens here**
+11. **Verify you are in a worktree.** This is a hard gate — do NOT proceed without passing it.
     ```bash
     pwd | grep -q "worktree" && echo "OK: in worktree" || echo "FAIL: not in worktree"
     ```
@@ -126,7 +127,7 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
     - Comment on the issue: `gh issue comment <number> --body "Agent aborted: not in a worktree. pwd=$(pwd). Needs investigation."`
     - Remove the `in-progress` label: `gh issue edit <number> --remove-label "in-progress"`
     - Exit. Do not attempt to work in the current directory as a fallback.
-11. Update the issue comment with the branch name:
+12. Update the issue comment with the branch name:
     ```bash
     gh issue comment <number> --body "Branch: \`<branch-name>\` | Worktree: \`<worktree-path>\`"
     ```
@@ -396,15 +397,21 @@ three-part test (user-facing behavior change + can't verify with tests + needs p
 **Prerequisite: Phase 8 (Merge) must be complete.** Do not tear down the worktree before the PR is merged.
 
 1. `cd` back to the **original working directory** (recorded in Phase 1)
-2. Remove the worktree:
+2. **Try to return the worktree to the pool** (if the worktree was claimed from the pool in Phase 1, Step 9):
+   ```bash
+   npx worktree-pool return --path <worktree-path> 2>/dev/null
+   ```
+   - If the command succeeds: the worktree is recycled back to the pool for reuse. Skip steps 3-5.
+   - If the command fails (pool not installed, worktree not from pool, or return error): continue with manual cleanup below.
+3. Remove the worktree:
    ```bash
    git worktree remove <worktree-path>
    ```
-3. If the local branch still exists, delete it:
+4. If the local branch still exists, delete it:
    ```bash
    git branch -d <branch-name> 2>/dev/null || git branch -D <branch-name>
    ```
-4. Clean up the remote branch if it still exists:
+5. Clean up the remote branch if it still exists:
    ```bash
    git push origin --delete <branch-name> 2>/dev/null || true
    ```
@@ -443,6 +450,12 @@ Print a single consolidated report. This is the **only** summary the user sees �
 Worktree removed. Back in original directory.
 ```
 
+If pool return was used instead of worktree removal:
+```
+### Cleanup
+Worktree returned to pool for reuse. Back in original directory.
+```
+
 If there were no review findings at all, replace the Review Results section with:
 ```
 ### Review Results
@@ -452,7 +465,7 @@ All 5 reviews passed clean — no findings.
 ## Validation
 
 - [ ] Issue fetched and understood
-- [ ] Branch and worktree created
+- [ ] Branch and worktree created (via pool claim or cold creation)
 - [ ] Implementation addresses requirements
 - [ ] Tests exist and all pass (created if missing)
 - [ ] 5 parallel reviews completed (before commit)
@@ -462,7 +475,7 @@ All 5 reviews passed clean — no findings.
 - [ ] PR created linking to issue
 - [ ] Escalated findings consolidated per review category (typically 0 issues)
 - [ ] PR merged
-- [ ] Worktree removed
+- [ ] Worktree returned to pool or removed
 - [ ] Returned to original working directory
 
 ## Troubleshooting
@@ -475,3 +488,4 @@ All 5 reviews passed clean — no findings.
 **`--delete-branch` fails in worktree**: This is expected — do not use `--delete-branch` with `gh pr merge` when working from a worktree. Clean up branches in Phase 9 instead.
 **Pre-existing test failures**: Run tests on the base branch to confirm. Only fix failures caused by your changes.
 **Review fix breaks tests**: Revert the specific fix and reclassify as Escalate. Do not let review fixes destabilize the build.
+**Pool return fails**: Not an error — the worktree may not have been from the pool. Fall back to manual `git worktree remove`.
