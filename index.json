@@ -221,6 +221,28 @@
       "path": "imboard-ai/meta/create-dossier.ds.md"
     },
     {
+      "name": "imboard-ai/meta/create-dossier-and-skill",
+      "title": "Create Dossier and Skill",
+      "version": "1.0.0",
+      "path": "imboard-ai/meta/create-dossier-and-skill.ds.md",
+      "category": [
+        "authoring",
+        "meta"
+      ],
+      "tags": [
+        "dossier-creation",
+        "skill-creation",
+        "authoring",
+        "meta-dossier",
+        "scaffolding"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/dossier-discovery",
       "title": "Dossier Discovery",
       "version": "1.2.0",
