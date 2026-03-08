@@ -10,12 +10,6 @@
       "path": "getting-started/hello.ds.md"
     },
     {
-      "name": "imboard-ai/development/release/release-notes-generator",
-      "title": "Release Notes Generator",
-      "version": "1.0.0",
-      "path": "imboard-ai/development/release/release-notes-generator.ds.md"
-    },
-    {
       "name": "imboard-ai/git/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
       "version": "1.0.0",
