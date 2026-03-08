@@ -206,6 +206,20 @@
       ]
     },
     {
+      "name": "imboard-ai/git/release-notes-generator",
+      "title": "Release Notes Generator",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/release-notes-generator.ds.md",
+      "category": [
+        "development"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/runbook-generator",
       "title": "Runbook & Ops Checklist Generator",
       "version": "1.0.0",
