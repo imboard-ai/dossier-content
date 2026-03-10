@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "status": "Stable",
   "last_updated": "2026-03-10",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e17fa064fee7d0e79c5cc1981a79f6366c63b70dd7fb84dea124ceb6b4b58433"
+    "hash": "df6227cd529437e6aac88859d75bc915ce81fcd17ab8467297ded0a2a75a26be"
   }
 }
 ---
@@ -160,11 +160,26 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    - Follow existing test patterns and conventions in the repo
    - Place tests where the project convention expects them (e.g., `__tests__/`, `*.test.ts`, `*.spec.ts`)
 4. **Run the full test suite** to catch regressions (e.g., `npm test`)
-5. **If tests fail**, check whether they are **pre-existing failures** by running the same tests on the base branch:
+5. **If tests fail**, check whether they are **pre-existing failures** using this cascade:
+
+   **Step A — Heuristic check (zero cost):** Get the list of changed files and check whether the failing test file or the source files it imports were modified in your branch:
    ```bash
-   git stash && git checkout main && npm test 2>&1 | tail -5 && git checkout - && git stash pop
+   git diff --name-only origin/main..HEAD
    ```
-   If the same tests fail on main, they are pre-existing — ignore them and proceed. Only fix failures caused by your changes (max 2 attempts).
+   If neither the failing test file nor any of its direct imports appear in the diff, the failure is pre-existing — ignore it and proceed.
+
+   **Step B — Baseline test in temp worktree (if heuristic is inconclusive):** If the failing test or its imports *were* in your diff, verify against the base branch using an isolated worktree. Do NOT use `git stash && git checkout main` — that fails when `main` is checked out in another worktree (which is always the case in a worktree-based workflow).
+   ```bash
+   git fetch origin main
+   tmp=$(mktemp -d)
+   git worktree add --detach "$tmp" origin/main
+   ln -s "$(pwd)/node_modules" "$tmp/node_modules"
+   (cd "$tmp" && npm test -- --testPathPattern "<failing-test>" 2>&1 | tail -20); baseline_exit=$?
+   git worktree remove "$tmp"
+   ```
+   If the same test fails on `origin/main` (`baseline_exit != 0`), it is pre-existing — ignore it and proceed. If the symlinked `node_modules` causes issues (e.g., deps changed between branches), fall back to running `npm install` in the temp worktree.
+
+   Only fix failures caused by your changes (max 2 attempts).
 
 ### Phase 5: Review & Fix
 
