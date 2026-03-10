@@ -3,9 +3,9 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "status": "Draft",
-  "last_updated": "2026-03-07",
+  "last_updated": "2026-03-10",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
   "category": [
     "development"
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "8f746ff8502c3967a6804e38283b3e962b4636057b6a2e94cfd2df55a5de72fa"
+    "hash": "d6d11d542b3d42c01b96b30fd781e193945e84fee363a7e92cab12f461798925"
   }
 }
 ---
@@ -71,9 +71,47 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
 
 ## Actions to Perform
 
-### Phase 1: Setup
+### Phase 0: Self-Check (Quick Gate ~30s)
+
+Lightweight safety gate before committing to the full workflow. No codebase exploration — just check issue metadata.
 
 1. Extract the issue number from user input
+2. Fetch issue metadata:
+   ```bash
+   gh issue view <number> --json state,labels,body
+   ```
+3. **Hard blocks** — if ANY of these are true, abort immediately with a comment on the issue:
+   - **Issue is closed**: `state == "CLOSED"`
+   - **Has label `decomposed`**: Issue was already decomposed into sub-issues by triage
+   - **Has label `needs-clarification`**: Issue was triaged as not ready
+   - **Has label `epic`**: Issue is an epic, not directly implementable
+   - **Has open dependency**: Body contains `Depends on #N` (case-insensitive) where issue #N is still open:
+     ```bash
+     # For each "Depends on #N" found in the body:
+     gh issue view <N> --json state --jq '.state'
+     ```
+     If the referenced issue state is `OPEN`, it's a hard block.
+
+   **On hard block**: Post a comment and stop:
+   ```bash
+   gh issue comment <number> --body "**Full-cycle aborted**: <reason>. Resolve the blocker and re-run."
+   ```
+   Do NOT proceed to Phase 1.
+
+4. **Soft warnings** — count how many of these are true:
+   - Body is empty or less than 50 characters
+   - Body contains research keywords: `evaluate`, `research`, `explore`, `investigate`, `compare` (case-insensitive)
+   - Issue has no labels at all
+
+   If **2 or more** soft warnings: log a warning line but continue:
+   ```
+   ⚠ Phase 0: 2 soft warnings (short body, no labels) — proceeding with caution
+   ```
+   If 0-1 soft warnings: proceed silently.
+
+### Phase 1: Setup
+
+1. Extract the issue number from user input (already done in Phase 0)
 2. **Pre-flight: clean stale worktrees.** Previous runs may have left zombie worktrees that lock branches (especially `main`). This causes "branch is checked out in another worktree" errors.
    ```bash
    git worktree list
@@ -102,7 +140,7 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    # Post agent context comment
    gh issue comment <number> --body "$(cat <<'EOF'
    **Agent pickup** — work started.
-   - **Agent**: Claude (full-cycle-issue workflow v2.5.0)
+   - **Agent**: Claude (full-cycle-issue workflow v2.6.0)
    - **Branch**: (will update after setup)
    - **Started**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
    EOF
@@ -464,6 +502,7 @@ All 5 reviews passed clean — no findings.
 
 ## Validation
 
+- [ ] Phase 0 self-check passed (no hard blocks)
 - [ ] Issue fetched and understood
 - [ ] Branch and worktree created (via pool claim or cold creation)
 - [ ] Implementation addresses requirements
