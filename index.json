@@ -35,14 +35,26 @@
     {
       "name": "imboard-ai/git/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "path": "imboard-ai/git/add-git-worktree-support.ds.md",
       "category": [
-        "development"
+        "development",
+        "git",
+        "workflow"
       ],
-      "authors": [
+      "tags": [
+        "git",
+        "worktrees",
+        "workflow",
+        "organization",
+        "development-setup"
+      ],
+      "tools_required": [
         {
-          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+          "name": "git",
+          "version": ">=2.5.0",
+          "check_command": "git --version",
+          "install_url": "https://git-scm.com/downloads"
         }
       ]
     },
