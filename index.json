@@ -165,7 +165,7 @@
     {
       "name": "imboard-ai/git/full-cycle-issue",
       "title": "Full Cycle Issue Workflow",
-      "version": "2.5.0",
+      "version": "2.6.0",
       "path": "imboard-ai/git/full-cycle-issue.ds.md",
       "category": [
         "development"
