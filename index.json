@@ -407,6 +407,27 @@
       ]
     },
     {
+      "name": "imboard-ai/issue-triage-skill",
+      "title": "Issue Triage",
+      "version": "1.0.0",
+      "path": "imboard-ai/issue-triage-skill.ds.md",
+      "description": "Assess and route issues: autonomous, plan-first, or not-ready. Use when user says 'triage issue', 'assess issue', 'check issue readiness'",
+      "category": [
+        "skills"
+      ],
+      "tags": [
+        "github",
+        "triage",
+        "workflow",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/meta/create-dossier",
       "title": "Create New Dossier",
       "version": "1.0.2",
