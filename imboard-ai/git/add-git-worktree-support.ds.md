@@ -1,49 +1,199 @@
 ---dossier
 {
-  "version": "1.0.0",
   "dossier_schema_version": "1.0.0",
-  "risk_level": "high",
   "name": "add-git-worktree-support",
   "title": "Add Git Worktree Support to Project",
-  "status": "Draft",
-  "objective": "Restructure a git project to support git worktrees by moving repository contents into a main/ subdirectory and organizing all worktrees under a sibling worktrees/ directory",
-  "authors": [
+  "version": "1.1.0",
+  "protocol_version": "1.0",
+  "status": "Stable",
+  "last_updated": "2026-03-10",
+  "objective": "Restructure a git project to support git worktrees by moving repository contents into a main/ subdirectory and creating a worktree registry for tracking active work",
+  "category": [
+    "development",
+    "git",
+    "workflow"
+  ],
+  "tags": [
+    "git",
+    "worktrees",
+    "workflow",
+    "organization",
+    "development-setup"
+  ],
+  "tools_required": [
     {
-      "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+      "name": "git",
+      "version": ">=2.5.0",
+      "check_command": "git --version",
+      "install_url": "https://git-scm.com/downloads"
     }
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c0e957fe7e3c6bcc071a9e5a3d3cc08ce5e83e20528837bc7d7600d157946bc9"
+    "hash": "9a0f47527a19f50c18a8b9b0b1654c1d6919f9d81b582815f5e8fdc632c45273"
+  },
+  "risk_level": "high",
+  "risk_factors": [
+    "modifies_directory_structure",
+    "moves_files_within_repository",
+    "changes_working_directory_paths",
+    "requires_multiple_safety_checks"
+  ],
+  "requires_approval": true,
+  "destructive_operations": [
+    "Moves all repository files into a new subdirectory (main/)",
+    "Changes working directory structure",
+    "Creates new WORKTREES.md registry file",
+    "May break tools/scripts with hardcoded paths"
+  ],
+  "estimated_duration": {
+    "min_minutes": 5,
+    "max_minutes": 15
+  },
+  "relationships": {
+    "followed_by": [
+      {
+        "dossier": "create-feature-worktree",
+        "condition": "suggested",
+        "purpose": "Create your first feature worktree after setup"
+      }
+    ]
+  },
+  "inputs": {
+    "required": [],
+    "optional": [
+      {
+        "name": "main_directory_name",
+        "description": "Name for the main worktree directory",
+        "type": "string",
+        "default": "main",
+        "example": "main"
+      }
+    ]
+  },
+  "outputs": {
+    "files": [
+      {
+        "path": "main/",
+        "description": "All repository contents moved into this subdirectory"
+      },
+      {
+        "path": ".git",
+        "description": "Git pointer file at parent directory (gitdir: main/.git)"
+      },
+      {
+        "path": "main/WORKTREES.md",
+        "description": "Registry file tracking active worktrees"
+      }
+    ],
+    "configuration": [
+      {
+        "type": "directory_structure",
+        "description": "Parent directory structure ready for multiple worktrees"
+      },
+      {
+        "type": "git_config",
+        "description": "core.worktree set to absolute path of main/ so git works from parent"
+      }
+    ]
+  },
+  "mcp_integration": {
+    "required": false,
+    "server_name": "@dossier/mcp-server",
+    "min_version": "1.0.0",
+    "features_used": [
+      "verify_dossier",
+      "dossier://security"
+    ],
+    "fallback": "manual_execution",
+    "benefits": [
+      "Automatic security verification for high-risk file restructuring",
+      "Signature validation for trusted workflow changes",
+      "Clear risk assessment before modifying directory structure"
+    ]
+  },
+  "prerequisites": [
+    {
+      "description": "Must be in a git repository",
+      "check": "git rev-parse --git-dir"
+    },
+    {
+      "description": "All work must be pushed to remote",
+      "check": "git status",
+      "severity": "critical"
+    },
+    {
+      "description": "Working directory should be clean (no uncommitted changes)",
+      "check": "git status --porcelain",
+      "severity": "critical"
+    },
+    {
+      "description": "Repository should be backed up (cloud or external)",
+      "severity": "critical"
+    }
+  ],
+  "validation": {
+    "success_criteria": [
+      {
+        "description": "Main worktree subdirectory exists",
+        "check": "test -d main"
+      },
+      {
+        "description": "Git repository exists in main subdirectory",
+        "check": "test -d main/.git"
+      },
+      {
+        "description": "Parent .git file exists and points to main/.git",
+        "check": "test -f .git && grep -q 'gitdir: main/.git' .git"
+      },
+      {
+        "description": "Git works from parent directory (core.worktree set correctly)",
+        "check": "git status --porcelain | wc -l | grep -q '^0$'"
+      },
+      {
+        "description": "WORKTREES.md registry file exists",
+        "check": "test -f main/WORKTREES.md"
+      },
+      {
+        "description": "Git still functions correctly from main/",
+        "check": "cd main && git status"
+      },
+      {
+        "description": "Can create and remove a test worktree",
+        "check": "cd main && git worktree add ../test-worktree && git worktree remove ../test-worktree"
+      }
+    ]
+  },
+  "rollback": {
+    "supported": true,
+    "instructions": "Move all contents from main/ back to parent directory and delete the empty main/ directory"
   },
   "signature": {
-    "algorithm": "ed25519",
-    "signature": "OHQxcznatzmb+oQXlkZboITwNx5x3q3gVN2iAVrR9lMyrDd2hLwmW0GylTKVAhKf9/diecLAhB6kau0T8/yuBw==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEANvCyj7RG85NwvvB5AozhC8Oep2DnwY4X3YC1fY/8E9E=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-03-05T14:48:46.390Z",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  },
-  "category": [
-    "development"
-  ]
+    "algorithm": "ECDSA-SHA-256",
+    "signature": "MEUCIAXuEcuO1YIEz+3OjxKGuHmcZMAwyvrK8XQP83917V6FAiEAiaN7fkFlVpFGYhVRzslLYudHyc2CutNJ5Z5QBbJDUMo=",
+    "public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqIbQGqW1Jdh97TxQ5ZvnSVvvOcN5NWhfWwXRAaDDuKK1pv8F+kz+uo1W8bNn+8ObgdOBecFTFizkRa/g+QJ8kA==",
+    "key_id": "arn:aws:kms:us-east-1:942039714848:key/d9ccd3fc-b190-49fd-83f7-e94df6620c1d",
+    "signed_at": "2025-11-16T11:23:31.103Z",
+    "signed_by": "Dossier Team <team@dossier.ai>"
+  }
 }
 ---
-
 # Dossier: Add Git Worktree Support to Project
 
 **Protocol Version**: 1.0
 
+---
 
 ## Objective
 
 Restructure a git repository to support the git worktree workflow by:
 1. Moving the current repository contents into a `main/` subdirectory
-2. Creating a `worktrees/` directory as a sibling of `main/` to hold all worktrees
-3. Creating a `WORKTREES.md` registry file for tracking active worktrees
-4. Documenting the worktree workflow for the team
+2. Creating a `WORKTREES.md` registry file for tracking active worktrees
+3. Documenting the worktree workflow for the team
 
 This enables parallel work on multiple features without constantly switching branches or stashing changes.
 
+---
 
 ## What Are Git Worktrees?
 
@@ -54,6 +204,7 @@ Git worktrees allow you to have multiple working directories from the same repos
 - **Clean separation**: Each worktree is isolated, no risk of mixing changes
 - **Shared git history**: All worktrees share the same `.git` directory (saves space)
 
+---
 
 ## ⚠️ CRITICAL: Safety Checks Before Proceeding
 
@@ -95,6 +246,7 @@ Continue? (yes/no)
 
 If NO → **STOP**. User must push changes first.
 
+---
 
 ### Safety Check 2: Cloud/External Backup Exists
 
@@ -132,6 +284,7 @@ Proceed anyway? (I understand the risk)
 
 Only proceed if user types exactly: `I understand the risk`
 
+---
 
 ### Safety Check 3: Understand the Risks
 
@@ -141,11 +294,9 @@ Only proceed if user types exactly: `I understand the risk`
 
 This dossier will:
 ✓ Create a new subdirectory called 'main/'
-✓ Create a new subdirectory called 'worktrees/'
 ✓ Move ALL repository files into main/
 ✓ Change your working directory structure from:
   ~/projects/foo/         →    ~/projects/foo/main/
-                               ~/projects/foo/worktrees/
 
 Risks:
 ❌ Tools/scripts with hardcoded paths will break
@@ -166,6 +317,7 @@ Type 'PROCEED' to continue, or anything else to abort:
 
 Otherwise → **ABORT**
 
+---
 
 ## Prerequisites
 
@@ -196,6 +348,7 @@ Otherwise → **ABORT**
    dir
    ```
 
+---
 
 ## Context to Gather
 
@@ -221,6 +374,7 @@ Before proceeding, the LLM should gather:
 ### 4. User Preferences
 - Main directory name (default: "main", but user may prefer "primary", project name, etc.)
 
+---
 
 ## Decision Points
 
@@ -236,6 +390,7 @@ Before proceeding, the LLM should gather:
 
 **Default**: Use `main` if user doesn't specify
 
+---
 
 ### 2. Handle Uncommitted Changes (if any detected)
 
@@ -248,6 +403,7 @@ Before proceeding, the LLM should gather:
 
 **Recommendation**: Option A or abort
 
+---
 
 ## Actions to Perform
 
@@ -281,82 +437,78 @@ To restore if needed:
   git checkout before-worktree-restructure-20251107-143022
 ```
 
+---
 
-### Step 2: Create Directory Structure
+### Step 2: Create Main Subdirectory
 
-**Objective**: Create the `main/` and `worktrees/` directories. Both must be siblings under the project root.
+**Objective**: Create the `main/` directory that will hold all repository contents.
 
 **Actions**:
-1. Create `main/` directory (will hold all repository contents)
-2. Create `worktrees/` directory (will hold all future worktrees)
-3. Verify both were created successfully
+1. Create a directory with the chosen name (default: `main`)
+2. Verify it was created successfully
 
 **Example implementation (bash/Unix)**:
 ```bash
-mkdir main worktrees
+mkdir main
 ```
 
 **Example implementation (Windows PowerShell)**:
 ```powershell
 New-Item -ItemType Directory -Name "main"
-New-Item -ItemType Directory -Name "worktrees"
 ```
 
 **Example implementation (Windows cmd)**:
 ```cmd
 mkdir main
-mkdir worktrees
 ```
 
 **Note for LLM**: Choose the appropriate command based on detected platform.
 
 **Verification**:
-- Check that both directories exist
-- Confirm they are empty
+- Check that directory exists
+- Confirm it's empty
 
 **Output to user**:
 ```
 ✅ Created directory: main/
-✅ Created directory: worktrees/
 ```
 
+---
 
 ### Step 3: Move Repository Contents
 
-**Objective**: Move all files and directories (except `main/` and `worktrees/`) into the `main/` subdirectory.
+**Objective**: Move all files and directories (except `main/` itself) into the `main/` subdirectory.
 
 **Critical**: This is the highest-risk step. Be careful to:
 - Move hidden files (`.git/`, `.gitignore`, etc.)
 - Preserve file permissions
-- Not move the `main/` or `worktrees/` directories into themselves
+- Not move the `main/` directory into itself
 - Handle special characters in filenames
 
 **Approach**:
-1. List all items in current directory (excluding `.`, `..`, `main/`, and `worktrees/`)
+1. List all items in current directory (excluding `.`, `..`, and `main/`)
 2. Move each item into `main/`
 3. Verify each move succeeded
 
 **Example implementation (bash/Unix)**:
 ```bash
 # Option 1: Using find (safest, handles all files including hidden)
-find . -maxdepth 1 ! -name '.' ! -name '..' ! -name 'main' ! -name 'worktrees' -exec mv {} main/ \;
+find . -maxdepth 1 ! -name '.' ! -name '..' ! -name 'main' -exec mv {} main/ \;
 
 # Option 2: Using shell glob with dotglob (alternative)
 shopt -s dotglob  # Include hidden files
-shopt -s extglob  # Enable extended globbing
-mv !(main|worktrees) main/  # Move everything except main and worktrees
+mv !(main) main/  # Move everything except main
 shopt -u dotglob  # Reset
-shopt -u extglob  # Reset
 ```
 
 **Example implementation (Windows PowerShell)**:
 ```powershell
-Get-ChildItem -Force | Where-Object { $_.Name -ne 'main' -and $_.Name -ne 'worktrees' } | Move-Item -Destination main
+Get-ChildItem -Force | Where-Object { $_.Name -ne 'main' } | Move-Item -Destination main
 ```
 
 **Example implementation (Windows cmd)**:
 ```cmd
-for /d %%d in (*) do if /i not "%%d"=="main" if /i not "%%d"=="worktrees" move "%%d" main\
+for /d %%d in (*) do if /i not "%%d"=="main" move "%%d" main\
 for %%f in (*) do move "%%f" main\
 ```
 
@@ -383,6 +535,7 @@ for %%f in (*) do move "%%f" main\
 ✅ All files moved to main/
 ```
 
+---
 
 ### Step 4: Verify Git Repository Integrity
 
@@ -424,7 +577,6 @@ Recovery steps:
    mv main/* .
    mv main/.* .  # Move hidden files
    rmdir main
-   rmdir worktrees
 
 Please restore and try again, or seek help.
 ```
@@ -437,8 +589,76 @@ Please restore and try again, or seek help.
    Remote: origin
 ```
 
+---
 
-### Step 5: Create WORKTREES.md Registry
+### Step 5: Make Parent Directory Git-Aware
+
+**Objective**: Allow git, gh, and tools like Claude Code to discover the repository when opened from the parent directory (above `main/`).
+
+Without this step, running `git status` from the parent fails with "not a git repository." Tools that launch in the parent directory (e.g., Claude Code, IDE terminals) will not recognize the repo.
+
+**Actions**:
+1. Create a `.git` **file** (not directory) at the parent that points to `main/.git`
+2. Set `core.worktree` in git config to tell git the working tree lives in `main/`
+
+**Example implementation (bash/Unix)**:
+```bash
+# From inside main/ (where we are after Step 4)
+MAIN_ABS="$(pwd)"
+cd ..
+
+# Create .git file at parent pointing to main's git directory
+echo 'gitdir: main/.git' > .git
+
+# Tell git the working tree is in main/ (MUST use absolute path)
+git -C main config core.worktree "$MAIN_ABS"
+```
+
+**Example implementation (Windows PowerShell)**:
+```powershell
+$MainAbs = (Get-Location).Path
+Set-Location ..
+Set-Content -Path .git -Value "gitdir: main/.git"
+git -C main config core.worktree $MainAbs
+```
+
+**⚠️ CRITICAL**: The `core.worktree` value MUST be an absolute path. Relative paths cause git to fail with "cannot chdir" errors that prevent even `git config` from running (requiring manual config file edits to recover).
+
+**Verification**:
+```bash
+# From parent directory
+git status
+# Expected: clean status, same as from main/
+
+# From main/
+cd main
+git status
+# Expected: clean status
+```
+
+**If git status from parent shows all files as "deleted"**:
+```
+❌ ERROR: core.worktree was not set correctly
+
+The .git file was created but git doesn't know where the working tree is.
+
+Fix:
+  cd main
+  git config core.worktree "$(pwd)"
+  cd ..
+  git status   # Should now be clean
+```
+
+**If successful**:
+```
+✅ Parent directory is git-aware
+   git status works from both parent/ and main/
+   Tools (gh, Claude Code, IDEs) will discover the repository
+```
+
+---
+
+### Step 6: Create WORKTREES.md Registry
 
 **Objective**: Create a markdown file to track active worktrees.
 
@@ -458,6 +678,7 @@ This file tracks active git worktrees for this project.
 
 **Last updated**: [Current Date]
 
+---
 
 ## What Are Git Worktrees?
 
@@ -469,6 +690,7 @@ Git worktrees allow you to have multiple working directories from the same repos
 - Each worktree is isolated (no risk of mixing changes)
 - All worktrees share the same git history (saves disk space)
 
+---
 
 ## Active Worktrees
 
@@ -476,6 +698,7 @@ Git worktrees allow you to have multiple working directories from the same repos
 |----------|--------|---------|--------|---------|------------|
 | main/ | main | [Date] | Active | Primary development | - |
 
+---
 
 ## Worktree Lifecycle
 
@@ -485,11 +708,11 @@ Git worktrees allow you to have multiple working directories from the same repos
 # From the main/ directory
 cd main
 
-# Create a worktree for a new feature branch (under worktrees/)
-git worktree add ../worktrees/feature-name -b feature/name
+# Create a worktree for a new feature branch
+git worktree add ../feature-name -b feature/name
 
 # Or for an existing branch
-git worktree add ../worktrees/feature-name existing-branch-name
+git worktree add ../feature-name existing-branch-name
 
 # List all worktrees
 git worktree list
@@ -497,12 +720,13 @@ git worktree list
 
 **After creation, update the table above** with the new worktree information.
 
+---
 
 ### Working in a Worktree
 
 ```bash
 # Navigate to the worktree
-cd ../worktrees/feature-name
+cd ../feature-name
 
 # Work normally - edit files, commit, push
 git add .
@@ -510,6 +734,7 @@ git commit -m "Your changes"
 git push origin feature/name
 ```
 
+---
 
 ### Updating This Registry
 
@@ -521,9 +746,10 @@ When you create or remove a worktree, **update the table above**:
 
 **Example entry**:
 ```
-| worktrees/feature-auth/ | feature/auth | 2025-11-07 | In Progress | OAuth2 login | #123, JIRA-456 |
+| feature-auth/ | feature/auth | 2025-11-07 | In Progress | OAuth2 login | #123, JIRA-456 |
 ```
 
+---
 
 ### Deleting a Worktree
 
@@ -532,7 +758,7 @@ When you create or remove a worktree, **update the table above**:
 cd main
 
 # When feature is merged and you're done with it
-git worktree remove ../worktrees/feature-name
+git worktree remove ../feature-name
 
 # Delete the remote branch if needed
 git push origin --delete feature/name
@@ -543,6 +769,7 @@ git worktree prune
 
 **After removal, update the registry** - mark as completed or remove the row.
 
+---
 
 ## Common Worktree Commands
 
@@ -550,28 +777,29 @@ git worktree prune
 # List all worktrees (shows path, branch, commit)
 git worktree list
 
-# Create a new worktree (always under worktrees/)
-git worktree add ../worktrees/<name> <branch>
+# Create a new worktree
+git worktree add <path> <branch>
 
 # Create worktree with new branch
-git worktree add ../worktrees/<name> -b <new-branch>
+git worktree add <path> -b <new-branch>
 
 # Remove a worktree
-git worktree remove ../worktrees/<name>
+git worktree remove <path>
 
 # Remove a worktree (force, even if dirty)
-git worktree remove --force ../worktrees/<name>
+git worktree remove --force <path>
 
 # Clean up stale worktree metadata
 git worktree prune
 
 # Lock a worktree (prevent automatic removal)
-git worktree lock ../worktrees/<name>
+git worktree lock <path>
 
 # Unlock a worktree
-git worktree unlock ../worktrees/<name>
+git worktree unlock <path>
 ```
 
+---
 
 ## Team Collaboration
 
@@ -593,8 +821,8 @@ git worktree unlock ../worktrees/<name>
 **Developer A creates a worktree and shares the branch**:
 ```bash
 cd ~/projects/foo/main
-git worktree add ../worktrees/feature-x -b feature/x
-cd ../worktrees/feature-x
+git worktree add ../feature-x -b feature/x
+cd ../feature-x
 # ... work, commit ...
 git push -u origin feature/x
 
@@ -606,8 +834,8 @@ git push -u origin feature/x
 ```bash
 cd ~/dev/foo/main  # Different local path, same repo
 git fetch origin
-git worktree add ../worktrees/feature-x feature/x  # Creates their own worktree
-cd ../worktrees/feature-x
+git worktree add ../feature-x feature/x  # Creates their own worktree
+cd ../feature-x
 # ... collaborate on same branch ...
 ```
 
@@ -616,6 +844,7 @@ cd ../worktrees/feature-x
 - Have different **worktree directories** (local paths)
 - Push/pull to collaborate (standard git workflow)
 
+---
 
 ## Troubleshooting
 
@@ -630,6 +859,7 @@ cd ../worktrees/feature-x
 
 **Why**: Git prevents the same branch from being checked out in multiple worktrees to avoid conflicts.
 
+---
 
 ### "Cannot remove working tree"
 
@@ -648,6 +878,7 @@ git worktree remove <worktree-path>
 git worktree remove --force <worktree-path>
 ```
 
+---
 
 ### "Worktree is locked"
 
@@ -659,6 +890,7 @@ git worktree unlock <path>
 git worktree remove <path>
 ```
 
+---
 
 ### Can't find my code after restructuring
 
@@ -673,12 +905,14 @@ cd main
 # Update any scripts with hardcoded paths
 ```
 
+---
 
 ## Additional Resources
 
 - **[Git Worktree Documentation](https://git-scm.com/docs/git-worktree)** - Official git docs
 - **[Git Worktree Tutorial](https://www.gitkraken.com/learn/git/git-worktree)** - Visual guide
 
+---
 
 *This registry is version-controlled. Update it whenever you create or remove worktrees to keep the team informed.*
 ```
@@ -694,8 +928,9 @@ cd main
    Location: main/WORKTREES.md
 ```
 
+---
 
-### Step 6: Commit the Registry to Git
+### Step 7: Commit the Registry to Git
 
 **Objective**: Add and commit the WORKTREES.md file so it's tracked in version control and shared with the team.
 
@@ -711,7 +946,6 @@ git add WORKTREES.md
 git commit -m "Add git worktree support and WORKTREES.md registry
 
 - Restructured directory to support git worktrees
-- Created worktrees/ directory for all worktrees
 - Created WORKTREES.md to track active worktrees
 - Documented worktree workflow for team collaboration
 
@@ -727,8 +961,9 @@ constantly switching branches or stashing changes."
    Commit: abc1234 "Add git worktree support..."
 ```
 
+---
 
-### Step 7: Final Verification
+### Step 8: Final Verification
 
 **Objective**: Verify everything works correctly.
 
@@ -739,14 +974,22 @@ constantly switching branches or stashing changes."
    # From parent directory
    cd ..
    ls
-   # Should show: main/ and worktrees/
+   # Should show: .git (file), .gitignore (optional), main/
 
    cd main
    ls -la  # or 'dir' on Windows
    # Should show: .git/, src/, README.md, WORKTREES.md, etc.
    ```
 
-2. **✅ Git repository works**
+2. **✅ Git works from parent directory**
+   ```
+   # From parent directory (above main/)
+   cd ..
+   git status
+   # Should show: clean working tree (NOT "deleted" files)
+   ```
+
+3. **✅ Git works from main/ directory**
    ```
    cd main
    git status
@@ -754,23 +997,23 @@ constantly switching branches or stashing changes."
    # Should work normally
    ```
 
-3. **✅ Can create a test worktree**
+4. **✅ Can create a test worktree**
    ```
    cd main
-   git worktree add ../worktrees/test-worktree -b test/worktree-verification
+   git worktree add ../test-worktree -b test/worktree-verification
    git worktree list
-   # Should show both main/ and worktrees/test-worktree/
+   # Should show both main/ and test-worktree/
    ```
 
-4. **✅ Can remove the test worktree**
+5. **✅ Can remove the test worktree**
    ```
-   git worktree remove ../worktrees/test-worktree
+   git worktree remove ../test-worktree
    git branch -d test/worktree-verification
    git worktree list
    # Should show only main/
    ```
 
-5. **✅ Remote connection still works**
+6. **✅ Remote connection still works**
    ```
    git remote -v
    git fetch origin
@@ -798,6 +1041,7 @@ Next steps:
 See troubleshooting section below or rollback the changes.
 ```
 
+---
 
 ## Example: Before and After
 
@@ -818,33 +1062,33 @@ See troubleshooting section below or rollback the changes.
 
 **To work on a feature**: `git checkout -b feature/auth` (switches whole directory)
 
+---
 
 ### After Restructuring
 
 ```
 ~/projects/foo/
-├── main/                          # Main worktree
-│   ├── .git/                      # Git repository (same location, just moved)
-│   ├── .gitignore
-│   ├── src/
-│   │   ├── index.js
-│   │   └── utils.js
-│   ├── tests/
-│   ├── README.md
-│   ├── package.json
-│   ├── .env
-│   └── WORKTREES.md              # Registry file (NEW)
-│
-└── worktrees/                     # All worktrees go here
+└── main/                          # Main worktree
+    ├── .git/                      # Git repository (same location, just moved)
+    ├── .gitignore
+    ├── src/
+    │   ├── index.js
+    │   └── utils.js
+    ├── tests/
+    ├── README.md
+    ├── package.json
+    ├── .env
+    └── WORKTREES.md              # Registry file (NEW)
 ```
 
 **To work on a feature**:
 ```bash
 cd main
-git worktree add ../worktrees/feature-auth -b feature/auth
-cd ../worktrees/feature-auth  # Separate directory, isolated work
+git worktree add ../feature-auth -b feature/auth
+cd ../feature-auth  # Separate directory, isolated work
 ```
 
+---
 
 ### With Multiple Worktrees Created
 
@@ -855,25 +1099,25 @@ cd ../worktrees/feature-auth  # Separate directory, isolated work
 │   ├── WORKTREES.md
 │   └── [all project files]
 │
-└── worktrees/                     # All worktrees live here
-    ├── feature-auth/              # Feature branch (separate worktree)
-    │   ├── .git → points to main/.git/worktrees/feature-auth
-    │   └── [project files on feature/auth branch]
-    │
-    ├── bugfix-ui/                 # Bugfix branch (separate worktree)
-    │   └── [project files on bugfix/ui branch]
-    │
-    └── review-pr-123/             # Temporary worktree for PR review
-        └── [project files on pr-123 branch]
+├── feature-auth/                  # Feature branch (separate worktree)
+│   ├── .git → points to main/.git/worktrees/feature-auth
+│   └── [project files on feature/auth branch]
+│
+├── bugfix-ui/                     # Bugfix branch (separate worktree)
+│   └── [project files on bugfix/ui branch]
+│
+└── review-pr-123/                 # Temporary worktree for PR review
+    └── [project files on pr-123 branch]
 ```
 
 **Parallel workflow enabled**:
-- Terminal 1: `cd ~/projects/foo/worktrees/feature-auth` → work on authentication
-- Terminal 2: `cd ~/projects/foo/worktrees/bugfix-ui` → fix urgent bug
-- Terminal 3: `cd ~/projects/foo/worktrees/review-pr-123` → review teammate's code
+- Terminal 1: `cd ~/projects/foo/feature-auth` → work on authentication
+- Terminal 2: `cd ~/projects/foo/bugfix-ui` → fix urgent bug
+- Terminal 3: `cd ~/projects/foo/review-pr-123` → review teammate's code
 
 No branch switching. No stashing. No context loss.
 
+---
 
 ## Troubleshooting
 
@@ -907,6 +1151,7 @@ Get-ChildItem main -Force    # PowerShell
 2. **If .git/ is missing from main/**: Check if it's still in parent directory
 3. **If everything is in wrong place**: Follow rollback procedure below
 
+---
 
 ### Issue: "Git doesn't work in main/ directory"
 
@@ -926,6 +1171,7 @@ git rev-parse --git-dir  # Should show .git
 - If `.git/` is in parent, move it manually: `mv ../.git .` (Unix) or `move ..\.git .` (Windows)
 - If `.git/` is corrupted, restore from git tag: `git checkout before-worktree-restructure-XXXXXX`
 
+---
 
 ### Issue: "IDE/tools can't find project files"
 
@@ -947,6 +1193,7 @@ git rev-parse --git-dir  # Should show .git
    - Aliases pointing to project directory
    - Environment variables with paths
 
+---
 
 ### Issue: "Can't push changes after restructuring"
 
@@ -975,6 +1222,7 @@ git remote add origin <your-repo-url>
 git push -u origin main
 ```
 
+---
 
 ## Rollback Procedure
 
@@ -995,6 +1243,7 @@ git checkout -b restored-state
 
 **Note**: This restores **git state** (commits, branches) but may not restore directory structure if files were physically moved. Use Option 2 for directory restore.
 
+---
 
 ### Option 2: Manual Directory Rollback
 
@@ -1016,9 +1265,8 @@ Get-ChildItem main -Force | Move-Item -Destination .
 for /r main %f in (*) do move "%f" .
 for /r main %d in (.*) do move "%d" .
 
-# Remove now-empty directories
-rmdir main       # Unix/Mac/Windows
-rmdir worktrees  # Unix/Mac/Windows
+# Remove now-empty main/ directory
+rmdir main    # Unix/Mac/Windows
 ```
 
 **Verify**:
@@ -1035,6 +1283,7 @@ git status    # Should work from current directory
    Repository files restored to: <current-directory>
 ```
 
+---
 
 ### Option 3: Restore from Backup (If you created one per Safety Check #2)
 
@@ -1044,6 +1293,7 @@ git status    # Should work from current directory
 2. Restore from backup (cloud sync, Time Machine, manual copy)
 3. Verify git still works: `git status`
 
+---
 
 ## Next Steps
 
@@ -1058,6 +1308,7 @@ git push origin main
 
 This makes the `WORKTREES.md` registry available to your team and saves your restructuring work.
 
+---
 
 ### 2. 📚 Familiarize Yourself with the Registry
 
@@ -1070,17 +1321,18 @@ Get-Content main/WORKTREES.md    # Windows PowerShell
 
 Understand the worktree workflow before creating your first worktree.
 
+---
 
 ### 3. 🚀 Create Your First Feature Worktree
 
 ```bash
 cd main
 
-# Create a worktree for a new feature (under worktrees/)
-git worktree add ../worktrees/my-feature -b feature/my-awesome-feature
+# Create a worktree for a new feature
+git worktree add ../my-feature -b feature/my-awesome-feature
 
 # Navigate to the new worktree
-cd ../worktrees/my-feature
+cd ../my-feature
 
 # Start coding!
 # Edit files, commit, push normally
@@ -1088,6 +1340,7 @@ cd ../worktrees/my-feature
 
 **Don't forget**: Update `WORKTREES.md` with your new worktree information.
 
+---
 
 ### 4. 👥 Update Your Team (if applicable)
 
@@ -1099,7 +1352,6 @@ cd ../worktrees/my-feature
 
    The repository structure has changed:
    - All code is now in the main/ subdirectory
-   - All worktrees go under the worktrees/ subdirectory
    - We can now use git worktrees for parallel development
    - See WORKTREES.md for documentation
 
@@ -1113,6 +1365,7 @@ cd ../worktrees/my-feature
 
 3. **Help teammates** update their local setups
 
+---
 
 ### 5. 🔧 Update Scripts and Configs
 
@@ -1145,6 +1398,7 @@ cd ../worktrees/my-feature
 }
 ```
 
+---
 
 ## Notes for Team Collaboration
 
@@ -1170,16 +1424,17 @@ cd ../worktrees/my-feature
    - CI/CD sees branches, not worktrees
    - Merge workflows are unchanged
 
+---
 
 ### Team Workflow Example
 
 **Developer Alice creates a feature worktree**:
 ```bash
 cd ~/projects/foo/main
-git worktree add ../worktrees/feature-auth -b feature/auth
+git worktree add ../feature-auth -b feature/auth
 
 # Work on feature
-cd ../worktrees/feature-auth
+cd ../feature-auth
 # ... edit files, commit ...
 git push -u origin feature/auth
 
@@ -1201,10 +1456,10 @@ git fetch origin
 git pull origin main  # Gets updated WORKTREES.md
 
 # Create his own worktree for the same branch
-git worktree add ../worktrees/feature-auth feature/auth
+git worktree add ../feature-auth feature/auth
 
 # Work collaboratively
-cd ../worktrees/feature-auth
+cd ../feature-auth
 # ... edit files, commit ...
 git pull origin feature/auth  # Get Alice's changes
 git push origin feature/auth  # Share his changes
@@ -1212,9 +1467,10 @@ git push origin feature/auth  # Share his changes
 
 **Both Alice and Bob**:
 - Work on the same **branch** (`feature/auth` - shared via git)
-- Have different **worktree directories** (Alice: `~/projects/foo/worktrees/feature-auth`, Bob: `~/dev/foo/worktrees/feature-auth`)
+- Have different **worktree directories** (Alice: `~/projects/foo/feature-auth`, Bob: `~/dev/foo/feature-auth`)
 - Collaborate using standard git push/pull
 
+---
 
 ### Handling Shared Registry Updates
 
@@ -1222,7 +1478,7 @@ git push origin feature/auth  # Share his changes
 
 When creating a worktree, update WORKTREES.md immediately:
 ```bash
-git worktree add ../worktrees/feature-x -b feature/x
+git worktree add ../feature-x -b feature/x
 
 # Immediately update registry
 cd ../main
@@ -1232,13 +1488,13 @@ git commit -m "Registry: Add feature-x worktree"
 git push origin main
 
 # Go back to work
-cd ../worktrees/feature-x
+cd ../feature-x
 ```
 
 When removing a worktree, mark it completed:
 ```bash
 cd main
-git worktree remove ../worktrees/feature-x
+git worktree remove ../feature-x
 
 # Update registry
 # Edit WORKTREES.md to mark feature-x as "Merged" or remove row
@@ -1249,6 +1505,7 @@ git push origin main
 
 This keeps the team informed about active work.
 
+---
 
 ## Platform-Specific Notes
 
@@ -1272,6 +1529,7 @@ This keeps the team informed about active work.
   - `Main/` and `main/` are different directories
   - Match case exactly in commands
 
+---
 
 ## Additional Resources
 
@@ -1279,6 +1537,7 @@ This keeps the team informed about active work.
 - **[Git Worktree Tutorial](https://www.gitkraken.com/learn/git/git-worktree)** - Visual walkthrough
 - **[Git Worktree Workflow Guide](https://spin.atomicobject.com/2016/06/26/parallelize-development-git-worktrees/)** - Real-world usage
 
+---
 
 **🎯 Dossier: Add Git Worktree Support**
 
