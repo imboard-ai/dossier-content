@@ -11,7 +11,7 @@
   "dossier_schema_version": "1.0.0",
   "status": "Draft",
   "title": "Agent Discovery Scaffold",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "category": [
     "documentation",
     "development"
@@ -150,6 +150,8 @@ Action: Identify the project's main capabilities
 
 Action: Find modules that could be extracted or consumed by external agents
 
+**IMPORTANT: Discover module paths from code, not from assumptions.** Do not rely on directory names or hints from existing docs — glob and grep for actual source files, read their exports, and verify paths exist before cataloging them.
+
 For each significant source directory/file, assess:
 
 1. **Self-containment**: Does it have minimal internal dependencies?
@@ -162,10 +164,17 @@ For each significant source directory/file, assess:
 - **Medium** (2/4): Useful but needs some adaptation
 - **Low** (1/4): Tightly coupled, project-specific
 
+**It is normal and expected for domain-specific projects to have zero High-reusability modules.** Do not inflate scores to fill a quota. A project where everything is Medium or Low is an honest assessment, not a failure.
+
+**Export style matters for reusability:**
+- Modules with **programmatic exports** (named functions/classes) are more reusable than CLI-only scripts
+- For CLI-only modules (no programmatic exports), note this explicitly and suggest whether wrapping key logic in exported functions would meaningfully increase reusability
+- A module that is only callable via `node script.js --flag` is harder for an external agent to integrate than one that exports `doThing(options)`
+
 For each reusable module, extract:
-- Module path and name
+- Module path and name (verified to exist on disk)
 - What it does (one sentence)
-- Key exports (function signatures)
+- Key exports (function signatures) — or note "CLI-only" if no programmatic exports
 - Dependencies (internal and external)
 - Configuration options
 - Example usage (from existing code or tests)
@@ -224,13 +233,15 @@ Focus on WHAT it produces, not HOW it works internally.}
 
 ## Reusable Modules
 
-{Only modules scored Medium or High reusability}
+{Only modules scored Medium or High reusability. It is normal for domain-specific projects to have no High-rated modules.}
+{Include Low-rated modules only in the module catalog, not here.}
 
 ### {module_name} — {reusability_score}
 - **Path**: `{relative/path}`
 - **What**: {one sentence}
-- **Key exports**: `{function1}`, `{function2}`
+- **Key exports**: `{function1}`, `{function2}` {or "CLI-only (no programmatic exports)"}
 - **Dependencies**: {external deps only}
+- **Limitation**: {one sentence on what would need changing for reuse}
 - **Usage example**:
   ```{language}
   {minimal usage example}
@@ -264,20 +275,23 @@ Focus on WHAT it produces, not HOW it works internally.}
 
 Action: Create per-module documentation in `docs/modules/`
 
-For each Medium/High reusability module, create `docs/modules/{module-name}.md`:
+For each Medium/High reusability module, create `docs/modules/{module-name}.md`.
+Also create docs for Low-rated modules — they belong in the catalog for reference, just not in AGENTS.md's summary.
 
 ```markdown
 # {Module Name}
 
 > {one-line description}
 
-## Reusability: {High/Medium}
+## Reusability: {High/Medium/Low}
 
 ## Interface
 
 ### Exports
 
-{List each export with signature and description}
+{List each export with signature and description.
+If CLI-only: note "No programmatic exports — invoked via CLI only" and list the CLI flags/args instead.
+Suggest whether wrapping key logic as exports would meaningfully increase reusability.}
 
 ### Configuration
 
@@ -292,16 +306,18 @@ For each Medium/High reusability module, create `docs/modules/{module-name}.md`:
 ## Usage Example
 
 ```{language}
-{Copy-pasteable example}
+{Copy-pasteable example — import-based if exports exist, CLI invocation if CLI-only}
 ```
 
-## Extraction Guide
+## What Would Need Changing for Reuse
 
-{If someone wanted to use this module standalone, what would they need to do?}
+{Concrete list of what an external consumer would need to adapt.
+Be specific: "replace HUB_PAGES constant with your own hub definitions" not "configuration changes needed".}
 
-1. Copy `{files}`
-2. Install deps: `{command}`
-3. {Any adaptation needed}
+1. {Specific thing to change and why}
+2. {Specific thing to change and why}
+3. {Any files to copy}
+4. {Dependencies to install}
 ```
 
 Create `docs/modules/README.md` as an index:
