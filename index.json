@@ -12,7 +12,7 @@
     {
       "name": "imboard-ai/agent-discovery-scaffold",
       "title": "Agent Discovery Scaffold",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "path": "imboard-ai/agent-discovery-scaffold.ds.md",
       "description": "Analyze a project and generate structured entry-point documentation (AGENTS.md + module catalog) so external AI agents can understand capabilities without full codebase exploration",
       "category": [
