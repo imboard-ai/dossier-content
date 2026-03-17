@@ -44,6 +44,27 @@
       ]
     },
     {
+      "name": "imboard-ai/agent-discovery-skill",
+      "title": "Agent Discovery Scaffold",
+      "version": "1.0.0",
+      "path": "imboard-ai/agent-discovery-skill.ds.md",
+      "description": "Generate AGENTS.md and module catalog so external AI agents can discover project capabilities without full exploration. Use when user says 'make project discoverable', 'agent discovery', 'generate AGENTS.md', 'document for agents', 'create project manifest'.",
+      "category": [
+        "skills"
+      ],
+      "tags": [
+        "agent-discovery",
+        "documentation",
+        "agents-md",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/full-cycle-issue",
       "title": "Full Cycle Issue Workflow",
       "version": "2.6.0",
