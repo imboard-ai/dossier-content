@@ -10,6 +10,40 @@
       "path": "getting-started/hello.ds.md"
     },
     {
+      "name": "imboard-ai/agent-discovery-scaffold",
+      "title": "Agent Discovery Scaffold",
+      "version": "1.0.0",
+      "path": "imboard-ai/agent-discovery-scaffold.ds.md",
+      "description": "Analyze a project and generate structured entry-point documentation (AGENTS.md + module catalog) so external AI agents can understand capabilities without full codebase exploration",
+      "category": [
+        "documentation",
+        "development"
+      ],
+      "tags": [
+        "agent-discovery",
+        "documentation",
+        "agents-md",
+        "module-catalog",
+        "onboarding",
+        "reusability"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "tools_required": [
+        {
+          "name": "node",
+          "check_command": "node --version"
+        },
+        {
+          "name": "git",
+          "check_command": "git --version"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/full-cycle-issue",
       "title": "Full Cycle Issue Workflow",
       "version": "2.6.0",
