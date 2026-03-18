@@ -1,11 +1,10 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
-  "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "2.6.0",
-  "status": "Stable",
-  "last_updated": "2026-03-10",
+  "version": "2.7.0",
+  "status": "Draft",
+  "last_updated": "2026-03-18",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
   "category": [
     "development"
@@ -20,13 +19,13 @@
     "merge"
   ],
   "risk_level": "medium",
-  "requires_approval": false,
   "risk_factors": [
     "modifies_files",
     "network_access",
     "creates_pull_request",
     "merges_code"
   ],
+  "requires_approval": false,
   "destructive_operations": [
     "Creates new git branch",
     "Creates new git worktree",
@@ -39,9 +38,10 @@
       "name": "Yuval Dimnik"
     }
   ],
+  "name": "full-cycle-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "df6227cd529437e6aac88859d75bc915ce81fcd17ab8467297ded0a2a75a26be"
+    "hash": "bdaa89e82f68972351c8f7f94d65fc1cfcbe38356d8efef7273e60dd987df0da"
   }
 }
 ---
@@ -71,9 +71,47 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
 
 ## Actions to Perform
 
-### Phase 1: Setup
+### Phase 0: Self-Check (Quick Gate ~30s)
+
+Lightweight safety gate before committing to the full workflow. No codebase exploration — just check issue metadata.
 
 1. Extract the issue number from user input
+2. Fetch issue metadata:
+   ```bash
+   gh issue view <number> --json state,labels,body
+   ```
+3. **Hard blocks** — if ANY of these are true, abort immediately with a comment on the issue:
+   - **Issue is closed**: `state == "CLOSED"`
+   - **Has label `decomposed`**: Issue was already decomposed into sub-issues by triage
+   - **Has label `needs-clarification`**: Issue was triaged as not ready
+   - **Has label `epic`**: Issue is an epic, not directly implementable
+   - **Has open dependency**: Body contains `Depends on #N` (case-insensitive) where issue #N is still open:
+     ```bash
+     # For each "Depends on #N" found in the body:
+     gh issue view <N> --json state --jq '.state'
+     ```
+     If the referenced issue state is `OPEN`, it's a hard block.
+
+   **On hard block**: Post a comment and stop:
+   ```bash
+   gh issue comment <number> --body "**Full-cycle aborted**: <reason>. Resolve the blocker and re-run."
+   ```
+   Do NOT proceed to Phase 1.
+
+4. **Soft warnings** — count how many of these are true:
+   - Body is empty or less than 50 characters
+   - Body contains research keywords: `evaluate`, `research`, `explore`, `investigate`, `compare` (case-insensitive)
+   - Issue has no labels at all
+
+   If **2 or more** soft warnings: log a warning line but continue:
+   ```
+   ⚠ Phase 0: 2 soft warnings (short body, no labels) — proceeding with caution
+   ```
+   If 0-1 soft warnings: proceed silently.
+
+### Phase 1: Setup
+
+1. Extract the issue number from user input (already done in Phase 0)
 2. **Pre-flight: clean stale worktrees.** Previous runs may have left zombie worktrees that lock branches (especially `main`). This causes "branch is checked out in another worktree" errors.
    ```bash
    git worktree list
@@ -102,7 +140,7 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    # Post agent context comment
    gh issue comment <number> --body "$(cat <<'EOF'
    **Agent pickup** — work started.
-   - **Agent**: Claude (full-cycle-issue workflow v2.4.0)
+   - **Agent**: Claude (full-cycle-issue workflow v2.7.0)
    - **Branch**: (will update after setup)
    - **Started**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
    EOF
@@ -111,13 +149,14 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
 4. **Record the original working directory** — you will return here after merge
 5. Run the setup workflow:
    ```bash
-   ai-dossier run imboard-ai/development/git/setup-issue-workflow
+   ai-dossier run imboard-ai/git/setup-issue-workflow
    ```
 6. Provide the issue number when prompted
-7. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated.
+7. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated. The setup workflow will automatically try the worktree pool first for instant setup; if no pool is available it falls back to cold worktree creation.
 8. Note the worktree path and branch name from the setup output
-9. `cd` into the worktree directory — **all subsequent work happens here**
-10. **Verify you are in a worktree.** This is a hard gate — do NOT proceed without passing it.
+9. **Record whether the worktree was claimed from the pool** — check the setup output for "Claimed pre-warmed worktree from pool". You will need this in Phase 9 to decide whether to return the worktree to the pool.
+10. `cd` into the worktree directory — **all subsequent work happens here**
+11. **Verify you are in a worktree.** This is a hard gate — do NOT proceed without passing it.
     ```bash
     pwd | grep -q "worktree" && echo "OK: in worktree" || echo "FAIL: not in worktree"
     ```
@@ -126,18 +165,19 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
     - Comment on the issue: `gh issue comment <number> --body "Agent aborted: not in a worktree. pwd=$(pwd). Needs investigation."`
     - Remove the `in-progress` label: `gh issue edit <number> --remove-label "in-progress"`
     - Exit. Do not attempt to work in the current directory as a fallback.
-11. Update the issue comment with the branch name:
+12. Update the issue comment with the branch name:
     ```bash
     gh issue comment <number> --body "Branch: \`<branch-name>\` | Worktree: \`<worktree-path>\`"
     ```
 
 ### Phase 2: Understand & Plan
 
-1. Read issue details: `gh issue view <number> --json title,labels,body,assignees`
-2. Read PLANNING.md created by setup
-3. Explore relevant code
-4. If clear enough, proceed immediately
-5. If genuinely ambiguous, ask ONE focused question then proceed
+1. Read issue details: `gh issue view <number> --json title,labels,body,assignees,comments`
+2. Read the issue body AND all comments — comments often contain clarifications, updated requirements, or design decisions added after the issue was filed. Treat them as additional context with the same weight as the body.
+3. Read PLANNING.md created by setup
+4. Explore relevant code
+5. If clear enough, proceed immediately
+6. If genuinely ambiguous, ask ONE focused question then proceed
 
 ### Phase 3: Implement
 
@@ -160,26 +200,11 @@ Do NOT ask about: file names, branch names, commit messages, PR descriptions, wh
    - Follow existing test patterns and conventions in the repo
    - Place tests where the project convention expects them (e.g., `__tests__/`, `*.test.ts`, `*.spec.ts`)
 4. **Run the full test suite** to catch regressions (e.g., `npm test`)
-5. **If tests fail**, check whether they are **pre-existing failures** using this cascade:
-
-   **Step A — Heuristic check (zero cost):** Get the list of changed files and check whether the failing test file or the source files it imports were modified in your branch:
+5. **If tests fail**, check whether they are **pre-existing failures** by running the same tests on the base branch:
    ```bash
-   git diff --name-only origin/main..HEAD
+   git stash && git checkout main && npm test 2>&1 | tail -5 && git checkout - && git stash pop
    ```
-   If neither the failing test file nor any of its direct imports appear in the diff, the failure is pre-existing — ignore it and proceed.
-
-   **Step B — Baseline test in temp worktree (if heuristic is inconclusive):** If the failing test or its imports *were* in your diff, verify against the base branch using an isolated worktree. Do NOT use `git stash && git checkout main` — that fails when `main` is checked out in another worktree (which is always the case in a worktree-based workflow).
-   ```bash
-   git fetch origin main
-   tmp=$(mktemp -d)
-   git worktree add --detach "$tmp" origin/main
-   ln -s "$(pwd)/node_modules" "$tmp/node_modules"
-   (cd "$tmp" && npm test -- --testPathPattern "<failing-test>" 2>&1 | tail -20); baseline_exit=$?
-   git worktree remove "$tmp"
-   ```
-   If the same test fails on `origin/main` (`baseline_exit != 0`), it is pre-existing — ignore it and proceed. If the symlinked `node_modules` causes issues (e.g., deps changed between branches), fall back to running `npm install` in the temp worktree.
-
-   Only fix failures caused by your changes (max 2 attempts).
+   If the same tests fail on main, they are pre-existing — ignore them and proceed. Only fix failures caused by your changes (max 2 attempts).
 
 ### Phase 5: Review & Fix
 
@@ -411,15 +436,21 @@ three-part test (user-facing behavior change + can't verify with tests + needs p
 **Prerequisite: Phase 8 (Merge) must be complete.** Do not tear down the worktree before the PR is merged.
 
 1. `cd` back to the **original working directory** (recorded in Phase 1)
-2. Remove the worktree:
+2. **Try to return the worktree to the pool** (if the worktree was claimed from the pool in Phase 1, Step 9):
+   ```bash
+   npx worktree-pool return --path <worktree-path> 2>/dev/null
+   ```
+   - If the command succeeds: the worktree is recycled back to the pool for reuse. Skip steps 3-5.
+   - If the command fails (pool not installed, worktree not from pool, or return error): continue with manual cleanup below.
+3. Remove the worktree:
    ```bash
    git worktree remove <worktree-path>
    ```
-3. If the local branch still exists, delete it:
+4. If the local branch still exists, delete it:
    ```bash
    git branch -d <branch-name> 2>/dev/null || git branch -D <branch-name>
    ```
-4. Clean up the remote branch if it still exists:
+5. Clean up the remote branch if it still exists:
    ```bash
    git push origin --delete <branch-name> 2>/dev/null || true
    ```
@@ -458,6 +489,12 @@ Print a single consolidated report. This is the **only** summary the user sees �
 Worktree removed. Back in original directory.
 ```
 
+If pool return was used instead of worktree removal:
+```
+### Cleanup
+Worktree returned to pool for reuse. Back in original directory.
+```
+
 If there were no review findings at all, replace the Review Results section with:
 ```
 ### Review Results
@@ -466,8 +503,9 @@ All 5 reviews passed clean — no findings.
 
 ## Validation
 
+- [ ] Phase 0 self-check passed (no hard blocks)
 - [ ] Issue fetched and understood
-- [ ] Branch and worktree created
+- [ ] Branch and worktree created (via pool claim or cold creation)
 - [ ] Implementation addresses requirements
 - [ ] Tests exist and all pass (created if missing)
 - [ ] 5 parallel reviews completed (before commit)
@@ -477,7 +515,7 @@ All 5 reviews passed clean — no findings.
 - [ ] PR created linking to issue
 - [ ] Escalated findings consolidated per review category (typically 0 issues)
 - [ ] PR merged
-- [ ] Worktree removed
+- [ ] Worktree returned to pool or removed
 - [ ] Returned to original working directory
 
 ## Troubleshooting
@@ -490,3 +528,4 @@ All 5 reviews passed clean — no findings.
 **`--delete-branch` fails in worktree**: This is expected — do not use `--delete-branch` with `gh pr merge` when working from a worktree. Clean up branches in Phase 9 instead.
 **Pre-existing test failures**: Run tests on the base branch to confirm. Only fix failures caused by your changes.
 **Review fix breaks tests**: Revert the specific fix and reclassify as Escalate. Do not let review fixes destabilize the build.
+**Pool return fails**: Not an error — the worktree may not have been from the pool. Fall back to manual `git worktree remove`.
