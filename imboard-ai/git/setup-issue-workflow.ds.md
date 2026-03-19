@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
   "authors": [
@@ -13,7 +13,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "37bd7561312a5ac726e28afed51694de9eeec38da4beca7acd52b68685a9a96d"
+    "hash": "62a563f3c15a1318cc5b3bd2b770cb84990e48872d3427646fdc6f03aead8365"
   },
   "category": [
     "development"
@@ -119,6 +119,19 @@ Extract:
 - `title` - Issue title for branch naming
 - `labels` - Check for "bug" or "feature" labels
 - `body` - Issue description for PLANNING.md
+- `base_branch` - Extract from body (see below)
+
+**Extract base branch** from the issue body. Look for `merges into \`<branch-name>\`` (case-insensitive):
+```bash
+# Example: "**Branch**: `migrate/setup` → merges into `epic/migrate-shadcn`"
+# Extract: epic/migrate-shadcn
+BASE_BRANCH=$(gh issue view <ISSUE_NUMBER> --json body --jq '.body' | grep -oiP 'merges into `\K[^`]+' | head -1)
+if [ -z "$BASE_BRANCH" ]; then
+  BASE_BRANCH="main"
+fi
+echo "Base branch: $BASE_BRANCH"
+```
+Store `BASE_BRANCH` for use in Steps 5.5, 7, and 8. If not found in the issue body, defaults to `main`.
 
 ### Step 3: Determine Branch Type
 
@@ -235,8 +248,9 @@ Before creating a cold worktree, check if a pre-warmed worktree pool is availabl
    ```bash
    cd "$REPO_ROOT/worktrees/<selected-worktree>"
    git fetch origin
-   git checkout -b <new-branch-name> origin/main
+   git checkout -b <new-branch-name> origin/$BASE_BRANCH
    ```
+   > `$BASE_BRANCH` was extracted in Step 2 (defaults to `main`).
 
 5. **Rename the worktree directory**:
    ```bash
@@ -308,18 +322,22 @@ Create the worktree in the `worktrees/` subdirectory **INSIDE the repository roo
 **Skip this step if user chose option 2 (Repurpose) or if a pool worktree was claimed in Step 5.1.**
 
 **For New Worktree mode (option 1)**:
-Create the branch without checking it out (the worktree will handle checkout):
+Create the branch from the base branch without checking it out (the worktree will handle checkout):
 
 ```bash
-git branch <branch-name>
+git fetch origin $BASE_BRANCH
+git branch <branch-name> origin/$BASE_BRANCH
 ```
 
 **For Current directory or Custom path mode (options 3 or 4)**:
-Create and checkout the branch:
+Create and checkout the branch from the base branch:
 
 ```bash
-git checkout -b <branch-name>
+git fetch origin $BASE_BRANCH
+git checkout -b <branch-name> origin/$BASE_BRANCH
 ```
+
+> `$BASE_BRANCH` was extracted in Step 2 (defaults to `main`).
 
 Verify branch was created:
 ```bash
