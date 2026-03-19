@@ -3,9 +3,9 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "status": "Draft",
-  "last_updated": "2026-03-10",
+  "last_updated": "2026-03-19",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
   "category": [
     "development"
@@ -41,7 +41,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "d6d11d542b3d42c01b96b30fd781e193945e84fee363a7e92cab12f461798925"
+    "hash": "f4f0c91a93b5d290e193324fec98b740775693a6f4bdb844e50458c09222c635"
   }
 }
 ---
@@ -108,6 +108,18 @@ Lightweight safety gate before committing to the full workflow. No codebase expl
    ⚠ Phase 0: 2 soft warnings (short body, no labels) — proceeding with caution
    ```
    If 0-1 soft warnings: proceed silently.
+
+5. **Extract target branch** from the issue body. Look for `merges into \`<branch-name>\`` (case-insensitive).
+   ```bash
+   # Example: "**Branch**: `migrate/setup` → merges into `epic/migrate-shadcn`"
+   # Extract: epic/migrate-shadcn
+   TARGET_BRANCH=$(gh issue view <number> --json body --jq '.body' | grep -oiP 'merges into `\K[^`]+' | head -1)
+   if [ -z "$TARGET_BRANCH" ]; then
+     TARGET_BRANCH="main"
+   fi
+   echo "Target branch: $TARGET_BRANCH"
+   ```
+   Store `TARGET_BRANCH` for use in Phase 7 (PR creation). If not found in the issue body, defaults to `main`.
 
 ### Phase 1: Setup
 
@@ -341,7 +353,7 @@ Implementation and review fixes go together in one clean commit.
 ### Phase 7: Create PR
 
 ```bash
-gh pr create --title "<short title>" --body "$(cat <<'EOF'
+gh pr create --base "$TARGET_BRANCH" --title "<short title>" --body "$(cat <<'EOF'
 ## Summary
 <1-3 bullet points>
 
@@ -354,6 +366,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
+
+> **Note**: `$TARGET_BRANCH` was extracted in Phase 0 step 5. It defaults to `main` if the issue body doesn't specify a merge target.
 
 #### Create GH Issues for Escalated Findings
 
