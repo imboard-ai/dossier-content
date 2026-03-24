@@ -1,11 +1,10 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
-  "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "status": "Draft",
-  "last_updated": "2026-03-19",
+  "last_updated": "2026-03-18",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
   "category": [
     "development"
@@ -20,13 +19,13 @@
     "merge"
   ],
   "risk_level": "medium",
-  "requires_approval": false,
   "risk_factors": [
     "modifies_files",
     "network_access",
     "creates_pull_request",
     "merges_code"
   ],
+  "requires_approval": false,
   "destructive_operations": [
     "Creates new git branch",
     "Creates new git worktree",
@@ -39,9 +38,20 @@
       "name": "Yuval Dimnik"
     }
   ],
+  "name": "full-cycle-issue",
+  "inputs": {
+    "optional": [
+      {
+        "name": "warmup_dossier",
+        "description": "Which warm-worktree dossier to use for worktree warmup. Passed through to setup-issue-workflow. Override for project-specific warmup (e.g., imboard-ai/imboard/warm-worktree for pnpm+SSM).",
+        "type": "string",
+        "default": "imboard-ai/git/warm-worktree"
+      }
+    ]
+  },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "f4f0c91a93b5d290e193324fec98b740775693a6f4bdb844e50458c09222c635"
+    "hash": "fa17f48e230becc5e7591ae01b0c7a541df2752023e4f4b3657a9ebab42239ca"
   }
 }
 ---
@@ -109,18 +119,6 @@ Lightweight safety gate before committing to the full workflow. No codebase expl
    ```
    If 0-1 soft warnings: proceed silently.
 
-5. **Extract target branch** from the issue body. Look for `merges into \`<branch-name>\`` (case-insensitive).
-   ```bash
-   # Example: "**Branch**: `migrate/setup` → merges into `epic/migrate-shadcn`"
-   # Extract: epic/migrate-shadcn
-   TARGET_BRANCH=$(gh issue view <number> --json body --jq '.body' | grep -oiP 'merges into `\K[^`]+' | head -1)
-   if [ -z "$TARGET_BRANCH" ]; then
-     TARGET_BRANCH="main"
-   fi
-   echo "Target branch: $TARGET_BRANCH"
-   ```
-   Store `TARGET_BRANCH` for use in Phase 7 (PR creation). If not found in the issue body, defaults to `main`.
-
 ### Phase 1: Setup
 
 1. Extract the issue number from user input (already done in Phase 0)
@@ -152,7 +150,7 @@ Lightweight safety gate before committing to the full workflow. No codebase expl
    # Post agent context comment
    gh issue comment <number> --body "$(cat <<'EOF'
    **Agent pickup** — work started.
-   - **Agent**: Claude (full-cycle-issue workflow v2.6.0)
+   - **Agent**: Claude (full-cycle-issue workflow v2.7.0)
    - **Branch**: (will update after setup)
    - **Started**: $(date -u +%Y-%m-%dT%H:%M:%SZ)
    EOF
@@ -163,6 +161,7 @@ Lightweight safety gate before committing to the full workflow. No codebase expl
    ```bash
    ai-dossier run imboard-ai/git/setup-issue-workflow
    ```
+   If a `warmup_dossier` parameter was provided in context, pass it through — the setup workflow will use it for worktree warmup instead of the default.
 6. Provide the issue number when prompted
 7. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated. The setup workflow will automatically try the worktree pool first for instant setup; if no pool is available it falls back to cold worktree creation.
 8. Note the worktree path and branch name from the setup output
@@ -184,11 +183,12 @@ Lightweight safety gate before committing to the full workflow. No codebase expl
 
 ### Phase 2: Understand & Plan
 
-1. Read issue details: `gh issue view <number> --json title,labels,body,assignees`
-2. Read PLANNING.md created by setup
-3. Explore relevant code
-4. If clear enough, proceed immediately
-5. If genuinely ambiguous, ask ONE focused question then proceed
+1. Read issue details: `gh issue view <number> --json title,labels,body,assignees,comments`
+2. Read the issue body AND all comments — comments often contain clarifications, updated requirements, or design decisions added after the issue was filed. Treat them as additional context with the same weight as the body.
+3. Read PLANNING.md created by setup
+4. Explore relevant code
+5. If clear enough, proceed immediately
+6. If genuinely ambiguous, ask ONE focused question then proceed
 
 ### Phase 3: Implement
 
@@ -353,7 +353,7 @@ Implementation and review fixes go together in one clean commit.
 ### Phase 7: Create PR
 
 ```bash
-gh pr create --base "$TARGET_BRANCH" --title "<short title>" --body "$(cat <<'EOF'
+gh pr create --title "<short title>" --body "$(cat <<'EOF'
 ## Summary
 <1-3 bullet points>
 
@@ -366,8 +366,6 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
-
-> **Note**: `$TARGET_BRANCH` was extracted in Phase 0 step 5. It defaults to `main` if the issue body doesn't specify a merge target.
 
 #### Create GH Issues for Escalated Findings
 
