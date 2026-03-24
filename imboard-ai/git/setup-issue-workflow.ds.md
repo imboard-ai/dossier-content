@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
   "authors": [
@@ -13,11 +13,21 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "62a563f3c15a1318cc5b3bd2b770cb84990e48872d3427646fdc6f03aead8365"
+    "hash": "6857cac51cd0c90ae0608b9955d37a56c117a7b48578ab3f516d55f3d4d9b1e2"
   },
   "category": [
     "development"
-  ]
+  ],
+  "inputs": {
+    "optional": [
+      {
+        "name": "warmup_dossier",
+        "description": "Which warm-worktree dossier to run for worktree warmup. Override this to use a project-specific warmup (e.g., imboard-ai/imboard/warm-worktree for pnpm+SSM projects).",
+        "type": "string",
+        "default": "imboard-ai/git/warm-worktree"
+      }
+    ]
+  }
 }
 ---
 
@@ -383,10 +393,12 @@ mkdir -p <custom-path>
 
 > **⚠️ MANDATORY STEP**: For worktree mode, you MUST run this warmup workflow before proceeding to Step 9. DO NOT skip this step or proceed without completing the warmup. The worktree is NOT ready for development until this step completes.
 
-Run the warm-worktree workflow to prepare the development environment:
+Run the warm-worktree workflow to prepare the development environment.
+
+Use the `warmup_dossier` parameter if one was provided in context. Otherwise, default to `imboard-ai/git/warm-worktree`.
 
 ```bash
-ai-dossier run imboard-ai/git/warm-worktree
+ai-dossier run <warmup_dossier>
 ```
 
 When running the warmup workflow, you must provide:
@@ -581,7 +593,7 @@ Next steps:
 - [ ] `worktrees/` directory exists and is in `.gitignore`
 - [ ] Git worktree was created at `worktrees/<type>-<number>-<slug>`
 - [ ] **WARMUP-STATUS.md exists** in the worktree root
-- [ ] **Warmup workflow was executed** via `ai-dossier run imboard-ai/git/warm-worktree`
+- [ ] **Warmup workflow was executed** via `ai-dossier run <warmup_dossier>`
 - [ ] WARMUP-STATUS.md shows final status (COMPLETED or FAILED, not IN_PROGRESS)
 - [ ] .env files were copied from source to target worktree
 - [ ] Dependencies were installed
