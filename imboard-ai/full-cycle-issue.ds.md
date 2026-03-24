@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Full Cycle Issue Workflow",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "status": "Draft",
   "last_updated": "2026-03-18",
   "objective": "Take a GitHub issue from start to merged PR autonomously — setup, implement, test, commit, push, PR, parallel review, and merge with zero unnecessary interruptions",
@@ -39,9 +39,19 @@
     }
   ],
   "name": "full-cycle-issue",
+  "inputs": {
+    "optional": [
+      {
+        "name": "warmup_dossier",
+        "description": "Which warm-worktree dossier to use for worktree warmup. Passed through to setup-issue-workflow. Override for project-specific warmup (e.g., imboard-ai/imboard/warm-worktree for pnpm+SSM).",
+        "type": "string",
+        "default": "imboard-ai/git/warm-worktree"
+      }
+    ]
+  },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "bdaa89e82f68972351c8f7f94d65fc1cfcbe38356d8efef7273e60dd987df0da"
+    "hash": "fa17f48e230becc5e7591ae01b0c7a541df2752023e4f4b3657a9ebab42239ca"
   }
 }
 ---
@@ -151,6 +161,7 @@ Lightweight safety gate before committing to the full workflow. No codebase expl
    ```bash
    ai-dossier run imboard-ai/git/setup-issue-workflow
    ```
+   If a `warmup_dossier` parameter was provided in context, pass it through — the setup workflow will use it for worktree warmup instead of the default.
 6. Provide the issue number when prompted
 7. **When asked where to work, always choose option 1 (create a new git worktree)**. Do not use current directory or custom path — full-cycle must be isolated. The setup workflow will automatically try the worktree pool first for instant setup; if no pool is available it falls back to cold worktree creation.
 8. Note the worktree path and branch name from the setup output
