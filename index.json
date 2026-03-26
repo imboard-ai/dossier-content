@@ -800,7 +800,7 @@
     {
       "name": "imboard-ai/skills/guided-cycle-issue-skill",
       "title": "Guided Cycle Issue",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "path": "imboard-ai/skills/guided-cycle-issue-skill.ds.md",
       "description": "Collaborative issue workflow with plan review and optional visual review. Use when user says 'guided cycle', 'plan issue', 'lets discuss issue', 'work on issue with review', 'guided issue'",
       "category": [
