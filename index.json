@@ -369,6 +369,29 @@
       ]
     },
     {
+      "name": "imboard-ai/git/review-issue",
+      "title": "Review Issue — Parallel Code Review",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/review-issue.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "issue",
+        "workflow",
+        "git",
+        "github",
+        "review",
+        "security",
+        "code-quality"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/runbook-generator",
       "title": "Runbook & Ops Checklist Generator",
       "version": "1.0.0",
