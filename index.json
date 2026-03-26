@@ -283,6 +283,28 @@
       ]
     },
     {
+      "name": "imboard-ai/git/implement-issue",
+      "title": "Implement Issue — Code and Test",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/implement-issue.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "issue",
+        "workflow",
+        "git",
+        "github",
+        "implement",
+        "test"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/onboarding-friction-review",
       "title": "Onboarding Friction Assessment",
       "version": "1.0.0",
