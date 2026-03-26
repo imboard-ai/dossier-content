@@ -262,6 +262,27 @@
       ]
     },
     {
+      "name": "imboard-ai/git/gate-issue",
+      "title": "Gate Issue — Pre-Flight Safety Check",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/gate-issue.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "issue",
+        "workflow",
+        "git",
+        "github",
+        "gate"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/onboarding-friction-review",
       "title": "Onboarding Friction Assessment",
       "version": "1.0.0",
