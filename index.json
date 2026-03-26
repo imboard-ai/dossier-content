@@ -297,6 +297,28 @@
       ]
     },
     {
+      "name": "imboard-ai/git/plan-issue",
+      "title": "Plan Issue — Rich Planning Document",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/plan-issue.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "issue",
+        "workflow",
+        "git",
+        "github",
+        "plan",
+        "planning"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/project-exploration",
       "title": "Project Exploration",
       "version": "1.0.0",
