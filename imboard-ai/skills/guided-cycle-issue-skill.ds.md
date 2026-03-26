@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.1.0",
   "name": "guided-cycle-issue-skill",
   "title": "Guided Cycle Issue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "Draft",
   "objective": "Collaborative issue workflow: plan with user review, implement, optional visual review for FE changes, then autonomous ship and rich report",
   "description": "Collaborative issue workflow with plan review and optional visual review. Use when user says 'guided cycle', 'plan issue', 'lets discuss issue', 'work on issue with review', 'guided issue'",
@@ -32,6 +32,20 @@
 # Guided Cycle Issue
 
 Collaborative issue workflow with human checkpoints. Unlike full-cycle (fire-and-forget), this workflow pauses for plan review and optional visual review before shipping.
+
+## Routing — Which Issue Workflow?
+
+If the user's intent is ambiguous (e.g. "work on issue 42", "fix issue 42", "issue 42"), present the three options briefly:
+
+| Command | Behavior |
+|---|---|
+| **guided cycle issue 42** | Plan together → implement → [visual review if FE] → ship → rich report |
+| **full cycle issue 42** | Fire-and-forget. Autonomous start-to-merge, no stops. |
+| **start issue 42** | Setup + plan only, then you take over manually. |
+
+If the user says "what issue workflows do I have?" or "help with issue workflows", run: `ai-dossier run imboard-ai/git/issue-workflows-guide` and present the full catalog.
+
+Only route if the user is unclear. If they said a specific trigger phrase, skip routing and run the matching skill directly.
 
 ## Project Parameters
 
