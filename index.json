@@ -305,6 +305,28 @@
       ]
     },
     {
+      "name": "imboard-ai/git/issue-workflows-guide",
+      "title": "Issue Workflows Guide",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/issue-workflows-guide.ds.md",
+      "category": [
+        "documentation"
+      ],
+      "tags": [
+        "issue",
+        "workflow",
+        "git",
+        "github",
+        "guide",
+        "reference"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/onboarding-friction-review",
       "title": "Onboarding Friction Assessment",
       "version": "1.0.0",
