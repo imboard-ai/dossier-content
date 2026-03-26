@@ -1,20 +1,10 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
-  "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "6857cac51cd0c90ae0608b9955d37a56c117a7b48578ab3f516d55f3d4d9b1e2"
-  },
   "category": [
     "development"
   ],
@@ -25,8 +15,24 @@
         "description": "Which warm-worktree dossier to run for worktree warmup. Override this to use a project-specific warmup (e.g., imboard-ai/imboard/warm-worktree for pnpm+SSM projects).",
         "type": "string",
         "default": "imboard-ai/git/warm-worktree"
+      },
+      {
+        "name": "base_branch",
+        "description": "Target branch to branch from and merge into. Overrides issue body parsing ('merges into `<branch>`'). Use for epic sub-issues or when the target is not main.",
+        "type": "string",
+        "default": "auto"
       }
     ]
+  },
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
+  ],
+  "name": "setup-issue-workflow",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "b0cc346c8c062396f17249f2f686836e15e4110141e45d75820f80dc1f5e31b0"
   }
 }
 ---
@@ -131,17 +137,21 @@ Extract:
 - `body` - Issue description for PLANNING.md
 - `base_branch` - Extract from body (see below)
 
-**Extract base branch** from the issue body. Look for `merges into \`<branch-name>\`` (case-insensitive):
-```bash
-# Example: "**Branch**: `migrate/setup` → merges into `epic/migrate-shadcn`"
-# Extract: epic/migrate-shadcn
-BASE_BRANCH=$(gh issue view <ISSUE_NUMBER> --json body --jq '.body' | grep -oiP 'merges into `\K[^`]+' | head -1)
-if [ -z "$BASE_BRANCH" ]; then
-  BASE_BRANCH="main"
-fi
-echo "Base branch: $BASE_BRANCH"
-```
-Store `BASE_BRANCH` for use in Steps 5.5, 7, and 8. If not found in the issue body, defaults to `main`.
+**Resolve base branch** — determines which branch to branch from and target PRs against:
+
+1. **If `base_branch` input parameter was provided** (and is not `"auto"`): use it directly. Skip issue body parsing.
+2. **Otherwise**: extract from the issue body. Look for `merges into \`<branch-name>\`` (case-insensitive):
+   ```bash
+   # Example: "**Branch**: `migrate/setup` → merges into `epic/migrate-shadcn`"
+   # Extract: epic/migrate-shadcn
+   BASE_BRANCH=$(gh issue view <ISSUE_NUMBER> --json body --jq '.body' | grep -oiP 'merges into `\K[^`]+' | head -1)
+   if [ -z "$BASE_BRANCH" ]; then
+     BASE_BRANCH="main"
+   fi
+   ```
+3. **Print**: `Base branch: $BASE_BRANCH`
+
+Store `BASE_BRANCH` for use in Steps 5.1, 5.5, 7, and 8. This value should also be communicated in the output summary (Step 10) so downstream dossiers can use it.
 
 ### Step 3: Determine Branch Type
 
@@ -220,8 +230,22 @@ Before creating a cold worktree, check if a pre-warmed worktree pool is availabl
    ```
    - If claim succeeds (exit code 0), `CLAIMED_PATH` contains the absolute path to the ready worktree.
    - The worktree is already on the correct branch with `node_modules`, `.env` files, and build artifacts.
+
+   **If `BASE_BRANCH` ≠ `main`** (epic sub-issue): Pool worktrees are pre-warmed from `main`. You must rebase onto the correct base:
+   ```bash
+   cd "$CLAIMED_PATH"
+   git fetch origin "$BASE_BRANCH"
+   git rebase "origin/$BASE_BRANCH"
+   ```
+   If the rebase has conflicts, abort and fall back to cold worktree creation:
+   ```bash
+   git rebase --abort
+   # Continue to Step 6 (cold worktree from BASE_BRANCH)
+   ```
+
    - **Skip Steps 6, 7, 8, and 8.5 entirely** — go directly to Step 9 (Generate Planning File) using `CLAIMED_PATH` as the worktree path.
    - Print: `⚡ Claimed pre-warmed worktree from pool (instant setup)`
+   - If rebased: also print `Rebased onto $BASE_BRANCH`
 
 3. **If pool is empty or claim fails**:
    - Print: `Pool empty or unavailable — creating cold worktree...`
@@ -482,6 +506,7 @@ Issue workflow setup complete!
 Issue:      #<NUMBER> - <TITLE>
 Type:       <bug|feature>
 Branch:     <branch-name>
+Base:       <BASE_BRANCH>
 Worktree:   <worktree-path> (claimed from pool)
 Planning:   <worktree-path>/PLANNING-<NUMBER>-<slug>.md
 
@@ -510,6 +535,7 @@ Issue workflow setup complete!
 Issue:      #<NUMBER> - <TITLE>
 Type:       <bug|feature>
 Branch:     <branch-name>
+Base:       <BASE_BRANCH>
 Worktree:   worktrees/<type>-<number>-<slug>
 Planning:   worktrees/<type>-<number>-<slug>/PLANNING-<NUMBER>-<slug>.md
 Warmup:     worktrees/<type>-<number>-<slug>/WARMUP-STATUS.md
@@ -530,7 +556,7 @@ Next steps:
 3. Start working on the issue!
 
 4. When done, create a PR:
-   gh pr create --title "<title>" --body "Closes #<NUMBER>"
+   gh pr create --base <BASE_BRANCH> --title "<title>" --body "Closes #<NUMBER>"
 ```
 
 **For Current directory mode:**
@@ -540,6 +566,7 @@ Issue workflow setup complete!
 Issue:      #<NUMBER> - <TITLE>
 Type:       <bug|feature>
 Branch:     <branch-name> (checked out)
+Base:       <BASE_BRANCH>
 Planning:   ./PLANNING-<NUMBER>-<slug>.md
 
 Next steps:
@@ -548,7 +575,7 @@ Next steps:
 2. Start working on the issue!
 
 3. When done, create a PR:
-   gh pr create --title "<title>" --body "Closes #<NUMBER>"
+   gh pr create --base <BASE_BRANCH> --title "<title>" --body "Closes #<NUMBER>"
 ```
 
 **For Custom path mode:**
@@ -558,6 +585,7 @@ Issue workflow setup complete!
 Issue:      #<NUMBER> - <TITLE>
 Type:       <bug|feature>
 Branch:     <branch-name> (checked out)
+Base:       <BASE_BRANCH>
 Location:   <custom-path>
 Planning:   <custom-path>/PLANNING-<NUMBER>-<slug>.md
 
@@ -570,7 +598,7 @@ Next steps:
 3. Start working on the issue!
 
 4. When done, create a PR:
-   gh pr create --title "<title>" --body "Closes #<NUMBER>"
+   gh pr create --base <BASE_BRANCH> --title "<title>" --body "Closes #<NUMBER>"
 ```
 
 ## Validation
