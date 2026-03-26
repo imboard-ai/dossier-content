@@ -777,6 +777,27 @@
       ]
     },
     {
+      "name": "imboard-ai/skills/full-cycle-issue-skill",
+      "title": "Full Cycle Issue",
+      "version": "1.5.0",
+      "path": "imboard-ai/skills/full-cycle-issue-skill.ds.md",
+      "description": "Full autopilot: gate, setup, plan, implement, test, review, commit, push, PR, merge, rich report. Use when user says 'full cycle issue', 'auto issue', 'autopilot issue', 'fire and forget'",
+      "category": [
+        "skills"
+      ],
+      "tags": [
+        "github",
+        "workflow",
+        "autonomous",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/guided-cycle-issue-skill",
       "title": "Guided Cycle Issue",
       "version": "1.0.0",
