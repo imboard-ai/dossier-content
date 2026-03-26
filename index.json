@@ -369,6 +369,28 @@
       ]
     },
     {
+      "name": "imboard-ai/git/report-issue",
+      "title": "Report Issue — Rich Completion Summary",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/report-issue.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "issue",
+        "workflow",
+        "git",
+        "github",
+        "report",
+        "summary"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/review-issue",
       "title": "Review Issue — Parallel Code Review",
       "version": "1.0.0",
