@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-arm-dev-machine",
   "title": "Setup ARM Dev Machine",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-27",
@@ -79,7 +79,7 @@
   },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "468779966f087d51b8cb0521adcaa6f2dbf786bfd0f01d649fef8c6ae6ecf52e"
+    "hash": "4cc58912e086ece311c5ece513731e6910ad7e2ceb826e3b576ece8e84c5c5a7"
   },
   "risk_level": "medium",
   "risk_factors": [
@@ -434,7 +434,39 @@ PROMPT_FIX
 REMOTE
 ```
 
-### Step 13: Keep-Alive Cron (Oracle only)
+### Step 13: Sync Claude Code Config
+
+Replicate local Claude Code configuration (skills, commands, permissions, memory, plugins) to the remote machine so it behaves identically without retraining.
+
+```bash
+# Run from local machine
+
+# Skills, commands, skills-library
+rsync -avL ~/.claude/skills/ {{dev_username}}@{{server_ip}}:~/.claude/skills/
+rsync -av ~/.claude/commands/ {{dev_username}}@{{server_ip}}:~/.claude/commands/
+rsync -avL ~/.claude/skills-library/ {{dev_username}}@{{server_ip}}:~/.claude/skills-library/
+
+# CLAUDE.md (global instructions)
+scp ~/.claude/CLAUDE.md {{dev_username}}@{{server_ip}}:~/.claude/CLAUDE.md
+
+# Permissions + settings
+scp ~/.claude/settings.json {{dev_username}}@{{server_ip}}:~/.claude/settings.json
+scp ~/.claude/settings.local.json {{dev_username}}@{{server_ip}}:~/.claude/settings.local.json
+scp ~/.claude/mcp.json {{dev_username}}@{{server_ip}}:~/.claude/mcp.json 2>/dev/null
+
+# Plugins config (cache rebuilds itself)
+for f in config.json installed_plugins.json blocklist.json known_marketplaces.json; do
+  scp ~/.claude/plugins/$f {{dev_username}}@{{server_ip}}:~/.claude/plugins/$f 2>/dev/null
+done
+
+# Project-level memory (imboard monorepo)
+LOCAL_PROJECT="$HOME/.claude/projects/-home-{{dev_username}}-projects-imboard-imboard-monorepo"
+REMOTE_PROJECT="/home/{{dev_username}}/.claude/projects/-home-{{dev_username}}-projects-imboard-imboard-monorepo"
+ssh {{dev_username}}@{{server_ip}} "mkdir -p $REMOTE_PROJECT/memory"
+rsync -av "$LOCAL_PROJECT/memory/" {{dev_username}}@{{server_ip}}:"$REMOTE_PROJECT/memory/"
+```
+
+### Step 14: Keep-Alive Cron (Oracle only)
 
 Skip this step if `{{provider}}` is `hetzner`.
 
@@ -455,7 +487,7 @@ echo "Keep-alive cron installed"
 REMOTE
 ```
 
-### Step 13: Notify
+### Step 15: Notify
 
 ```bash
 PUBLIC_IP={{server_ip}}
