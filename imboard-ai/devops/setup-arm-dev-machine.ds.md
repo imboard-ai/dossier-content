@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-arm-dev-machine",
   "title": "Setup ARM Dev Machine",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-27",
@@ -79,7 +79,7 @@
   },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e3f26d20b2d2f69e92c4c30b0b6b9630c867584e6241d07cd903fa85f5ec89e3"
+    "hash": "468779966f087d51b8cb0521adcaa6f2dbf786bfd0f01d649fef8c6ae6ecf52e"
   },
   "risk_level": "medium",
   "risk_factors": [
@@ -361,9 +361,32 @@ scp /tmp/remote-zshrc {{dev_username}}@{{server_ip}}:~/.zshrc
 rm /tmp/remote-zshrc
 ```
 
-### Step 10: Authenticate CLIs (interactive)
+### Step 10: tmux + aichat + Memory MCP
 
-SSH in and authenticate each CLI. These require browser interaction.
+```bash
+# Copy tmux config from local machine
+scp ~/.tmux.conf {{dev_username}}@{{server_ip}}:~/.tmux.conf
+
+# Install aichat
+ssh {{dev_username}}@{{server_ip}} << 'REMOTE'
+AICHAT_VER=$(curl -sL https://api.github.com/repos/sigoden/aichat/releases/latest | grep tag_name | cut -d'"' -f4)
+curl -sL "https://github.com/sigoden/aichat/releases/download/${AICHAT_VER}/aichat-${AICHAT_VER}-aarch64-unknown-linux-musl.tar.gz" | sudo tar -C /usr/local/bin -xz aichat
+echo "aichat: $(aichat --version)"
+REMOTE
+
+# Memory MCP server (token from SSM)
+MEM_TOKEN=$(aws ssm get-parameter --name /imboard/development/memory-mcp-token --with-decryption --query Parameter.Value --output text)
+ssh {{dev_username}}@{{server_ip}} << REMOTE
+source ~/.nvm/nvm.sh
+claude mcp add --transport http --scope user memory-mcp \
+  https://memory-mcp-server.imboard-ai.workers.dev/mcp \
+  --header "Authorization: Bearer ${MEM_TOKEN}"
+REMOTE
+```
+
+### Step 11: Authenticate CLIs (interactive)
+
+SSH in and authenticate each CLI. These require browser/token interaction.
 
 ```bash
 ssh {{dev_username}}@{{server_ip}}
@@ -380,9 +403,38 @@ fly auth login
 
 # Cloudflare — already authenticated via CLOUDFLARE_API_KEY env var
 wrangler whoami
+
+# aichat — configure on first run
+aichat
 ```
 
-### Step 12: Keep-Alive Cron (Oracle only)
+### Step 12: Remote Prompt Indicator
+
+Add a cloud icon to the shell prompt so remote sessions are visually distinct from local.
+
+```bash
+ssh {{ssh_user}}@{{server_ip}} << 'REMOTE'
+cat >> /home/{{dev_username}}/.zshrc << 'PROMPT_FIX'
+
+# Remote machine indicator
+prompt_cloud() {
+  prompt_segment black white "☁ "
+}
+build_prompt() {
+  RETVAL=$?
+  prompt_cloud
+  prompt_status
+  prompt_virtualenv
+  prompt_context
+  prompt_dir
+  prompt_git
+  prompt_end
+}
+PROMPT_FIX
+REMOTE
+```
+
+### Step 13: Keep-Alive Cron (Oracle only)
 
 Skip this step if `{{provider}}` is `hetzner`.
 
