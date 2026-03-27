@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-arm-dev-machine",
   "title": "Setup ARM Dev Machine",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-27",
@@ -79,7 +79,7 @@
   },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6a74d35d1a75573a5fb7fd4f7cdb7abe14582730e57ed600ed32f6248d6eb9d1"
+    "hash": "e3f26d20b2d2f69e92c4c30b0b6b9630c867584e6241d07cd903fa85f5ec89e3"
   },
   "risk_level": "medium",
   "risk_factors": [
@@ -260,14 +260,33 @@ bash scripts/sync-secrets.sh imboard/development packages/backend/.env.developme
 REMOTE
 ```
 
-### Step 8: Install Claude Code
+### Step 8: Install Dev Tools (Claude Code, gh, Fly, Wrangler, Dossier CLI)
 
 ```bash
+ssh {{ssh_user}}@{{server_ip}} << 'REMOTE'
+set -euo pipefail
+
+# gh CLI
+(type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y))
+sudo mkdir -p -m 755 /etc/apt/keyrings
+out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg && cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt update -qq && sudo apt install gh -y -qq
+REMOTE
+
 ssh {{dev_username}}@{{server_ip}} << 'REMOTE'
 set -euo pipefail
 export NVM_DIR="$HOME/.nvm" && source "$NVM_DIR/nvm.sh"
 
+# Claude Code
 npm install -g @anthropic-ai/claude-code
+
+# Fly.io CLI
+curl -sL https://fly.io/install.sh | sh
+
+# Cloudflare Wrangler
+npm install -g wrangler
 
 # Dossier CLI (from ai-dossier monorepo)
 cd /tmp && git clone https://github.com/imboard-ai/ai-dossier.git && cd ai-dossier
@@ -275,45 +294,95 @@ npm install --workspaces && npm run build --workspace=packages/core && npm run b
 npm install -g .
 cd ~ && rm -rf /tmp/ai-dossier
 
-# Fly.io CLI
-curl -L https://fly.io/install.sh | sh
-echo 'export FLYCTL_INSTALL="$HOME/.fly"' >> ~/.zshrc
-echo 'export PATH="$FLYCTL_INSTALL/bin:$PATH"' >> ~/.zshrc
-export FLYCTL_INSTALL="$HOME/.fly" && export PATH="$FLYCTL_INSTALL/bin:$PATH"
-
-# Cloudflare Wrangler CLI
-npm install -g wrangler
-
 echo "Claude Code: $(claude --version)"
-echo "Dossier CLI: $(dossier --version 2>/dev/null || echo 'installed')"
-echo "Fly: $(fly version)"
+echo "gh: $(gh --version | head -1)"
+echo "Fly: $($HOME/.fly/bin/fly version)"
 echo "Wrangler: $(wrangler --version)"
 REMOTE
 ```
 
-Then SSH in interactively and authenticate the CLIs:
+### Step 9: Configure Shell (SSM-sourced .zshrc)
+
+Pull secrets from SSM and write a portable `.zshrc`. This avoids hardcoding tokens.
 
 ```bash
-ssh {{dev_username}}@{{server_ip}}
+# Run from local machine (has full AWS access)
+CF_KEY=$(aws ssm get-parameter --name /imboard/development/cloudflare-api-key --with-decryption --query Parameter.Value --output text)
+CF_EMAIL=$(aws ssm get-parameter --name /imboard/development/cloudflare-email --query Parameter.Value --output text)
+HANEST_BOT=$(aws ssm get-parameter --name /imboard/development/hanest-telegram-bot-token --with-decryption --query Parameter.Value --output text)
+HANEST_CHAT=$(aws ssm get-parameter --name /imboard/development/hanest-telegram-chat-id --query Parameter.Value --output text)
+VERCEL=$(aws ssm get-parameter --name /imboard/development/vercel-token --with-decryption --query Parameter.Value --output text)
+GH_MCP_PAT=$(aws ssm get-parameter --name /imboard/development/github-mcp-pat --with-decryption --query Parameter.Value --output text)
 
-# Claude Code (Max subscription OAuth)
-claude auth login
+cat > /tmp/remote-zshrc << ZSHRC
+export ZSH="\$HOME/.oh-my-zsh"
+ZSH_THEME="agnoster"
+plugins=(git)
+source \$ZSH/oh-my-zsh.sh
 
-# Fly.io
-fly auth login
+# nvm
+export NVM_DIR="\$HOME/.nvm"
+[ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"
+[ -s "\$NVM_DIR/bash_completion" ] && \. "\$NVM_DIR/bash_completion"
+
+# PATH
+export PATH="./node_modules/.bin:\$HOME/.local/bin:\$PATH"
+export FLYCTL_INSTALL="\$HOME/.fly"
+export PATH="\$FLYCTL_INSTALL/bin:\$PATH"
 
 # Cloudflare
-wrangler login
+export CLOUDFLARE_API_KEY="${CF_KEY}"
+export CLOUDFLARE_EMAIL="${CF_EMAIL}"
+
+# Telegram
+export HANEST_TELEGRAM_BOT_TOKEN="${HANEST_BOT}"
+export HANEST_TELEGRAM_CHAT_ID="${HANEST_CHAT}"
+
+# Vercel
+export VERCEL_TOKEN="${VERCEL}"
+
+# GitHub MCP
+export GITHUB_MCP_PAT="${GH_MCP_PAT}"
+
+# Claude Code
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+
+# Start in projects
+cd ~/projects/imboard 2>/dev/null
+
+# Ensure cron is running
+CRON_RUNNING=\$(service cron status 2>/dev/null | grep -q "is running" && echo "running")
+if [ -z "\$CRON_RUNNING" ]; then
+    sudo service cron start > /dev/null 2>&1
+fi
+ZSHRC
+
+scp /tmp/remote-zshrc {{dev_username}}@{{server_ip}}:~/.zshrc
+rm /tmp/remote-zshrc
 ```
+
+### Step 10: Authenticate CLIs (interactive)
+
+SSH in and authenticate each CLI. These require browser interaction.
 
 ```bash
 ssh {{dev_username}}@{{server_ip}}
-claude auth login
-# Select "Paste API key or auth token"
-# Paste your token from https://console.anthropic.com or use Max OAuth
+
+# Claude Code — just run `claude`, it will prompt for auth
+claude
+
+# GitHub CLI
+gh auth login
+# → GitHub.com → HTTPS → Paste authentication token
+
+# Fly.io (prints URL to open in browser)
+fly auth login
+
+# Cloudflare — already authenticated via CLOUDFLARE_API_KEY env var
+wrangler whoami
 ```
 
-### Step 10: Keep-Alive Cron (Oracle only)
+### Step 12: Keep-Alive Cron (Oracle only)
 
 Skip this step if `{{provider}}` is `hetzner`.
 
@@ -334,7 +403,7 @@ echo "Keep-alive cron installed"
 REMOTE
 ```
 
-### Step 11: Notify
+### Step 13: Notify
 
 ```bash
 PUBLIC_IP={{server_ip}}
