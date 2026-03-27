@@ -96,7 +96,7 @@
     {
       "name": "imboard-ai/devops/setup-arm-dev-machine",
       "title": "Setup ARM Dev Machine",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "path": "imboard-ai/devops/setup-arm-dev-machine.ds.md",
       "description": "Connects to a freshly provisioned ARM Ubuntu server via SSH and installs the complete imboard development stack. Works on both Hetzner CAX and Oracle A1 instances. Includes Oracle-specific keep-alive cron to prevent reclamation.",
       "category": [
