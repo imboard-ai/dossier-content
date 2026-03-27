@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-arm-dev-machine",
   "title": "Setup ARM Dev Machine",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-27",
@@ -54,8 +54,8 @@
     },
     "dev_username": {
       "type": "string",
-      "description": "Non-root user to create for development",
-      "default": "dev"
+      "description": "Non-root user to create for development (use same username as local machine for path consistency)",
+      "default": "yuvaldim"
     },
     "telegram_bot_token": {
       "type": "string",
@@ -79,7 +79,7 @@
   },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "f33e26e48380011824e83df5efc7bf629b7e4e27a285114776aeacac1c902945"
+    "hash": "6a74d35d1a75573a5fb7fd4f7cdb7abe14582730e57ed600ed32f6248d6eb9d1"
   },
   "risk_level": "medium",
   "risk_factors": [
@@ -240,14 +240,17 @@ REMOTE
 
 ### Step 7: Clone Repo + Sync Secrets
 
+Mirror the local dev directory structure (`~/projects/imboard/imboard-monorepo/main/`) so paths are copy-pasteable between machines.
+
 ```bash
 ssh {{dev_username}}@{{server_ip}} << 'REMOTE'
 set -euo pipefail
 export NVM_DIR="$HOME/.nvm" && source "$NVM_DIR/nvm.sh"
 
-# Clone
-git clone https://github.com/imboard-ai/imboard-monorepo.git ~/imboard
-cd ~/imboard
+# Mirror local directory structure: ~/projects/imboard/imboard-monorepo
+mkdir -p ~/projects/imboard
+git clone https://github.com/imboard-ai/imboard-monorepo.git ~/projects/imboard/imboard-monorepo
+cd ~/projects/imboard/imboard-monorepo/main
 
 # Install dependencies
 pnpm install
@@ -257,7 +260,60 @@ bash scripts/sync-secrets.sh imboard/development packages/backend/.env.developme
 REMOTE
 ```
 
-### Step 8: Keep-Alive Cron (Oracle only)
+### Step 8: Install Claude Code
+
+```bash
+ssh {{dev_username}}@{{server_ip}} << 'REMOTE'
+set -euo pipefail
+export NVM_DIR="$HOME/.nvm" && source "$NVM_DIR/nvm.sh"
+
+npm install -g @anthropic-ai/claude-code
+
+# Dossier CLI (from ai-dossier monorepo)
+cd /tmp && git clone https://github.com/imboard-ai/ai-dossier.git && cd ai-dossier
+npm install --workspaces && npm run build --workspace=packages/core && npm run build --workspace=cli
+npm install -g .
+cd ~ && rm -rf /tmp/ai-dossier
+
+# Fly.io CLI
+curl -L https://fly.io/install.sh | sh
+echo 'export FLYCTL_INSTALL="$HOME/.fly"' >> ~/.zshrc
+echo 'export PATH="$FLYCTL_INSTALL/bin:$PATH"' >> ~/.zshrc
+export FLYCTL_INSTALL="$HOME/.fly" && export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+# Cloudflare Wrangler CLI
+npm install -g wrangler
+
+echo "Claude Code: $(claude --version)"
+echo "Dossier CLI: $(dossier --version 2>/dev/null || echo 'installed')"
+echo "Fly: $(fly version)"
+echo "Wrangler: $(wrangler --version)"
+REMOTE
+```
+
+Then SSH in interactively and authenticate the CLIs:
+
+```bash
+ssh {{dev_username}}@{{server_ip}}
+
+# Claude Code (Max subscription OAuth)
+claude auth login
+
+# Fly.io
+fly auth login
+
+# Cloudflare
+wrangler login
+```
+
+```bash
+ssh {{dev_username}}@{{server_ip}}
+claude auth login
+# Select "Paste API key or auth token"
+# Paste your token from https://console.anthropic.com or use Max OAuth
+```
+
+### Step 10: Keep-Alive Cron (Oracle only)
 
 Skip this step if `{{provider}}` is `hetzner`.
 
@@ -278,7 +334,7 @@ echo "Keep-alive cron installed"
 REMOTE
 ```
 
-### Step 9: Notify
+### Step 11: Notify
 
 ```bash
 PUBLIC_IP={{server_ip}}
