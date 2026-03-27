@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-arm-dev-machine",
   "title": "Setup ARM Dev Machine",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-27",
@@ -79,7 +79,7 @@
   },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "4cc58912e086ece311c5ece513731e6910ad7e2ceb826e3b576ece8e84c5c5a7"
+    "hash": "95e609be7d6daed34f1faa85295d3471110d26a066b1be0461b03d13a0eff80f"
   },
   "risk_level": "medium",
   "risk_factors": [
@@ -257,6 +257,35 @@ pnpm install
 
 # Sync secrets from SSM
 bash scripts/sync-secrets.sh imboard/development packages/backend/.env.development
+REMOTE
+```
+
+### Step 7b: Set Up Worktrees
+
+Replicate the local worktree structure so feature branches are available. Run from local machine to get the list of active worktrees, then create them on the remote.
+
+```bash
+# Get active worktree branches from local (skip main and .claude worktrees)
+BRANCHES=$(cd ~/projects/imboard/imboard-monorepo && git worktree list --porcelain | grep "^branch " | sed 's|branch refs/heads/||' | grep -v "^main$")
+
+ssh {{dev_username}}@{{server_ip}} << REMOTE
+set -euo pipefail
+cd ~/projects/imboard/imboard-monorepo
+mkdir -p worktrees
+git fetch --all --prune
+
+for branch in $BRANCHES; do
+  dir=\$(echo "\$branch" | tr '/' '-')
+  if [ ! -d "worktrees/\$dir" ]; then
+    if git branch -r | grep -q "origin/\$branch"; then
+      git worktree add "worktrees/\$dir" -b "\$branch" "origin/\$branch"
+    else
+      echo "Skipping \$branch (not on remote)"
+    fi
+  fi
+done
+
+git worktree list
 REMOTE
 ```
 
