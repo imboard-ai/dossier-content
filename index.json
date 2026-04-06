@@ -786,6 +786,38 @@
       ]
     },
     {
+      "name": "imboard-ai/pm/feature-to-issues",
+      "title": "Feature to Issues — Multi-Agent Feature Development Pipeline",
+      "version": "1.0.0",
+      "path": "imboard-ai/pm/feature-to-issues.ds.md",
+      "category": [
+        "development",
+        "workflow"
+      ],
+      "tags": [
+        "feature",
+        "prd",
+        "issues",
+        "workflow",
+        "multi-agent",
+        "planning",
+        "discovery",
+        "pm"
+      ],
+      "tools_required": [
+        {
+          "name": "gh",
+          "version": ">=2.0.0",
+          "check_command": "gh --version"
+        },
+        {
+          "name": "git",
+          "version": ">=2.30.0",
+          "check_command": "git --version"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/security/dependency-vulnerability-report",
       "title": "Dependency Drift & Vulnerability Report",
       "version": "1.0.0",
