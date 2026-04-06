@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "feature-to-issues",
   "title": "Feature to Issues — Multi-Agent Feature Development Pipeline",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-04-06",
@@ -131,7 +131,7 @@
   },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "2b53b7894391c928b93d266dbe1d71d48f938c6c42c9af5df9ce8b009db3b077"
+    "hash": "a4caedf95b3aeb873704586c11e56b17f4166f09710ed54bc257ea17905632f8"
   }
 }
 ---
@@ -252,9 +252,10 @@ This header ensures each file is self-contained — a new session can read the h
    - Framework: scan for `next.config.*`, `nuxt.config.*`, `angular.json`, `svelte.config.*`, Django `settings.py`, Rails `config/`, etc.
    - Repo name: `gh repo view --json name --jq '.name'`
 
-4. **Attempt to load business context** (optional):
-   - If `pm-business-context` skill is available AND a business brief exists: load it for ICP, positioning, stage, constraints.
-   - If not available: log a note and continue. This dossier works without business context.
+4. **Load business context — DO THIS FIRST, before any PM work:**
+   - Run `/pm-business-context` NOW. This loads the business brief (ICP, positioning, stage, constraints) which the PM Agent needs for every decision from this point forward.
+   - If the skill is not installed or no brief exists: log "Business context not available — proceeding without ICP/positioning data" and continue. The pipeline works without it, but decisions will be less grounded.
+   - The business context, once loaded, informs ALL subsequent stages (discovery, creative loop, PRD, issue decomposition). Do not defer this.
 
 5. **Write `problem-signal.md`** with artifact header and problem statement.
 
