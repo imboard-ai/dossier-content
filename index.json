@@ -788,7 +788,7 @@
     {
       "name": "imboard-ai/pm/feature-to-issues",
       "title": "Feature to Issues — Multi-Agent Feature Development Pipeline",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/pm/feature-to-issues.ds.md",
       "category": [
         "development",
