@@ -173,27 +173,6 @@
       ]
     },
     {
-      "name": "imboard-ai/full-cycle-issue-skill",
-      "title": "Full Cycle Issue",
-      "version": "1.6.0",
-      "path": "imboard-ai/full-cycle-issue-skill.ds.md",
-      "description": "Full autopilot: gate, setup, plan, implement, test, review, commit, push, PR, merge, rich report. Use when user says 'full cycle issue', 'auto issue', 'autopilot issue', 'fire and forget'",
-      "category": [
-        "skills"
-      ],
-      "tags": [
-        "github",
-        "workflow",
-        "autonomous",
-        "skill"
-      ],
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "imboard-ai/git/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
       "version": "1.1.0",
