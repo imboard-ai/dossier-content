@@ -368,6 +368,37 @@
       ]
     },
     {
+      "name": "imboard-ai/git/git-sync",
+      "title": "Git Sync — Reconcile Local State with Origin",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/git-sync.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "git",
+        "github",
+        "sync",
+        "commit",
+        "gitignore",
+        "worktree",
+        "cleanup"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "tools_required": [
+        {
+          "name": "git"
+        },
+        {
+          "name": "gh"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/implement-issue",
       "title": "Implement Issue — Code and Test",
       "version": "1.0.0",
