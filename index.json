@@ -947,6 +947,23 @@
       ]
     },
     {
+      "name": "imboard-ai/setup/setup-tracing",
+      "title": "Setup Tracing",
+      "version": "1.0.0",
+      "path": "imboard-ai/setup/setup-tracing.ds.md",
+      "category": [
+        "setup",
+        "monitoring"
+      ],
+      "tags": [
+        "tracing",
+        "configuration",
+        "mcp",
+        "observability"
+      ],
+      "tools_required": []
+    },
+    {
       "name": "imboard-ai/skills/full-cycle-issue-skill",
       "title": "Full Cycle Issue",
       "version": "1.6.0",
