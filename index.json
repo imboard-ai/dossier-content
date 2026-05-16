@@ -746,6 +746,28 @@
       ]
     },
     {
+      "name": "imboard-ai/implement-issue",
+      "title": "Implement Issue — Code and Test",
+      "version": "1.1.0",
+      "path": "imboard-ai/implement-issue.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "issue",
+        "workflow",
+        "git",
+        "github",
+        "implement",
+        "test"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/issue-triage",
       "title": "Issue Triage Workflow",
       "version": "1.0.0",
