@@ -2,8 +2,9 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "Stable",
+  "last_updated": "2026-05-16",
   "objective": "Implement the solution described in the planning document, run tests, and auto-fix lint issues",
   "category": [
     "development"
@@ -45,7 +46,7 @@
   "name": "implement-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "82187eb600bfea99bbff9e36ee9e3c16eb91db334ca2afeaa5ba972dd733a45b"
+    "hash": "04c32d6638aa5072eab3e326099642aa36f9e0fc5ba705696efd0c9c44a168bb"
   }
 }
 ---
@@ -82,12 +83,18 @@ Read the planning file at `planning_file` path. Extract:
 
 ### Step 3: Auto-Fix Lint
 
-**Before building**, run the project's auto-fixer to avoid lint iteration loops:
+**Before building**, run the project's auto-fixer to avoid lint iteration loops.
 
-- Node.js with biome: `npx biome check --write .`
-- Node.js with eslint: `npx eslint --fix .`
-- Python with ruff: `ruff check --fix .`
-- Or whatever the project's `lint:fix` script is (check package.json / Makefile)
+**First, prefer the project's combined script.** Grep `package.json` / `Makefile` for a single script that bundles everything CI runs — common names: `hygiene`, `hygiene:ci`, `check`, `lint:fix`, `format`, `precommit`. If one exists, run it (or its `:fix` / `:write` variant) — this is the single source of truth and matches what CI will check.
+
+**If no combined script, detect the toolchain and run ALL configured fixers** — running only the linter when the project also uses a separate formatter is the #1 reason CI hygiene fails after local checks pass:
+
+- Biome (combined lint + format): `npx biome check --write .`
+- ESLint + Prettier (two separate tools — run BOTH): `npx eslint --fix . && npx prettier --write .`
+- ESLint only (no separate formatter — verify there is no `.prettierrc*` or `prettier` in `package.json`): `npx eslint --fix .`
+- Python with Ruff (combined lint + format): `ruff check --fix . && ruff format .`
+
+Check config files to identify the toolchain: `biome.json`, `.eslintrc*` / `eslint.config.*`, `.prettierrc*` / `prettier` key in `package.json`, `pyproject.toml`.
 
 ### Step 4: Test
 
@@ -105,11 +112,17 @@ Read the planning file at `planning_file` path. Extract:
    ```
    If the same tests fail on `base_branch`, they are pre-existing — ignore them and proceed. Only fix failures caused by your changes (max 2 attempts).
 
-### Step 5: Final Lint Pass
+### Step 5: Final Lint Pass + CI-Mode Verify
 
-Run lint auto-fixer one more time after tests (test creation may introduce lint issues):
+1. Run lint auto-fixer one more time after tests (test creation may introduce lint issues) — same commands as Step 3.
 
-- Same commands as Step 3
+2. **Verify in CI-check mode before reporting complete.** Run the same checks CI will run, in check (read-only) mode — if anything reports issues that the fixer didn't resolve, fix manually before continuing. CI WILL fail otherwise.
+   - Prefer the project's CI script if one exists (e.g., `npm run hygiene:ci`, `npm run check`).
+   - Otherwise run check-mode equivalents of every tool in Step 3:
+     - Biome: `npx biome check .`
+     - ESLint + Prettier: `npx eslint . && npx prettier --check .`
+     - Ruff: `ruff check . && ruff format --check .`
+   - Also run typecheck if the project has one (`npx tsc --noEmit`, `mypy .`, etc.) — auto-fix doesn't catch type errors.
 
 ### Step 6: Output
 
@@ -145,6 +158,7 @@ git diff --name-only
 - [ ] Tests exist and pass for changed code (created if missing)
 - [ ] Full test suite was run
 - [ ] Pre-existing failures were verified against base branch (not blindly fixed)
+- [ ] CI-mode verification (check-only) passes — including any separate formatter (e.g. Prettier) and typecheck
 
 ## Troubleshooting
 
@@ -155,3 +169,5 @@ git diff --name-only
 **Lint auto-fix breaks code**: Review the changes — some auto-fixes may be incorrect. Revert problematic auto-fixes.
 
 **Tests fail after 2 attempts**: Escalate to user — may need design discussion.
+
+**ESLint passes locally but CI hygiene fails on Prettier**: You skipped Step 3's "ESLint + Prettier are two tools, run BOTH" rule. ESLint does not format. Re-run `npx prettier --write .` then verify with `npx prettier --check .`.
