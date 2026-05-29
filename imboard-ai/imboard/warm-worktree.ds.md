@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "warm-worktree",
   "title": "Imboard Warm Worktree (pnpm + SSM)",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "Stable",
   "objective": "Prepare a fresh imboard-monorepo worktree for development using pnpm content-addressable store and AWS SSM secrets — no .env copying needed",
   "authors": [
@@ -37,7 +37,7 @@
   },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "0a789729516fd027ae6d43bb4b2dd3da48d63ba98b3647adb8c484d5f6ebb04c"
+    "hash": "08d35dabe411bba33955cfa9b91a629f105cf38cfd8ac2c5dd33bed93b79ee35"
   }
 }
 ---
@@ -61,13 +61,13 @@ pnpm install
 
 pnpm hard-links packages from its global content-addressable store, so this completes in ~3-5 seconds for repeat installs.
 
-### Step 2: Build shared types
+### Step 2: Build workspace libraries
 
 ```bash
-pnpm run build:shared
+pnpm run build:libs
 ```
 
-This runs `tsc --project packages/shared-types/tsconfig.json` to produce `dist/index.js` + `dist/index.d.ts`. Both backend and frontend depend on this output.
+This runs `build:shared` + `build:emails` — the workspace library packages (`@imboard/shared-types`, `@imboard/emails`) that other packages import and that must exist as `dist/` before typecheck passes. The backend imports both; the frontend imports `shared-types`. `build:libs` is defined in the root `package.json`, so the warmup never enumerates packages itself — when a new imported library package is added, only `build:libs` changes.
 
 ### Step 3: Verify (quick check)
 
@@ -87,7 +87,7 @@ If this passes, the worktree is ready for development.
 ## Validation
 
 - [ ] `pnpm install` completed without errors
-- [ ] `pnpm run build:shared` completed without errors
+- [ ] `pnpm run build:libs` completed without errors
 - [ ] `pnpm run typecheck` passes (all packages)
 
 ## Troubleshooting
@@ -96,5 +96,5 @@ If this passes, the worktree is ready for development.
 |---------|----------|
 | `pnpm: command not found` | Install: `npm install -g pnpm` or use `corepack enable` |
 | Node version mismatch | This project uses `packageManager: pnpm@10.32.1` — ensure compatible Node |
-| shared-types build fails | Check for uncommitted type changes on the source branch |
+| `build:libs` fails | Check for uncommitted type changes in `shared-types`/`emails` on the source branch |
 | typecheck fails | May indicate pre-existing errors on main — check `git log` for recent changes |
