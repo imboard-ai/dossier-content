@@ -871,6 +871,41 @@
       ]
     },
     {
+      "name": "imboard-ai/scaffold-project",
+      "title": "Scaffold TypeScript Project",
+      "version": "1.0.0",
+      "path": "imboard-ai/scaffold-project.ds.md",
+      "category": [
+        "development",
+        "setup"
+      ],
+      "tags": [
+        "scaffold",
+        "typescript",
+        "boilerplate",
+        "ci",
+        "project-creation",
+        "github-actions"
+      ],
+      "tools_required": [
+        {
+          "name": "node",
+          "version": ">=20.0.0",
+          "check_command": "node --version"
+        },
+        {
+          "name": "gh",
+          "version": ">=2.0.0",
+          "check_command": "gh --version"
+        },
+        {
+          "name": "git",
+          "version": ">=2.30.0",
+          "check_command": "git --version"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/security/dependency-vulnerability-report",
       "title": "Dependency Drift & Vulnerability Report",
       "version": "1.0.0",
