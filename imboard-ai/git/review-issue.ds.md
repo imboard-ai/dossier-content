@@ -2,9 +2,9 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "Stable",
-  "objective": "Run 5 parallel review agents (DRY, Security, Supportability, Maintainability, Documentation) on uncommitted changes, fix findings in-place, and produce a review summary",
+  "objective": "Run 6 parallel review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract) on uncommitted changes, fix findings in-place, and produce a review summary",
   "category": [
     "development"
   ],
@@ -33,7 +33,7 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "2d764730b650caf6aabf1068ba59da22a3f9633807b9d3d61ec1f139a5e18f49"
+    "hash": "adc256274bfef1a8afca2e7faabd7937838bbc7e9ac47b581e461ca15283d254"
   }
 }
 ---
@@ -42,7 +42,7 @@
 
 ## Objective
 
-Run 5 focused review agents in parallel on uncommitted changes. Each agent reviews from a different quality dimension, fixes what it can, and escalates only what requires human judgment. After all agents complete, consolidate fixes and produce a review summary.
+Run 6 focused review agents in parallel on uncommitted changes. Each agent reviews from a different quality dimension, fixes what it can, and escalates only what requires human judgment. After all agents complete, consolidate fixes and produce a review summary.
 
 ## Prerequisites
 
@@ -64,9 +64,9 @@ git diff --name-only
 
 This lists unstaged changes — we have not committed yet. If the list is empty, there is nothing to review. Stop and report "No uncommitted changes to review."
 
-### Step 3: Run 5 Review Agents in Parallel
+### Step 3: Run 6 Review Agents in Parallel
 
-Launch all 5 agents simultaneously using the Agent tool. Each agent receives the changed files list and operates independently.
+Launch all 6 agents simultaneously using the Agent tool. Each agent receives the changed files list and operates independently.
 
 ---
 
@@ -166,9 +166,19 @@ improvements, minor bugs, "consider doing X" opinions. Fix them or skip them.
 > Classify findings per the Classification Criteria above.
 > If none found, report "No documentation issues found."
 
+#### Agent 6: Convention / Contract Enforcement
+
+> You are reviewing uncommitted changes for violations of the project's cross-cutting contracts and conventions — the rules that are easy to break from memory and that a generic linter will not catch. Knowing a convention is not the same as enforcing it; your job is to enforce it on the touched code.
+>
+> 1. Read the project's convention sources: `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, and anything under `docs/architecture/` or `docs/conventions/`.
+> 2. For each changed file, check it against those documented contracts. Common classes: API request/response envelopes consumed through the shared helper (not ad-hoc destructuring of response bodies); data-access conventions (where indexes are declared, reference-field shape); shared error/response wrappers; module-boundary and naming rules the project documents.
+> 3. Flag any touched code that bypasses a documented contract, citing the convention source (file + rule).
+>
+> A contract violation is verifiable and is not a product decision — classify it "Fix now" per the Classification Criteria, and fix it in-place. If the project documents no such conventions, report "No documented conventions to enforce."
+
 ### Step 4: After All Agents Complete
 
-1. **Collect** all findings from the 5 agents
+1. **Collect** all findings from the 6 agents
 2. **Fix ALL "Fix now" findings** — use the Edit tool directly. These can be non-trivial: refactors, adding error handling, fixing historic lint issues in touched files, etc.
 3. **Re-run tests** after fixes to ensure nothing broke. If a fix breaks tests, revert that specific fix and reclassify as Escalate.
 4. **Run lint auto-fixer** to clean up formatting:
@@ -202,7 +212,7 @@ Escalated findings:
 
 - [ ] Working directory was confirmed before starting
 - [ ] Changed files list was obtained via `git diff --name-only`
-- [ ] All 5 review agents were launched in parallel
+- [ ] All 6 review agents were launched in parallel
 - [ ] Each agent classified findings using the Classification Criteria
 - [ ] All "Fix now" findings were applied via Edit tool
 - [ ] Tests were re-run after fixes — no regressions introduced
