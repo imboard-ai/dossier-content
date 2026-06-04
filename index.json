@@ -964,6 +964,30 @@
       "tools_required": []
     },
     {
+      "name": "imboard-ai/skills/feature-to-issues-skill",
+      "title": "Feature to Issues",
+      "version": "1.0.0",
+      "path": "imboard-ai/skills/feature-to-issues-skill.ds.md",
+      "description": "Orchestrate PM, UX/FE, and DB/BE agents to take a problem signal through discovery, PRD creation, spec generation, and GH issue decomposition. Use when user says 'feature to issues', 'plan feature', 'feature pipeline', 'new feature', 'feature development'",
+      "category": [
+        "skills"
+      ],
+      "tags": [
+        "feature",
+        "prd",
+        "issues",
+        "workflow",
+        "multi-agent",
+        "planning",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/full-cycle-issue-skill",
       "title": "Full Cycle Issue",
       "version": "1.6.0",
