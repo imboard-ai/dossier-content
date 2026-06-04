@@ -2,7 +2,8 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.2.0",
+  "version": "1.2.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-06-04",
   "objective": "Implement the solution described in the planning document, run tests, and auto-fix lint issues",
@@ -18,6 +19,7 @@
     "test"
   ],
   "risk_level": "medium",
+  "requires_approval": false,
   "risk_factors": [
     "modifies_files"
   ],
