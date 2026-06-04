@@ -2,9 +2,9 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "status": "Stable",
-  "last_updated": "2026-05-16",
+  "last_updated": "2026-06-04",
   "objective": "Implement the solution described in the planning document, run tests, and auto-fix lint issues",
   "category": [
     "development"
@@ -46,7 +46,7 @@
   "name": "implement-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "04c32d6638aa5072eab3e326099642aa36f9e0fc5ba705696efd0c9c44a168bb"
+    "hash": "6387ac81ff2d65af29674ee98a97be8b6bd3bb6a0380f4f6ed18f7cec5c497d7"
   }
 }
 ---
@@ -124,6 +124,8 @@ Check config files to identify the toolchain: `biome.json`, `.eslintrc*` / `esli
      - Ruff: `ruff check . && ruff format --check .`
    - Also run typecheck if the project has one (`npx tsc --noEmit`, `mypy .`, etc.) — auto-fix doesn't catch type errors.
 
+3. **If this change added a NEW package / workspace / module**, confirm its typecheck and tests are wired into the PR CI pipeline — not just runnable locally. A package that CI never typechecks or tests is a silent blind spot that breaks only under feature pressure later. If the CI wiring is missing and you can add it, do so in this change; otherwise record it in the output as an explicit follow-up.
+
 ### Step 6: Output
 
 Report what was done:
@@ -159,6 +161,7 @@ git diff --name-only
 - [ ] Full test suite was run
 - [ ] Pre-existing failures were verified against base branch (not blindly fixed)
 - [ ] CI-mode verification (check-only) passes — including any separate formatter (e.g. Prettier) and typecheck
+- [ ] Any newly added package/workspace/module is wired into PR CI (typecheck + tests), or the gap is recorded as a follow-up
 
 ## Troubleshooting
 
