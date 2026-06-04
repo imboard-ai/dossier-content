@@ -2,7 +2,8 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Plan Issue — Rich Planning Document",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Read a GitHub issue and its comments, explore relevant codebase areas, confirm any new state/flow is actually reachable, and write a rich planning document for structured implementation",
   "category": [
@@ -17,6 +18,7 @@
     "planning"
   ],
   "risk_level": "low",
+  "requires_approval": false,
   "risk_factors": [
     "modifies_files"
   ],
