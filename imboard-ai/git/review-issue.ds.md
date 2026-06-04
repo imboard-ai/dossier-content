@@ -2,7 +2,8 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Run 6 parallel review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract) on uncommitted changes, fix findings in-place, and produce a review summary",
   "category": [
@@ -18,6 +19,7 @@
     "code-quality"
   ],
   "risk_level": "medium",
+  "requires_approval": false,
   "risk_factors": [
     "modifies_files"
   ],
