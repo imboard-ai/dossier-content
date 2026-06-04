@@ -2,9 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.0.0",
+  "version": "3.1.0",
+  "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-03-26",
+  "last_updated": "2026-06-04",
   "objective": "Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report",
   "category": [
     "development"
@@ -57,7 +58,7 @@
   "name": "full-cycle-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "87eba74f79b622cc03a3086df94276a3dd6332cb131429698bb0fb87a3361ecd"
+    "hash": "f6947201076950ecf71ade45c1564ed805542902aeeb94f650498b0faee7722a"
   }
 }
 ---
@@ -146,8 +147,8 @@ This workflow composes the following sub-dossiers in sequence:
 ### Phase 2: Plan
 
 1. Run: `ai-dossier run imboard-ai/git/plan-issue`
-2. Pass through the issue number, base_branch, and worktree path
-3. **In full-cycle mode: proceed immediately.** Do not checkpoint with the user. If the issue is genuinely ambiguous, ask ONE focused question then proceed.
+2. Pass through the issue number, base_branch, and worktree path. Also pass `prod_data_access` = "Use the `mongodb-prod` MCP (read-only `count`/`find`/`aggregate`) against the production cluster to confirm a new state/flow actually occurs before building it; 0 occurrences ⇒ don't build, escalate (retro #1632)" — this drives plan-issue's reachability check.
+3. **In full-cycle mode: proceed immediately.** Do not checkpoint with the user. If the issue is genuinely ambiguous, ask ONE focused question then proceed. **Exception:** if the reachability check escalated (a new state shows 0 prod occurrences), surface that one question before building — do not build an unreachable state.
 
 ### Phase 3: Implement
 
