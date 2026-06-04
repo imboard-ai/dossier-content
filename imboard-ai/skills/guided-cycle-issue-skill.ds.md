@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.1.0",
   "name": "guided-cycle-issue-skill",
   "title": "Guided Cycle Issue",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "status": "Draft",
   "objective": "Collaborative issue workflow: plan with user review, implement, optional visual review for FE changes, then autonomous ship and rich report",
   "description": "Collaborative issue workflow with plan review and optional visual review. Use when user says 'guided cycle', 'plan issue', 'lets discuss issue', 'work on issue with review', 'guided issue'",
@@ -24,7 +24,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "PLACEHOLDER"
+    "hash": "55e582f6a835a26227f935879922502c437801833506db6de12de4aeb4518338"
   }
 }
 ---
@@ -50,6 +50,7 @@ Only route if the user is unclear. If they said a specific trigger phrase, skip 
 ## Project Parameters
 
 - **warmup_dossier**: `imboard-ai/imboard/warm-worktree`
+- **prod_data_access**: Use the `mongodb-prod` MCP (read-only `count` / `find` / `aggregate`) against the production cluster to confirm a new state/flow actually occurs before building it. 0 occurrences ⇒ don't build, escalate. (retro #1632)
 
 ## Flags
 
@@ -81,7 +82,7 @@ If user provided `--base <branch>`, use that instead of the gate's extracted bas
 
 ### Phase C: Plan + Discuss (CHECKPOINT)
 1. Run: `ai-dossier run imboard-ai/git/plan-issue`
-2. Pass through the issue number, base_branch, and worktree path
+2. Pass through the issue number, base_branch, worktree path, and the `prod_data_access` parameter above (so the plan-issue reachability check queries prod via the mongodb-prod MCP)
 3. **CHECKPOINT — Present the plan to the user:**
    - Show the full contents of the generated `PLANNING-{number}-{slug}.md`
    - Ask: "Does this plan look right? Any changes before we implement?"
