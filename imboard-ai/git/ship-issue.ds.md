@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Ship Issue — Commit, PR, Merge, Teardown",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, and clean up the worktree",
   "category": [
@@ -78,7 +78,7 @@
   "name": "ship-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "488cb2574a1bb2e7efd35c340d68f5e0a0651f031e4a88e0bfce8239f18ec929"
+    "hash": "3a075ce215f7a9ade01e017c2777b1a0e8b81a5621d72ef2b9fb86874bdbb012"
   }
 }
 ---
@@ -159,21 +159,54 @@ EOF
 
 If zero escalated findings (common case), create no GH issues.
 
-### Step 5: Wait for CI
+### Step 5: Wait for CI — stable-confirmation gate
 
-**Do NOT merge until all checks pass.**
+**Do NOT merge until checks are CONFIRMED green, and guard against false positives.**
+The GitHub check-runs API (and `gh pr checks --watch`) intermittently report a phantom
+`completed`/`success` for a job that is still running, and can momentarily show all-pass
+*before* a slow required job (e.g. the backend integration suite) has even registered.
+Merging on a single transient read ships an unverified build. This has bitten real runs —
+treat one green read as **unconfirmed**.
+
+The merge gate has two conditions, **both confirmed on two consecutive polls ≥20s apart**:
+
+1. `mergeStateStatus` is `CLEAN` (via `gh pr view <pr-number> --json mergeStateStatus`).
+2. `gh pr checks <pr-number>` shows **zero** checks still `pending`/`in_progress` and
+   **zero** in any failing state.
+
+Poll loop (do not merge until it exits with `stable=2`):
 
 ```bash
-gh pr checks <pr-number> --watch --fail-fast
+stable=0
+while [ "$stable" -lt 2 ]; do
+  mss=$(gh pr view <pr-number> --json mergeStateStatus --jq '.mergeStateStatus')
+  checks=$(gh pr checks <pr-number> 2>/dev/null)
+  pend=$(printf '%s\n' "$checks" | grep -ciE 'pending|in_progress')
+  fail=$(printf '%s\n' "$checks" | grep -ciE 'fail|failure|error|cancel|timed_out')
+  echo "mss=$mss pending=$pend failing=$fail stable=$stable"
+  if [ "$fail" -gt 0 ]; then break; fi                 # real or flaky failure -> Step 6
+  if [ "$mss" = "CLEAN" ] && [ "$pend" -eq 0 ]; then
+    stable=$((stable + 1))                              # one confirmed-clean read
+  else
+    stable=0                                            # reset on any not-yet-ready read
+  fi
+  [ "$stable" -lt 2 ] && sleep 25
+done
 ```
 
-If the command is not available or times out, poll manually:
+- `stable` reaching `2` = two consecutive fully-green reads ⇒ proceed to Step 7.
+- `failing > 0` ⇒ go to Step 6.
+- `mergeStateStatus` values other than `CLEAN` (`UNSTABLE`, `BLOCKED`, `BEHIND`, `UNKNOWN`)
+  reset the counter — `UNSTABLE`/`UNKNOWN` usually just means not every check has reported
+  yet; keep polling, do not treat it as a failure on its own.
 
-```bash
-gh pr checks <pr-number>
-```
-
-Repeat every 30 seconds until all checks show `pass` or `fail`.
+**Known transient false-blocks (re-run once, don't escalate):** if a required check fails
+but the signature is a known-flaky/environmental one *unrelated to the diff* — a codegen
+race (e.g. a docs/`.source` "not a module" / missing-property typecheck on a PR that
+touches no docs), or a freshly-published dependency advisory the PR never introduced
+(OSV-Scanner on a transitive dep) — re-run that job once (`gh run rerun <run-id> --failed`)
+before treating it as a real Step-6 failure. If a security advisory is genuinely on `main`
+too, the fix is a separate dependency-bump PR, not this one.
 
 ### Step 6: Handle CI Failures (max 2 attempts)
 
@@ -201,7 +234,12 @@ If CI fails:
 
 ### Step 7: Merge
 
-All checks green — merge:
+**Only after the Step 5 gate exited with `stable=2`.** Re-confirm with one final read
+immediately before merging — `gh pr view <pr-number> --json mergeStateStatus` must still
+be `CLEAN`. If it regressed to `UNSTABLE`/`BLOCKED` (a check re-queued or a new push
+landed), return to Step 5; never merge on a stale green.
+
+All checks confirmed green — merge:
 
 ```bash
 gh pr merge <pr-number> --squash
@@ -255,6 +293,7 @@ gh issue edit <issue_number> --remove-label "in-progress"
 - [ ] PR created targeting correct base_branch
 - [ ] Escalated findings consolidated per review category (typically 0)
 - [ ] CI passed (or failures fixed within 2 attempts)
+- [ ] CI confirmed green on two consecutive stable polls — not a single transient success
 - [ ] PR merged (squash)
 - [ ] in-progress label removed
 - [ ] Worktree returned to pool or removed
@@ -263,6 +302,11 @@ gh issue edit <issue_number> --remove-label "in-progress"
 ## Troubleshooting
 
 **CI fails after fixes**: Ask user — may be infrastructure issue
+
+**Phantom success / flaky check status**: the checks API can report a transient
+`success` while a required job is still running, or all-pass before a slow job registers.
+Never merge on one read — require two consecutive `CLEAN` + zero-pending polls (Step 5).
+Don't stall passively either: drive the Step 5 loop to `stable=2`, then merge.
 
 **Merge conflicts**: Ask user — needs human judgment
 
