@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Ship Issue — Commit, PR, Merge, Teardown",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, and clean up the worktree",
   "category": [
@@ -78,7 +78,7 @@
   "name": "ship-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "3a075ce215f7a9ade01e017c2777b1a0e8b81a5621d72ef2b9fb86874bdbb012"
+    "hash": "7ae470a97cad6a8450dd12e6a38f2d824990ea0fe2b136ec9c1635790a55d659"
   }
 }
 ---
@@ -159,7 +159,17 @@ EOF
 
 If zero escalated findings (common case), create no GH issues.
 
-### Step 5: Wait for CI — stable-confirmation gate
+### Step 5: Wait for CI — stable-confirmation gate (stay in this turn)
+
+**You MUST stay in THIS turn until the gate passes — do NOT background the wait.** No
+`Monitor`, no `run_in_background` poll, no "I'll be notified when CI finishes," no ending
+your turn while checks are still pending. CI here takes ~12 minutes; you wait by re-running
+a short foreground poll **batch** yourself, back-to-back, until it reports green or failing.
+A backgrounded or deferred wait is the #1 cause of a PR that goes green but **never merges**
+because the turn ended before Step 7 — do not do it. (Why a batch and not one long loop: the
+Bash tool caps a single call at a few minutes and blocks open-ended foreground `sleep`, so a
+single 12-minute poll loop cannot complete in one call — it gets killed mid-wait. The fix is
+to make "keep waiting" an explicit **same-turn re-run** of a short bounded batch.)
 
 **Do NOT merge until checks are CONFIRMED green, and guard against false positives.**
 The GitHub check-runs API (and `gh pr checks --watch`) intermittently report a phantom
@@ -168,37 +178,48 @@ The GitHub check-runs API (and `gh pr checks --watch`) intermittently report a p
 Merging on a single transient read ships an unverified build. This has bitten real runs —
 treat one green read as **unconfirmed**.
 
-The merge gate has two conditions, **both confirmed on two consecutive polls ≥20s apart**:
+The merge gate has two conditions, **both confirmed on two consecutive reads ≥20s apart**:
 
 1. `mergeStateStatus` is `CLEAN` (via `gh pr view <pr-number> --json mergeStateStatus`).
-2. `gh pr checks <pr-number>` shows **zero** checks still `pending`/`in_progress` and
-   **zero** in any failing state.
+2. `gh pr checks <pr-number>` shows **zero** checks `pending` and **zero** `fail`/`cancel`.
 
-Poll loop (do not merge until it exits with `stable=2`):
+Run this **bounded poll batch**. It does up to 6 reads (~2.5 min) then EXITS with a
+`RESULT=` line — short enough to finish inside the Bash tool timeout. It persists the
+consecutive-clean counter to a file so two-in-a-row survives across batch re-runs, and reads
+`bucket` from `--json` (machine-readable; `skipping` is correctly ignored, so a skipped job
+never blocks and an unreported-checks window never false-greens):
 
 ```bash
-stable=0
-while [ "$stable" -lt 2 ]; do
-  mss=$(gh pr view <pr-number> --json mergeStateStatus --jq '.mergeStateStatus')
-  checks=$(gh pr checks <pr-number> 2>/dev/null)
-  pend=$(printf '%s\n' "$checks" | grep -ciE 'pending|in_progress')
-  fail=$(printf '%s\n' "$checks" | grep -ciE 'fail|failure|error|cancel|timed_out')
-  echo "mss=$mss pending=$pend failing=$fail stable=$stable"
-  if [ "$fail" -gt 0 ]; then break; fi                 # real or flaky failure -> Step 6
-  if [ "$mss" = "CLEAN" ] && [ "$pend" -eq 0 ]; then
-    stable=$((stable + 1))                              # one confirmed-clean read
-  else
-    stable=0                                            # reset on any not-yet-ready read
+SF=/tmp/ship-stable-<pr-number>; stable=$(cat "$SF" 2>/dev/null || echo 0); i=0
+while [ "$i" -lt 6 ]; do
+  i=$((i + 1))
+  mss=$(gh pr view <pr-number> --json mergeStateStatus --jq '.mergeStateStatus' 2>/dev/null)
+  checks=$(gh pr checks <pr-number> --json bucket 2>/dev/null)
+  if [ -z "$checks" ]; then pend=1; fail=0; else      # no checks reported yet => not ready
+    pend=$(printf '%s' "$checks" | jq '[.[]|select(.bucket=="pending")]|length')
+    fail=$(printf '%s' "$checks" | jq '[.[]|select(.bucket=="fail" or .bucket=="cancel")]|length')
   fi
-  [ "$stable" -lt 2 ] && sleep 25
+  echo "read $i/6: mss=$mss pending=$pend failing=$fail stable=$stable"
+  if [ "$fail" -gt 0 ]; then echo 0 >"$SF"; echo "RESULT=failing"; exit 0; fi
+  if [ "$mss" = "CLEAN" ] && [ "$pend" -eq 0 ]; then stable=$((stable + 1)); else stable=0; fi
+  if [ "$stable" -ge 2 ]; then echo 0 >"$SF"; echo "RESULT=green"; exit 0; fi
+  [ "$i" -lt 6 ] && sleep 25
 done
+echo "$stable" >"$SF"; echo "RESULT=pending stable=$stable"
 ```
 
-- `stable` reaching `2` = two consecutive fully-green reads ⇒ proceed to Step 7.
-- `failing > 0` ⇒ go to Step 6.
+When you run it, set the Bash tool `timeout` to `200000` (200s) so the batch isn't cut off
+mid-poll. Then act on the `RESULT` line:
+
+- `RESULT=green` ⇒ two consecutive confirmed-clean reads. Go to **Step 7 now, in this same
+  turn**.
+- `RESULT=failing` ⇒ go to **Step 6**.
+- `RESULT=pending` ⇒ **immediately run the batch again. Do NOT yield, do NOT background, do
+  NOT end your turn.** Keep re-running back-to-back until it returns green or failing (~5
+  batches covers a 12-min CI). Each re-run resumes the counter from the file.
 - `mergeStateStatus` values other than `CLEAN` (`UNSTABLE`, `BLOCKED`, `BEHIND`, `UNKNOWN`)
-  reset the counter — `UNSTABLE`/`UNKNOWN` usually just means not every check has reported
-  yet; keep polling, do not treat it as a failure on its own.
+  reset the counter inside the batch — `UNSTABLE`/`UNKNOWN` usually just means not every check
+  has reported yet; keep re-running, do not treat it as a failure on its own.
 
 **Known transient false-blocks (re-run once, don't escalate):** if a required check fails
 but the signature is a known-flaky/environmental one *unrelated to the diff* — a codegen
@@ -294,6 +315,7 @@ gh issue edit <issue_number> --remove-label "in-progress"
 - [ ] Escalated findings consolidated per review category (typically 0)
 - [ ] CI passed (or failures fixed within 2 attempts)
 - [ ] CI confirmed green on two consecutive stable polls — not a single transient success
+- [ ] CI wait done in-turn (foreground batch re-runs) — never backgrounded or deferred
 - [ ] PR merged (squash)
 - [ ] in-progress label removed
 - [ ] Worktree returned to pool or removed
@@ -305,8 +327,13 @@ gh issue edit <issue_number> --remove-label "in-progress"
 
 **Phantom success / flaky check status**: the checks API can report a transient
 `success` while a required job is still running, or all-pass before a slow job registers.
-Never merge on one read — require two consecutive `CLEAN` + zero-pending polls (Step 5).
-Don't stall passively either: drive the Step 5 loop to `stable=2`, then merge.
+Never merge on one read — require two consecutive `CLEAN` + zero-pending reads (Step 5).
+
+**Merge stall / "I'll be notified when CI is done"**: the most common failure of this phase
+is the agent backgrounding the CI wait (a `Monitor`, a `run_in_background` poll, or just
+ending the turn to "wait for notification") — the PR then goes green but never merges. Never
+do that. Step 5 is a foreground, same-turn loop: run the bounded batch, and on `RESULT=pending`
+run it again immediately. Stay in the turn until `RESULT=green` (→ merge) or `RESULT=failing`.
 
 **Merge conflicts**: Ask user — needs human judgment
 
