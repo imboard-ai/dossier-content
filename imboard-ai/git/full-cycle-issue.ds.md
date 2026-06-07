@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-06-04",
@@ -58,7 +58,7 @@
   "name": "full-cycle-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "f6947201076950ecf71ade45c1564ed805542902aeeb94f650498b0faee7722a"
+    "hash": "e6a9e62a1fde5b165c67828eda01da9389805d142285710a0bf059fa1cc8c69d"
   }
 }
 ---
@@ -164,6 +164,10 @@ This workflow composes the following sub-dossiers in sequence:
 
 1. Run: `ai-dossier run imboard-ai/git/ship-issue`
 2. Pass through: issue number, base_branch, review_escalated, worktree_path, original_dir, pool_claimed
+3. **This phase blocks until the PR is MERGED, in this same turn.** The CI wait (~12 min) is a
+   foreground poll you re-run yourself until green — do NOT background it (no `Monitor`, no
+   `run_in_background`, no "I'll be notified"), and do NOT end your turn with the PR still open.
+   A PR left green-but-unmerged is a failed run, not a completed one.
 
 ### Phase 6: Report
 
