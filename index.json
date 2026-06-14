@@ -1126,6 +1126,31 @@
       ]
     },
     {
+      "name": "imboard-ai/skills/fleet-cycle-skill",
+      "title": "Fleet Cycle",
+      "version": "1.1.0",
+      "path": "imboard-ai/skills/fleet-cycle-skill.ds.md",
+      "description": "Orchestrate multiple issues at once. Builds a dependency-aware wave plan and dispatches full-cycle-issue across background agents — parallel where safe, serial where dependent. Use when the user says 'fleet cycle', 'full cycle issues 1,2,3', 'full cycle issues 1..9', 'batch issues', 'map these issues and run them', 'run these issues in parallel/serial', or gives a LIST or RANGE of issues to take to merged PRs.",
+      "category": [
+        "skills"
+      ],
+      "tags": [
+        "github",
+        "workflow",
+        "autonomous",
+        "orchestration",
+        "batch",
+        "parallel",
+        "fleet",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/full-cycle-issue-skill",
       "title": "Full Cycle Issue",
       "version": "1.6.0",
