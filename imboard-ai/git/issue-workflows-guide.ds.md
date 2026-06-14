@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Issue Workflows Guide",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "Stable",
   "objective": "Reference guide for the issue workflow family — explains when to use each workflow, how they compose from shared sub-dossiers, and available flags",
   "category": [
@@ -25,14 +25,14 @@
   "name": "issue-workflows-guide",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "fb3bc86b54e479101f8af0bb219a558b5cca5ce006eff4d3c74e1f187397cd7a"
+    "hash": "9cf43454feadb5dddca5b699ca7903bdbf1427487ea46573497217958ca97dac"
   }
 }
 ---
 
 # Issue Workflows Guide
 
-Reference guide for the issue workflow family. Three skills share the same sub-dossiers — improving any sub-dossier improves all workflows.
+Reference guide for the issue workflow family. The single-issue skills share the same sub-dossiers — improving any sub-dossier improves all workflows. `fleet-cycle` sits one level above and orchestrates many `full-cycle-issue` runs at once.
 
 ## Quick Reference
 
@@ -41,6 +41,11 @@ Reference guide for the issue workflow family. Three skills share the same sub-d
 | `guided cycle issue 42` | `guided-cycle-issue` | Gate → setup → plan → **discuss** → implement → **[visual review]** → review → ship → rich report | Default for most issues. You want input on the plan or to review FE changes. |
 | `full cycle issue 42` | `full-cycle-issue` | Gate → setup → plan → implement → review → ship → rich report (all autonomous) | Confident fire-and-forget. Simple/clear issues. |
 | `start issue 42` | `start-issue` | Gate → setup → plan → **stop** | You want full manual control after planning. |
+| `fleet cycle issues 1..9` | `fleet-cycle` | Resolve set → dependency DAG → wave plan → dispatch `full-cycle-issue` per issue across background agents (parallel where safe, serial where dependent) → aggregate report | A **list or range** of issues. Runs independent ones in parallel, dependent ones in order. |
+
+## Single Issue vs. Fleet
+
+The first three skills take **one** issue to a merged PR. `fleet-cycle` is the batch layer: give it `1,2,3` or `1..9`, and it builds a dependency-aware **wave plan** and dispatches a `full-cycle-issue` run per issue across background agents. It serializes issues that collide on files, blocks a failed issue's dependents, and presents the plan before auto-running. See `imboard-ai/git/fleet-cycle`.
 
 ## Flags
 
