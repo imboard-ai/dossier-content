@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Ship Issue — Commit, PR, Merge, Teardown",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, and clean up the worktree",
   "category": [
@@ -78,7 +78,7 @@
   "name": "ship-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "7ae470a97cad6a8450dd12e6a38f2d824990ea0fe2b136ec9c1635790a55d659"
+    "hash": "c34e693dc843e311aeb22415c6510529045b996418b0a2a4af1c9d8cdb923c7a"
   }
 }
 ---
@@ -163,12 +163,13 @@ If zero escalated findings (common case), create no GH issues.
 
 **You MUST stay in THIS turn until the gate passes — do NOT background the wait.** No
 `Monitor`, no `run_in_background` poll, no "I'll be notified when CI finishes," no ending
-your turn while checks are still pending. CI here takes ~12 minutes; you wait by re-running
+your turn while checks are still pending. CI here takes ~18–20 minutes (the backend `Tests`
+integration job runs on Blacksmith); you wait by re-running
 a short foreground poll **batch** yourself, back-to-back, until it reports green or failing.
 A backgrounded or deferred wait is the #1 cause of a PR that goes green but **never merges**
 because the turn ended before Step 7 — do not do it. (Why a batch and not one long loop: the
 Bash tool caps a single call at a few minutes and blocks open-ended foreground `sleep`, so a
-single 12-minute poll loop cannot complete in one call — it gets killed mid-wait. The fix is
+single ~20-minute poll loop cannot complete in one call — it gets killed mid-wait. The fix is
 to make "keep waiting" an explicit **same-turn re-run** of a short bounded batch.)
 
 **Do NOT merge until checks are CONFIRMED green, and guard against false positives.**
@@ -215,8 +216,9 @@ mid-poll. Then act on the `RESULT` line:
   turn**.
 - `RESULT=failing` ⇒ go to **Step 6**.
 - `RESULT=pending` ⇒ **immediately run the batch again. Do NOT yield, do NOT background, do
-  NOT end your turn.** Keep re-running back-to-back until it returns green or failing (~5
-  batches covers a 12-min CI). Each re-run resumes the counter from the file.
+  NOT end your turn.** Keep re-running back-to-back until it returns green or failing (~8–10
+  batches covers a ~20-min CI; do NOT stop polling at the 12-min mark). Each re-run resumes
+  the counter from the file.
 - `mergeStateStatus` values other than `CLEAN` (`UNSTABLE`, `BLOCKED`, `BEHIND`, `UNKNOWN`)
   reset the counter inside the batch — `UNSTABLE`/`UNKNOWN` usually just means not every check
   has reported yet; keep re-running, do not treat it as a failure on its own.
@@ -274,9 +276,25 @@ Clean up issue labels:
 gh issue edit <issue_number> --remove-label "in-progress"
 ```
 
+### Step 7b: Confirm the merge before doing ANYTHING else
+
+**This is a hard gate — do not skip it.** Immediately after Step 7, run:
+
+```bash
+gh pr view <pr-number> --json mergedAt,state
+```
+
+`mergedAt` MUST be non-null **and** `state` MUST be `MERGED`. If it is not, **you are not
+done** — the merge did not happen; return to Step 5 / Step 7 and drive it to a real merge.
+Never emit an idle notification, end your turn, or proceed to Teardown (Step 8) or Report
+(Phase 6) with an unmerged PR. "PR opened and checks passing" is **not** a completed run;
+only a confirmed merge is. A background agent that idles green-but-unmerged here is the
+single most common failure of this workflow — this gate exists to stop it.
+
 ### Step 8: Teardown
 
-**Prerequisite: Step 7 (Merge) must be complete.** Do not tear down before merge.
+**Prerequisite: Step 7b (merge confirmed) must be complete.** Do not tear down before the
+merge is confirmed.
 
 1. `cd` back to `original_dir` (if provided)
 2. **Try to return the worktree to the pool** (if `pool_claimed` is true):
@@ -317,6 +335,7 @@ gh issue edit <issue_number> --remove-label "in-progress"
 - [ ] CI confirmed green on two consecutive stable polls — not a single transient success
 - [ ] CI wait done in-turn (foreground batch re-runs) — never backgrounded or deferred
 - [ ] PR merged (squash)
+- [ ] Merge confirmed: `gh pr view` shows `mergedAt` non-null and `state` `MERGED` (Step 7b)
 - [ ] in-progress label removed
 - [ ] Worktree returned to pool or removed
 - [ ] Returned to original directory
