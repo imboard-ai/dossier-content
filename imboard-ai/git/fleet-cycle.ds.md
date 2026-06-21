@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Fleet Cycle — Orchestrate Multiple Issues",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-06-14",
@@ -87,7 +87,7 @@
   "name": "fleet-cycle",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "892a8cae626f861112c826d3a0ea46dc97e8f462c616ec84dd93f88221cdb30b"
+    "hash": "6c2337114b027ce614e4b512c5c4b1940b16e02ac0eb4fef9a38c2709cc320a4"
   },
   "signature": {
     "algorithm": "ed25519",
@@ -179,6 +179,7 @@ For each wave, in order:
    - Issues with no dependency on the failure continue normally.
    - Record the failure and the blocked set for the final report.
 5. Do not advance to the next wave until the current wave has fully resolved (all runs either merged, failed, or blocked).
+6. **An agent reporting idle or "done" is NOT proof of merge.** Background full-cycle agents routinely idle with the PR green-but-unmerged. Before marking an issue **succeeded**, advancing to the next wave, or dispatching dependents, the orchestrator MUST independently verify `gh pr view <pr> --json mergedAt,state` shows `mergedAt` non-null **and** `state` `MERGED`, **and** the issue is CLOSED. If the PR is green-but-unmerged, merge it directly (`gh pr merge <pr> --squash`) — or re-task the agent — before proceeding. Never treat an idle/"done" signal as merge confirmation.
 
 **Concurrency discipline:** never exceed `max_parallel` concurrent runs, and never exceed worktree-pool capacity. If the pool is exhausted, queue and dispatch as worktrees free up rather than cold-starting many worktrees at once.
 
@@ -201,6 +202,7 @@ Post the roll-up to the conversation. Include direct PR URLs for every merged an
 - **`gh` / CI rate limits and contention.** Many simultaneous runs hammer the API and CI queue. Keep `max_parallel` modest (default 3).
 - **Optimistic independence.** The most expensive failure mode is assuming two issues are independent when they aren't — you discover it at merge time after both ran. When in doubt, serialize.
 - **Background agent visibility.** Long-running background runs can fail silently. Supervise actively; surface failures as they happen, not only at the end.
+- **Green-but-unmerged idle.** Background full-cycle agents reliably idle with the PR green but unmerged, then emit an idle/"done" signal that looks like progress. The orchestrator must independently verify `mergedAt` is non-null (Phase 4, rule 6) before counting an issue as succeeded — never trust the agent's idle signal as proof of merge.
 - **Partial fleet success is normal.** Blocking dependents on failure means a run may end with some issues merged, some failed, some blocked. The report must make the blocked set and its cause explicit so the user can re-run the remainder.
 
 ## Decision Points
