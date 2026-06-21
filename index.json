@@ -150,32 +150,6 @@
       ]
     },
     {
-      "name": "imboard-ai/fleet-cycle",
-      "title": "Fleet Cycle — Orchestrate Multiple Issues",
-      "version": "1.1.0",
-      "path": "imboard-ai/fleet-cycle.ds.md",
-      "category": [
-        "development"
-      ],
-      "tags": [
-        "github",
-        "issues",
-        "workflow",
-        "autonomous",
-        "orchestration",
-        "batch",
-        "parallel",
-        "fleet",
-        "full-cycle",
-        "dependencies"
-      ],
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "imboard-ai/fleet-cycle-skill",
       "title": "Fleet Cycle",
       "version": "1.0.0",
