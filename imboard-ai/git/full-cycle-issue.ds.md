@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-06-04",
@@ -58,7 +58,7 @@
   "name": "full-cycle-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e6a9e62a1fde5b165c67828eda01da9389805d142285710a0bf059fa1cc8c69d"
+    "hash": "0f6123f448aa7fa0f6b1eb9017c77202728cdae8dc49aa4674405e81cccb4926"
   }
 }
 ---
@@ -164,10 +164,13 @@ This workflow composes the following sub-dossiers in sequence:
 
 1. Run: `ai-dossier run imboard-ai/git/ship-issue`
 2. Pass through: issue number, base_branch, review_escalated, worktree_path, original_dir, pool_claimed
-3. **This phase blocks until the PR is MERGED, in this same turn.** The CI wait (~12 min) is a
+3. **This phase blocks until the PR is MERGED, in this same turn.** The CI wait (~18–20 min,
+   the backend `Tests` integration job on Blacksmith) is a
    foreground poll you re-run yourself until green — do NOT background it (no `Monitor`, no
-   `run_in_background`, no "I'll be notified"), and do NOT end your turn with the PR still open.
-   A PR left green-but-unmerged is a failed run, not a completed one.
+   `run_in_background`, no "I'll be notified"), and do NOT stop polling at the 12-min mark
+   (~8–10 batches), and do NOT end your turn with the PR still open.
+   A PR left green-but-unmerged is a failed run, not a completed one. ship-issue Step 7b
+   (confirm `mergedAt` is non-null) must pass before this phase is considered complete.
 
 ### Phase 6: Report
 
@@ -189,7 +192,7 @@ This workflow composes the following sub-dossiers in sequence:
 - [ ] Committed with conventional commit message
 - [ ] PR created targeting correct base_branch
 - [ ] Escalated findings consolidated per review category (typically 0)
-- [ ] CI passed and PR merged
+- [ ] CI passed and PR merged — merge confirmed via `mergedAt` non-null (ship-issue Step 7b)
 - [ ] Worktree returned to pool or removed
 - [ ] Rich report posted to conversation and PR comment
 - [ ] Returned to original working directory
