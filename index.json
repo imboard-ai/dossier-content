@@ -1102,29 +1102,6 @@
       "tools_required": []
     },
     {
-      "name": "imboard-ai/ship-issue",
-      "title": "Ship Issue — Commit, PR, Merge, Teardown",
-      "version": "1.3.0",
-      "path": "imboard-ai/ship-issue.ds.md",
-      "category": [
-        "development"
-      ],
-      "tags": [
-        "issue",
-        "workflow",
-        "git",
-        "github",
-        "ship",
-        "pr",
-        "merge"
-      ],
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "imboard-ai/skills/feature-to-issues-skill",
       "title": "Feature to Issues",
       "version": "1.0.0",
