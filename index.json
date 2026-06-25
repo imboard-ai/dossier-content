@@ -451,7 +451,7 @@
     {
       "name": "imboard-ai/git/implement-issue",
       "title": "Implement Issue — Code and Test",
-      "version": "1.2.1",
+      "version": "1.3.0",
       "path": "imboard-ai/git/implement-issue.ds.md",
       "category": [
         "development"
