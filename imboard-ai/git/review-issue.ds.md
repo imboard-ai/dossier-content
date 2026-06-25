@@ -2,9 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Stable",
+  "last_updated": "2026-06-25",
   "objective": "Run 6 parallel review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract) on uncommitted changes, fix findings in-place, and produce a review summary",
   "category": [
     "development"
@@ -35,7 +36,7 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "adc256274bfef1a8afca2e7faabd7937838bbc7e9ac47b581e461ca15283d254"
+    "hash": "dd8f4a310529ca5177bfaea8c0c8b387fccc151f810bce9889839aff59e04821"
   }
 }
 ---
@@ -175,8 +176,9 @@ improvements, minor bugs, "consider doing X" opinions. Fix them or skip them.
 > 1. Read the project's convention sources: `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, and anything under `docs/architecture/` or `docs/conventions/`.
 > 2. For each changed file, check it against those documented contracts. Common classes: API request/response envelopes consumed through the shared helper (not ad-hoc destructuring of response bodies); data-access conventions (where indexes are declared, reference-field shape); shared error/response wrappers; module-boundary and naming rules the project documents.
 > 3. Flag any touched code that bypasses a documented contract, citing the convention source (file + rule).
+> 4. **New backend route without an integration test.** If the diff added or modified a route under `packages/backend/src/api/v1/registry/routes/`, run the route-coverage mapper (`pnpm --filter imboard_be test:route-coverage`) and check whether any route in the diff is reported as uncovered. A new uncovered route is a contract violation — this is an agents-driven repo, so an agent-authored route MUST land with its integration test, not a human-authored follow-up. Flag it as a finding. (If this project has no such routes/mapper, skip this check.)
 >
-> A contract violation is verifiable and is not a product decision — classify it "Fix now" per the Classification Criteria, and fix it in-place. If the project documents no such conventions, report "No documented conventions to enforce."
+> A contract violation is verifiable and is not a product decision — classify it "Fix now" per the Classification Criteria, and fix it in-place (for an uncovered route, add the integration test under `tests/integration/`). If the project documents no such conventions, report "No documented conventions to enforce."
 
 ### Step 4: After All Agents Complete
 
@@ -217,6 +219,7 @@ Escalated findings:
 - [ ] All 6 review agents were launched in parallel
 - [ ] Each agent classified findings using the Classification Criteria
 - [ ] All "Fix now" findings were applied via Edit tool
+- [ ] A new/changed backend registry route in the diff was checked against the route-coverage mapper; any uncovered route was flagged (and its integration test added)
 - [ ] Tests were re-run after fixes — no regressions introduced
 - [ ] Lint auto-fixer was run after all fixes
 - [ ] Escalated findings (if any) each satisfy all three escalation criteria
