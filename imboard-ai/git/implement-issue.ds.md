@@ -2,10 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-06-04",
+  "last_updated": "2026-06-25",
   "objective": "Implement the solution described in the planning document, run tests, and auto-fix lint issues",
   "category": [
     "development"
@@ -48,7 +48,7 @@
   "name": "implement-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6387ac81ff2d65af29674ee98a97be8b6bd3bb6a0380f4f6ed18f7cec5c497d7"
+    "hash": "b03b46d90fa08362daa01715eeaefac882c52e9db820c5ca0266363b489030f0"
   }
 }
 ---
@@ -114,6 +114,8 @@ Check config files to identify the toolchain: `biome.json`, `.eslintrc*` / `esli
    ```
    If the same tests fail on `base_branch`, they are pre-existing — ignore them and proceed. Only fix failures caused by your changes (max 2 attempts).
 
+> **Backend registry routes require an integration test (this repo).** If this change adds or modifies a route under `packages/backend/src/api/v1/registry/routes/`, it MUST ship with an integration test that exercises that route in the same PR. A new route without one fails the route-coverage ratchet (`pnpm --filter imboard_be test:route-coverage:check`) in CI — the baseline may only shrink, never grow. Add the test under `tests/integration/` following the existing supertest specs, then confirm the route is now covered with `pnpm --filter imboard_be test:route-coverage`. The human reviews the PR; the agent authors the coverage.
+
 ### Step 5: Final Lint Pass + CI-Mode Verify
 
 1. Run lint auto-fixer one more time after tests (test creation may introduce lint issues) — same commands as Step 3.
@@ -160,6 +162,7 @@ git diff --name-only
 - [ ] Reusable code from the plan was leveraged (not re-implemented)
 - [ ] Lint auto-fixer was run before AND after testing
 - [ ] Tests exist and pass for changed code (created if missing)
+- [ ] Any new/changed backend registry route ships with an integration test in the same PR (route-coverage ratchet stays green)
 - [ ] Full test suite was run
 - [ ] Pre-existing failures were verified against base branch (not blindly fixed)
 - [ ] CI-mode verification (check-only) passes — including any separate formatter (e.g. Prettier) and typecheck
