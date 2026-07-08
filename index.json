@@ -150,6 +150,43 @@
       ]
     },
     {
+      "name": "imboard-ai/devtools/chrome-devtools-connect",
+      "title": "Chrome DevTools MCP — Connect & Self-Heal the WSL→Windows Bridge",
+      "version": "1.0.0",
+      "path": "imboard-ai/devtools/chrome-devtools-connect.ds.md",
+      "category": [
+        "devops"
+      ],
+      "tags": [
+        "chrome-devtools",
+        "mcp",
+        "wsl2",
+        "browser-automation",
+        "portproxy",
+        "live-verify",
+        "setup"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "tools_required": [
+        {
+          "name": "curl",
+          "check_command": "curl --version"
+        },
+        {
+          "name": "powershell.exe",
+          "check_command": "powershell.exe -NoProfile -Command \"$PSVersionTable.PSVersion.ToString()\""
+        },
+        {
+          "name": "chrome-devtools MCP",
+          "check_command": "curl -s --max-time 5 http://172.18.208.1:9222/json/version"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/fleet-cycle-skill",
       "title": "Fleet Cycle",
       "version": "1.0.0",
