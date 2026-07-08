@@ -925,6 +925,32 @@
       ]
     },
     {
+      "name": "imboard-ai/pm/idea-to-prd",
+      "title": "Idea to PRD — PM discovery loop with a go/kill gate",
+      "version": "0.1.0",
+      "path": "imboard-ai/pm/idea-to-prd.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "product-management",
+        "pm",
+        "discovery",
+        "prd",
+        "go-kill-gate",
+        "wireframes",
+        "workflow",
+        "autonomous",
+        "loop",
+        "grounded"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/scaffold-project",
       "title": "Scaffold TypeScript Project",
       "version": "1.0.0",
