@@ -370,7 +370,7 @@
     {
       "name": "imboard-ai/git/full-cycle-issue",
       "title": "Full Cycle Issue Workflow",
-      "version": "3.3.0",
+      "version": "3.4.0",
       "path": "imboard-ai/git/full-cycle-issue.ds.md",
       "category": [
         "development"
@@ -1259,5 +1259,5 @@
       "path": "tal-liberio/setup/validate-project-config.ds.md"
     }
   ],
-  "updated_at": "2025-12-04T09:10:00Z"
+  "updated_at": "2026-07-08T00:00:00Z"
 }
