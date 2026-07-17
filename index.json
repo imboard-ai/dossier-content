@@ -622,7 +622,7 @@
     {
       "name": "imboard-ai/git/report-issue",
       "title": "Report Issue — Rich Completion Summary",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "path": "imboard-ai/git/report-issue.ds.md",
       "category": [
         "development"
