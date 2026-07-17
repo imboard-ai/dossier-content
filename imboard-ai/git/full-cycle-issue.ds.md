@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-07-08",
@@ -58,7 +58,7 @@
   "name": "full-cycle-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "91feb8e1af3b98afd331c7dcaede8810cd4bf3b1cde6a07c64880de6d05bbf25"
+    "hash": "246d285aa9e89f54ec7d62314748539700c41391b34fed008ac9b2f659f9f47c"
   }
 }
 ---
@@ -164,9 +164,10 @@ This workflow composes the following sub-dossiers in sequence:
 
 1. Run: `ai-dossier run imboard-ai/git/ship-issue`
 2. Pass through: issue number, base_branch, review_escalated, worktree_path, original_dir, pool_claimed
-3. **Opening a PR is NOT completion. You are done only when the PR is MERGED
-   (or you have a hard blocker you escalated).** A PR left green-but-unmerged
-   is a FAILED run, not a completed one.
+3. **Opening a PR is NOT completion, and neither is merging it. You are done
+   when the merge has REACHED PRODUCTION** (or you have a hard blocker you
+   escalated). A PR left green-but-unmerged is a FAILED run; a PR merged but
+   never deployed is code live to nobody — see ship-issue Step 7c.
 4. **Hand off the merge to the auto-merge watcher — do NOT babysit CI and do
    NOT merge the PR yourself.** The repo runs an `auto-merge-watcher` GitHub
    Action (every 5 min) that squash-merges green, clean PRs server-side and
@@ -185,6 +186,11 @@ This workflow composes the following sub-dossiers in sequence:
    ~3–5 min, up to ~25 min) until `mergedAt` is non-null. This is confirming
    the watcher did its job, NOT polling CI statuses. ship-issue Step 7b
    (`mergedAt` non-null) must pass before this phase is considered complete.
+   Then ship-issue Step 7c must ALSO pass: confirm a successful deploy carries
+   `MERGE_COMMIT`, dispatching the deploy yourself if nothing does. On repos
+   where a bot token performs the merge, GitHub does not fire `on: push`, so the
+   deploy NEVER runs by itself — merged code then sits until an unrelated human
+   push carries it out. Do not confuse "merged" with "shipped".
 6. **If the watcher blocks the merge** — the watcher leaves an
    `auto-merge-blocked` label + a comment with the reason (failing checks,
    conflict, branch-update failure) and removes `auto-merge` — **or the PR is
@@ -202,6 +208,11 @@ This workflow composes the following sub-dossiers in sequence:
    it means the PR was not merged. If you are reporting with `MERGE_COMMIT`
    empty, you must also be reporting a hard blocker you escalated (Phase 5.6);
    a clean exit with an unmerged PR is a failed run.
+4. **The report MUST also carry `DEPLOYED`** (report-issue's `Shipped` line):
+   the deployed SHA + run URL, `N/A — <reason>` when the project genuinely has
+   no deploy step, or an explicit `NOT DEPLOYED` warning naming what a human must
+   run. `MERGE_COMMIT` present + `DEPLOYED` absent is the failure this field
+   exists to catch: it reads as a clean run while the change is live to nobody.
 
 ## Validation
 
@@ -220,6 +231,7 @@ This workflow composes the following sub-dossiers in sequence:
 - [ ] Escalated findings consolidated per review category (typically 0)
 - [ ] `auto-merge` label applied to PR and confirmed present
 - [ ] PR merged by the watcher — `MERGE_COMMIT` captured (merge confirmed via `mergedAt` non-null, ship-issue Step 7b). Empty `MERGE_COMMIT` = FAILED run (unless a hard blocker was escalated)
+- [ ] Merge REACHED PRODUCTION — a successful deploy carries `MERGE_COMMIT`, and `DEPLOYED` is in the report (ship-issue Step 7c). Merged ≠ shipped; `N/A` is valid only when the project has no deploy step
 - [ ] Worktree returned to pool or removed
 - [ ] Rich report posted to conversation and PR comment
 - [ ] Returned to original working directory
