@@ -1,10 +1,10 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
-  "title": "Ship Issue — Commit, PR, Merge, Teardown",
-  "version": "1.3.0",
+  "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
+  "version": "1.4.0",
   "status": "Stable",
-  "objective": "Commit changes, push, create a PR, wait for CI, merge, and clean up the worktree",
+  "objective": "Commit changes, push, create a PR, wait for CI, merge, confirm the merge reached production, and clean up the worktree",
   "category": [
     "development"
   ],
@@ -78,7 +78,7 @@
   "name": "ship-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c34e693dc843e311aeb22415c6510529045b996418b0a2a4af1c9d8cdb923c7a"
+    "hash": "ef1b15721acbffec32912c0ccfaa8082f99be81eda6e0526e16269260969e61b"
   }
 }
 ---
@@ -287,13 +287,73 @@ gh pr view <pr-number> --json mergedAt,state
 `mergedAt` MUST be non-null **and** `state` MUST be `MERGED`. If it is not, **you are not
 done** — the merge did not happen; return to Step 5 / Step 7 and drive it to a real merge.
 Never emit an idle notification, end your turn, or proceed to Teardown (Step 8) or Report
-(Phase 6) with an unmerged PR. "PR opened and checks passing" is **not** a completed run;
-only a confirmed merge is. A background agent that idles green-but-unmerged here is the
-single most common failure of this workflow — this gate exists to stop it.
+(Phase 6) with an unmerged PR. "PR opened and checks passing" is **not** a completed run.
+A background agent that idles green-but-unmerged here is the single most common failure of
+this workflow — this gate exists to stop it.
+
+A confirmed merge is **necessary but NOT sufficient**: it puts code on the default branch,
+not in front of users. Continue to Step 7c — do not treat this gate as the finish line.
+
+### Step 7c: Confirm the merge REACHED PRODUCTION
+
+**A merge is not a release.** Step 7b proves the code is on the default branch; it does
+NOT prove a single user can see it. Treat "merged" as done and you will report success on
+code that is live to nobody.
+
+This is not hypothetical. On a repo whose merges are performed by a bot token, GitHub
+deliberately does NOT fire `on: push` workflows for those pushes — so the deploy pipeline
+never runs, and the merged code sits on the default branch until some *unrelated* human
+push happens to carry it out. Observed 2026-07-17 (imboard #2714): four PRs merged green,
+`MERGE_COMMIT` captured, zero deploys; they reached production hours later bundled into a
+stranger's push. Every signal this workflow checks said "shipped".
+
+**Skip this step and the workflow's success token is a lie.**
+
+1. **Find the project's deploy mechanism.** Do not assume it exists or that it is
+   automatic. Look for a deploy workflow (`gh workflow list`), a `deploy`/`release`
+   script, or a documented runbook in the repo guide. If the project has NO deploy step
+   (a library, a docs site auto-built on push, an app deployed by an external system you
+   cannot observe), record `DEPLOYED=N/A — <reason>` and move on. That is a legitimate
+   outcome; silence is not.
+
+2. **Check whether a deploy already carries your merge.** A successful deploy run whose
+   commit CONTAINS `MERGE_COMMIT` (it need not equal it — a later deploy carrying your
+   commit still ships it):
+
+   ```bash
+   # newest successful deploy runs, with the SHA each one shipped
+   gh run list --workflow <deploy-workflow> --limit 5 \
+     --json headSha,status,conclusion,createdAt \
+     --jq '.[] | select(.conclusion=="success") | .createdAt + " " + .headSha'
+   # is your merge contained in what shipped?
+   git fetch origin --quiet
+   git merge-base --is-ancestor <MERGE_COMMIT> <deployed_sha> && echo SHIPPED || echo NOT-SHIPPED
+   ```
+
+3. **If nothing ships it within ~5 minutes, dispatch the deploy yourself**, then confirm
+   it succeeded:
+
+   ```bash
+   gh workflow run <deploy-workflow> [-f environment=production]   # inputs vary — read the workflow
+   ```
+
+   Deploying deliberately is SAFER than the default. The merged code is going to
+   production regardless — the only question is whether it goes at a moment nobody chose,
+   unattended, bundled with an unrelated change, and attributed to whoever pushed next.
+
+4. **A failed deploy is a hard blocker.** Escalate on the issue (comment + remove
+   `in-progress`) with the run URL. Do NOT report the run as complete. Do NOT retry blindly
+   more than once — a red deploy on the default branch may be affecting live users and is a
+   human's call.
+
+5. **Record `DEPLOYED`** — the shipped SHA + the run URL — and pass it to Phase 6.
+
+**Only now is the work shipped.**
 
 ### Step 8: Teardown
 
-**Prerequisite: Step 7b (merge confirmed) must be complete.** Do not tear down before the
+**Prerequisite: Step 7b (merge confirmed) AND Step 7c (deploy confirmed or `N/A`) must be
+complete.** Do not tear down before the
 merge is confirmed.
 
 1. `cd` back to `original_dir` (if provided)
@@ -336,6 +396,7 @@ merge is confirmed.
 - [ ] CI wait done in-turn (foreground batch re-runs) — never backgrounded or deferred
 - [ ] PR merged (squash)
 - [ ] Merge confirmed: `gh pr view` shows `mergedAt` non-null and `state` `MERGED` (Step 7b)
+- [ ] Deploy confirmed: a successful deploy run CONTAINS `MERGE_COMMIT`, or `DEPLOYED=N/A` with a reason (Step 7c) — merged is not shipped
 - [ ] in-progress label removed
 - [ ] Worktree returned to pool or removed
 - [ ] Returned to original directory
