@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "Stable",
   "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment",
   "category": [
@@ -74,7 +74,7 @@
   "name": "report-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "65400a7bb20ea8aefddd2bd656db9dd8b5558b02ea8ea9d300f30ffac8e9eae5"
+    "hash": "1bfdd25ea3e62b394bb5f8a550e9e755316e03a9c3cd20e8f85c780a31c1a49a"
   }
 }
 ---
@@ -143,6 +143,7 @@ Print to conversation:
 **Issue**: #<issue_number> — <title>
 **PR**: #<pr_number> (merged into `<base_branch>`)
 **Branch**: <branch-name> → `<base_branch>`
+**Shipped**: <DEPLOYED — the deployed SHA + run URL, or `NOT DEPLOYED` / `N/A — <reason>`>
 
 ### What Changed
 <1-3 sentence summary of implementation. Focus on WHAT was built, not HOW.>
@@ -176,6 +177,20 @@ Print to conversation:
 ### Cleanup
 <Worktree returned to pool for reuse. / Worktree removed.> Back in original directory.
 ```
+
+**The `Shipped` line is not decoration — it is the report's honesty gate.**
+
+`MERGE_COMMIT` alone has never meant "users can see it". A merge puts code on the default
+branch; a deploy puts it in front of people, and on some repos the merge does NOT trigger
+the deploy at all (see ship-issue Step 7c). A report that says "Cycle Complete" over
+undeployed code is the most expensive kind of wrong: everything downstream — the issue
+close, the PR comment, the human reading it — treats shipped as done.
+
+- deploy confirmed → `**Shipped**: <sha> (<run url>)`
+- no deploy step exists for this project → `**Shipped**: N/A — <why>`
+- merged but NOT deployed → `**Shipped**: ⚠️ NOT DEPLOYED — <what a human must run>`,
+  and say it in the FIRST line of the report, not buried in Dev/Ops implications. A run
+  that ends here is not a clean run; ship-issue Step 7c should have already escalated it.
 
 **If `base_branch` != main**: Add a note after the Branch line:
 ```
@@ -214,11 +229,13 @@ Report posted to conversation and PR #<pr_number>.
 
 - `report_posted`: true
 - `pr_comment_posted`: true
+- `deployed`: the deployed SHA when a deploy was confirmed; `null` when merged-but-not-deployed; `"n/a"` when the project has no deploy step. NEVER omit — a missing value reads as success.
 - `user_implications_count`: number of user-facing implications
 - `devops_implications_count`: number of dev/ops implications
 
 ## Validation
 
+- [ ] `Shipped` line present and accurate — deployed SHA, `N/A — <reason>`, or an explicit `NOT DEPLOYED` warning. Merged is not shipped.
 - [ ] PR details were fetched
 - [ ] Changed files were analyzed for user-facing implications
 - [ ] Changed files were analyzed for dev/ops implications
