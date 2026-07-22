@@ -913,6 +913,46 @@
       ]
     },
     {
+      "name": "imboard-ai/marketing/google-ads",
+      "title": "Google Ads Expert",
+      "version": "1.0.0",
+      "path": "imboard-ai/marketing/google-ads.ds.md",
+      "description": "Expert Google Ads account management — auditing, first-look account review, competitor analysis (Auction Insights), keyword research, campaign structure, bid strategy, Quality Score, search-term triage, RSA copywriting, Performance Max, landing page evaluation, PPC math, optimization loops, and a SaaS/AI-product deep dive (activation-first conversion architecture, competitor conquesting, PLG landing pages). Works with any data source: Google Ads MCP (GAQL), CSV exports, or screenshots. Read-only by default — every account change is a draft until explicitly approved.",
+      "category": [
+        "documentation"
+      ],
+      "tags": [
+        "google-ads",
+        "ppc",
+        "sem",
+        "audit",
+        "competitor-analysis",
+        "quality-score",
+        "bidding",
+        "search-terms",
+        "rsa",
+        "performance-max",
+        "saas",
+        "plg",
+        "conquesting",
+        "knowledge"
+      ],
+      "authors": [
+        {
+          "name": "Daniel Agrici (claude-ads, MIT)"
+        },
+        {
+          "name": "nowork.studio (NotFair, MIT)"
+        },
+        {
+          "name": "googleadsagent.ai (agent-skills, MIT)"
+        },
+        {
+          "name": "Ido Zalmanovich (curation)"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/meta/create-dossier",
       "title": "Create New Dossier",
       "version": "1.0.2",
