@@ -11,14 +11,23 @@
   "dossier_schema_version": "1.0.0",
   "status": "Draft",
   "title": "Start Issue Workflow",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e8e7977e01910753c33c385e83c8ce7af409717f7f02afbe92829bcbd5fc3264"
+    "hash": "e1f964a229844a199b3dd3d7a2178ccf0b68d95dc8cad5dfc9446a077eee5260"
   },
   "category": [
     "skills"
-  ]
+  ],
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "p0BrpjxmEIEGnFdh8HZkng5g2pMF+zO6QLuNfHiT4yTPN0ra5xZOOri9l0gDMyu1SWtTfDNcVP1Dp5TjbIXNCA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:36.047Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+  }
 }
 ---
 
