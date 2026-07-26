@@ -1,10 +1,13 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
+  "name": "git-sync-skill",
   "title": "Git Sync",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Reconcile a repo's local state with origin: gitignore obvious junk, commit and push real work, surface ambiguous items",
+  "description": "Triages uncommitted/unpushed state and syncs with GitHub. Use when arriving in a repo with dirty state, when the user says 'sync this repo', 'review uncommitted', 'commit pending', 'what's dirty here', 'push changes', or runs /git-sync.",
   "category": [
     "skills"
   ],
@@ -15,13 +18,13 @@
     "workflow",
     "skill"
   ],
+  "risk_level": "high",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik"
     }
-  ],
-  "description": "Triages uncommitted/unpushed state and syncs with GitHub. Use when arriving in a repo with dirty state, when the user says 'sync this repo', 'review uncommitted', 'commit pending', 'what's dirty here', 'push changes', or runs /git-sync.",
-  "name": "git-sync-skill"
+  ]
 }
 ---
 
