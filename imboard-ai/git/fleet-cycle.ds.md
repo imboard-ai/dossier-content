@@ -1,8 +1,9 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
+  "name": "fleet-cycle",
   "title": "Fleet Cycle — Orchestrate Multiple Issues",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-06-14",
@@ -22,13 +23,13 @@
     "full-cycle",
     "dependencies"
   ],
-  "risk_level": "medium",
-  "requires_approval": false,
+  "risk_level": "high",
   "risk_factors": [
     "modifies_files",
     "network_access",
     "executes_external_code"
   ],
+  "requires_approval": false,
   "destructive_operations": [
     "Dispatches multiple full-cycle-issue runs, each of which creates branches, worktrees, PRs, and merges code",
     "Spawns background agents that operate autonomously",
@@ -84,7 +85,6 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "name": "fleet-cycle",
   "checksum": {
     "algorithm": "sha256",
     "hash": "6c2337114b027ce614e4b512c5c4b1940b16e02ac0eb4fef9a38c2709cc320a4"
