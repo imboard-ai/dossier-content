@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Plan Issue — Rich Planning Document",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Read a GitHub issue and its comments, explore relevant codebase areas, confirm any new state/flow is actually reachable, and write a rich planning document for structured implementation",
@@ -60,6 +60,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "c5301cef91cbe1fc3ae37d4e41c7e351a1c39d4c4b61ff72f3158f98fc8bfb4d"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "oUoApeO0Zmie90RhYBiFFLY47OAOgRTS2GPlKbMN3aE3jdMR3mz0MxP4PfVr6CXac7bkDLkbymdl4lrSaNFSAw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:43.066Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
