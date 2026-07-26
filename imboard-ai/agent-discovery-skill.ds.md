@@ -1,17 +1,13 @@
 ---dossier
 {
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "name": "agent-discovery-skill",
-  "description": "Generate AGENTS.md and module catalog so external AI agents can discover project capabilities without full exploration. Use when user says 'make project discoverable', 'agent discovery', 'generate AGENTS.md', 'document for agents', 'create project manifest'.",
-  "objective": "Generate structured agent-discoverable documentation for the current project",
   "dossier_schema_version": "1.0.0",
-  "status": "Draft",
+  "name": "agent-discovery-skill",
   "title": "Agent Discovery Scaffold",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Generate structured agent-discoverable documentation for the current project",
+  "description": "Generate AGENTS.md and module catalog so external AI agents can discover project capabilities without full exploration. Use when user says 'make project discoverable', 'agent discovery', 'generate AGENTS.md', 'document for agents', 'create project manifest'.",
   "category": [
     "skills"
   ],
@@ -20,6 +16,13 @@
     "documentation",
     "agents-md",
     "skill"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
   ]
 }
 ---
