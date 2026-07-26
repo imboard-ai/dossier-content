@@ -3,7 +3,8 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues",
   "title": "Batch Issue Orchestration",
-  "version": "2.0.0",
+  "version": "2.0.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-06",
   "objective": "Batch-process GitHub issues via Claude Code headless agents, with parallel and sequential (epic) modes",
@@ -22,14 +23,14 @@
     "autonomous",
     "agent-friendly"
   ],
-  "risk_level": "medium",
-  "requires_approval": false,
+  "risk_level": "high",
   "risk_factors": [
     "modifies_files",
     "network_access",
     "creates_pull_request",
     "merges_code"
   ],
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik"
