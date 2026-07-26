@@ -93,7 +93,7 @@
     {
       "name": "imboard-ai/devops/provision-arm-vps",
       "title": "Provision ARM VPS",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/devops/provision-arm-vps.ds.md",
       "description": "Creates a Hetzner Cloud ARM server with Ubuntu 24.04, firewall, and SSH key. Designed as a throwaway bridge until Oracle Always Free A1 instance is claimed. Provider-agnostic inputs where possible.",
       "category": [
