@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "git-sync",
   "title": "Git Sync — Reconcile Local State with Origin",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-04-29",
@@ -52,6 +52,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "58721c6f0a1be8e4fd6aabbf59f9052824294db94c6d3bc06068a2008ed091fb"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "jdf3Zs7/JEkp03w1gMIWvU//h5ktQLBHiO3Mhr9yGAxDUNZ1EolToZ3XhZBaITqttD66tegTOOFS5SpuUNFGBQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:27.034Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
