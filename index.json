@@ -608,7 +608,7 @@
     {
       "name": "imboard-ai/git/release-notes-generator",
       "title": "Release Notes Generator",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/git/release-notes-generator.ds.md",
       "category": [
         "development"
