@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "git-sync",
   "title": "Git Sync — Reconcile Local State with Origin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-04-29",
@@ -20,22 +20,6 @@
     "worktree",
     "cleanup"
   ],
-  "risk_level": "medium",
-  "requires_approval": false,
-  "risk_factors": [
-    "modifies_files",
-    "deletes_files",
-    "network_access"
-  ],
-  "destructive_operations": [
-    "Appends entries to .gitignore for files matching well-known junk patterns",
-    "Deletes untracked files matching narrow scratch patterns (tmp/*, scratch/*, *.bak, *~)",
-    "Creates commits and pushes them to origin"
-  ],
-  "estimated_duration": {
-    "min_minutes": 1,
-    "max_minutes": 5
-  },
   "tools_required": [
     {
       "name": "git"
@@ -43,6 +27,22 @@
     {
       "name": "gh"
     }
+  ],
+  "estimated_duration": {
+    "min_minutes": 1,
+    "max_minutes": 5
+  },
+  "risk_level": "high",
+  "risk_factors": [
+    "modifies_files",
+    "deletes_files",
+    "network_access"
+  ],
+  "requires_approval": false,
+  "destructive_operations": [
+    "Appends entries to .gitignore for files matching well-known junk patterns",
+    "Deletes untracked files matching narrow scratch patterns (tmp/*, scratch/*, *.bak, *~)",
+    "Creates commits and pushes them to origin"
   ],
   "authors": [
     {
