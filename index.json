@@ -748,7 +748,7 @@
     {
       "name": "imboard-ai/git/test-coverage-gap-analysis",
       "title": "Test Coverage Gap Analysis",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/git/test-coverage-gap-analysis.ds.md",
       "category": [
         "development"
