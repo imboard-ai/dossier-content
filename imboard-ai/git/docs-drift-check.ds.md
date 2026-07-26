@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "docs-drift-check",
   "title": "Docs/README Drift Check",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Detect documentation drift from code and propose fixes",
@@ -23,10 +23,12 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
-    "signature": "OPKrwkNL5sZp0GTQocMLAv8aIn+GcN2glCN0Fr1J5KslUnkJai3jASIX5D1z7KRleau6gHq+1vutQ5vxmMuyAA==",
-    "signed_by": "yuvaldim",
-    "timestamp": "2025-12-14T15:34:39.734454+00:00"
+    "signature": "A9M4XRyIPexQ62IgdCfDAMcgUud22ynueH2wV+jVGGXqFMzqGplSqN8A0Xe5wUZKSMJZPGXqNpe0NoJi4W1SAQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:04.497Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
