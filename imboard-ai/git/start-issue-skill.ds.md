@@ -1,24 +1,27 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "start-issue-skill",
+  "title": "Start Issue Workflow",
+  "version": "1.1.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Set up a GitHub issue for development with proper branch, worktree, and planning documentation",
+  "description": "Set up a GitHub issue for development with branch, worktree, and planning doc. Use when user says \"start issue\", \"work on issue\"",
+  "category": [
+    "skills"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik"
     }
   ],
-  "description": "Set up a GitHub issue for development with branch, worktree, and planning doc. Use when user says \"start issue\", \"work on issue\"",
-  "name": "start-issue-skill",
-  "objective": "Set up a GitHub issue for development with proper branch, worktree, and planning documentation",
-  "dossier_schema_version": "1.0.0",
-  "status": "Draft",
-  "title": "Start Issue Workflow",
-  "version": "1.1.0",
   "checksum": {
     "algorithm": "sha256",
     "hash": "e5ad16f83f7f441c98c85b8ca1c69f4c8b5dd6659918babad2e016b0073b9c23"
-  },
-  "category": [
-    "skills"
-  ]
+  }
 }
 ---
 
