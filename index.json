@@ -323,7 +323,7 @@
     {
       "name": "imboard-ai/git/finish-issue-workflow",
       "title": "Finish Issue Workflow",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/git/finish-issue-workflow.ds.md",
       "category": [
         "development",
