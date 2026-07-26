@@ -294,7 +294,7 @@
     {
       "name": "imboard-ai/git/docs-drift-check",
       "title": "Docs/README Drift Check",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/git/docs-drift-check.ds.md",
       "category": [
         "development"
