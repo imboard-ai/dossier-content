@@ -1,8 +1,9 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
+  "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-07-08",
@@ -19,7 +20,7 @@
     "pr",
     "merge"
   ],
-  "risk_level": "medium",
+  "risk_level": "high",
   "risk_factors": [
     "modifies_files",
     "network_access",
@@ -55,7 +56,6 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "name": "full-cycle-issue",
   "checksum": {
     "algorithm": "sha256",
     "hash": "246d285aa9e89f54ec7d62314748539700c41391b34fed008ac9b2f659f9f47c"
