@@ -12,7 +12,7 @@
     {
       "name": "imboard-ai/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "path": "imboard-ai/add-git-worktree-support.ds.md",
       "category": [
         "development",
