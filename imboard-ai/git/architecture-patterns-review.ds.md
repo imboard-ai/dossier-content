@@ -1,5 +1,17 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "architecture-patterns-review",
+  "title": "Architecture & Pattern Consistency",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Identify inconsistent patterns, duplicate approaches, and architectural drift in the codebase",
+  "category": [
+    "development"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -9,22 +21,13 @@
     "algorithm": "sha256",
     "hash": "c7343913e8925696823ec80a337927621a1df44f3f5e6fda0f177410305105c2"
   },
-  "name": "architecture-patterns-review",
-  "objective": "Identify inconsistent patterns, duplicate approaches, and architectural drift in the codebase",
-  "dossier_schema_version": "1.0.0",
   "signature": {
     "algorithm": "ed25519",
     "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
     "signature": "1c5Tr1WsL6of2R4BeBkmCGqZA+hZQrbwxjDv0b/ENdXpbGPAHVyl+jYppEjqytSz+4vRzVU8dbSy7HAZF8PTDw==",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>",
     "timestamp": "2025-12-05T20:02:24.418938+00:00"
-  },
-  "status": "draft",
-  "title": "Architecture & Pattern Consistency",
-  "version": "1.0.0",
-  "category": [
-    "development"
-  ]
+  }
 }
 ---
 
