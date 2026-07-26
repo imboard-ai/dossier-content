@@ -1,8 +1,10 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
+  "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.4.0",
+  "version": "1.4.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, confirm the merge reached production, and clean up the worktree",
   "category": [
@@ -17,13 +19,14 @@
     "pr",
     "merge"
   ],
-  "risk_level": "medium",
+  "risk_level": "high",
   "risk_factors": [
     "modifies_files",
     "network_access",
     "creates_pull_request",
     "merges_code"
   ],
+  "requires_approval": false,
   "destructive_operations": [
     "Pushes branch to remote",
     "Creates and merges pull request",
@@ -75,7 +78,6 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "name": "ship-issue",
   "checksum": {
     "algorithm": "sha256",
     "hash": "ef1b15721acbffec32912c0ccfaa8082f99be81eda6e0526e16269260969e61b"
