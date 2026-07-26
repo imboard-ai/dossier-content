@@ -240,7 +240,7 @@
     {
       "name": "imboard-ai/git/architecture-patterns-review",
       "title": "Architecture & Pattern Consistency",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/git/architecture-patterns-review.ds.md",
       "category": [
         "development"
