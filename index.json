@@ -152,7 +152,7 @@
     {
       "name": "imboard-ai/devtools/chrome-devtools-connect",
       "title": "Chrome DevTools MCP — Connect & Self-Heal the WSL→Windows Bridge",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/devtools/chrome-devtools-connect.ds.md",
       "category": [
         "devops"
