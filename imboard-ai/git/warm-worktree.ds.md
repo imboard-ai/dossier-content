@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "warm-worktree",
   "title": "Warm Worktree",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Prepare a fresh git worktree for development by copying environment files, installing dependencies, running builds, verifying tests, and checking that servers can start.",
@@ -27,6 +27,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "ef68311baea4ae9bf60fded87adc509d9283875b424f462ca44f0b3cdb593892"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "2eurmKlpec5t4SN49CQs7Ve0TNlim0zDj/zr0+A6sEkkXPEfuyXOsvTuSY3s0B/VfD3qA+oankT+gG6qE7C6CQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:27.232Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
