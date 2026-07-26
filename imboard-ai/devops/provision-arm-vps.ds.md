@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "provision-arm-vps",
   "title": "Provision ARM VPS",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-27",
@@ -86,6 +86,15 @@
   "estimated_duration": {
     "min_minutes": 3,
     "max_minutes": 10
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "d+aHW6T7zeJBICiitN3701y5/wYUXpKHw+oaLLBb/wzKHvelon57rxWrpXTWhj1ynLaE9y0AR90Ob3ktagqaBg==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:46:36.710Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
