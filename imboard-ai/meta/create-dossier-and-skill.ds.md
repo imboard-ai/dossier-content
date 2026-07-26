@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "create-dossier-and-skill",
   "title": "Create Dossier and Skill",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-03-20",
@@ -102,10 +102,12 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "aejB0tdF7ccrYjtOp/VHkOMpeuDDT4igCrsWhyJx3d/IDYu8fEvR3ZTCrZ/H2otpZbc0Z+jUQyY168LMnGGbCQ==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEANvCyj7RG85NwvvB5AozhC8Oep2DnwY4X3YC1fY/8E9E=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-03-20T21:27:30.072Z",
-    "signed_by": "Dossier Team"
+    "signature": "0cWyZXdmeDQA+3ML5wz8Giu89YKlVRZ4fVPc3BqOz46PESoWp/CyCZiRKgEGaTzUHDhBK8dTSBn07uPEu96lCg==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:49.823Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
