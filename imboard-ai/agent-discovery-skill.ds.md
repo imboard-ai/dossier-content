@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "agent-discovery-skill",
   "title": "Agent Discovery Scaffold",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Generate structured agent-discoverable documentation for the current project",
@@ -23,7 +23,20 @@
     {
       "name": "Yuval Dimnik"
     }
-  ]
+  ],
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "407a003641081a4314507dc0c4d4334f636b654d533c3cc74a90b2cfc963b189"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "aW0qmgdQMxTe8/Yiw0JQp9qGKNiF6p5zXNHwx2klPx/v0TMYxLwl7TKiFUuYN/g2noVnxG4iGgb8E3EzqOWGBg==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:46:33.553Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+  }
 }
 ---
 
