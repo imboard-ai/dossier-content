@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "release-notes-generator",
   "title": "Release Notes Generator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Generate customer-facing release notes and internal support brief from git history",
@@ -23,10 +23,12 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
-    "signature": "zmOtOXWc5x4AJKoCnI6/6iys3NFsukJaGREqh5QtdhzJGI1wCWkwFND0n5dAUGadhlScNeAQXgKH3AnWj1cZAg==",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>",
-    "timestamp": "2025-12-14T14:42:28.693458+00:00"
+    "signature": "/seTpykVGIpfHdxTZXVghBiIysyCCHdNJKOYqMWtWI9OK3X8duv4hgHZvovCEdZfrmLtytj3min99ppRd6CEAQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:53.082Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
