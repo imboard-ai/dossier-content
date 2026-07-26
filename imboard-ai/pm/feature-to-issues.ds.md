@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "feature-to-issues",
   "title": "Feature to Issues — Multi-Agent Feature Development Pipeline",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-04-06",
@@ -132,6 +132,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "a4caedf95b3aeb873704586c11e56b17f4166f09710ed54bc257ea17905632f8"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "O+GZpd3rwYM6zRp5LIF3OOELa44sYn0S78wunClVHJG9nx1G8vSvtNoGbXBNkyNaJ9ACO13z7ef4FCMVjorCCA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:56.378Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
