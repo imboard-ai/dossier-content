@@ -3,17 +3,11 @@
   "dossier_schema_version": "1.0.0",
   "name": "pr-review",
   "title": "PR Review",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
   "status": "Draft",
-  "risk_level": "low",
-  "requires_approval": false,
   "objective": "Multi-dimensional review of a PR diff across security, architecture, code quality, performance, and accessibility — run one lens or all of them",
   "description": "Review the current PR diff across one or more dimensions: security (OWASP), architecture (boundaries & design), code quality (DRY, type safety, conventions), performance (rendering, queries, bundle), and accessibility (WCAG 2.1 AA). Use when user says 'review PR', 'pr review', 'security review', 'architecture review', 'code quality review', 'performance review', 'accessibility review', or '/pr-review'.",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
   "category": [
     "review"
   ],
@@ -28,6 +22,8 @@
     "wcag",
     "skill"
   ],
+  "risk_level": "low",
+  "requires_approval": false,
   "inputs": {
     "optional": [
       {
@@ -53,6 +49,11 @@
       }
     ]
   },
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
+  ],
   "checksum": {
     "algorithm": "sha256",
     "hash": "b4e4ca526bd697410a68dd6a12501ab4cc6202ee5d3df92004fc0709bc4c11e0"
