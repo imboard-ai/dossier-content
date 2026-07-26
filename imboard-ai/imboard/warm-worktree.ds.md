@@ -3,16 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "warm-worktree",
   "title": "Imboard Warm Worktree (pnpm + SSM)",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Prepare a fresh imboard-monorepo worktree for development using pnpm content-addressable store and AWS SSM secrets — no .env copying needed",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
   "category": [
     "development"
   ],
@@ -26,6 +20,8 @@
     "min_minutes": 0,
     "max_minutes": 1
   },
+  "risk_level": "low",
+  "requires_approval": false,
   "inputs": {
     "required": [
       {
@@ -35,6 +31,11 @@
       }
     ]
   },
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
+  ],
   "checksum": {
     "algorithm": "sha256",
     "hash": "08d35dabe411bba33955cfa9b91a629f105cf38cfd8ac2c5dd33bed93b79ee35"
