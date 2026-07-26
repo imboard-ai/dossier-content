@@ -1,5 +1,17 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "release-notes-generator",
+  "title": "Release Notes Generator",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Generate customer-facing release notes and internal support brief from git history",
+  "category": [
+    "development"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -9,22 +21,13 @@
     "algorithm": "sha256",
     "hash": "62ee0be5996208db7c5e25bae9728be77a128af421cad18ae1bfd4529e42bf2d"
   },
-  "name": "release-notes-generator",
-  "objective": "Generate customer-facing release notes and internal support brief from git history",
-  "dossier_schema_version": "1.0.0",
   "signature": {
     "algorithm": "ed25519",
     "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
     "signature": "zmOtOXWc5x4AJKoCnI6/6iys3NFsukJaGREqh5QtdhzJGI1wCWkwFND0n5dAUGadhlScNeAQXgKH3AnWj1cZAg==",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>",
     "timestamp": "2025-12-14T14:42:28.693458+00:00"
-  },
-  "status": "draft",
-  "title": "Release Notes Generator",
-  "version": "1.0.0",
-  "category": [
-    "development"
-  ]
+  }
 }
 ---
 
