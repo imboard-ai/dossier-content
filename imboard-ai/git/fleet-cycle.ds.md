@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle",
   "title": "Fleet Cycle — Orchestrate Multiple Issues",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-06-14",
@@ -91,10 +91,12 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "cicf9FQLU+vywrSDAwFoQ31l3magIG9pgYw/6+kyvuBSGqN+X+8LcuwNlGlb115IvY9LRBsk2CP2ntPOovz5DA==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEANvCyj7RG85NwvvB5AozhC8Oep2DnwY4X3YC1fY/8E9E=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-06-14T16:02:38.612Z",
-    "signed_by": "(not specified)"
+    "signature": "wefxB6TbfZ4ITfa+IVrBPpB9IIyiF+1NAy/zZL/x0yWBi7pY5RH0eaVn3qKML3TLPaVfsHlGk/n2OsaejKwiCA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:14.240Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
