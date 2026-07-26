@@ -568,7 +568,7 @@
     {
       "name": "imboard-ai/git/pr-review",
       "title": "PR Review",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/git/pr-review.ds.md",
       "description": "Review the current PR diff across one or more dimensions: security (OWASP), architecture (boundaries & design), code quality (DRY, type safety, conventions), performance (rendering, queries, bundle), and accessibility (WCAG 2.1 AA). Use when user says 'review PR', 'pr review', 'security review', 'architecture review', 'code quality review', 'performance review', 'accessibility review', or '/pr-review'.",
       "category": [
