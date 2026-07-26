@@ -1,5 +1,17 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "onboarding-friction-review",
+  "title": "Onboarding Friction Assessment",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Identify pain points and confusion points for new contributors trying to understand and work with the project",
+  "category": [
+    "development"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -9,22 +21,13 @@
     "algorithm": "sha256",
     "hash": "87f9053a9fc5d578211518060c6597f038f96e58e5c2b4a3b4070bab22667e4a"
   },
-  "name": "onboarding-friction-review",
-  "objective": "Identify pain points and confusion points for new contributors trying to understand and work with the project",
-  "dossier_schema_version": "1.0.0",
   "signature": {
     "algorithm": "ed25519",
     "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
     "signature": "O/naum/9Bl1MAnX31Ufqof8avs5vMa9GKg/43hKMn+s6VrgT1aUdUfqJVZWUV5UE3Qkrq6+fFPJTTf1e3VY/AQ==",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>",
     "timestamp": "2025-12-06T14:22:27.734592+00:00"
-  },
-  "status": "draft",
-  "title": "Onboarding Friction Assessment",
-  "version": "1.0.0",
-  "category": [
-    "development"
-  ]
+  }
 }
 ---
 
