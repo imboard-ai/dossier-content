@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "scan-markdown-security-skill",
   "title": "Markdown Security Scanner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "risk_level": "low",
@@ -27,6 +27,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "72ef0c516f1c2bdbceadc81908c9cfa16ea11f1f1694d4b9c12030902ecd2bf6"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "eOQtx78YRaCDr1mACR+EA7LymK46OjV8k0tuwtKf6hUdBiBg76gGj47nvaJusxTllj7EvnZakolQxkvYxuUlBQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:12.710Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
