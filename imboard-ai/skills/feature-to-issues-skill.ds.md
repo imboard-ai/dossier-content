@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "feature-to-issues-skill",
   "title": "Feature to Issues",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Multi-agent feature development pipeline: problem signal → discovery → PRD → specs → GH issues → implementation → review loop",
@@ -33,9 +33,10 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "lmisk2+W8b0TT/8z2jOFy18kXyjbzxXMTL2ud9LUXF4Fr8rArPIudFoeOpjv8IZq1ia38O5yXnaQls8jB5m6BA==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAm97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-06-04T10:52:22.818Z",
+    "signature": "ani+P01aZ+iNfbgASImyVr4KBv+w7N1fAOsa6JXuA0GUXefd/U9+hEdCIwBQQIwW3u3GV2ZGN1GbVWD49YoMCg==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:23.175Z",
+    "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
