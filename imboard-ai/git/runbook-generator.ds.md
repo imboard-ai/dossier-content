@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "runbook-generator",
   "title": "Runbook & Ops Checklist Generator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Generate service runbooks and ops checklists for oncall readiness",
@@ -23,10 +23,12 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
-    "signature": "SwEk7lM8G/tDvlZRlYz3walItmBUGEzD0LTJu6svOJND+u6LVZNr4TDjhar94DImVyLY3NU2OeKUrLoqYRwYAA==",
-    "signed_by": "yuvaldim",
-    "timestamp": "2025-12-14T15:32:03.319558+00:00"
+    "signature": "OKcHc/YYVgN6OILyJN5bVj5Vk9W0D4jkTBLaShbWJCTuStsLrymFVmzDzraMz6mZYmeIaVtPb06BR61grFiyAw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:03.767Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
