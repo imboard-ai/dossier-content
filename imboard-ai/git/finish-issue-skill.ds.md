@@ -3,10 +3,16 @@
   "dossier_schema_version": "1.0.0",
   "name": "finish-issue-skill",
   "title": "Finish Issue Workflow",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Prepare a GitHub issue branch for PR with quality checks, cleanup, and review recommendations",
   "description": "Prepare a GitHub issue branch for PR with quality checks, cleanup, and review recommendations. Use when user says \"finish issue\", \"ready for PR\", \"prepare for review\", \"submit PR\", \"create PR\", \"finalize issue\", or \"wrap up\".",
+  "category": [
+    "skills"
+  ],
+  "risk_level": "medium",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Dossier Community"
@@ -15,10 +21,7 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "60701af646e0bca5d4d78fe9097f9bb8ac330c058f20c16c50c15ef9435c7875"
-  },
-  "category": [
-    "skills"
-  ]
+  }
 }
 ---
 
