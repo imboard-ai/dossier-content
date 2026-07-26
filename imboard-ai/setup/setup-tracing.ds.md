@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-tracing",
   "title": "Setup Tracing",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-05-13",
@@ -65,6 +65,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "bd7a1985c7f19d3591eff31f1e5f89746627333500a13509e872829741dd3903"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "xo5wH85HUhdgGTJx0K0XgkoZLH9h+p0ZG1T9FP0dVCIV6g5VRSGYYCWck8AVihB3XxSy2bVyygH4sqhJJf/8BQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:19.273Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
