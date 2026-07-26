@@ -1,17 +1,13 @@
 ---dossier
 {
-  "dossier_schema_version": "1.1.0",
+  "dossier_schema_version": "1.0.0",
   "name": "guided-cycle-issue-skill",
   "title": "Guided Cycle Issue",
-  "version": "1.2.0",
+  "version": "1.2.1",
+  "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Collaborative issue workflow: plan with user review, implement, optional visual review for FE changes, then autonomous ship and rich report",
   "description": "Collaborative issue workflow with plan review and optional visual review. Use when user says 'guided cycle', 'plan issue', 'lets discuss issue', 'work on issue with review', 'guided issue'",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
   "category": [
     "skills"
   ],
@@ -21,6 +17,13 @@
     "collaborative",
     "skill",
     "issue"
+  ],
+  "risk_level": "high",
+  "requires_approval": false,
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
   ],
   "checksum": {
     "algorithm": "sha256",
