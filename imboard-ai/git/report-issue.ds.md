@@ -1,8 +1,10 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
+  "name": "report-issue",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment",
   "category": [
@@ -20,6 +22,7 @@
   "risk_factors": [
     "network_access"
   ],
+  "requires_approval": false,
   "inputs": {
     "required": [
       {
@@ -71,7 +74,6 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "name": "report-issue",
   "checksum": {
     "algorithm": "sha256",
     "hash": "1bfdd25ea3e62b394bb5f8a550e9e755316e03a9c3cd20e8f85c780a31c1a49a"
