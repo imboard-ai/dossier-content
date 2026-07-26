@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "today-summary-skill",
   "title": "Today's Work Summary",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Generate a summary of today's development work",
@@ -21,6 +21,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "61f6f93fd2271af2c845916549958626410da91bd63a5c6d67c2604230efcbe6"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "+aIzOKL0cuQzIgEqQdxX/CpaRToIafRr1nB92Z3pzPgD4CLOOHWzXUJt4TeR7u2ufHmq+enQI0pxA83HKoCpBQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:24.191Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
