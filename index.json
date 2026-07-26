@@ -695,7 +695,7 @@
     {
       "name": "imboard-ai/git/ship-issue",
       "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "path": "imboard-ai/git/ship-issue.ds.md",
       "category": [
         "development"
