@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "title": "Setup React Component Library",
   "name": "setup-react-library",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2025-11-05",
@@ -60,12 +60,13 @@
     ]
   },
   "signature": {
-    "algorithm": "ECDSA-SHA-256",
-    "signature": "MEUCIQDx/1g0CgiXen+dV8DsFCMjEn7U9/XvwCQRIFEh7/DJDwIgPTu9EGkLx8FqflmgfS3b3MJvDBvbhuQFXvZC31dd7HI=",
-    "public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqIbQGqW1Jdh97TxQ5ZvnSVvvOcN5NWhfWwXRAaDDuKK1pv8F+kz+uo1W8bNn+8ObgdOBecFTFizkRa/g+QJ8kA==",
-    "key_id": "arn:aws:kms:us-east-1:942039714848:key/d9ccd3fc-b190-49fd-83f7-e94df6620c1d",
-    "signed_at": "2025-11-16T11:23:31.933Z",
-    "signed_by": "Dossier Team <team@dossier.ai>"
+    "algorithm": "ed25519",
+    "signature": "/ZYiK70UPRA4Wt0R+XWp+xnlkpZgRIamjHeOyX4f2FhRb0uGBjuWRqfgL7/gzY1tXY3U3vfKuzVUpqtYrEQGDw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:15.940Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
