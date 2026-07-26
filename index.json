@@ -1148,7 +1148,7 @@
     {
       "name": "imboard-ai/setup/setup-react-library",
       "title": "Setup React Component Library",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/setup/setup-react-library.ds.md",
       "category": [
         "development",
