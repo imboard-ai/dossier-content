@@ -3,25 +3,14 @@
   "dossier_schema_version": "1.0.0",
   "name": "finish-issue-workflow",
   "title": "Finish Issue Workflow",
-  "version": "1.0.0",
-  "status": "stable",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Stable",
   "objective": "Comprehensive pre-PR workflow that performs git preparation, security scans, code cleanup, quality checks, testing, and creates a properly formatted pull request with context-aware review recommendations.",
-  "authors": [
-    {
-      "name": "Dossier Community"
-    }
+  "category": [
+    "development",
+    "git"
   ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "957583fa0f8ead89fb6f763443397b90bdcda5f8f3e6f95504fc870b2450aca8"
-  },
-  "risk_level": "medium",
-  "risk_factors": [
-    "modifies_files",
-    "executes_external_code",
-    "network_access"
-  ],
-  "requires_approval": "true - development - git",
   "tags": [
     "finish-issue",
     "pull-request",
@@ -32,10 +21,22 @@
     "min_minutes": 5,
     "max_minutes": 30
   },
-  "category": [
-    "development",
-    "git"
-  ]
+  "risk_level": "medium",
+  "risk_factors": [
+    "modifies_files",
+    "executes_external_code",
+    "network_access"
+  ],
+  "requires_approval": true,
+  "authors": [
+    {
+      "name": "Dossier Community"
+    }
+  ],
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "957583fa0f8ead89fb6f763443397b90bdcda5f8f3e6f95504fc870b2450aca8"
+  }
 }
 ---
 
