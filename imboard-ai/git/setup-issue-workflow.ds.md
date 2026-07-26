@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
@@ -36,6 +36,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "b0cc346c8c062396f17249f2f686836e15e4110141e45d75820f80dc1f5e31b0"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "nTUzWP5H77tj9EoMRh0Y+VmSSrlLU3MeSHOmEoWz95kWKzA2Cy+xv4FxokypC1IpJqTEUE2zYJOGNxH8yNJADA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:07.891Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
