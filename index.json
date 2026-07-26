@@ -1091,7 +1091,7 @@
     {
       "name": "imboard-ai/security/dependency-vulnerability-report",
       "title": "Dependency Drift & Vulnerability Report",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/security/dependency-vulnerability-report.ds.md",
       "category": [
         "security"
