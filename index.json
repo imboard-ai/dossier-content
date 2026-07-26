@@ -865,7 +865,7 @@
     {
       "name": "imboard-ai/issue-triage",
       "title": "Issue Triage Workflow",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/issue-triage.ds.md",
       "category": [
         "development"
