@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-arm-dev-machine",
   "title": "Setup ARM Dev Machine",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-27",
@@ -97,6 +97,15 @@
   "estimated_duration": {
     "min_minutes": 10,
     "max_minutes": 25
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "Yo6ucQW4zCRtzA7pNgbp8cGWyv1TD+R5Nu76WJ/HYK2rBGSiQQejfCe/n5Snnx7/Qw6E+LrrzkGJsAXq0C6gBg==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:46:40.862Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
