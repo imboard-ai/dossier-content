@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "add-git-worktree-support",
   "title": "Add Git Worktree Support to Project",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-10",
@@ -28,16 +28,13 @@
       "install_url": "https://git-scm.com/downloads"
     }
   ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "9a0f47527a19f50c18a8b9b0b1654c1d6919f9d81b582815f5e8fdc632c45273"
+  "estimated_duration": {
+    "min_minutes": 5,
+    "max_minutes": 15
   },
   "risk_level": "high",
   "risk_factors": [
-    "modifies_directory_structure",
-    "moves_files_within_repository",
-    "changes_working_directory_paths",
-    "requires_multiple_safety_checks"
+    "modifies_directory_structure"
   ],
   "requires_approval": true,
   "destructive_operations": [
@@ -46,19 +43,26 @@
     "Creates new WORKTREES.md registry file",
     "May break tools/scripts with hardcoded paths"
   ],
-  "estimated_duration": {
-    "min_minutes": 5,
-    "max_minutes": 15
-  },
-  "relationships": {
-    "followed_by": [
-      {
-        "dossier": "create-feature-worktree",
-        "condition": "suggested",
-        "purpose": "Create your first feature worktree after setup"
-      }
-    ]
-  },
+  "prerequisites": [
+    {
+      "description": "Must be in a git repository",
+      "check": "git rev-parse --git-dir"
+    },
+    {
+      "description": "All work must be pushed to remote",
+      "check": "git status",
+      "severity": "critical"
+    },
+    {
+      "description": "Working directory should be clean (no uncommitted changes)",
+      "check": "git status --porcelain",
+      "severity": "critical"
+    },
+    {
+      "description": "Repository should be backed up (cloud or external)",
+      "severity": "critical"
+    }
+  ],
   "inputs": {
     "required": [],
     "optional": [
@@ -97,41 +101,15 @@
       }
     ]
   },
-  "mcp_integration": {
-    "required": false,
-    "server_name": "@dossier/mcp-server",
-    "min_version": "1.0.0",
-    "features_used": [
-      "verify_dossier",
-      "dossier://security"
-    ],
-    "fallback": "manual_execution",
-    "benefits": [
-      "Automatic security verification for high-risk file restructuring",
-      "Signature validation for trusted workflow changes",
-      "Clear risk assessment before modifying directory structure"
+  "relationships": {
+    "followed_by": [
+      {
+        "dossier": "create-feature-worktree",
+        "condition": "suggested",
+        "purpose": "Create your first feature worktree after setup"
+      }
     ]
   },
-  "prerequisites": [
-    {
-      "description": "Must be in a git repository",
-      "check": "git rev-parse --git-dir"
-    },
-    {
-      "description": "All work must be pushed to remote",
-      "check": "git status",
-      "severity": "critical"
-    },
-    {
-      "description": "Working directory should be clean (no uncommitted changes)",
-      "check": "git status --porcelain",
-      "severity": "critical"
-    },
-    {
-      "description": "Repository should be backed up (cloud or external)",
-      "severity": "critical"
-    }
-  ],
   "validation": {
     "success_criteria": [
       {
@@ -167,6 +145,25 @@
   "rollback": {
     "supported": true,
     "instructions": "Move all contents from main/ back to parent directory and delete the empty main/ directory"
+  },
+  "mcp_integration": {
+    "required": false,
+    "server_name": "@dossier/mcp-server",
+    "min_version": "1.0.0",
+    "features_used": [
+      "verify_dossier",
+      "dossier://security"
+    ],
+    "fallback": "manual_execution",
+    "benefits": [
+      "Automatic security verification for high-risk file restructuring",
+      "Signature validation for trusted workflow changes",
+      "Clear risk assessment before modifying directory structure"
+    ]
+  },
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "9a0f47527a19f50c18a8b9b0b1654c1d6919f9d81b582815f5e8fdc632c45273"
   },
   "signature": {
     "algorithm": "ECDSA-SHA-256",
