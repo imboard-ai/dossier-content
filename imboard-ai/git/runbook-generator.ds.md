@@ -1,5 +1,17 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "runbook-generator",
+  "title": "Runbook & Ops Checklist Generator",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Generate service runbooks and ops checklists for oncall readiness",
+  "category": [
+    "development"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "yuvaldim"
@@ -9,22 +21,13 @@
     "algorithm": "sha256",
     "hash": "c78348deb33898b6b6fef75c200f4ea0c11d5cf6b4237cd691c57e4fe259ac01"
   },
-  "name": "runbook-generator",
-  "objective": "Generate service runbooks and ops checklists for oncall readiness",
-  "dossier_schema_version": "1.0.0",
   "signature": {
     "algorithm": "ed25519",
     "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
     "signature": "SwEk7lM8G/tDvlZRlYz3walItmBUGEzD0LTJu6svOJND+u6LVZNr4TDjhar94DImVyLY3NU2OeKUrLoqYRwYAA==",
     "signed_by": "yuvaldim",
     "timestamp": "2025-12-14T15:32:03.319558+00:00"
-  },
-  "status": "draft",
-  "title": "Runbook & Ops Checklist Generator",
-  "version": "1.0.0",
-  "category": [
-    "development"
-  ]
+  }
 }
 ---
 
