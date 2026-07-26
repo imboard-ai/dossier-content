@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-triage",
   "title": "Issue Triage Workflow",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-03-10",
@@ -49,6 +49,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "5bbb9997ed83f0fadeed749372ef082e80678a95996d6b4a80008b63ca85fc7e"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "EMfziwEs3vaP+/8HndCXgGqbrev6ok2ykiejII2mrq1y8rztGDR3DDu5dOEzYa/eQB2lXnWsFWAmDXjwtVEdCQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:40.323Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
