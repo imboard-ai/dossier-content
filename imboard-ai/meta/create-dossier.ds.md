@@ -1,22 +1,46 @@
----
-authors:
-- name: Yuval Dimnik <yuval.dimnik@gmail.com>
-checksum:
-  algorithm: sha256
-  hash: a06ba7e9e0f588e9882db80af69789191f30fea4fc35a0dcb5b0ecd0ec895c4a
-name: create-dossier
-objective: Guide an agent to create well-structured dossier markdown files that other
-  agents will execute successfully
-schema_version: 1.0.0
-signature:
-  algorithm: ed25519
-  public_key: rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=
-  signature: 97uhpDfXGjhdo+cEd6ElyaSJQwRciO0Ia7HdI6oSSaqO2gglXafB5UYvYYrgG6sekI1ctF//HJYci6O8NKFRCg==
-  signed_by: Yuval Dimnik <yuval.dimnik@gmail.com>
-  timestamp: '2025-12-14T15:17:28.617175+00:00'
-status: draft
-title: Create New Dossier
-version: 1.0.2
+---dossier
+{
+  "dossier_schema_version": "1.0.0",
+  "protocol_version": "1.0",
+  "risk_level": "low",
+  "requires_approval": false,
+  "risk_factors": [
+    "modifies_files"
+  ],
+  "category": [
+    "documentation"
+  ],
+  "tags": [
+    "meta",
+    "authoring",
+    "dossier"
+  ],
+  "content_scope": "self-contained",
+  "last_updated": "2026-07-26",
+  "name": "create-dossier",
+  "title": "Create New Dossier",
+  "version": "1.1.0",
+  "status": "Stable",
+  "objective": "Guide an agent to create well-structured dossier markdown files that other agents will execute successfully",
+  "authors": [
+    {
+      "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+    }
+  ],
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "6708c6dc674a64c48c80920e5aa193c87ee52a290e63ff61f44af1bdb13971a2"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "9e8siUwfv3Gq2rUK4xjAIXMG1Gq1FtqGLt0Y0ZkIyF6I/pFHB1CuNvc/JtyP73hQf587JC65eDw1DA+/xUMdCQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:55.755Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+  }
+}
 ---
 
 # Create New Dossier
@@ -62,6 +86,24 @@ Review the codebase and provide feedback.
 Identify the top 5 performance bottlenecks in the codebase and provide specific optimization recommendations for each, with estimated impact.
 ```
 
+## Writing the Scope Section
+
+Directly after "Your Task", state the boundary. An executing agent given a clear task and no boundary will widen it — investigating adjacent code, fixing what it was asked to report on, or continuing well past the point of usefulness.
+
+Three lines:
+
+```markdown
+## Scope
+
+**In scope:** [what to examine]
+**Out of scope:** [the adjacent thing it will be tempted to pull in]
+**Stop when:** [the completion condition]
+
+Report findings only — do not modify code.
+```
+
+That last line matters for every analysis or review dossier. Without it, an agent that finds a fixable problem will fix it. Drop the line for dossiers that are meant to act.
+
 ## Writing the Main Sections
 
 The main sections depend on what type of dossier you're creating:
@@ -106,7 +148,24 @@ Use "Steps to Perform" with numbered steps and validation checkpoints:
 
 ## Writing the Output Format Section
 
-**This is the most critical section.** Write it FIRST, then work backwards to the investigation sections. The Output Format should be at least as long as all other sections combined.
+**This is the most critical section.** Write it FIRST, then work backwards to the investigation sections.
+
+Judge it by **specificity, not length**. The Output Format earns its space by removing ambiguity — exact headers, a consistent item structure, placeholders, one worked example. Once the executing agent cannot misread the structure, stop. Prose past that point makes the deliverable longer without making it clearer.
+
+Then size the **deliverable**. An agent handed a structure and no sizes will fill every section generously:
+
+```markdown
+### Summary
+[One paragraph, 3-5 sentences]
+
+### Findings
+[One entry per issue found — no cap. Report everything meeting the bar below.]
+
+### Recommendations
+[3-5 items, highest impact first]
+```
+
+Sections with a natural ceiling get a number. Sections that should be exhaustive say so **explicitly** — given no instruction, an executing agent infers a limit that you never set and silently drops findings.
 
 ### Bad Output Format (vague):
 
@@ -190,6 +249,10 @@ The Instructions section should be actionable bullets, not a restatement of the 
 
 6. **Abstract section headers** - "Main Content" or "Analysis" are meaningless. Use specific headers like "Security Vulnerabilities to Check" or "Refactoring Candidates".
 
+7. **No scope boundary** - A dossier that says what to do but never what to leave alone invites the agent to widen the task. State what's out of scope and when to stop.
+
+8. **Unsized output sections** - A structure with no sizes gets filled generously everywhere. Give each section a length, an item count, or an explicit "no cap".
+
 ## Complete Example
 
 Here's a complete dossier. Notice how the Output Format section is detailed and specific:
@@ -202,6 +265,14 @@ You are analyzing the project's dependencies for security, maintenance, and upgr
 ## Your Task
 
 Audit all dependencies and produce a prioritized report of security vulnerabilities, unmaintained packages, and recommended upgrades.
+
+## Scope
+
+**In scope:** Direct and transitive dependencies declared in the project's manifest and lockfile.
+**Out of scope:** The project's own source code, CI configuration, and container base images.
+**Stop when:** Every declared dependency has been classified, or the audit tooling fails and you have reported why.
+
+Report findings only — do not upgrade packages or edit the manifest.
 
 ## Areas to Investigate
 
@@ -229,9 +300,11 @@ Audit all dependencies and produce a prioritized report of security vulnerabilit
 ### Health Score
 **Overall: [Healthy/Needs Attention/At Risk]**
 
-[One paragraph summarizing dependency health and key concerns]
+[One paragraph, 3-5 sentences: dependency health and key concerns]
 
 ### Security Vulnerabilities
+
+[One row per vulnerability — no cap. List every CVE found, at any severity.]
 
 | Package | Severity | CVE | Description | Fix |
 |---------|----------|-----|-------------|-----|
@@ -240,6 +313,8 @@ Audit all dependencies and produce a prioritized report of security vulnerabilit
 *If no vulnerabilities: "No known security vulnerabilities found."*
 
 ### Unmaintained Packages
+
+[One entry per package meeting the bar in Instructions — no cap.]
 
 1. **[package-name]** - Last updated: [date]
    - Used for: [purpose in this project]
@@ -317,6 +392,8 @@ Next steps to publish this dossier:
 
 **Instructions:**
 - Write the Output Format section FIRST, then work backwards to create investigation sections that support it
+- Give every Output Format section a size - a length, an item count, or an explicit "no cap"
+- Always include a Scope section with an out-of-scope line and a stop condition
 - If the user provides reference dossiers, match their structure and level of detail
 - Keep each dossier focused on ONE task - suggest multiple dossiers if the user wants too much
 - State assumptions explicitly if requirements were unclear
