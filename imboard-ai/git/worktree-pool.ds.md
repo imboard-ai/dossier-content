@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "title": "Worktree Pool",
   "name": "worktree-pool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-07",
@@ -35,6 +35,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "c28ea16b5e9197fe29db7cb2adcc776ff428ed06d0d07360cdab477c881c4038"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "4tX+AytkHq93Ts4QnZKfEZI6CeItv7KfuzZpTONB3UW1SHmE6dUq3Cb1qSZWmBupc22kfGE7CEvDf3AtqevFBA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:30.448Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
