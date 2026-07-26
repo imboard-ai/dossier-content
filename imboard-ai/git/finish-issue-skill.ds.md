@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "finish-issue-skill",
   "title": "Finish Issue Workflow",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Prepare a GitHub issue branch for PR with quality checks, cleanup, and review recommendations",
@@ -21,6 +21,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "60701af646e0bca5d4d78fe9097f9bb8ac330c058f20c16c50c15ef9435c7875"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "/zhY3stc4nKNvjeT+Vb0eRETLkLOxJFgZyjtVdiXOzkHKQgqBqZswaHB5B79Gfn0/X0ry/YSn64GhAUsI9slCQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:07.663Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
