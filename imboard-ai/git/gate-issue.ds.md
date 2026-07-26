@@ -1,8 +1,10 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
+  "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow",
   "category": [
@@ -16,6 +18,7 @@
     "gate"
   ],
   "risk_level": "low",
+  "requires_approval": false,
   "inputs": {
     "required": [
       {
@@ -31,7 +34,6 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "name": "gate-issue",
   "checksum": {
     "algorithm": "sha256",
     "hash": "250f5086b6ac01e4ab1a3389d321bbf168f519b71c7cd62ecd2f75b56e257dcc"
