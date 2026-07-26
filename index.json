@@ -280,7 +280,7 @@
     {
       "name": "imboard-ai/git/code-refactoring-abstraction",
       "title": "Code Refactoring & Abstraction Analysis",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/git/code-refactoring-abstraction.ds.md",
       "category": [
         "development"
