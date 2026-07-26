@@ -1,17 +1,13 @@
 ---dossier
 {
-  "dossier_schema_version": "1.1.0",
+  "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle-skill",
   "title": "Fleet Cycle",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Take a SET of GitHub issues to merged PRs via dependency-aware waves of background full-cycle runs",
   "description": "Orchestrate multiple issues at once. Builds a dependency-aware wave plan and dispatches full-cycle-issue across background agents — parallel where safe, serial where dependent. Use when the user says 'fleet cycle', 'full cycle issues 1,2,3', 'full cycle issues 1..9', 'batch issues', 'map these issues and run them', 'run these issues in parallel/serial', or gives a LIST or RANGE of issues to take to merged PRs.",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
   "category": [
     "skills"
   ],
@@ -24,6 +20,13 @@
     "parallel",
     "fleet",
     "skill"
+  ],
+  "risk_level": "high",
+  "requires_approval": false,
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
   ],
   "checksum": {
     "algorithm": "sha256",
