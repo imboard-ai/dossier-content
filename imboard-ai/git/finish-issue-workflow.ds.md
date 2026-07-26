@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "finish-issue-workflow",
   "title": "Finish Issue Workflow",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Comprehensive pre-PR workflow that performs git preparation, security scans, code cleanup, quality checks, testing, and creates a properly formatted pull request with context-aware review recommendations.",
@@ -36,6 +36,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "957583fa0f8ead89fb6f763443397b90bdcda5f8f3e6f95504fc870b2450aca8"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "9QGR3kD0JOzE2uKD5Tr4eHtp38YH9VBNhA7BEazgIm6ilw873vfbEWMpoDCP3XuCWObJIkkrM5sv7/2Bkj/0Dg==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:10.959Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
