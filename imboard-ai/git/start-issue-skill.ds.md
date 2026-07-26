@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "start-issue-skill",
   "title": "Start Issue Workflow",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Set up a GitHub issue for development with proper branch, worktree, and planning documentation",
@@ -21,6 +21,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "e5ad16f83f7f441c98c85b8ca1c69f4c8b5dd6659918babad2e016b0073b9c23"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "YV1k27ch+EIS3SVUZReirK4kazip3wz0SV3H/5d0yhIE27xJfOL5ZtVTkig0k0GLTo5S3vuUE12k6vtqUEb6DA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:17.748Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
