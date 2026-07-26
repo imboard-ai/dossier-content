@@ -8,7 +8,7 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "version": "2.0.0",
+  "version": "2.0.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-03-07",
@@ -96,6 +96,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "3cf5b95e0431d767b339bda0dd668ccf2ba429e9dc53f4efc7e420e18a8522c6"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "mXmpnHKQjyktEAytr7V8F4m3yQebHeMAov+BuVUodgdx2Ic/ypVhk8ENrU+tb9H8aGGeClfxF1tqmTYODhT/AQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:09.422Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
