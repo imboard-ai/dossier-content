@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-06-25",
@@ -37,6 +37,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "dd8f4a310529ca5177bfaea8c0c8b387fccc151f810bce9889839aff59e04821"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "gB+NL6/RnA3wvNocwsEvlYpU6m6Td3N366zW7AnuYuRQP17HjDF9q+ETu270UU6JzT+M5j5DN1IqIAyV1yL4DQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:59.706Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
