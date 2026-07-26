@@ -1167,7 +1167,7 @@
     {
       "name": "imboard-ai/setup/setup-tracing",
       "title": "Setup Tracing",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/setup/setup-tracing.ds.md",
       "category": [
         "setup",
