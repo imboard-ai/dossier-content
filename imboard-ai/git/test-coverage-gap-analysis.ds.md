@@ -1,5 +1,17 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "test-coverage-gap-analysis",
+  "title": "Test Coverage Gap Analysis",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Analyze test files against project structure to identify untested code paths, controllers, routes, and functions. Supports Jest, Mocha, Vitest, and other test frameworks.",
+  "category": [
+    "development"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -9,22 +21,13 @@
     "algorithm": "sha256",
     "hash": "e64357589982286564d28254b473c79786a03c3ed00358c80909252b1d9dee88"
   },
-  "name": "test-coverage-gap-analysis",
-  "objective": "Analyze test files against project structure to identify untested code paths, controllers, routes, and functions. Supports Jest, Mocha, Vitest, and other test frameworks.",
-  "dossier_schema_version": "1.0.0",
   "signature": {
     "algorithm": "ed25519",
     "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
     "signature": "wCpViINuKrDT/nIMl0JYneXqBrzBVhbA9E78o0Auk4MswMs+8UE+LGJkgYt6CUM8+DhS8lhNmuUqYjlRbPlTAQ==",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>",
     "timestamp": "2025-12-07T06:39:38.213311+00:00"
-  },
-  "status": "draft",
-  "title": "Test Coverage Gap Analysis",
-  "version": "1.0.0",
-  "category": [
-    "development"
-  ]
+  }
 }
 ---
 
