@@ -1,17 +1,13 @@
 ---dossier
 {
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "name": "agent-discovery-scaffold",
-  "description": "Analyze a project and generate structured entry-point documentation (AGENTS.md + module catalog) so external AI agents can understand capabilities without full codebase exploration",
-  "objective": "Make any project instantly discoverable by external AI agents by generating structured manifests of capabilities, reusable modules, and entry points",
   "dossier_schema_version": "1.0.0",
-  "status": "Draft",
+  "name": "agent-discovery-scaffold",
   "title": "Agent Discovery Scaffold",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Make any project instantly discoverable by external AI agents by generating structured manifests of capabilities, reusable modules, and entry points",
+  "description": "Analyze a project and generate structured entry-point documentation (AGENTS.md + module catalog) so external AI agents can understand capabilities without full codebase exploration",
   "category": [
     "documentation",
     "development"
@@ -34,19 +30,19 @@
       "check_command": "git --version"
     }
   ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "risk_factors": [
-    "creates_files"
-  ],
-  "destructive_operations": [
-    "Creates or overwrites AGENTS.md in project root",
-    "Creates docs/modules/ directory with module catalog files"
-  ],
   "estimated_duration": {
     "min_minutes": 3,
     "max_minutes": 10
   },
+  "risk_level": "low",
+  "risk_factors": [
+    "modifies_files"
+  ],
+  "requires_approval": false,
+  "destructive_operations": [
+    "Creates or overwrites AGENTS.md in project root",
+    "Creates docs/modules/ directory with module catalog files"
+  ],
   "inputs": {
     "required": [
       {
@@ -83,7 +79,12 @@
         "description": "Module catalog index with reusability assessment"
       }
     ]
-  }
+  },
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
+  ]
 }
 ---
 
