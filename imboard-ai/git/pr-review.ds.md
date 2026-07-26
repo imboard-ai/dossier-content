@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "pr-review",
   "title": "PR Review",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Multi-dimensional review of a PR diff across security, architecture, code quality, performance, and accessibility — run one lens or all of them",
@@ -60,9 +60,10 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "ZI0Xr6PcnOAlt8bzdUShPpbC3AIdfhagYMk7OSv4MrY30WRXWs/n9g2UrFdKUZLhGfWzD9hd3V4FAuzu6qtzBQ==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAm97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-06-04T11:00:07.348Z",
+    "signature": "T3NXbcJOTFdmBkk2PA62qbDsLjT7476DRxPfNlFkNnC12EL0yP5pF1hMAl4voG64oxL2a6q6zNFLeRV2+RnVCA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:49.418Z",
+    "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
