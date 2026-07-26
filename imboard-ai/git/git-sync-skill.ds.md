@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "git-sync-skill",
   "title": "Git Sync",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Reconcile a repo's local state with origin: gitignore obvious junk, commit and push real work, surface ambiguous items",
@@ -24,7 +24,20 @@
     {
       "name": "Yuval Dimnik"
     }
-  ]
+  ],
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "ed2b88726feadb111dae7f2b69f38e95eab2f80f075e1d8777f02d1f4d7e7df8"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "j7a30gAlMmUoH8LV/hxHIjIdgTURolSh3m4RAPqI8/EZvyTLrJWRPQxoT4vmZzTIgxZihe8RPXq3NGKW7ATEDg==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:30.201Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+  }
 }
 ---
 
