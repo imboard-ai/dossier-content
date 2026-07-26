@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-06-25",
@@ -49,6 +49,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "b03b46d90fa08362daa01715eeaefac882c52e9db820c5ca0266363b489030f0"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "hU39KumGt+ld/LvN2WBqEr/XA+DPQl3yKCEqsSHaCyXU2CQICCseJIv0zdc7k9Q9El1/sP8wrYO2jqKvLF8lBw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:33.413Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
