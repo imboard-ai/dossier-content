@@ -3,15 +3,11 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue-skill",
   "title": "Full Cycle Issue",
-  "version": "1.6.0",
+  "version": "1.6.1",
+  "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Take a GitHub issue from start to merged PR autonomously",
   "description": "Full autopilot: gate, setup, plan, implement, test, review, commit, push, PR, merge, rich report. Use when user says 'full cycle issue', 'auto issue', 'autopilot issue', 'fire and forget'",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
   "category": [
     "skills"
   ],
@@ -20,6 +16,13 @@
     "workflow",
     "autonomous",
     "skill"
+  ],
+  "risk_level": "high",
+  "requires_approval": false,
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
   ],
   "checksum": {
     "algorithm": "sha256",
