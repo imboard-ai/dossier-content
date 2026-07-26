@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "scaffold-project",
   "title": "Scaffold TypeScript Project",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-03-09",
@@ -170,9 +170,10 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "Rj2Hqwrx/pQPFNnv+ClLfuuM2Ao8jVFNYETQ4l6cpI2ioPbC3OTwIpgOkLAawVGPnAry7M9anzmX1EaMtampDQ==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAm97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-06-04T10:51:34.316Z",
+    "signature": "3LH53mLUx9YM7fOY/3XSX0PgetgH+9h1ZGWzrZYCFBiqAKSSKQhQ43AUhDoezzh8f/1kUPlTWt7aS7cUj/c7Aw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:03.004Z",
+    "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
