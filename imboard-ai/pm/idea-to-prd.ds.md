@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Idea to PRD — PM discovery loop with a go/kill gate",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-07-07",
@@ -97,6 +97,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "c8259b979e69f2778cf297a587e1943065dcc25bd8a518c492b7f305f096b7cc"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "gzHNHDcRR7HE+XWNHPYCd2dBnQR0vqmaJrOCF7a8EXfXbF/DjhjREeLYVHHdwBtZ3+WazX0oysnncDRYfXNUAg==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:59.802Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
