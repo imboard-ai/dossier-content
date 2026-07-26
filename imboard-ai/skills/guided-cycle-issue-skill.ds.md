@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "guided-cycle-issue-skill",
   "title": "Guided Cycle Issue",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Collaborative issue workflow: plan with user review, implement, optional visual review for FE changes, then autonomous ship and rich report",
@@ -28,6 +28,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "55e582f6a835a26227f935879922502c437801833506db6de12de4aeb4518338"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "r83FfpD4NfDaGa3l+ldh/zEP9wtJ6Vc9iLS/2nd2R5b4v+j2v2U6iV7NVZq4xE7nG25PkSHm1WBOUZ80fEz3Bw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:32.978Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
