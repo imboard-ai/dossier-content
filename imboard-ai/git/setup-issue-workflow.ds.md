@@ -1,13 +1,17 @@
 ---dossier
 {
   "dossier_schema_version": "1.0.0",
+  "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.9.0",
+  "version": "1.9.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
   "category": [
     "development"
   ],
+  "risk_level": "low",
+  "requires_approval": false,
   "inputs": {
     "optional": [
       {
@@ -29,7 +33,6 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "name": "setup-issue-workflow",
   "checksum": {
     "algorithm": "sha256",
     "hash": "b0cc346c8c062396f17249f2f686836e15e4110141e45d75820f80dc1f5e31b0"
