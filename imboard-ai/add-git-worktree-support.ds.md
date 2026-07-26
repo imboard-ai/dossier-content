@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "add-git-worktree-support",
   "title": "Add Git Worktree Support to Project",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-04-06",
@@ -165,7 +165,15 @@
     "algorithm": "sha256",
     "hash": "87d37294f757375d823b0e4b496a4c2b2256bb62ccafef77e16a363cf3581725"
   },
-  "signature": null
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "J6PTjgB4Y0aFdJHAvzUrxUyjto5ZmH0tRsExPvvcpOqW56+70pp+opUZbCpReLIpLoiE2Xd17E6h44EYYKyRCQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:46:26.837Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+  }
 }
 ---
 # Dossier: Add Git Worktree Support to Project
