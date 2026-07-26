@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "code-refactoring-abstraction",
   "title": "Code Refactoring & Abstraction Analysis",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Analyze code for DRY violations and repetitive patterns, then suggest abstractions to reduce duplication. Supports TypeScript/JavaScript, Python, and Go with configurable output modes.",
@@ -23,10 +23,12 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
-    "signature": "jENgxkdvzRPjiB1xJ7/VCg6QTDcVRnzdKe6gycgyhNoIiJ7q3qOR+UV9cbAq2m4NtEg/SBSnnkc1p0GWw/wRDQ==",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>",
-    "timestamp": "2025-12-07T06:22:45.679962+00:00"
+    "signature": "xrsBE174Vo9+3C8xGOW31xhdpD2DNaHoYuSrfemr0kZMI4SotdQ4Gxps62eZwRteMpJRLYdkPeYfx8xI8XOEBQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:00.912Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
