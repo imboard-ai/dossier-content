@@ -1,24 +1,27 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "dossier-discovery-skill",
+  "title": "Dossier Discovery",
+  "version": "1.2.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Find and suggest relevant dossier workflows for complex tasks",
+  "description": "Run `ai-dossier list --json` at START of workflow tasks (setup, deploy, migrate, refactor, CI/CD). Once per conversation. Output 'Dossier check: [result]' after running. Skip if you see this marker in conversation history.",
+  "category": [
+    "skills"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik"
     }
   ],
-  "description": "Run `ai-dossier list --json` at START of workflow tasks (setup, deploy, migrate, refactor, CI/CD). Once per conversation. Output 'Dossier check: [result]' after running. Skip if you see this marker in conversation history.",
-  "name": "dossier-discovery-skill",
-  "objective": "Find and suggest relevant dossier workflows for complex tasks",
-  "dossier_schema_version": "1.0.0",
-  "status": "Draft",
-  "title": "Dossier Discovery",
-  "version": "1.2.0",
   "checksum": {
     "algorithm": "sha256",
     "hash": "b321334135d3dec7d45bca6ae5962c6208261732ae9d930c938a4d8130edf729"
-  },
-  "category": [
-    "skills"
-  ]
+  }
 }
 ---
 
