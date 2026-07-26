@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue-skill",
   "title": "Full Cycle Issue",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Take a GitHub issue from start to merged PR autonomously",
@@ -30,10 +30,12 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "e0aE2YMqGkGggDK8/vml9rLqI78ZE92UI510o1YpmLpNVn9L95O6VHpPWYQxkrQXHFSdCRN2uzNBqZkivZqABg==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEANvCyj7RG85NwvvB5AozhC8Oep2DnwY4X3YC1fY/8E9E=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-04-16T13:32:23.753Z",
-    "signed_by": "(not specified)"
+    "signature": "WvtW/0aUZzHyqVVYsnjP3iBndxi+r3zgepYsqapMJT1IS1G+99UncQYZJwjqvxD43DqyK/mM0stjde+MQD7bCA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:29.825Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
