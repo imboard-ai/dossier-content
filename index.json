@@ -955,8 +955,21 @@
     {
       "name": "imboard-ai/meta/create-dossier",
       "title": "Create New Dossier",
-      "version": "1.0.2",
-      "path": "imboard-ai/meta/create-dossier.ds.md"
+      "version": "1.1.0",
+      "path": "imboard-ai/meta/create-dossier.ds.md",
+      "category": [
+        "documentation"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "dossier"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
     },
     {
       "name": "imboard-ai/meta/create-dossier-and-skill",
