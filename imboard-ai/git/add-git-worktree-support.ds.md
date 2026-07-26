@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "add-git-worktree-support",
   "title": "Add Git Worktree Support to Project",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-10",
@@ -166,12 +166,13 @@
     "hash": "9a0f47527a19f50c18a8b9b0b1654c1d6919f9d81b582815f5e8fdc632c45273"
   },
   "signature": {
-    "algorithm": "ECDSA-SHA-256",
-    "signature": "MEUCIAXuEcuO1YIEz+3OjxKGuHmcZMAwyvrK8XQP83917V6FAiEAiaN7fkFlVpFGYhVRzslLYudHyc2CutNJ5Z5QBbJDUMo=",
-    "public_key": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqIbQGqW1Jdh97TxQ5ZvnSVvvOcN5NWhfWwXRAaDDuKK1pv8F+kz+uo1W8bNn+8ObgdOBecFTFizkRa/g+QJ8kA==",
-    "key_id": "arn:aws:kms:us-east-1:942039714848:key/d9ccd3fc-b190-49fd-83f7-e94df6620c1d",
-    "signed_at": "2025-11-16T11:23:31.103Z",
-    "signed_by": "Dossier Team <team@dossier.ai>"
+    "algorithm": "ed25519",
+    "signature": "VU4xRGQYLqLNA/Yj7rLv0yllkzcbUMw4MYCL+opW6RctOREMU+J6mpO0FKLEIbwV3q5ewfrKaCSbTtn5ONzMBw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:46:50.835Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
