@@ -915,7 +915,7 @@
     {
       "name": "imboard-ai/marketing/google-ads",
       "title": "Google Ads Expert",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/marketing/google-ads.ds.md",
       "description": "Expert Google Ads account management — auditing, first-look account review, competitor analysis (Auction Insights), keyword research, campaign structure, bid strategy, Quality Score, search-term triage, RSA copywriting, Performance Max, landing page evaluation, PPC math, optimization loops, and a SaaS/AI-product deep dive (activation-first conversion architecture, competitor conquesting, PLG landing pages). Works with any data source: Google Ads MCP (GAQL), CSV exports, or screenshots. Read-only by default — every account change is a draft until explicitly approved.",
       "category": [
