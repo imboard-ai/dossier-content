@@ -1,5 +1,17 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "project-exploration",
+  "title": "Project Exploration",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Map a project's structure (routes, controllers, models, types) to enable onboarding, refactoring, and gap analysis. Generates both human-readable Markdown and machine-readable JSON outputs.",
+  "category": [
+    "development"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -9,22 +21,13 @@
     "algorithm": "sha256",
     "hash": "7423e2aea48e0de4999bbd8cf394d18c014008d791420843829e63d43e3bf0ee"
   },
-  "name": "project-exploration",
-  "objective": "Map a project's structure (routes, controllers, models, types) to enable onboarding, refactoring, and gap analysis. Generates both human-readable Markdown and machine-readable JSON outputs.",
-  "dossier_schema_version": "1.0.0",
   "signature": {
     "algorithm": "ed25519",
     "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
     "signature": "XAPM9vm5oLeu3p7LPNTL80nAWON37y6i8+ShmkfmDQfmAzdtm47RUvjmVY6R04PzB/a4+f/90a9jKGjWy3+RBw==",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>",
     "timestamp": "2025-12-07T06:27:52.168419+00:00"
-  },
-  "status": "draft",
-  "title": "Project Exploration",
-  "version": "1.0.0",
-  "category": [
-    "development"
-  ]
+  }
 }
 ---
 
