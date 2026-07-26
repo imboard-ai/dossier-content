@@ -3,16 +3,11 @@
   "dossier_schema_version": "1.0.0",
   "name": "feature-to-issues-skill",
   "title": "Feature to Issues",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
   "status": "Draft",
-  "risk_level": "medium",
   "objective": "Multi-agent feature development pipeline: problem signal → discovery → PRD → specs → GH issues → implementation → review loop",
   "description": "Orchestrate PM, UX/FE, and DB/BE agents to take a problem signal through discovery, PRD creation, spec generation, and GH issue decomposition. Use when user says 'feature to issues', 'plan feature', 'feature pipeline', 'new feature', 'feature development'",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
   "category": [
     "skills"
   ],
@@ -24,6 +19,13 @@
     "multi-agent",
     "planning",
     "skill"
+  ],
+  "risk_level": "medium",
+  "requires_approval": false,
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
   ],
   "checksum": {
     "algorithm": "sha256",
