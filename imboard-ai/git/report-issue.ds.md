@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "report-issue",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment",
@@ -77,6 +77,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "1bfdd25ea3e62b394bb5f8a550e9e755316e03a9c3cd20e8f85c780a31c1a49a"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "eupyWOSiK3j/HI4hU9C2ef0SNYftp1YXzxitEoFQbY6saQBuUDBwYt8+/OEuaQyF4VhY59tgGXO9mJIcxNxADQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:56.343Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
