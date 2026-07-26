@@ -3,15 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "warm-worktree",
   "title": "Warm Worktree",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Prepare a fresh git worktree for development by copying environment files, installing dependencies, running builds, verifying tests, and checking that servers can start.",
-  "authors": [
-    {
-      "name": "Dossier Community"
-    }
-  ],
-  "risk_level": "low",
   "category": [
     "development",
     "git"
@@ -21,6 +16,13 @@
     "setup",
     "environment",
     "dependencies"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
+  "authors": [
+    {
+      "name": "Dossier Community"
+    }
   ],
   "checksum": {
     "algorithm": "sha256",
