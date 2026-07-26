@@ -1,5 +1,17 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "docs-drift-check",
+  "title": "Docs/README Drift Check",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Detect documentation drift from code and propose fixes",
+  "category": [
+    "development"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "yuvaldim"
@@ -9,22 +21,13 @@
     "algorithm": "sha256",
     "hash": "5fadb48995651eef76e60fced7d0df0b347f058859ec3ad995f579bcc42c26b0"
   },
-  "name": "docs-drift-check",
-  "objective": "Detect documentation drift from code and propose fixes",
-  "dossier_schema_version": "1.0.0",
   "signature": {
     "algorithm": "ed25519",
     "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
     "signature": "OPKrwkNL5sZp0GTQocMLAv8aIn+GcN2glCN0Fr1J5KslUnkJai3jASIX5D1z7KRleau6gHq+1vutQ5vxmMuyAA==",
     "signed_by": "yuvaldim",
     "timestamp": "2025-12-14T15:34:39.734454+00:00"
-  },
-  "status": "draft",
-  "title": "Docs/README Drift Check",
-  "version": "1.0.0",
-  "category": [
-    "development"
-  ]
+  }
 }
 ---
 
