@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle-skill",
   "title": "Fleet Cycle",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Take a SET of GitHub issues to merged PRs via dependency-aware waves of background full-cycle runs",
@@ -31,6 +31,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "a9c6e3c7d24478dec9c313529ecb6f8da06e4c03661b1ede77dec41432f1393c"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "L/Ykao8/RYsAaVx7noeCZ4EQZdwZvRgfRXlBkzzg6HMyNkkxakBBJyFSBuTfMDXHobHPOnkB8gLMHAIdK2ptCA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:49:26.793Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
