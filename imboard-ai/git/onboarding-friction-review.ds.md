@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "onboarding-friction-review",
   "title": "Onboarding Friction Assessment",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Identify pain points and confusion points for new contributors trying to understand and work with the project",
@@ -23,10 +23,12 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "public_key": "rwZMHabZOn44qGc9tIRVPjFsHpoB3KxbsLhoULI5Xrw=",
-    "signature": "O/naum/9Bl1MAnX31Ufqof8avs5vMa9GKg/43hKMn+s6VrgT1aUdUfqJVZWUV5UE3Qkrq6+fFPJTTf1e3VY/AQ==",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>",
-    "timestamp": "2025-12-06T14:22:27.734592+00:00"
+    "signature": "kf1eDThMS9P/yhCHu2xaNDL7LZcZhYkbaBs0HTtxE6DfQhtHbErFgXu283biQ4Uz7uz5jp+v6AteJb3bZiZUAw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:47:39.925Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
