@@ -1,5 +1,18 @@
 ---dossier
 {
+  "dossier_schema_version": "1.0.0",
+  "name": "today-summary-skill",
+  "title": "Today's Work Summary",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
+  "status": "Draft",
+  "objective": "Generate a summary of today's development work",
+  "description": "Summarize today's work based on git commits and file changes. Use when user asks \"what did I do today\", \"daily summary\", \"today's progress\", or \"end of day report\".",
+  "category": [
+    "skills"
+  ],
+  "risk_level": "low",
+  "requires_approval": false,
   "authors": [
     {
       "name": "Yuval Dimnik"
@@ -8,17 +21,7 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "61f6f93fd2271af2c845916549958626410da91bd63a5c6d67c2604230efcbe6"
-  },
-  "description": "Summarize today's work based on git commits and file changes. Use when user asks \"what did I do today\", \"daily summary\", \"today's progress\", or \"end of day report\".",
-  "name": "today-summary-skill",
-  "objective": "Generate a summary of today's development work",
-  "dossier_schema_version": "1.0.0",
-  "status": "draft",
-  "title": "Today's Work Summary",
-  "version": "1.0.0",
-  "category": [
-    "skills"
-  ]
+  }
 }
 ---
 
