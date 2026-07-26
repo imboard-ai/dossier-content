@@ -961,7 +961,7 @@
     {
       "name": "imboard-ai/meta/create-dossier-and-skill",
       "title": "Create Dossier and Skill",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "path": "imboard-ai/meta/create-dossier-and-skill.ds.md",
       "category": [
         "development",
