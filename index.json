@@ -532,7 +532,7 @@
     {
       "name": "imboard-ai/git/onboarding-friction-review",
       "title": "Onboarding Friction Assessment",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/git/onboarding-friction-review.ds.md",
       "category": [
         "development"
