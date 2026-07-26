@@ -54,7 +54,7 @@
   ],
   "name": "google-ads",
   "title": "Google Ads Expert",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "status": "Draft",
   "objective": "Expert Google Ads management playbook: audit workflow, PPC math, campaign structure, bid strategy, Quality Score, search-term triage, RSA copy, PMax, competitor analysis, and SaaS/PLG acquisition — evidence-first, read-only by default, writes only with explicit approval",
   "authors": [
@@ -74,6 +74,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "e5538c7294902f2969401cda62f971725c843e18a16915f493b15b8acc1f4a3d"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "s6UseUrbdiFH7/4aQ20Cecq8Kduvo0VpkoBUSReWW88Dod90vkw4komOoAw+LTZk++7Oe/G/4wu8c4CGFZGhDA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:46.565Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
