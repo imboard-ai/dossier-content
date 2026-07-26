@@ -466,7 +466,7 @@
     {
       "name": "imboard-ai/git/git-sync-skill",
       "title": "Git Sync",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/git/git-sync-skill.ds.md",
       "description": "Triages uncommitted/unpushed state and syncs with GitHub. Use when arriving in a repo with dirty state, when the user says 'sync this repo', 'review uncommitted', 'commit pending', 'what's dirty here', 'push changes', or runs /git-sync.",
       "category": [
