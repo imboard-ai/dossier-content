@@ -3,7 +3,8 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-triage",
   "title": "Issue Triage Workflow",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-03-10",
   "objective": "Assess a GitHub issue's readiness for autonomous implementation and route it to the right lane: autonomous, plan-first decomposition, or not-ready",
@@ -18,16 +19,6 @@
     "autonomous",
     "planning"
   ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "risk_factors": [
-    "network_access"
-  ],
-  "destructive_operations": [
-    "Creates sub-issues on GitHub (plan-first lane)",
-    "Adds labels to issues",
-    "Posts comments on issues"
-  ],
   "tools_required": [
     {
       "name": "gh",
@@ -35,8 +26,20 @@
       "check_command": "gh --version"
     }
   ],
+  "risk_level": "high",
+  "risk_factors": [
+    "network_access"
+  ],
+  "requires_approval": false,
+  "destructive_operations": [
+    "Creates sub-issues on GitHub (plan-first lane)",
+    "Adds labels to issues",
+    "Posts comments on issues"
+  ],
   "relationships": {
-    "followed_by": ["imboard-ai/git/full-cycle-issue"]
+    "followed_by": [
+      "imboard-ai/git/full-cycle-issue"
+    ]
   },
   "authors": [
     {
