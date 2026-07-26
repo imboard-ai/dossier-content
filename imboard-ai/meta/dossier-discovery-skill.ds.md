@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "dossier-discovery-skill",
   "title": "Dossier Discovery",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Find and suggest relevant dossier workflows for complex tasks",
@@ -21,6 +21,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "b321334135d3dec7d45bca6ae5962c6208261732ae9d930c938a4d8130edf729"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "yJ3P8Xyba+FX9Eb9qJWyFYED0mG+saIhktGe8d9W/j+nVPEDvF4NB9bpG1SyxpZw9zemvwlgX1DF/3OKf7sUAg==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:48:53.010Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
