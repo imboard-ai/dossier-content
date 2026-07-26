@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "chrome-devtools-connect",
   "title": "Chrome DevTools MCP — Connect & Self-Heal the WSL→Windows Bridge",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-07-08",
@@ -75,6 +75,15 @@
   "checksum": {
     "algorithm": "sha256",
     "hash": "332be9aa7a58eca011cf6c00fe19155b103218081b20fe81d6ec9e541cb6ae75"
+  },
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "EtgK149y39K/UWACLkjrEkgqyAnNkjlda7KljkmkKtKK6v/nI1K0YqpLZw88AkVAJDBue25sF+o7vy5cHMrDBQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-26T12:46:44.259Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
