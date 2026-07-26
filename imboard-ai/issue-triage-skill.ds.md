@@ -3,15 +3,11 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-triage-skill",
   "title": "Issue Triage",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Triage a GitHub issue to determine if it's ready for autonomous implementation",
   "description": "Assess and route issues: autonomous, plan-first, or not-ready. Use when user says 'triage issue', 'assess issue', 'check issue readiness'",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
   "category": [
     "skills"
   ],
@@ -20,6 +16,13 @@
     "triage",
     "workflow",
     "skill"
+  ],
+  "risk_level": "high",
+  "requires_approval": false,
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
   ],
   "checksum": {
     "algorithm": "sha256",
