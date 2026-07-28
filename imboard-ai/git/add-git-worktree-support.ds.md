@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "add-git-worktree-support",
   "title": "Add Git Worktree Support to Project",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-03-10",
@@ -34,7 +34,8 @@
   },
   "risk_level": "high",
   "risk_factors": [
-    "modifies_directory_structure"
+    "modifies_directory_structure",
+    "network_access"
   ],
   "requires_approval": true,
   "destructive_operations": [
@@ -93,11 +94,13 @@
     "configuration": [
       {
         "type": "directory_structure",
-        "description": "Parent directory structure ready for multiple worktrees"
+        "description": "Parent directory structure ready for multiple worktrees",
+        "key": "directory_structure"
       },
       {
         "type": "git_config",
-        "description": "core.worktree set to absolute path of main/ so git works from parent"
+        "description": "core.worktree set to absolute path of main/ so git works from parent",
+        "key": "git_config"
       }
     ]
   },
@@ -112,33 +115,49 @@
   },
   "validation": {
     "success_criteria": [
+      "Main worktree subdirectory exists",
+      "Git repository exists in main subdirectory",
+      "Parent .git file exists and points to main/.git",
+      "Git works from parent directory (core.worktree set correctly)",
+      "WORKTREES.md registry file exists",
+      "Git still functions correctly from main/",
+      "Can create and remove a test worktree"
+    ],
+    "verification_commands": [
       {
-        "description": "Main worktree subdirectory exists",
-        "check": "test -d main"
+        "command": "test -d main",
+        "expected": "exits 0",
+        "description": "Main worktree subdirectory exists"
       },
       {
-        "description": "Git repository exists in main subdirectory",
-        "check": "test -d main/.git"
+        "command": "test -d main/.git",
+        "expected": "exits 0",
+        "description": "Git repository exists in main subdirectory"
       },
       {
-        "description": "Parent .git file exists and points to main/.git",
-        "check": "test -f .git && grep -q 'gitdir: main/.git' .git"
+        "command": "test -f .git && grep -q 'gitdir: main/.git' .git",
+        "expected": "exits 0",
+        "description": "Parent .git file exists and points to main/.git"
       },
       {
-        "description": "Git works from parent directory (core.worktree set correctly)",
-        "check": "git status --porcelain | wc -l | grep -q '^0$'"
+        "command": "git status --porcelain | wc -l | grep -q '^0$'",
+        "expected": "exits 0",
+        "description": "Git works from parent directory (core.worktree set correctly)"
       },
       {
-        "description": "WORKTREES.md registry file exists",
-        "check": "test -f main/WORKTREES.md"
+        "command": "test -f main/WORKTREES.md",
+        "expected": "exits 0",
+        "description": "WORKTREES.md registry file exists"
       },
       {
-        "description": "Git still functions correctly from main/",
-        "check": "cd main && git status"
+        "command": "cd main && git status",
+        "expected": "exits 0",
+        "description": "Git still functions correctly from main/"
       },
       {
-        "description": "Can create and remove a test worktree",
-        "check": "cd main && git worktree add ../test-worktree && git worktree remove ../test-worktree"
+        "command": "cd main && git worktree add ../test-worktree && git worktree remove ../test-worktree",
+        "expected": "exits 0",
+        "description": "Can create and remove a test worktree"
       }
     ]
   },
@@ -167,13 +186,37 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "VU4xRGQYLqLNA/Yj7rLv0yllkzcbUMw4MYCL+opW6RctOREMU+J6mpO0FKLEIbwV3q5ewfrKaCSbTtn5ONzMBw==",
+    "signature": "m37vWkU5dEXoZt+FFlDlEwE/ZdyWOA52RAGRt68ByAez+pwjJHSfYzZh4U3IJCuVO/O824G4k2nEYw2oGXLqBA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:46:50.835Z",
+    "signed_at": "2026-07-28T06:58:26.282Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
+  },
+  "external_references": [
+    {
+      "url": "https://git-scm.com/docs/git-worktree",
+      "description": "Official git-worktree documentation",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    },
+    {
+      "url": "https://www.gitkraken.com/learn/git/git-worktree",
+      "description": "Third-party explainer on git worktrees",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    },
+    {
+      "url": "https://spin.atomicobject.com/2016/06/26/parallelize-development-git-worktrees/",
+      "description": "Article on parallelising development with worktrees",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    }
+  ],
+  "content_scope": "references-external"
 }
 ---
 # Dossier: Add Git Worktree Support to Project
