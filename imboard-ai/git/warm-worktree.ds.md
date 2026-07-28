@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "warm-worktree",
   "title": "Warm Worktree",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Prepare a fresh git worktree for development by copying environment files, installing dependencies, running builds, verifying tests, and checking that servers can start.",
@@ -26,47 +26,19 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "ef68311baea4ae9bf60fded87adc509d9283875b424f462ca44f0b3cdb593892"
+    "hash": "9d420b78bcef66f0149823b77c9346948fbd241ca50cf9f268b4070179bd09bf"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "2eurmKlpec5t4SN49CQs7Ve0TNlim0zDj/zr0+A6sEkkXPEfuyXOsvTuSY3s0B/VfD3qA+oankT+gG6qE7C6CQ==",
+    "signature": "zUidnXu5vYND5HzqZU7W6VWVsnzCiamfyym/fSGsSWroCfX5ZrEljXeTyTKnHHobuK+niwyqOSCTHn9phESRAQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:27.232Z",
+    "signed_at": "2026-07-28T08:19:34.176Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
-dossier_schema_version: "1.0.0"
-name: warm-worktree
-title: Warm Worktree
-version: "1.0.0"
-status: stable
-objective: Prepare a fresh git worktree for development by copying environment files, installing dependencies, running builds, verifying tests, and checking that servers can start.
-authors:
-  - name: Dossier Community
-checksum:
-  algorithm: sha256
-  hash: 5a11a58547595a1435cc62a2b5ba18594e3fe9834633b286da423c009c36541e
-risk_level: low
-risk_factors:
-  - executes_external_code
-  - network_access
-requires_approval: false
-category:
-  - development
-  - git
-tags:
-  - worktree
-  - setup
-  - environment
-  - dependencies
-estimated_duration:
-  min_minutes: 1
-  max_minutes: 10
-
 # Warm Worktree
 
 Prepare a fresh git worktree for development by setting up the environment, installing dependencies, and verifying the project builds and runs correctly.
