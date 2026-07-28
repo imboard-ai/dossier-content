@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue-skill",
   "title": "Full Cycle Issue",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Take a GitHub issue from start to merged PR autonomously",
@@ -26,13 +26,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e987430caa1f7235e771a8ec6549371283446995a3fbd6d7dca1eea810cf7ac0"
+    "hash": "5ce3dd57756d05ada556e85e169bc89c4004b9b61fd1f58daccc31848636d93f"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "WvtW/0aUZzHyqVVYsnjP3iBndxi+r3zgepYsqapMJT1IS1G+99UncQYZJwjqvxD43DqyK/mM0stjde+MQD7bCA==",
+    "signature": "4sQTgUS48PmnD3UqfyRBJEFPMSWlKrd32EwYE/KsrdngC2nf4l2iwodGVvTB6Jp5/dXsLb/44OrIKOZy7D19CA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:49:29.825Z",
+    "signed_at": "2026-07-28T08:19:47.740Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -44,7 +44,7 @@
 
 ## Project Parameters
 
-- **warmup_dossier**: `imboard-ai/git/warm-worktree` (generic; auto-detects package manager from lockfiles). For the imboard monorepo's faster pnpm + SSM path, override with `imboard-ai/imboard/warm-worktree`.
+- **warmup_dossier**: `imboard-ai/git/warm-worktree` (generic; auto-detects package manager from lockfiles). For the imboard monorepo's faster pnpm + SSM path, override with `imboard-ai/imboard/warm-worktree-pnpm-ssm`.
 
 ## Flags
 
