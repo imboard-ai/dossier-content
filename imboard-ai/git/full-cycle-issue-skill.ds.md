@@ -3,9 +3,9 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue-skill",
   "title": "Full Cycle Issue",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "protocol_version": "1.0",
-  "status": "Draft",
+  "status": "Deprecated",
   "objective": "Take a GitHub issue from start to merged PR autonomously",
   "description": "Full autopilot: setup, implement, test, commit, push, PR, parallel review, merge. Use when user says 'full cycle issue', 'auto issue', 'autopilot issue'",
   "category": [
@@ -26,19 +26,33 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "fb3a75adc76c6459e1d2349f5429f80e915a8b571afcb374d86777b6f26b47f0"
+    "hash": "be52df96c9a1514f3a2a14f3c5e36e336ab87f454f2a1c22e048b3e98eccb068"
+  },
+  "relationships": {
+    "alternatives": [
+      {
+        "dossier": "imboard-ai/skills/full-cycle-issue-skill",
+        "when_to_use": "Always — this is the maintained location."
+      }
+    ]
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "FZcpF+bBd7FCj1tQxDuorA2gGvZZkMnZIbfYX3FiY4bdfBvAdt/aYMfENlkXNp4qklK6JTQGQtbNbdRUdVfGDA==",
+    "signature": "fC4uqg6xs3rl0t2SS+el+dFOWuBRQXO4f6GJzYlO4wfD/0OQttvJXZOCUTGiKtNm7S/7tw1wOlvoPmRXpIV/Bg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:20.822Z",
+    "signed_at": "2026-07-28T08:21:11.089Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
+> **Deprecated — moved to `imboard-ai/skills/full-cycle-issue-skill`.**
+>
+> Both paths installed to the same skill directory (`install-skill` keys on the
+> basename), so whichever was installed last silently replaced the other. This copy
+> is no longer maintained. Use `imboard-ai/skills/full-cycle-issue-skill`.
+
 
 # Full Cycle Issue
 
