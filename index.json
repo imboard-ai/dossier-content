@@ -678,7 +678,7 @@
     {
       "name": "imboard-ai/git/runbook-generator",
       "title": "Runbook & Ops Checklist Generator",
-      "version": "1.0.2",
+      "version": "1.1.0",
       "path": "imboard-ai/git/runbook-generator.ds.md",
       "category": [
         "development"
