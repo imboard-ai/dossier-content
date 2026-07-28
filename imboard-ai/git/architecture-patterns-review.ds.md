@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "architecture-patterns-review",
   "title": "Architecture & Pattern Consistency",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Identify inconsistent patterns, duplicate approaches, and architectural drift in the codebase",
@@ -19,13 +19,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c7343913e8925696823ec80a337927621a1df44f3f5e6fda0f177410305105c2"
+    "hash": "c59dd25df423be177ffe09312b433167587d232242ac9de02d3c70d870273e9c"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "/HjjPWjop31L054ncTW8XMmM4MTocEsvoUeJt44sC4hWRjNiQCLe/SASxw6DSWn11gc+dVk65d/s8ZXv3nstCA==",
+    "signature": "QLn5Rdy3clb8ClvAVUVZk2iyrGoODY0aX8wT77e/uG8SXJSDXTRgu2Z2wq0LtDAvpXlO9p1mxQidWa7HWRMFAg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:46:54.074Z",
+    "signed_at": "2026-07-28T06:56:02.438Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -40,6 +40,15 @@ You are analyzing the codebase for architectural consistency and pattern usage.
 ## Your Task
 
 Identify how the codebase handles common concerns and whether it does so consistently.
+
+
+## Scope
+
+**In scope:** Source files in the repository, read for the patterns listed below.
+**Out of scope:** Dependencies and vendored code, generated output, and any judgement about whether a pattern is fashionable — only whether the codebase applies it consistently.
+**Stop when:** Every concern below has been checked across the codebase, or you have stated which you could not assess and why.
+
+Report findings only — do not refactor, reformat, or "fix" the inconsistencies you find.
 
 ## Patterns to Investigate
 
@@ -135,6 +144,17 @@ Identify how the codebase handles common concerns and whether it does so consist
 
 **Low Priority / Future:**
 3. [Nice-to-have consistency improvements]
+
+
+## Section Sizing
+
+Give each part of the report the space it earns:
+
+- **Summary / assessment** — one paragraph, 3-5 sentences.
+- **Findings** — one entry per real finding, no cap. Report everything meeting the bar above; do not select a "top N" and drop the rest.
+- **Recommendations** — 3-5 items, highest impact first.
+
+Length is not evidence of thoroughness. A finding with a `file:line` and a concrete consequence beats a paragraph of context.
 
 ---
 
