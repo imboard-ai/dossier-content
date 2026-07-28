@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "runbook-generator",
   "title": "Runbook & Ops Checklist Generator",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Generate service runbooks and ops checklists for oncall readiness",
@@ -19,13 +19,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c78348deb33898b6b6fef75c200f4ea0c11d5cf6b4237cd691c57e4fe259ac01"
+    "hash": "cde938469edb3b3501615e055a622be1fcf431f3c5c825da83c7a9c9c149cbf4"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "OKcHc/YYVgN6OILyJN5bVj5Vk9W0D4jkTBLaShbWJCTuStsLrymFVmzDzraMz6mZYmeIaVtPb06BR61grFiyAw==",
+    "signature": "Q8tAE8jdIpWLoOfKtfVgWr0LGOC7jADaJXyPlDItL2yVEvqkLeFa5PPTPZ0hMdSqUVC5MeR8gfTMpeiwvXoKDA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:03.767Z",
+    "signed_at": "2026-07-28T06:56:13.705Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -443,3 +443,13 @@ Runbooks should be updated when:
 - ITIL Service Operation: Incident management practices
 - Kubernetes Best Practices: Health checks and deployment strategies
 - The Twelve-Factor App: Configuration and service design principles
+
+## Section Sizing
+
+Give each part of the report the space it earns:
+
+- **Summary / assessment** — one paragraph, 3-5 sentences.
+- **Findings** — one entry per real finding, no cap. Report everything meeting the bar above; do not select a "top N" and drop the rest.
+- **Recommendations** — 3-5 items, highest impact first.
+
+Length is not evidence of thoroughness. A finding with a `file:line` and a concrete consequence beats a paragraph of context.
