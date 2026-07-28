@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "onboarding-friction-review",
   "title": "Onboarding Friction Assessment",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Identify pain points and confusion points for new contributors trying to understand and work with the project",
@@ -19,13 +19,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "87f9053a9fc5d578211518060c6597f038f96e58e5c2b4a3b4070bab22667e4a"
+    "hash": "4463b197f53e8ef7562c10cd297dc930c28394825f78a9497dd95fe07a14e744"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "kf1eDThMS9P/yhCHu2xaNDL7LZcZhYkbaBs0HTtxE6DfQhtHbErFgXu283biQ4Uz7uz5jp+v6AteJb3bZiZUAw==",
+    "signature": "4uOT0g13s7ETD89b1TWdq8GoJT+YjTmSI041NXoQCKn8LxNbDJBKChXnIdvQ39LRmPj5ab/YYtZUyNETKWrFCQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:39.925Z",
+    "signed_at": "2026-07-28T06:56:08.194Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -47,6 +47,15 @@ Simulate the journey of a new contributor who wants to:
 5. Run tests and verify their changes
 
 For each stage, identify friction points.
+
+
+## Scope
+
+**In scope:** What a new contributor encounters — README, setup and contributing docs, scripts, config, and error messages on the documented happy path.
+**Out of scope:** Code quality, architecture, and test coverage. A confusing implementation is only in scope if a newcomer would hit it while following the documented path.
+**Stop when:** All five stages below have been walked, or you have said which you could not complete and what blocked you.
+
+Report findings only — do not edit documentation or fix the setup problems you find.
 
 ## Areas to Investigate
 
@@ -113,6 +122,17 @@ For each stage, identify friction points.
 1. **[Quick win]** - [why it helps] - [where to add it]
    - Effort: [Low/Medium]
    - Impact: [High/Medium]
+
+
+## Section Sizing
+
+Give each part of the report the space it earns:
+
+- **Summary / assessment** — one paragraph, 3-5 sentences.
+- **Findings** — one entry per real finding, no cap. Report everything meeting the bar above; do not select a "top N" and drop the rest.
+- **Recommendations** — 3-5 items, highest impact first.
+
+Length is not evidence of thoroughness. A finding with a `file:line` and a concrete consequence beats a paragraph of context.
 
 ---
 
