@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "test-coverage-gap-analysis",
   "title": "Test Coverage Gap Analysis",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Analyze test files against project structure to identify untested code paths, controllers, routes, and functions. Supports Jest, Mocha, Vitest, and other test frameworks.",
@@ -19,17 +19,51 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e64357589982286564d28254b473c79786a03c3ed00358c80909252b1d9dee88"
+    "hash": "cfeb2e8aca2a4929444e313256dfa4000b33f36a78fb18c6d24a5134046193ca"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "EWjTWCOrfCqci8bvwsFs9eLU5sCYpejuc2E7irLrdJMYYDFaLUkcrmSTa69Rzx2cC5Mt3wA2kGnV4z07Tc4YCQ==",
+    "signature": "HkGFYbIfiWygzdtsV/TJyth9T6u3b6KJFzt6/9ejVRdecURuFu5+IS6lI2MRp+iKNIMPgnsRiaCnSeEFECrfCQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:21.026Z",
+    "signed_at": "2026-07-28T06:58:39.815Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
+  },
+  "external_references": [
+    {
+      "url": "https://jestjs.io/",
+      "description": "Jest testing framework documentation",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    },
+    {
+      "url": "https://mochajs.org/",
+      "description": "Mocha testing framework documentation",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    },
+    {
+      "url": "https://vitest.dev/",
+      "description": "Vitest testing framework documentation",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    },
+    {
+      "url": "https://github.com/goldbergyoni/javascript-testing-best-practices",
+      "description": "JavaScript testing best-practices repository",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    }
+  ],
+  "content_scope": "references-external",
+  "risk_factors": [
+    "network_access"
+  ]
 }
 ---
 
@@ -64,6 +98,15 @@ Analyze test files against project structure to identify:
 - **Untested Models** - Data models without validation or CRUD tests
 - **Partial Coverage** - Functions referenced but not thoroughly tested
 - **Test Quality Issues** - Skipped tests, `.only` modifiers, empty test blocks
+
+
+## Scope
+
+**In scope:** First-party test files and the source they are meant to cover.
+**Out of scope:** Dependencies' own tests, generated code, and any judgement about coverage percentage as a target in itself.
+**Stop when:** Every source area enumerated below has been checked for corresponding tests, or you have said which you could not assess.
+
+Report gaps only — do not write, scaffold, or modify tests.
 
 ## Prerequisites
 
@@ -816,3 +859,13 @@ Next Steps:
 - [Mocha Testing Framework](https://mochajs.org/)
 - [Vitest](https://vitest.dev/)
 - [Testing Best Practices](https://github.com/goldbergyoni/javascript-testing-best-practices)
+
+## Section Sizing
+
+Give each part of the report the space it earns:
+
+- **Summary / assessment** — one paragraph, 3-5 sentences.
+- **Findings** — one entry per real finding, no cap. Report everything meeting the bar above; do not select a "top N" and drop the rest.
+- **Recommendations** — 3-5 items, highest impact first.
+
+Length is not evidence of thoroughness. A finding with a `file:line` and a concrete consequence beats a paragraph of context.
