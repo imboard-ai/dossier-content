@@ -3,9 +3,9 @@
   "dossier_schema_version": "1.0.0",
   "name": "warm-worktree",
   "title": "Imboard Warm Worktree (pnpm + SSM)",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "protocol_version": "1.0",
-  "status": "Stable",
+  "status": "Deprecated",
   "objective": "Prepare a fresh imboard-monorepo worktree for development using pnpm content-addressable store and AWS SSM secrets — no .env copying needed",
   "category": [
     "development"
@@ -38,19 +38,33 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "08d35dabe411bba33955cfa9b91a629f105cf38cfd8ac2c5dd33bed93b79ee35"
+    "hash": "f01c718a890c357e5654868589336a0ad01d6b9f6fc22b39867b276ec4b99285"
+  },
+  "relationships": {
+    "alternatives": [
+      {
+        "dossier": "imboard-ai/imboard/warm-worktree-pnpm-ssm",
+        "when_to_use": "Always — this is the maintained location."
+      }
+    ]
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "eYjsoxE2J7Uluj4ZV2ka2c2TZ87euCMqgsbKXSLAb4NBrQUvfbhj/t633lnYFZfREkyQA0TXfRw7bxp0o96NBA==",
+    "signature": "I1LA2ijKTHoriHDiilnPLEsw3k8ASrfudUpioDTwoRPEJPB0FMywk38eFpoGGjHBeS484whETB3o6PoCJansAg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:37.016Z",
+    "signed_at": "2026-07-28T08:19:28.933Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
+> **Deprecated — moved to `imboard-ai/imboard/warm-worktree-pnpm-ssm`.**
+>
+> Both paths installed to the same skill directory (`install-skill` keys on the
+> basename), so whichever was installed last silently replaced the other. This copy
+> is no longer maintained. Use `imboard-ai/imboard/warm-worktree-pnpm-ssm`.
+
 
 # Imboard Warm Worktree (pnpm + SSM)
 
