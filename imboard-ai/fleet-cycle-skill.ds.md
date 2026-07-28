@@ -3,9 +3,9 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle-skill",
   "title": "Fleet Cycle",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "protocol_version": "1.0",
-  "status": "Draft",
+  "status": "Deprecated",
   "objective": "Take a SET of GitHub issues to merged PRs via dependency-aware waves of background full-cycle runs",
   "description": "Orchestrate multiple issues at once. Builds a dependency-aware wave plan and dispatches full-cycle-issue across background agents — parallel where safe, serial where dependent. Use when the user says 'fleet cycle', 'full cycle issues 1,2,3', 'full cycle issues 1..9', 'batch issues', 'map these issues and run them', 'run these issues in parallel/serial', or gives a LIST or RANGE of issues to take to merged PRs.",
   "category": [
@@ -30,19 +30,33 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "a9c6e3c7d24478dec9c313529ecb6f8da06e4c03661b1ede77dec41432f1393c"
+    "hash": "fbc52bc2d0eed0b1788b15be743f17af9da19edeb06773e1dbafedcecbbc9c8c"
+  },
+  "relationships": {
+    "alternatives": [
+      {
+        "dossier": "imboard-ai/skills/fleet-cycle-skill",
+        "when_to_use": "Always — this is the maintained location."
+      }
+    ]
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "+wXgRB7BwuqeCZQf/zKaf2LcuCrbpF6lSpihx3PiOJ4o8Y1hlUZnreZ2BhOE0Jk9vO/CJhFzHXfPhFmZFmArBA==",
+    "signature": "BcT2VEVcHKbd1T7MMaCclNyZLBinYPAXo0uZxmI2gmk1wz7uNOPBDGEDHKTi3z90Yhvf6IGNDhskUd8GMttxCA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:46:47.651Z",
+    "signed_at": "2026-07-28T08:19:11.396Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
+> **Deprecated — moved to `imboard-ai/skills/fleet-cycle-skill`.**
+>
+> Both paths installed to the same skill directory (`install-skill` keys on the
+> basename), so whichever was installed last silently replaced the other. This copy
+> is no longer maintained. Use `imboard-ai/skills/fleet-cycle-skill`.
+
 
 # Fleet Cycle
 
