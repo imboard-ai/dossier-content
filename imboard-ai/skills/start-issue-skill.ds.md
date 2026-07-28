@@ -11,19 +11,22 @@
   "dossier_schema_version": "1.0.0",
   "status": "Draft",
   "title": "Start Issue Workflow",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e1f964a229844a199b3dd3d7a2178ccf0b68d95dc8cad5dfc9446a077eee5260"
+    "hash": "47ff1751e2251eb3e26e1a2f587bf7b88441b70a236bfd579119aff972501484"
   },
   "category": [
     "skills"
   ],
+  "protocol_version": "1.0",
+  "risk_level": "medium",
+  "requires_approval": false,
   "signature": {
     "algorithm": "ed25519",
-    "signature": "p0BrpjxmEIEGnFdh8HZkng5g2pMF+zO6QLuNfHiT4yTPN0ra5xZOOri9l0gDMyu1SWtTfDNcVP1Dp5TjbIXNCA==",
+    "signature": "H92c3g/c7gLJs9AIZXFjOc+uFGMUxG2GOOdZaJCvUAh6C4LmLTiPmijSAAFvi6T0EH3sx5aZY/7F0CJHjs/QBQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:49:36.047Z",
+    "signed_at": "2026-07-28T08:22:20.447Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -37,7 +40,7 @@ When the user wants to start working on a GitHub issue:
 
 ## Project Parameters
 
-- **warmup_dossier**: `imboard-ai/imboard/warm-worktree`
+- **warmup_dossier**: `imboard-ai/imboard/warm-worktree-pnpm-ssm`
 
 ## Flags
 
