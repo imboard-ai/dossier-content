@@ -3,11 +3,22 @@
     {
       "name": "getting-started/hello",
       "title": "Hello World Dossier",
-      "version": "1.0.0",
+      "version": "1.1.0",
+      "path": "getting-started/hello.ds.md",
+      "description": "A worked example showing dossier anatomy and the create-sign-verify-publish workflow.",
       "category": [
-        "tutorial"
+        "documentation"
       ],
-      "path": "getting-started/hello.ds.md"
+      "tags": [
+        "tutorial",
+        "example",
+        "getting-started"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+        }
+      ]
     },
     {
       "name": "imboard-ai/add-git-worktree-support",
@@ -1338,5 +1349,5 @@
       "path": "tal-liberio/setup/validate-project-config.ds.md"
     }
   ],
-  "updated_at": "2026-07-08T00:00:00Z"
+  "updated_at": "2026-07-28T00:00:00Z"
 }
