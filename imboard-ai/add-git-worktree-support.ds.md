@@ -3,9 +3,9 @@
   "dossier_schema_version": "1.0.0",
   "name": "add-git-worktree-support",
   "title": "Add Git Worktree Support to Project",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "protocol_version": "1.0",
-  "status": "Stable",
+  "status": "Deprecated",
   "last_updated": "2026-04-06",
   "objective": "Restructure a git project to support git worktrees by moving repository contents into a main/ subdirectory with a sibling worktrees/ directory for feature branches",
   "category": [
@@ -111,6 +111,12 @@
         "condition": "suggested",
         "purpose": "Create your first feature worktree after setup"
       }
+    ],
+    "alternatives": [
+      {
+        "dossier": "imboard-ai/git/add-git-worktree-support",
+        "when_to_use": "Always — this is the maintained location."
+      }
     ]
   },
   "validation": {
@@ -182,16 +188,7 @@
   },
   "checksum": {
     "algorithm": "sha256",
-    "hash": "87d37294f757375d823b0e4b496a4c2b2256bb62ccafef77e16a363cf3581725"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "SYniAdL4FAPUHe7L/LXafSGLYXpprZ32q81C4/3x+LzNUL+63DJ3/I4y0UBvfjS5H8Z/LcaTZUd1sdsCXRTPDQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T06:58:21.993Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+    "hash": "66a3a494630b685fddf00095cc345b2d4e46ffa69bdaed034b7a644bcf594614"
   },
   "external_references": [
     {
@@ -216,9 +213,24 @@
       "required": false
     }
   ],
-  "content_scope": "references-external"
+  "content_scope": "references-external",
+  "signature": {
+    "algorithm": "ed25519",
+    "signature": "wDZ+r9UHWUt7BSb8FgiBow7SdnLA1VQFhiguNkexR+HmPyV6iJUjNpz0kjNh5YjeuqayYZ4tIknGJJ4At2g+BA==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-07-28T08:19:05.954Z",
+    "covers": "frontmatter+body",
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+  }
 }
 ---
+> **Deprecated — moved to `imboard-ai/git/add-git-worktree-support`.**
+>
+> Both paths installed to the same skill directory (`install-skill` keys on the
+> basename), so whichever was installed last silently replaced the other. This copy
+> is no longer maintained. Use `imboard-ai/git/add-git-worktree-support`.
+
 # Dossier: Add Git Worktree Support to Project
 
 **Protocol Version**: 1.0
