@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "release-notes-generator",
   "title": "Release Notes Generator",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Generate customer-facing release notes and internal support brief from git history",
@@ -19,13 +19,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "62ee0be5996208db7c5e25bae9728be77a128af421cad18ae1bfd4529e42bf2d"
+    "hash": "1c5ef9d4f61dd1568a3c3805cb646dcb6d03346d5904200e666d20821b249bb5"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "/seTpykVGIpfHdxTZXVghBiIysyCCHdNJKOYqMWtWI9OK3X8duv4hgHZvovCEdZfrmLtytj3min99ppRd6CEAQ==",
+    "signature": "XCjcMQhUniYQ9Ka5vYOohJAlYLkALy1vP8AsANguvgj9SIlULDCCDXxUWgbtWbcpN/FXGXGw+MGfhIGQkBj3CA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:53.082Z",
+    "signed_at": "2026-07-28T06:58:35.615Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -46,6 +46,15 @@ These documents do NOT overlap. The internal brief assumes the reader has seen t
 Analyze all changes since the last release tag and produce:
 1. Customer-facing release notes covering features, fixes, security updates, breaking changes, deprecations, and migrations
 2. Internal support brief covering known issues, technical root causes, workarounds, and things NOT communicated externally
+
+
+## Scope
+
+**In scope:** Commits, merged PRs, and tags between the last release tag and HEAD.
+**Out of scope:** Unmerged branches, work in progress, and anything before the previous release tag.
+**Stop when:** Every commit in the range is either represented in one of the two documents or deliberately excluded as noise.
+
+Report findings only — do not tag a release, edit a changelog file, or push anything.
 
 ## Context to Gather
 
@@ -378,12 +387,12 @@ auth:
 
 ### Documentation
 
-- [Full v2.3.0 documentation](https://docs.example.com/v2.3.0)
-- [OAuth migration guide](https://docs.example.com/migrate-oauth)
+- [Full v2.3.0 documentation](<your-docs-url>)
+- [OAuth migration guide](<your-docs-url>)
 
 ### Questions?
 
-Contact support@example.com or visit our [Help Center](https://help.example.com).
+Contact support@example.com or visit our [Help Center](<your-help-url>).
 ```
 
 ### Internal Support Brief Example
@@ -436,6 +445,17 @@ A: Exploitable only with direct API access and malformed JSON payload. No eviden
 
 **Rollback testing:** Tested in staging 2025-01-10
 ```
+
+
+## Section Sizing
+
+Give each part of the report the space it earns:
+
+- **Summary / assessment** — one paragraph, 3-5 sentences.
+- **Findings** — one entry per real finding, no cap. Report everything meeting the bar above; do not select a "top N" and drop the rest.
+- **Recommendations** — 3-5 items, highest impact first.
+
+Length is not evidence of thoroughness. A finding with a `file:line` and a concrete consequence beats a paragraph of context.
 
 ---
 
