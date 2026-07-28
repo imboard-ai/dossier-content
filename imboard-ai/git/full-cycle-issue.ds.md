@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.5.2",
+  "version": "3.5.3",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-07-08",
@@ -39,7 +39,7 @@
     "optional": [
       {
         "name": "warmup_dossier",
-        "description": "Which warm-worktree dossier to use for worktree warmup. Passed through to setup-issue-workflow. Override for project-specific warmup (e.g., imboard-ai/imboard/warm-worktree for pnpm+SSM).",
+        "description": "Which warm-worktree dossier to use for worktree warmup. Passed through to setup-issue-workflow. Override for project-specific warmup (e.g., imboard-ai/imboard/warm-worktree-pnpm-ssm for pnpm+SSM).",
         "type": "string",
         "default": "imboard-ai/git/warm-worktree"
       },
@@ -60,11 +60,21 @@
     "algorithm": "sha256",
     "hash": "246d285aa9e89f54ec7d62314748539700c41391b34fed008ac9b2f659f9f47c"
   },
+  "external_references": [
+    {
+      "url": "https://cli.github.com/",
+      "description": "GitHub CLI documentation",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    }
+  ],
+  "content_scope": "references-external",
   "signature": {
     "algorithm": "ed25519",
-    "signature": "N94W6YQySQt/AjK0ugA/7OEX8EtRjmnm3wpif6Jiq54PgHzMZwgSE8vE6bI+zUlDZCsk7kgkC68AuitK5y2uAQ==",
+    "signature": "yGeH0WxBHkI6Ar7x8uhEZXiMS1CS3hDZ9CoV8wzUYkvT2eEeNE/Sg1fy4xv81M7fSnkbpKKfgyG50LStmdrMAQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:17.553Z",
+    "signed_at": "2026-07-28T08:22:10.544Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
