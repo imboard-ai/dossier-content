@@ -874,6 +874,26 @@
       ]
     },
     {
+      "name": "imboard-ai/imboard/warm-worktree-pnpm-ssm",
+      "title": "Imboard Warm Worktree (pnpm + SSM)",
+      "version": "1.2.0",
+      "path": "imboard-ai/imboard/warm-worktree-pnpm-ssm.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "worktree",
+        "pnpm",
+        "ssm",
+        "imboard"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/issue-triage",
       "title": "Issue Triage Workflow",
       "version": "1.0.2",
