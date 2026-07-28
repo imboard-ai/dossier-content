@@ -2,9 +2,9 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Idea to PRD — PM discovery loop with a go/kill gate",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "protocol_version": "1.0",
-  "status": "Draft",
+  "status": "Deprecated",
   "last_updated": "2026-07-07",
   "objective": "Take any high-level product idea and EITHER kill it with a documented rationale when ROI/viability logic says it isn't worth chasing, OR generate the rationale for why it makes sense and drive it all the way to an engineering-ready PRD (user benefits + product feature design + text wireframes), tracked in GitHub — not gated in a chat session",
   "category": [
@@ -96,19 +96,33 @@
   "name": "idea-to-prd",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c8259b979e69f2778cf297a587e1943065dcc25bd8a518c492b7f305f096b7cc"
+    "hash": "253a1b7c2038e2929b411eff33579a8cb0c4740945e2be091c7245ad7ef7930d"
+  },
+  "relationships": {
+    "alternatives": [
+      {
+        "dossier": "imboard-ai/pm/idea-to-prd",
+        "when_to_use": "Always — this is the maintained location."
+      }
+    ]
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "gzHNHDcRR7HE+XWNHPYCd2dBnQR0vqmaJrOCF7a8EXfXbF/DjhjREeLYVHHdwBtZ3+WazX0oysnncDRYfXNUAg==",
+    "signature": "A3nqlI4BqykMbpmT9HgiZg9CnW9ZW5csPMas0b2AkW15kbLllKFOh7G3KsXJxcMP1TjpPRSPiriCL8OpKcQ2CA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:33.636Z",
+    "signed_at": "2026-07-28T08:19:23.265Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
+> **Deprecated — moved to `imboard-ai/pm/idea-to-prd`.**
+>
+> Both paths installed to the same skill directory (`install-skill` keys on the
+> basename), so whichever was installed last silently replaced the other. This copy
+> is no longer maintained. Use `imboard-ai/pm/idea-to-prd`.
+
 
 # Idea to PRD — PM discovery loop with a go/kill gate
 
