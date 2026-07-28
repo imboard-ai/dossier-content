@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
@@ -16,7 +16,7 @@
     "optional": [
       {
         "name": "warmup_dossier",
-        "description": "Which warm-worktree dossier to run for worktree warmup. Override this to use a project-specific warmup (e.g., imboard-ai/imboard/warm-worktree for pnpm+SSM projects).",
+        "description": "Which warm-worktree dossier to run for worktree warmup. Override this to use a project-specific warmup (e.g., imboard-ai/imboard/warm-worktree-pnpm-ssm for pnpm+SSM projects).",
         "type": "string",
         "default": "imboard-ai/git/warm-worktree"
       },
@@ -37,11 +37,45 @@
     "algorithm": "sha256",
     "hash": "b0cc346c8c062396f17249f2f686836e15e4110141e45d75820f80dc1f5e31b0"
   },
+  "external_references": [
+    {
+      "url": "https://cli.github.com/",
+      "description": "GitHub CLI documentation",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    },
+    {
+      "url": "https://git-scm.com/docs/git-worktree",
+      "description": "Official git documentation",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    },
+    {
+      "url": "https://cli.github.com/manual/",
+      "description": "GitHub CLI documentation",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    },
+    {
+      "url": "https://www.conventionalcommits.org/",
+      "description": "External reference: conventionalcommits.org",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    }
+  ],
+  "content_scope": "references-external",
+  "risk_factors": [
+    "network_access"
+  ],
   "signature": {
     "algorithm": "ed25519",
-    "signature": "nTUzWP5H77tj9EoMRh0Y+VmSSrlLU3MeSHOmEoWz95kWKzA2Cy+xv4FxokypC1IpJqTEUE2zYJOGNxH8yNJADA==",
+    "signature": "egGqAae+w2copa/yYiOS8gtz5NV02NW9tuq8K96ivHQlfPcfD51JAsohFHkvNTqhgAqjNxLsETCl/LvOOKvWBg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:07.891Z",
+    "signed_at": "2026-07-28T08:22:15.926Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
