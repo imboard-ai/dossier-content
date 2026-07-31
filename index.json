@@ -172,6 +172,32 @@
       ]
     },
     {
+      "name": "imboard-ai/fleet-cycle",
+      "title": "Fleet Cycle — Orchestrate Multiple Issues",
+      "version": "1.2.0",
+      "path": "imboard-ai/fleet-cycle.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "github",
+        "issues",
+        "workflow",
+        "autonomous",
+        "orchestration",
+        "batch",
+        "parallel",
+        "fleet",
+        "full-cycle",
+        "dependencies"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
       "version": "1.3.0",
