@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle",
   "title": "Fleet Cycle — Orchestrate Multiple Issues",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-06-14",
+  "last_updated": "2026-07-31",
   "objective": "Take a SET of GitHub issues to merged PRs by building a dependency-aware wave plan and dispatching full-cycle-issue runs across background agents — serial, parallel, or mixed",
   "category": [
     "development"
@@ -74,9 +74,9 @@
   "outputs": {
     "files": [
       {
-        "path": "FLEET-PLAN-{timestamp}.md",
-        "description": "The dependency DAG and wave plan written before dispatch",
-        "format": "markdown"
+        "path": "~/.dossier/logs/fleet-cycle/{project}/FLEET-PLAN-{timestamp}.md.gz",
+        "description": "Gzipped dependency DAG and wave plan, written before dispatch, kept per-project outside the working tree (most recent 20 retained)",
+        "format": "markdown+gzip"
       }
     ]
   },
@@ -87,13 +87,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6c2337114b027ce614e4b512c5c4b1940b16e02ac0eb4fef9a38c2709cc320a4"
+    "hash": "14e901a1643b988fa50df514b2f9d2e556fe9fe7320854366af098493e0b2870"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "wefxB6TbfZ4ITfa+IVrBPpB9IIyiF+1NAy/zZL/x0yWBi7pY5RH0eaVn3qKML3TLPaVfsHlGk/n2OsaejKwiCA==",
+    "signature": "mC3IpnC7zcky2liEjOMTFYvUa3/sfoVO/PXFPFixZLY2q8G2laBFbFRd5CvojySOq3bd9/EylcWfAgBjp4n7DQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:14.240Z",
+    "signed_at": "2026-07-31T07:18:11.034Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -167,7 +167,12 @@ Apply `mode`:
 
 Respect `max_parallel`: if a wave has more issues than the cap, dispatch in batches within the wave, refilling as runs finish.
 
-**Write `FLEET-PLAN-{timestamp}.md`** capturing: the resolved set, the dependency edges with their justification (explicit vs inferred), the wave breakdown, the concurrency cap, and the failure policy. Present a concise version in the conversation.
+**Write the wave plan to `~/.dossier/logs/fleet-cycle/{project}/FLEET-PLAN-{timestamp}.md`** capturing: the resolved set, the dependency edges with their justification (explicit vs inferred), the wave breakdown, the concurrency cap, and the failure policy.
+- `{project}` = repo slug `<owner>-<repo>` from `gh repo view --json owner,name -q '.owner.login + "-" + .name'`; if that fails (no remote / no `gh`), fall back to the basename of `git rev-parse --show-toplevel`.
+- `{timestamp}` = UTC `YYYYMMDD-HHMMSS`.
+- `mkdir -p` the target directory, write the file, then `gzip -f` it in place so the artifact on disk is `FLEET-PLAN-{timestamp}.md.gz`.
+- **Retention**: after writing, list `FLEET-PLAN-*.md.gz` in that project's log directory by mtime and delete all but the 20 most recent.
+- Present a concise version of the plan in the conversation — the file is for audit/history, not re-read during this run.
 
 ## Phase 4: Dispatch and Supervise
 
@@ -223,7 +228,7 @@ Post the roll-up to the conversation. Include direct PR URLs for every merged an
 - [ ] Issue set resolved from list/range; closed/missing issues reported as skipped
 - [ ] Dependency graph built from explicit + inferred signals
 - [ ] No undetected dependency cycle
-- [ ] Wave plan computed and written to `FLEET-PLAN-{timestamp}.md`
+- [ ] Wave plan computed and written to `~/.dossier/logs/fleet-cycle/{project}/FLEET-PLAN-{timestamp}.md.gz` (gzipped; older entries beyond the most recent 20 pruned)
 - [ ] Plan presented before dispatch
 - [ ] Each issue dispatched as a background `full-cycle-issue` run
 - [ ] Concurrency never exceeded `max_parallel` or pool capacity
