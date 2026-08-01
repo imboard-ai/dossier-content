@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "sheet-triage",
   "title": "QA Sheet Triage",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-01",
@@ -91,13 +91,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "d7e8a215600253ec6a62dcb2abf99087cb68c3520dd1de59eb4e0520533469ca"
+    "hash": "5de832ea8d3cba93e1b88ede7698321be73257f2174c06e7f208c8a89317f408"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "Ivjwyez2vUH1kTDaMddvYF62PaGom/DHHSEkMgwTHuFXf0+GnKjRQLqpjaTtUWZ2w5Y7IWh/imOVr3Ln2s7HAw==",
+    "signature": "lBzz6L6KoW00CUHns4+VOUBMQ6lBAVb3Y5dydXyyT2413LLS+0IIH7TFceO3n7wDnJgd9C8Liy42lAmwXY4eBA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-01T08:01:32.384Z",
+    "signed_at": "2026-08-01T12:11:11.951Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -206,10 +206,35 @@ Two findings with identical symptoms in different components are usually two iss
 share one detection gap. Two findings with different symptoms emitted from the same
 function are usually one issue.
 
-### Phase 3: Investigate — Three Agents Per Cluster, In Parallel
+### Phase 3: Investigate — Three Lenses, Each At Its Own Scope
 
-For each cluster, launch these three agents **simultaneously**. The unit of work is the
-cluster, not the row — that is what keeps this affordable on a large sheet.
+Three lenses, run in parallel. **Each lens has a different natural scope, and getting this
+wrong is the most expensive mistake available here:**
+
+| Lens | Scope | Why |
+|---|---|---|
+| **A — Root cause** | one per cluster | Diagnosis is inherently local to the code a fix touches. |
+| **B — Generalization** | one per *pattern* | A pattern spans clusters. Two clusters sharing a defect shape need one search, not two. |
+| **C — Detection gap** | **exactly one, over ALL findings** | Its most valuable output is the gap that appears in several findings at once. Sharded per cluster, it is structurally incapable of seeing that. |
+
+Do **not** run a detection-gap agent per cluster. It will report the same shallow
+"add a test here" N times and will miss the repeated gap — which is the single
+highest-value thing this workflow can produce. One agent, all findings, once.
+
+Identify the patterns for lens B *after* clustering: look for clusters whose root causes
+rhyme (same missing guard, same primitive, same contract violation). One B agent per
+distinct pattern. If no clusters rhyme, one B agent per cluster is the degenerate case.
+
+**Proportionality.** Match investigation depth to what is at stake. Before launching,
+decide and state which mode you are in:
+- **Full** — anything user-blocking, data-touching, security-adjacent, or affecting a
+  primary flow. All three lenses.
+- **Light** — cosmetic, copy, and single-call-site presentation findings. Lens A only,
+  plus a single shared lens C for the whole batch. Do not spawn a generalization agent to
+  ask whether a typo generalizes.
+
+A round of eleven CSS nits does not deserve the same fleet as a round containing a 500 on
+a primary action. Say which mode you chose and why.
 
 ---
 
@@ -293,9 +318,41 @@ your output.
 > hovered, or data is present. Those gaps recur, and naming the structural reason is
 > worth more than naming the single missing test.
 >
+> Because you see every finding at once, your most valuable output is any gap that
+> explains **more than one** of them. Look for it deliberately. Also check whether the
+> layer you are about to recommend actually *runs* — a suite that is never invoked, or
+> that passes vacuously when its inputs are missing, is a gap and not a safeguard.
+>
 > Classify per the Classification Criteria above.
 
 ---
+
+#### Reporting
+
+Every agent must **send its findings back**. An agent that finishes without reporting has
+done no work. If an agent goes idle without delivering, ask it again and require a
+partial answer with the unreached parts named — partial findings, clearly labelled, are
+useful; silence is not.
+
+---
+
+#### Reconcile Before Believing
+
+Agents disagree, and when they do **they are often both wrong**. Before any finding
+reaches an issue:
+
+1. **Diff the overlapping claims.** Where two agents counted, named, or located the same
+   thing differently, treat *both* numbers as unverified.
+2. **Measure it yourself.** Run the grep, open the file, count the call sites. Do not
+   average the estimates, do not pick the more confident agent, and do not quote a
+   number in an issue that no one measured.
+3. **Prefer the specific over the plausible.** A claim citing `file:line` outranks a
+   claim citing a rationale, regardless of which agent sounds more certain.
+4. **Carry disagreements forward when they cannot be resolved.** An issue that says "two
+   analyses disagreed on scope; verify before sweeping" is honest and useful. An issue
+   that silently picks one is a fabrication with a citation.
+
+A number that lands in a GitHub issue is a number someone will act on. Earn it.
 
 #### After All Agents Complete
 
@@ -411,6 +468,17 @@ Report, in this order:
 - **The tester is a colleague, not a ticket source.** Evidence problems get reported back
   courteously and specifically, because next round's sheet is better only if this round's
   gaps are named.
+- **Sharding the detection-gap lens destroys its best output.** Per-cluster, it produces
+  N shallow "add a test here" answers and cannot see the gap that explains several
+  findings at once. This is the most expensive mistake available in Phase 3.
+- **Two agents agreeing is not verification, and two agents disagreeing usually means
+  both are wrong.** Measure contested claims yourself before they reach an issue.
+- **The obvious fix sometimes converts a loud failure into a silent one.** A rejected
+  write that becomes an accepted no-op is strictly worse than the bug reported. When a
+  fix relaxes a validation, check what the code does with the value once it gets through.
+- **A safeguard that never runs is a gap, not a safeguard.** Check that the layer you
+  are crediting actually executes: suites gated behind tags nothing carries, or guards
+  whose missing-input branch exits zero, are green and worthless.
 
 ## Validation
 
@@ -420,7 +488,10 @@ Report, in this order:
 - [ ] Findings that are not defects were identified as such
 - [ ] The tracker was searched for existing issues before any were created
 - [ ] Every cluster is justified by a shared file path
-- [ ] All three investigation agents ran per cluster, in parallel
+- [ ] The investigation mode (full / light) was chosen and stated
+- [ ] Lens A ran per cluster; lens B per pattern; lens C **exactly once over all findings**
+- [ ] Every agent delivered findings; none was allowed to finish silently
+- [ ] Contested claims between agents were measured directly, not averaged or arbitrated
 - [ ] Every claim is labelled CONFIRMED or SUSPECTED
 - [ ] Every filed issue names a specific detection-gap artifact
 - [ ] Repeated detection gaps were called out once, not duplicated per issue
