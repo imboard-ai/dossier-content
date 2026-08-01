@@ -1216,6 +1216,28 @@
       ]
     },
     {
+      "name": "imboard-ai/skills/qa-sheet-triage-skill",
+      "title": "QA Sheet Triage",
+      "version": "1.0.0",
+      "path": "imboard-ai/skills/qa-sheet-triage-skill.ds.md",
+      "description": "Triage a manual-QA findings sheet into GitHub issues and prevention work. Use when user says 'triage QA sheet', 'QA findings', 'manual QA results', 'QA round', or hands over a spreadsheet of bugs",
+      "category": [
+        "testing"
+      ],
+      "tags": [
+        "qa",
+        "triage",
+        "github",
+        "workflow",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/start-issue-skill",
       "title": "Start Issue Workflow",
       "version": "1.3.2",
