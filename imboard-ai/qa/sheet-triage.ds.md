@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "sheet-triage",
   "title": "QA Sheet Triage",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-01",
@@ -91,13 +91,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "5de832ea8d3cba93e1b88ede7698321be73257f2174c06e7f208c8a89317f408"
+    "hash": "948472a21722ff6795ea45dc5d3c6ab00c6c5088ebfef6cde68bc1e4e1754ec0"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "lBzz6L6KoW00CUHns4+VOUBMQ6lBAVb3Y5dydXyyT2413LLS+0IIH7TFceO3n7wDnJgd9C8Liy42lAmwXY4eBA==",
+    "signature": "WHr0RkhdkSWZKGKyn+EvSGbp8fpcGls6EIdqPvOp9jhWmkbil6BvdYO31BoyhKIxF+5oHGqNfW9J7IgPFEwZAw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-01T12:11:11.951Z",
+    "signed_at": "2026-08-02T10:16:57.970Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -109,19 +109,31 @@
 
 ## Objective
 
-A human tester hands over a sheet of findings. Convert it into (a) GitHub issues an
-implementer can pick up cold, and (b) the automated checks that should have caught each
-finding without a human.
+A human tester hands over a sheet of findings. **The findings are not the deliverable —
+the misses are.**
 
-The second output is the one that compounds. A manual tester finding a bug a machine
-could have found is a **gate failure**, not just a bug. Each run should retire a class of
-defect, not only a list of defects.
+Every finding on that sheet is a defect that reached a human because no automated check
+caught it first. Fixing the bug closes one instance. Naming and closing the gap that let
+it through retires the class. Produce both, but understand which one you are actually
+here for.
+
+This matters most where the product has few or no users: automated checking is the *only*
+thing standing between a defect and production, so a human finding a bug is already a
+system failure, independent of how bad the bug is. Treat a four-month-old 100%-failing
+workflow and a cosmetic typo as the same category of question — *why did nothing catch
+this?*
+
+Measure a round by **classes of defect retired**, not by bugs found.
 
 ## Guiding Principle
 
 **Measured, not reasoned.** Every claim you make about the code is either CONFIRMED —
 you read the file, ran the command, saw the output — or SUSPECTED. Label each one. A
 tester's description is a report of symptoms, never a diagnosis.
+
+**A proposed artifact is not a closed gap.** An issue that says "we should add a test" has
+retired nothing. The gap closes when the artifact exists and runs — verify that, and carry
+anything unverified into the next round rather than counting it as done.
 
 **Do not stop to ask mechanical questions.** Issue titles, cluster names, label choices,
 file paths and ordering are yours to decide. Pause only where this dossier says to.
@@ -215,7 +227,10 @@ wrong is the most expensive mistake available here:**
 |---|---|---|
 | **A — Root cause** | one per cluster | Diagnosis is inherently local to the code a fix touches. |
 | **B — Generalization** | one per *pattern* | A pattern spans clusters. Two clusters sharing a defect shape need one search, not two. |
-| **C — Detection gap** | **exactly one, over ALL findings** | Its most valuable output is the gap that appears in several findings at once. Sharded per cluster, it is structurally incapable of seeing that. |
+| **C — Detection gap** | **exactly one, over ALL findings** | This is the primary lens, not the third one. Its most valuable output is the gap explaining several findings at once — sharded per cluster it is structurally incapable of seeing that. |
+
+Lens C is the reason the round exists. If effort has to be cut, cut A and B coverage
+before cutting C's depth.
 
 Do **not** run a detection-gap agent per cluster. It will report the same shallow
 "add a test here" N times and will miss the repeated gap — which is the single
@@ -432,10 +447,18 @@ Report, in this order:
 4. **Questions for the tester** — unreadable evidence, missing screenshots, sharing
    problems, findings that could not be reproduced. Include a short, courteous message
    they can act on directly.
-5. **Cycle record** — append this round to the workflow's cycle log: date, sheet
-   identifier, findings count, issues filed, and which detection-gap fixes have landed.
-   The log is what makes "are we catching more automatically over time?" answerable
-   instead of a matter of opinion.
+5. **Prior-round audit — do this before claiming progress.** Read the cycle log and, for
+   every detection-gap artifact promised in previous rounds, check whether it **actually
+   exists and runs today**. A named test file that was never written, or written and never
+   invoked, is an open gap wearing a closed issue's clothes. Report each as landed /
+   proposed-only / landed-but-not-running, and carry the unlanded ones forward.
+
+   This step is what separates a workflow that retires defect classes from one that
+   generates confident issue text.
+
+6. **Cycle record** — append this round: date, sheet identifier, findings count, issues
+   filed, **artifacts promised**, and **artifacts verified landed**. Those last two are
+   different numbers and the gap between them is the honest measure of the process.
 
 ## Output
 
@@ -479,6 +502,19 @@ Report, in this order:
 - **A safeguard that never runs is a gap, not a safeguard.** Check that the layer you
   are crediting actually executes: suites gated behind tags nothing carries, or guards
   whose missing-input branch exits zero, are green and worthless.
+- **"A test exists" is not "the product is tested."** Ask what payload, state, or path
+  the test actually exercises, and whether the product ever produces it. A test factory
+  that hand-rolls a request tests the factory, not the product — and every hand-rolled
+  request tends to be valid by construction, which is exactly why it passes. When a
+  defect survived a long time behind green CI, this is the first thing to check.
+- **Type-level contract checking is blind to value domains.** A field can be type-valid
+  on both sides while the backend requires a narrower set of values than the frontend can
+  produce. No amount of shared types catches it; only a shared validator or a test that
+  drives the real path does.
+- **The oldest bug in the round is the most informative one.** Date each finding's
+  introduction. A defect that survived months at high failure rates is telling you
+  something about coverage — or about whether anyone uses the feature — that a fresh
+  regression cannot.
 
 ## Validation
 
@@ -495,6 +531,9 @@ Report, in this order:
 - [ ] Every claim is labelled CONFIRMED or SUSPECTED
 - [ ] Every filed issue names a specific detection-gap artifact
 - [ ] Repeated detection gaps were called out once, not duplicated per issue
+- [ ] Each finding's introduction date was established, and the oldest was investigated
+- [ ] Prior rounds' promised artifacts were audited: landed / proposed-only / not-running
+- [ ] The report distinguishes artifacts **promised** from artifacts **verified landed**
 - [ ] The companion sheet contains a row for every original finding
 - [ ] The cycle was appended to the log
 
