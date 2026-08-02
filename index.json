@@ -967,7 +967,7 @@
     {
       "name": "imboard-ai/qa/sheet-triage",
       "title": "QA Sheet Triage",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "path": "imboard-ai/qa/sheet-triage.ds.md",
       "description": "Ingest a manual-QA findings sheet, validate that every referenced piece of evidence is actually readable, surface-review the findings for discrepancies, cluster them by the code surface a fix would touch, investigate each cluster with parallel root-cause / generalization / detection-gap agents, file one issue per cluster, and write the triage result back as a companion sheet. Use when the user says 'triage QA sheet', 'QA findings', 'manual QA results', or hands over a spreadsheet of bugs.",
       "category": [
