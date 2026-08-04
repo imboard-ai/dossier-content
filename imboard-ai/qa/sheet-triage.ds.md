@@ -3,12 +3,12 @@
   "dossier_schema_version": "1.0.0",
   "name": "sheet-triage",
   "title": "QA Sheet Triage",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-08-01",
-  "objective": "Turn a manual-QA findings spreadsheet into verified, clustered GitHub issues plus the detection-gap fixes that would have caught each bug automatically",
-  "description": "Ingest a manual-QA findings sheet, validate that every referenced piece of evidence is actually readable, surface-review the findings for discrepancies, cluster them by the code surface a fix would touch, investigate each cluster with parallel root-cause / generalization / detection-gap agents, file one issue per cluster, and write the triage result back as a companion sheet. Use when the user says 'triage QA sheet', 'QA findings', 'manual QA results', or hands over a spreadsheet of bugs.",
+  "last_updated": "2026-08-04",
+  "objective": "Turn a manual-QA findings spreadsheet into verified, clustered GitHub issues plus the detection-gap fixes that would have caught each bug automatically, then grade each issue for autonomous readiness and emit a dependency-ordered execution plan for the ready ones",
+  "description": "Ingest a manual-QA findings sheet, validate that every referenced piece of evidence is actually readable, surface-review the findings for discrepancies, cluster them by the code surface a fix would touch, investigate each cluster with parallel root-cause / generalization / detection-gap agents, file one issue per cluster, independently review each filed issue for full-cycle readiness, emit a dependency-ordered execution plan for the ready set, and write the triage result back as a companion sheet. Use when the user says 'triage QA sheet', 'QA findings', 'manual QA results', or hands over a spreadsheet of bugs.",
   "category": [
     "testing",
     "maintenance"
@@ -29,7 +29,10 @@
   ],
   "destructive_operations": [
     "Creates GitHub issues in the target repository (team-visible, noisy to undo)",
-    "Creates a new companion spreadsheet in the QA evidence folder"
+    "Applies readiness labels to the issues it files, and creates those labels in the repository if absent",
+    "Edits the bodies of issues it filed in this run to record dependency edges",
+    "Creates a new companion spreadsheet in the QA evidence folder",
+    "Appends to the persistent triage cycle log outside the working tree"
   ],
   "estimated_duration": {
     "min_minutes": 20,
@@ -72,7 +75,7 @@
       },
       {
         "name": "no_writeback",
-        "description": "Skip Phase 5 — file issues but create no companion sheet",
+        "description": "Skip Phase 7 — file issues but create no companion sheet",
         "type": "boolean",
         "default": false
       },
@@ -81,6 +84,21 @@
         "description": "Always stop for review after the Phase 1 surface review, even when nothing is ambiguous",
         "type": "boolean",
         "default": false
+      },
+      {
+        "name": "ready_label",
+        "description": "Label applied in Phase 5 to issues judged ready for autonomous full-cycle execution. Created in the repository if it does not exist. The not-ready label is deliberately not configurable: it is `needs-clarification`, which `imboard-ai/git/gate-issue` already treats as a hard block.",
+        "type": "string",
+        "default": "ready:full-cycle"
+      }
+    ]
+  },
+  "outputs": {
+    "files": [
+      {
+        "path": "~/.dossier/logs/qa-sheet-triage/{project}/TRIAGE-CYCLE-LOG.md",
+        "description": "Cumulative append-only cycle ledger, one section per round, kept per-project outside the working tree. Read back every round to audit prior rounds' promised artifacts. Never gzipped, never pruned.",
+        "format": "markdown"
       }
     ]
   },
@@ -91,14 +109,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "948472a21722ff6795ea45dc5d3c6ab00c6c5088ebfef6cde68bc1e4e1754ec0"
+    "hash": "245a1db0e1a76e07e204d859a6cb572bdb2590cd20ae20e0710416ad1b077ec4"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "WHr0RkhdkSWZKGKyn+EvSGbp8fpcGls6EIdqPvOp9jhWmkbil6BvdYO31BoyhKIxF+5oHGqNfW9J7IgPFEwZAw==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-02T10:16:57.970Z",
-    "covers": "frontmatter+body",
+    "signature": "3TVPTiu4lqFxls8zIqXzHsq/qSfbm/V0C8BVg0MQJjiDsIB74t1VeJ2wURTFEgdJky5g+eZJRGUtZ0zDKpkBBA==",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAT5MH6NyHt3zBur6eq+EVSNOA2AZbuSRpov+/BRFzLnY=\n-----END PUBLIC KEY-----\n",
+    "signed_at": "2026-08-04T05:55:56.337Z",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
@@ -125,6 +142,12 @@ this?*
 
 Measure a round by **classes of defect retired**, not by bugs found.
 
+A round ends in a **dispatchable plan**, not a pile of issues. Issues that a fresh agent
+cannot act on without asking a question are half-finished work wearing a tracker number;
+they are separated out and labelled as such rather than left for someone to discover at
+dispatch time. What survives that grading is ordered into waves and handed to
+`imboard-ai/git/fleet-cycle` ready to run.
+
 ## Guiding Principle
 
 **Measured, not reasoned.** Every claim you make about the code is either CONFIRMED —
@@ -135,11 +158,20 @@ tester's description is a report of symptoms, never a diagnosis.
 retired nothing. The gap closes when the artifact exists and runs — verify that, and carry
 anything unverified into the next round rather than counting it as done.
 
+**Ready means buildable from the issue alone.** The agent that eventually implements one of
+these issues will read the issue, not this conversation. Everything the triage run learned
+that is not written into the issue body is lost. Grade readiness on the published text, by
+an agent that did not write it.
+
 **Do not stop to ask mechanical questions.** Issue titles, cluster names, label choices,
 file paths and ordering are yours to decide. Pause only where this dossier says to.
 
-**Stop at filed issues.** This workflow does not change product code. Fixing is a
-separate, deliberately-triggered workflow.
+**Stop at filed issues.** This workflow does not change product code, and does not dispatch
+the execution plan it produces. Fixing is a separate, deliberately-triggered workflow.
+
+**Nothing this workflow writes lands in the repository working tree.** The cycle log lives
+outside it (Phase 8). A QA process artifact committed to the product repo is noise in every
+future diff and blame.
 
 ## Prerequisites
 
@@ -394,6 +426,11 @@ affected, and how it should have been caught. Concretely:
 - **The tester's evidence verbatim** — exact error strings in backticks, screenshot
   links, the finding IDs it covers. Do not paraphrase an error message.
 - **`file:line` for everything structural**, from Agent A.
+- **Files touched** — a plain list of the cluster's justifying paths from Phase 2, on its
+  own line as `Files touched: path/a.ts, path/b.tsx`. This is the same set that justified
+  the cluster, so it costs nothing to emit, and Phase 6 reads it to compute file-overlap
+  edges. Without it the execution plan has to re-derive by guesswork what Phase 2 already
+  established.
 - **Root cause**, with CONFIRMED / SUSPECTED preserved. Do not launder a hypothesis into
   a fact on the way into the issue.
 - **Also affected**, from Agent B — omit the section entirely when nothing matched.
@@ -415,7 +452,165 @@ and URLs against their finding IDs.
 Never apply labels that belong to pull requests rather than issues — merge-automation,
 hold, and CI-trigger labels in particular.
 
-### Phase 5: Write Back a Companion Sheet
+### Phase 5: Readiness Review
+
+Every issue filed in Phase 4 is now graded for **autonomous execution readiness** — can
+`imboard-ai/git/full-cycle-issue` take this issue to a merged PR without a human unblocking
+it partway through?
+
+**Run one reviewer agent per filed issue, in parallel. The reviewer must not be the agent
+that wrote the issue.** Self-assessment here is worthless: the author already believes the
+issue is clear, and is the one person who cannot notice what they left in their head. This
+is the same discipline as *Reconcile Before Believing* — an independent read, not a
+second opinion from the same context.
+
+**The reviewer reads the published issue and nothing else.** No triage transcript, no
+agent output, no sheet. That is exactly the input the implementer will have, so it is the
+only honest test of whether the issue survives on its own.
+
+#### Reviewer Agent: Readiness
+
+> You are deciding whether a GitHub issue can be handed to an autonomous
+> implement-and-ship workflow, or whether it needs a human or an investigation first.
+>
+> Read **only** the issue itself — title, body, labels, and linked issues. Do not consult
+> any other context, and do not go looking for the answer in the codebase. If the issue
+> does not tell you something, that is a finding, not a gap for you to fill.
+>
+> Judge it against all six criteria:
+>
+> 1. **Locatable** — does it name the specific file(s) and lines to change, as CONFIRMED
+>    rather than SUSPECTED? An issue whose root cause is still SUSPECTED hands the
+>    implementer an investigation, not a task.
+> 2. **Decided** — is every product, design, copy, and UX question already answered? Any
+>    open question whose answer would change *what gets built* disqualifies it. An open
+>    question that only trims scope at the edges does not, provided the out-of-scope
+>    section already resolves it.
+> 3. **Bounded** — is there an explicit out-of-scope section, and is the blast radius
+>    sized? A codebase-wide sweep with an unstated number of call sites is not bounded.
+> 4. **Verifiable** — can each acceptance criterion be checked by running something? "Looks
+>    correct", "feels better", and "improve the UX" are not checkable. The named
+>    detection-gap artifact must be concrete enough to write from the issue text alone.
+> 5. **Self-contained** — does it depend on other work? If so, is that dependency written
+>    in the body as `Depends on #N`, or only implied in prose?
+> 6. **Reproducible** — was the defect actually traced to code? An unconfirmed finding is
+>    never ready.
+>
+> Return one verdict:
+>
+> - **READY** — all six hold. A competent agent could implement, test, and ship this
+>   from the issue alone.
+> - **NEEDS-DECISION** — blocked on a judgment only a human should make: product
+>   behaviour, visual design, copy, priority, or an intentional-vs-defect call.
+> - **NEEDS-INVESTIGATION** — blocked on a fact, not a decision. No human judgment
+>   required; an agent could resolve it, but that work is investigation and must happen
+>   before implementation starts.
+>
+> For anything other than READY, you must name **the single specific thing that is
+> missing** and **who resolves it** — a named human, or an investigation an agent can run.
+> "Needs more detail" is not an answer and will be rejected. State the question in the form
+> the resolver can answer directly.
+>
+> For READY, name the one criterion you found weakest. Every issue has one; identifying it
+> is how you prove you did not just wave it through.
+
+**Bias hard toward not-ready.** The costs are wildly asymmetric: a false READY dispatches
+an autonomous agent that will confidently build and merge the wrong thing, and you find out
+after the PR lands. A false NEEDS-DECISION costs one human ten seconds of reading. When a
+criterion is arguable, it fails.
+
+**Record the verdicts.**
+
+- **READY** → apply the `ready_label` (default `ready:full-cycle`). Create the label in the
+  repository if it does not exist — this is the one label this workflow may create. Do not
+  reuse an unrelated existing label because it is already there.
+- **NEEDS-DECISION** and **NEEDS-INVESTIGATION** → apply `needs-clarification`, creating it
+  if absent. This is not decoration: `imboard-ai/git/gate-issue` treats
+  `needs-clarification` as a **hard block**, so labelling here mechanically prevents a
+  premature full-cycle run rather than merely advising against one. Where the repository
+  also has a decision-pending style label, apply it alongside for NEEDS-DECISION.
+- Append a `## Readiness` section to every issue body: the verdict, the blocking question
+  verbatim, and who resolves it. A label alone tells the resolver nothing about what to do.
+
+Every issue this workflow files leaves Phase 5 with exactly one of the two labels. An
+unlabelled issue is indistinguishable from one that was never reviewed.
+
+### Phase 6: Execution Order
+
+Turn the READY set into a plan someone can run.
+
+**Reuse the dependency model from `imboard-ai/git/fleet-cycle` Phase 2 rather than
+inventing a second one** — same signal taxonomy (explicit declarations, file-overlap
+collision, logical/data ordering, shared migration or config surface), and the same bias:
+**when uncertain, add the edge.** A false parallel is discovered at merge time after both
+runs finished; a false serial costs one wave of latency.
+
+This workflow has one advantage fleet-cycle does not: **Phase 2 already established each
+cluster's file paths, and Phase 4 wrote them into the issues.** File-overlap edges here are
+CONFIRMED from the `Files touched` lines, not inferred from issue prose. Use them.
+
+1. **Nodes** — the READY issues. Also pull in any not-ready issue that a READY issue
+   depends on; it is a real barrier and a plan that omits it is wrong.
+2. **Edges** — "must merge before", each labelled with its justification and whether it is
+   explicit or file-overlap.
+3. **Cycles** — a genuine dependency cycle among the ready set is one of the few things
+   worth stopping for. Surface it and ask.
+4. **Waves** — topologically partition: wave *N* holds every issue whose dependencies all
+   complete in waves `< N`. Within a wave, issues are mutually independent.
+5. **Held set** — any READY issue whose dependency chain reaches a not-ready issue is
+   **held**, not scheduled. It is ready in itself and blocked in practice; say which
+   not-ready issue holds it, because unblocking that one issue releases the chain.
+
+**Write the edges into the issues, not only into the picture.** For each dependent issue,
+append `Depends on #N` to its body. This is the durable half of the plan: `gate-issue`
+hard-blocks on an open `Depends on #N`, and fleet-cycle reads it as an *authoritative*
+explicit signal. A diagram in a log goes stale the moment anyone reorders anything; an edge
+in the issue body enforces itself. Skip this when `dry_run` is set.
+
+**Render the plan as a Mermaid diagram**, waves top to bottom, plus a wave table. Three
+node states, visually distinct: scheduled, held, and not-ready barrier.
+
+````
+```mermaid
+graph TD
+  subgraph W1["Wave 1 — parallel"]
+    I3042["#3042 · toast a11y"]
+    I3038["#3038 · date parse"]
+  end
+  subgraph W2["Wave 2"]
+    I3040["#3040 · shared form errors"]
+  end
+  I3041["#3041 · layout ladder skipped<br/>NEEDS-DECISION"]
+  I3044["#3044 · L4 visual assertions<br/>HELD by #3041"]
+
+  I3038 -->|"Files touched: src/lib/forms.ts"| I3040
+  I3041 -.->|blocks| I3044
+
+  classDef ready fill:#dcfce7,stroke:#16a34a,color:#14532d
+  classDef held fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  classDef blocked fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+  class I3042,I3038,I3040 ready
+  class I3044 held
+  class I3041 blocked
+```
+````
+
+Then emit the **ready-to-run dispatch command** for the scheduled set only — never the held
+or not-ready issues:
+
+```
+ai-dossier run imboard-ai/git/fleet-cycle --pull
+# issues: 3042,3038,3040
+```
+
+Present the diagram, the wave table, and the command in the conversation. State the held
+set and its blockers explicitly alongside — a plan that shows only what is runnable reads
+as complete when it is not.
+
+**This workflow does not dispatch the plan.** It hands it over. Running it is a separate,
+deliberate act.
+
+### Phase 7: Write Back a Companion Sheet
 
 The tester needs to see what happened to each row, in the format they work in.
 
@@ -423,10 +618,15 @@ If your document connector cannot edit the original sheet in place — most cann
 a **new** companion sheet in the shared evidence folder so the tester can see it, named
 so it clearly pairs with the source round. One row per original finding, carrying:
 
-`Finding ID | Cluster | Triage Status | Issue | Issue URL | Root cause (1 line) | Detection gap (1 line) | Notes`
+`Finding ID | Cluster | Triage Status | Issue | Issue URL | Readiness | Wave | Root cause (1 line) | Detection gap (1 line) | Notes`
 
 `Triage Status` is one of: Filed / Duplicate of #N / Already fixed in #N / Needs product
 decision / Not a bug / Evidence missing / Could not reproduce.
+
+`Readiness` is the Phase 5 verdict — Ready / Needs decision / Needs investigation — and is
+blank for rows that produced no issue. `Wave` is the Phase 6 wave number, `Held` for a
+ready-but-blocked issue, or blank. Together they answer the question the tester actually
+has, which is not "was it filed" but "is anything going to happen to it."
 
 **Every original row appears**, including rejected, duplicate and unconfirmed ones. A row
 that silently vanishes reads as an oversight and erodes trust in the whole report.
@@ -436,7 +636,7 @@ the write-back did not happen.
 
 Skip this phase entirely when `no_writeback` or `dry_run` is set.
 
-### Phase 6: Report
+### Phase 8: Report and Cycle Log
 
 Report, in this order:
 
@@ -444,10 +644,15 @@ Report, in this order:
 2. **Prevention** — the detection-gap issues, called out separately from the bug issues.
    This is the compounding half of the work and it should not be buried in a list.
 3. **Repeated gaps** — any detection gap that appeared in more than one cluster.
-4. **Questions for the tester** — unreadable evidence, missing screenshots, sharing
+4. **Readiness** — how many issues came out READY, NEEDS-DECISION, NEEDS-INVESTIGATION,
+   with the blocking question and named resolver for each that is not ready. This is a
+   worklist for a human, so make it directly actionable rather than a count.
+5. **Execution plan** — the wave diagram, the held set with its blockers, and the dispatch
+   command.
+6. **Questions for the tester** — unreadable evidence, missing screenshots, sharing
    problems, findings that could not be reproduced. Include a short, courteous message
    they can act on directly.
-5. **Prior-round audit — do this before claiming progress.** Read the cycle log and, for
+7. **Prior-round audit — do this before claiming progress.** Read the cycle log and, for
    every detection-gap artifact promised in previous rounds, check whether it **actually
    exists and runs today**. A named test file that was never written, or written and never
    invoked, is an open gap wearing a closed issue's clothes. Report each as landed /
@@ -456,9 +661,48 @@ Report, in this order:
    This step is what separates a workflow that retires defect classes from one that
    generates confident issue text.
 
-6. **Cycle record** — append this round: date, sheet identifier, findings count, issues
-   filed, **artifacts promised**, and **artifacts verified landed**. Those last two are
-   different numbers and the gap between them is the honest measure of the process.
+#### The Cycle Log
+
+The log lives **outside the repository working tree**, at:
+
+```
+~/.dossier/logs/qa-sheet-triage/{project}/TRIAGE-CYCLE-LOG.md
+```
+
+- `{project}` = repo slug `<owner>-<repo>` from
+  `gh repo view --json owner,name -q '.owner.login + "-" + .name'`; if that fails (no
+  remote, no `gh`), fall back to the basename of `git rev-parse --show-toplevel`.
+- `mkdir -p` the directory before writing.
+- **Never write this file into the repository.** A QA process ledger committed to the
+  product repo shows up in every future diff, blame, and review of unrelated work. It is
+  also cross-round state, which is the one kind of state a branch-based repo handles worst.
+
+Unlike fleet-cycle's per-run plan artifacts, this is a **single cumulative ledger**: plain
+markdown, appended to, **never gzipped and never pruned**. Phase 8 step 7 reads it back
+every round, so compressing or rotating it would destroy the audit it exists to serve.
+
+**Migration.** Earlier versions of this dossier wrote the log inside the repo (typically
+`docs/qa/triage-cycle-log.md`). On the first run after upgrading, check for a log at the
+old in-repo path. If one exists, move its content to the central path, preserving every
+prior round verbatim, and delete the in-repo copy — committing the deletion if the file was
+tracked. Do this once, silently, and say in the report that it happened. Losing rounds 1–N
+of history would destroy the prior-round audit permanently.
+
+**Append this round**, containing:
+
+- **A ledger row**: date, sheet identifier, findings count, issues filed, **artifacts
+  promised**, **artifacts verified landed**, and **issues ready / not ready**. Promised and
+  verified-landed are different numbers, and the gap between them is the honest measure of
+  the process.
+- **The execution plan** — the Mermaid diagram from Phase 6 and its wave table, embedded in
+  the round's section. A later round auditing this one needs to know not just what was
+  filed but what order it was meant to run in, which issues were held, and by what. When
+  the next round finds the same defect class again, the recorded plan shows whether the
+  work was ever scheduled at all.
+- **Round notes** — process defects, corrected agent claims, and anything the next round
+  should not have to rediscover.
+
+Skip the cycle-log append entirely when `dry_run` is set.
 
 ## Output
 
@@ -467,8 +711,13 @@ Report, in this order:
 - `issues_filed`: list of `{issue_number, url, finding_ids}`
 - `prevention_issues`: issues filed for detection-gap or generalization work
 - `unconfirmed`: findings that could not be traced to code
+- `readiness`: list of `{issue_number, verdict, blocking_question, resolver}` — verdict is
+  READY / NEEDS-DECISION / NEEDS-INVESTIGATION
+- `execution_plan`: `{waves: [[issue_numbers]], edges: [{from, to, justification}], held: [{issue_number, blocked_by}], mermaid}`
+- `dispatch_command`: the fleet-cycle invocation for the scheduled set
 - `writeback_url`: link to the companion sheet, or the reason there is none
 - `questions_for_tester`: unresolved evidence and reproduction problems
+- `cycle_log_path`: absolute path of the cumulative log this round was appended to
 
 ## Known Pitfalls
 
@@ -515,6 +764,33 @@ Report, in this order:
   introduction. A defect that survived months at high failure rates is telling you
   something about coverage — or about whether anyone uses the feature — that a fresh
   regression cannot.
+- **The issue's author is the worst judge of whether the issue is clear.** Everything the
+  investigation established is still in the author's context, so gaps in the written text
+  are invisible to them. Readiness is graded by a different agent reading only what was
+  published, or it is not graded at all.
+- **A generous readiness bar is the most expensive thing in this workflow.** A false READY
+  hands an autonomous agent an ambiguous task; it will resolve the ambiguity confidently,
+  in its own direction, and merge the result. That is discovered after the fact and costs
+  a revert plus a re-triage. A false NEEDS-DECISION costs one human a few seconds. Grade
+  accordingly.
+- **"Needs more detail" is not a blocking reason.** A not-ready verdict that does not name
+  the specific missing fact and the person or investigation that supplies it has converted
+  a filed issue into a stalled one and told nobody how to unstall it.
+- **A diagram is documentation; `Depends on #N` is enforcement.** A wave plan that lives
+  only in a log or a message is stale the moment someone reorders the work, and nothing
+  reads it. The edge written into the issue body is what `gate-issue` blocks on and what
+  fleet-cycle schedules from. Draw the picture, but write the edge.
+- **A ready issue behind a not-ready one is not runnable.** Scheduling it because it passed
+  its own review produces a wave that fails on contact. Hold it, and name the blocker —
+  unblocking one issue frequently releases a whole chain.
+- **Process state does not belong in the product repo.** A cycle log committed to the
+  working tree pollutes every unrelated diff and blame, and branches fork it. It is
+  cross-round, per-project state and belongs outside the tree.
+- **Compressing or rotating the cycle log destroys the audit.** It is read back in full
+  every round to check prior rounds' promised artifacts. Fleet-cycle's per-run plans are
+  gzipped and pruned to 20 because nothing re-reads them; this file is the opposite case.
+  Copying that retention policy here would silently break the one step that keeps the
+  workflow honest.
 
 ## Validation
 
@@ -532,10 +808,21 @@ Report, in this order:
 - [ ] Every filed issue names a specific detection-gap artifact
 - [ ] Repeated detection gaps were called out once, not duplicated per issue
 - [ ] Each finding's introduction date was established, and the oldest was investigated
+- [ ] Every filed issue was readiness-reviewed by an agent that did not write it
+- [ ] Each reviewer read only the published issue, not the triage context
+- [ ] Every filed issue carries exactly one of `ready_label` / `needs-clarification`
+- [ ] Every not-ready issue names its specific blocking question and its resolver
+- [ ] Every issue body has a `## Readiness` section recording the verdict
+- [ ] Dependency edges were written into issue bodies as `Depends on #N`, not only drawn
+- [ ] The wave plan covers the ready set; held issues are named with their blockers
+- [ ] The Mermaid diagram distinguishes scheduled / held / not-ready nodes
+- [ ] The dispatch command lists the scheduled set only
 - [ ] Prior rounds' promised artifacts were audited: landed / proposed-only / not-running
 - [ ] The report distinguishes artifacts **promised** from artifacts **verified landed**
-- [ ] The companion sheet contains a row for every original finding
-- [ ] The cycle was appended to the log
+- [ ] The companion sheet contains a row for every original finding, with readiness and wave
+- [ ] Any legacy in-repo cycle log was migrated to the central path and removed from the tree
+- [ ] The cycle was appended to `~/.dossier/logs/qa-sheet-triage/{project}/TRIAGE-CYCLE-LOG.md`, including the wave diagram
+- [ ] Nothing was written into the repository working tree
 
 ## Troubleshooting
 
@@ -554,4 +841,46 @@ and say so in the report so nobody waits for a column that will not appear.
 checked. Do not file a speculative issue, and do not silently drop the row.
 
 **`gh` not authenticated**: run `gh auth status` and resolve before Phase 4. Phases 0-3
-are read-only and can run without it.
+are read-only and can run without it; Phases 4-6 all write to the tracker.
+
+**Every issue comes back READY**: treat that as a signal the bar slipped, not as a good
+round. Re-read the weakest-criterion note each reviewer was required to produce — if those
+are vague or missing, the reviews were rubber stamps. A round with no ambiguity anywhere is
+rare.
+
+**Every issue comes back NEEDS-DECISION**: usually the sheet was full of product and copy
+preferences rather than defects, which Phase 1 should already have separated out. Check
+that routing happened before concluding the round produced nothing runnable.
+
+**The ready set is one long chain with no parallelism**: expected when a round's findings
+cluster onto a few shared files. Report it plainly rather than forcing parallel waves —
+serialized-but-correct beats parallel-and-conflicting. If the chain is very long, say so
+and let the user narrow the set.
+
+**A dependency cycle among ready issues**: two issues that each must merge before the other
+usually means Phase 2 split one cluster that should have been one issue. Re-check the
+clustering before asking the user to break the cycle by hand.
+
+**No cycle log at the central path, and none in the repo**: this is round 1 for this
+project. Create the file with a header and the "why the last two columns are separate"
+explanation, and say in the report that no prior-round audit was possible.
+
+**The repo has no `needs-clarification` or readiness label**: create them. This workflow is
+entitled to create exactly these two. Do not substitute a loosely-related existing label —
+`gate-issue` blocks on the literal name `needs-clarification`, so a near-miss silently
+disables the gate.
+
+## Relationship to Other Dossiers
+
+- **Hands off to**: `imboard-ai/git/fleet-cycle`. Phase 6 produces exactly its `issues`
+  input, and writes dependency edges in the form fleet-cycle treats as authoritative.
+  Triage stops at the handoff; dispatching is a separate, deliberate act.
+- **Enforced by**: `imboard-ai/git/gate-issue`, via `needs-clarification` (hard block) and
+  open `Depends on #N` (hard block). Phase 5 and Phase 6 are the write side of contracts
+  the gate already reads — which is why they use its exact vocabulary rather than a
+  parallel one.
+- **Borrows from**: fleet-cycle's Phase 2 dependency-signal taxonomy and its
+  serialize-when-uncertain bias. Do not fork that model; if it changes there, follow it.
+- **Diverges from** fleet-cycle deliberately on log retention: its plans are per-run,
+  gzipped, pruned to 20 because nothing reads them back. This dossier's log is a single
+  cumulative ledger, read in full every round.
