@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.5.3",
+  "version": "3.6.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-07-08",
+  "last_updated": "2026-08-05",
   "objective": "Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report",
   "category": [
     "development"
@@ -58,7 +58,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "246d285aa9e89f54ec7d62314748539700c41391b34fed008ac9b2f659f9f47c"
+    "hash": "ab6ede37f788a0b36a37c49320f1853aeca811cc29c33c230bf651d14daacce6"
   },
   "external_references": [
     {
@@ -72,10 +72,9 @@
   "content_scope": "references-external",
   "signature": {
     "algorithm": "ed25519",
-    "signature": "yGeH0WxBHkI6Ar7x8uhEZXiMS1CS3hDZ9CoV8wzUYkvT2eEeNE/Sg1fy4xv81M7fSnkbpKKfgyG50LStmdrMAQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T08:22:10.544Z",
-    "covers": "frontmatter+body",
+    "signature": "JNxNiiO3wIvPS0TDJUM2YlpME6gKcpFrLSTV+BWtUYr2qlYqXxVe5l9pq1eK/iVhhP+vpQmh64DL1kJ+64X/CA==",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAT5MH6NyHt3zBur6eq+EVSNOA2AZbuSRpov+/BRFzLnY=\n-----END PUBLIC KEY-----\n",
+    "signed_at": "2026-08-05T11:04:46.344Z",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
@@ -90,13 +89,33 @@ Take a GitHub issue from start to merged PR autonomously. For small-to-medium is
 
 ## Guiding Principle
 
-**Do not stop to ask yes/no questions.** Only pause when:
+**Do not ask the user interactively, at any phase.** This workflow runs unattended —
+there may be no one present to answer. If the run cannot complete autonomously, STOP
+and hand the decision back through the issue itself; never wait on a reply in this
+conversation.
+
+Stop and hand off when:
 - The issue description is too vague to implement
-- A business/product/design decision is genuinely ambiguous
+- A business/product/design decision is genuinely ambiguous — including anything the
+  review phase escalates (Phase 4) or a CI/merge blocker that needs judgment (Phase 5)
 - Tests fail after 2 fix attempts with unclear path forward
 - Merge conflicts require human judgment
 
-Do NOT ask about: file names, branch names, commit messages, PR descriptions, whether to proceed, or any mechanical decision.
+**How to hand off** (the same procedure every time, regardless of which phase triggers it):
+1. Push whatever work exists so nothing is lost; note the branch name in the comment (Step 2 below).
+2. `gh label create decision-pending --color "5319E7" --description "Blocked on a human decision" --force`
+   then `gh issue edit <number> --add-label "decision-pending" --remove-label "in-progress"`.
+3. Post ONE comment on the ORIGINAL issue — never a new issue — stating exactly what
+   decision is needed: file/line references, the options, and enough context that a
+   human (or a future run) can act on it without re-deriving your reasoning.
+4. End the run. Do NOT open a PR if one doesn't exist yet, and do NOT proceed to Ship or Report.
+
+**Never open a new GitHub issue as a substitute for this.** One issue in, at most that
+same issue updated — with the decision recorded in its comments — never fanned out
+into follow-up issues.
+
+Do NOT ask about (just proceed): file names, branch names, commit messages, PR
+descriptions, whether to proceed, or any other mechanical decision.
 
 ## Prerequisites
 
@@ -167,7 +186,7 @@ This workflow composes the following sub-dossiers in sequence:
 
 1. Run: `ai-dossier run imboard-ai/git/plan-issue`
 2. Pass through the issue number, base_branch, and worktree path. Also pass `prod_data_access` = "Use the `mongodb-prod` MCP (read-only `count`/`find`/`aggregate`) against the production cluster to confirm a new state/flow actually occurs before building it; 0 occurrences ⇒ don't build, escalate (retro #1632)" — this drives plan-issue's reachability check.
-3. **In full-cycle mode: proceed immediately.** Do not checkpoint with the user. If the issue is genuinely ambiguous, ask ONE focused question then proceed. **Exception:** if the reachability check escalated (a new state shows 0 prod occurrences), surface that one question before building — do not build an unreachable state.
+3. **In full-cycle mode: proceed immediately.** Do not checkpoint with the user. If the issue is genuinely ambiguous, apply the Guiding Principle hand-off (stop, don't ask) rather than guessing. **Exception path is the same, not different:** if the reachability check escalated (a new state shows 0 prod occurrences), that is also a hand-off case — stop and record the decision needed before building; do not build an unreachable state.
 
 ### Phase 3: Implement
 
@@ -178,15 +197,25 @@ This workflow composes the following sub-dossiers in sequence:
 
 1. Run: `ai-dossier run imboard-ai/git/review-issue`
 2. Collect the review results: `review_fixed`, `review_escalated`, `review_clean`
+3. **If `review_escalated` is non-empty: apply the Guiding Principle hand-off and STOP —
+   do not proceed to Phase 5.** review-issue already restricts escalation to findings
+   that genuinely need a product/business decision (typically 0, rarely more than 2), so
+   reaching this step means a real decision is needed, not a fan-out of side issues. The
+   comment posted to the issue should list each escalated finding (file/lines,
+   description, why it needs a human call), grouped by review category if there is more
+   than one.
 
 ### Phase 5: Ship
 
+**Only reached when `review_escalated` was empty at the end of Phase 4** — ship-issue's
+own prerequisites assume this and do not create GitHub issues for anything.
+
 1. Run: `ai-dossier run imboard-ai/git/ship-issue`
-2. Pass through: issue number, base_branch, review_escalated, worktree_path, original_dir, pool_claimed
+2. Pass through: issue number, base_branch, worktree_path, original_dir, pool_claimed
 3. **Opening a PR is NOT completion, and neither is merging it. You are done
    when the merge has REACHED PRODUCTION** (or you have a hard blocker you
    escalated). A PR left green-but-unmerged is a FAILED run; a PR merged but
-   never deployed is code live to nobody — see ship-issue Step 7c.
+   never deployed is code live to nobody — see ship-issue Step 6c.
 4. **Hand off the merge to the auto-merge watcher — do NOT babysit CI and do
    NOT merge the PR yourself.** The repo runs an `auto-merge-watcher` GitHub
    Action (every 5 min) that squash-merges green, clean PRs server-side and
@@ -203,9 +232,9 @@ This workflow composes the following sub-dossiers in sequence:
 5. **Confirm the merge before reporting done** (passive, not CI babysitting):
    poll `gh pr view <pr_number> --json mergedAt` at a coarse interval (every
    ~3–5 min, up to ~25 min) until `mergedAt` is non-null. This is confirming
-   the watcher did its job, NOT polling CI statuses. ship-issue Step 7b
+   the watcher did its job, NOT polling CI statuses. ship-issue Step 6b
    (`mergedAt` non-null) must pass before this phase is considered complete.
-   Then ship-issue Step 7c must ALSO pass: confirm a successful deploy carries
+   Then ship-issue Step 6c must ALSO pass: confirm a successful deploy carries
    `MERGE_COMMIT`, dispatching the deploy yourself if nothing does. On repos
    where a bot token performs the merge, GitHub does not fire `on: push`, so the
    deploy NEVER runs by itself — merged code then sits until an unrelated human
@@ -213,14 +242,18 @@ This workflow composes the following sub-dossiers in sequence:
 6. **If the watcher blocks the merge** — the watcher leaves an
    `auto-merge-blocked` label + a comment with the reason (failing checks,
    conflict, branch-update failure) and removes `auto-merge` — **or the PR is
-   still unmerged after ~25 min**: escalate the hard blocker on the issue
-   (comment + remove `in-progress` label). Do NOT silently exit on an
-   unmerged PR. Capture the blocker in the report with `MERGE_COMMIT` empty.
+   still unmerged after ~25 min**: apply the Guiding Principle hand-off (the PR
+   already exists, so skip the "push work" step — just label and comment). Do
+   NOT silently exit on an unmerged PR. Capture the blocker in the report with
+   `MERGE_COMMIT` empty.
 
 ### Phase 6: Report
 
+**Only reached on a real completion** — if Phase 4 or Phase 5 stopped via the Guiding
+Principle hand-off, the run already ended there; do not run this phase.
+
 1. Run: `ai-dossier run imboard-ai/git/report-issue`
-2. Pass through: issue number, pr_number, base_branch, review_fixed, review_escalated, review_clean, cleanup_method
+2. Pass through: issue number, pr_number, base_branch, review_fixed, review_clean, cleanup_method
 3. **The structured report MUST include a `MERGE_COMMIT` field** set to the
    squash-merge commit SHA (`gh pr view <pr_number> --json mergeCommit --jq '.mergeCommit.oid'`).
    An empty / `N/A` / missing `MERGE_COMMIT` is a **FAILURE**, not a success —
@@ -247,10 +280,10 @@ This workflow composes the following sub-dossiers in sequence:
 - [ ] Tests re-run after review fixes
 - [ ] Committed with conventional commit message
 - [ ] PR created targeting correct base_branch
-- [ ] Escalated findings consolidated per review category (typically 0)
+- [ ] Zero escalated findings reached Ship — any escalation stopped the run at Phase 4 with a decision-pending hand-off on the issue (see Guiding Principle), not a new GH issue
 - [ ] `auto-merge` label applied to PR and confirmed present
-- [ ] PR merged by the watcher — `MERGE_COMMIT` captured (merge confirmed via `mergedAt` non-null, ship-issue Step 7b). Empty `MERGE_COMMIT` = FAILED run (unless a hard blocker was escalated)
-- [ ] Merge REACHED PRODUCTION — a successful deploy carries `MERGE_COMMIT`, and `DEPLOYED` is in the report (ship-issue Step 7c). Merged ≠ shipped; `N/A` is valid only when the project has no deploy step
+- [ ] PR merged by the watcher — `MERGE_COMMIT` captured (merge confirmed via `mergedAt` non-null, ship-issue Step 6b). Empty `MERGE_COMMIT` = FAILED run (unless a hard blocker was escalated)
+- [ ] Merge REACHED PRODUCTION — a successful deploy carries `MERGE_COMMIT`, and `DEPLOYED` is in the report (ship-issue Step 6c). Merged ≠ shipped; `N/A` is valid only when the project has no deploy step
 - [ ] Worktree returned to pool or removed
 - [ ] Rich report posted to conversation and PR comment
 - [ ] Returned to original working directory
@@ -258,12 +291,12 @@ This workflow composes the following sub-dossiers in sequence:
 ## Troubleshooting
 
 **`gh` not found**: Install GitHub CLI: https://cli.github.com/
-**CI fails after fixes**: Ask user — may be infrastructure issue
-**Merge conflicts**: Ask user — needs human judgment
-**Vague issue**: Ask ONE clarifying question, then proceed
+**CI fails after fixes**: Apply the Guiding Principle hand-off — may be an infrastructure issue rather than a code issue; say so in the comment.
+**Merge conflicts**: Apply the Guiding Principle hand-off — needs human judgment, do not guess at a resolution.
+**Vague issue**: Apply the Guiding Principle hand-off rather than guessing at intent.
 **No test framework detected**: Default to vitest (Node.js) or pytest (Python)
 **Pre-existing test failures**: Run tests on the base branch to confirm
-**Review fix breaks tests**: Revert the fix and reclassify as Escalate
+**Review fix breaks tests**: Revert the fix and reclassify as Escalate (this feeds the Phase 4 hand-off, not a new issue)
 **Pool return fails**: Fall back to manual `git worktree remove`
 **`auto-merge-blocked` label appeared**: The watcher did not merge — read its comment for the reason (failing check, conflict, branch-update failure). Fix the root cause, then re-apply `gh pr edit <pr_number> --add-label "auto-merge"` to re-queue. Do NOT self-merge as a workaround.
-**PR still unmerged after ~25 min**: Escalate as a hard blocker (Phase 5.6) — the watcher may be down or the PR may be stuck BEHIND. Do NOT silently exit.
+**PR still unmerged after ~25 min**: Apply the Guiding Principle hand-off (Phase 5 item 6) — the watcher may be down or the PR may be stuck BEHIND. Do NOT silently exit.
