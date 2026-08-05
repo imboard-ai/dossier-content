@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-06-25",
@@ -36,14 +36,13 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "dd8f4a310529ca5177bfaea8c0c8b387fccc151f810bce9889839aff59e04821"
+    "hash": "fff957a854d3bfaa11d1c1dc111103d7eaf0b0fd80a1b0d955fb154ae6af5fc3"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "gB+NL6/RnA3wvNocwsEvlYpU6m6Td3N366zW7AnuYuRQP17HjDF9q+ETu270UU6JzT+M5j5DN1IqIAyV1yL4DQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:59.706Z",
-    "covers": "frontmatter+body",
+    "signature": "nxCGUJUGLxyBuviUr3bQrIsudC+pGDa3JxhFY+pmJDW5LsBabdh9mnxO/1tFSMqwmJHKiTl7vo6y2NqSIYXrBQ==",
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAT5MH6NyHt3zBur6eq+EVSNOA2AZbuSRpov+/BRFzLnY=\n-----END PUBLIC KEY-----\n",
+    "signed_at": "2026-08-05T11:04:48.303Z",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
@@ -101,6 +100,11 @@ Every review agent must classify each finding as follows:
 improvements, minor bugs, "consider doing X" opinions. Fix them or skip them.
 
 > Most PRs should have zero escalated issues. If you are escalating more than 2 total across all agents, re-evaluate each finding against the three-part test.
+
+> **What escalating costs**: an escalated finding does not spin off a side issue — it
+> stops the entire full-cycle run and hands the original issue back to a human as
+> `decision-pending` (see full-cycle-issue's Guiding Principle). Weigh that cost before
+> escalating; it is exactly why the three-part test is strict.
 
 ---
 
