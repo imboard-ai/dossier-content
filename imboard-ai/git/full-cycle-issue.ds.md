@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-05",
@@ -58,7 +58,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "ab6ede37f788a0b36a37c49320f1853aeca811cc29c33c230bf651d14daacce6"
+    "hash": "622f011caec6bcbf1ada2fd59abb6f853fd5a44422458c51918f1cd283de6704"
   },
   "external_references": [
     {
@@ -72,9 +72,9 @@
   "content_scope": "references-external",
   "signature": {
     "algorithm": "ed25519",
-    "signature": "JNxNiiO3wIvPS0TDJUM2YlpME6gKcpFrLSTV+BWtUYr2qlYqXxVe5l9pq1eK/iVhhP+vpQmh64DL1kJ+64X/CA==",
+    "signature": "4CP8fRpQ5p5/B0raxy8v0FOflq1cVuZZ1v1/qc6jpr3QAlxrpkRZ8zaetmJ30W/agzzFi5wG99rOUidJqkSUBw==",
     "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAT5MH6NyHt3zBur6eq+EVSNOA2AZbuSRpov+/BRFzLnY=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-08-05T11:04:46.344Z",
+    "signed_at": "2026-08-05T11:53:12.462Z",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
@@ -134,7 +134,7 @@ This workflow composes the following sub-dossiers in sequence:
 | 1 | `imboard-ai/git/setup-issue-workflow` | Branch + worktree + warmup + claim issue |
 | 2 | `imboard-ai/git/plan-issue` | Read issue + explore code + write planning doc |
 | 3 | `imboard-ai/git/implement-issue` | Implement + test + lint |
-| 4 | `imboard-ai/git/review-issue` | 5 parallel review agents + fix findings |
+| 4 | `imboard-ai/git/review-issue` | 6 parallel review agents + fix findings |
 | 5 | `imboard-ai/git/ship-issue` | Commit + push + PR + apply `auto-merge` label + confirm merge + teardown |
 | 6 | `imboard-ai/git/report-issue` | Rich completion report |
 
@@ -275,7 +275,7 @@ Principle hand-off, the run already ended there; do not run this phase.
 - [ ] Planning doc created
 - [ ] Implementation addresses requirements
 - [ ] Tests exist and all pass
-- [ ] 5 parallel reviews completed
+- [ ] 6 parallel reviews completed
 - [ ] Review fixes applied in-place
 - [ ] Tests re-run after review fixes
 - [ ] Committed with conventional commit message
