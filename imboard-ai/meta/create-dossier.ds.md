@@ -16,10 +16,10 @@
     "dossier"
   ],
   "content_scope": "self-contained",
-  "last_updated": "2026-07-26",
+  "last_updated": "2026-08-14",
   "name": "create-dossier",
   "title": "Create New Dossier",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "status": "Stable",
   "objective": "Guide an agent to create well-structured dossier markdown files that other agents will execute successfully",
   "authors": [
@@ -29,15 +29,14 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6708c6dc674a64c48c80920e5aa193c87ee52a290e63ff61f44af1bdb13971a2"
+    "hash": "0c1c5cef81cf23d01e14daae38784f005f735f1800ae0b05e7ced953b2566003"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "9e8siUwfv3Gq2rUK4xjAIXMG1Gq1FtqGLt0Y0ZkIyF6I/pFHB1CuNvc/JtyP73hQf587JC65eDw1DA+/xUMdCQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:49:55.755Z",
+    "signature": "oY1BK3GivPlfmwTUCKcB+aDnKCSBKNNHXArXfqRohoKRaZWcWFAfXrgN8aLDZ9LdEqPvjlq8ghMCvcQkUr48Dg==",
+    "public_key": "AL0Qv7hVlFUkPkb5g3YKy6C2SDgwjbreJAHOI/Ht37s=",
+    "signed_at": "2026-08-14T08:35:04.745Z",
     "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
@@ -365,24 +364,31 @@ Save the dossier as a `.md` file (not `.ds.md`). Then:
 
 3. **Provide CLI commands** with the discovered values filled in:
 
+**Signing convention (current, as of 2026-08-14): local ed25519, not KMS.** AWS KMS signing (`--method kms`, the CLI's default when `--key` is omitted) is deprecated for this org — do not sign new dossiers with it. Use a local ed25519 key instead: check `~/.dossier/*.pem` for an existing personal key first (do not generate a new one if one is already present, on this machine or a synced one — see the imboard-monorepo root `CLAUDE.md` sync note — each new key adds an entry to `trusted-keys.txt` that has to propagate everywhere dossiers get verified). If none exists, create one with `dossier keys generate --name <your-name>`, then register it with `dossier keys add <printed-public-key> "<your-name>"`. Sign with `dossier from-file --sign --key ~/.dossier/<your-name>.pem ...` (or `dossier sign <file> --method ed25519 --key <path>` for an already-created dossier). `dossier verify` resolves the matching public key from `trusted-keys.txt` automatically.
+
 ```
 File saved to: [path]
 
 Next steps to publish this dossier:
 
-1. Create (adds metadata + signature):
+1. Create (adds metadata + signature, ed25519 not KMS):
    dossier from-file [your-file.md] \
      --name "[dossier-slug]" \
      --title "[Dossier Title]" \
      --objective "[What it accomplishes]" \
      --author "[Name from whoami] <[email]>" \
-     --sign --signed-by "[Name] <[email]>" \
+     --sign --key [path to your ~/.dossier/*.pem] --signed-by "[Name] <[email]>" \
      -o [output.ds.md]
 
 2. Verify:
    dossier verify [output.ds.md]
 
-3. Publish (optional):
+3. Publish — always pass --namespace explicitly. Omitting it can land the
+   dossier under a different top-level name instead of updating the
+   existing one (observed: publishing without --namespace created a stray
+   `imboard-ai/<name>` entry instead of updating `imboard-ai/skills/<name>`).
+   Check `dossier info <existing-namespace>/<name>` first to confirm where
+   the current version actually lives:
    dossier publish [output.ds.md] \
      --namespace "[suggested-namespace]" \
      --changelog "[Version description]"
