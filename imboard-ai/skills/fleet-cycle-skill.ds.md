@@ -3,11 +3,15 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle-skill",
   "title": "Fleet Cycle",
-  "version": "1.1.2",
-  "protocol_version": "1.0",
+  "version": "1.1.3",
   "status": "Draft",
   "objective": "Take a SET of GitHub issues to merged PRs via dependency-aware waves of background full-cycle runs",
   "description": "Orchestrate multiple issues at once. Builds a dependency-aware wave plan and dispatches full-cycle-issue across background agents — parallel where safe, serial where dependent. Use when the user says 'fleet cycle', 'full cycle issues 1,2,3', 'full cycle issues 1..9', 'batch issues', 'map these issues and run them', 'run these issues in parallel/serial', or gives a LIST or RANGE of issues to take to merged PRs.",
+  "authors": [
+    {
+      "name": "Yuval Dimnik"
+    }
+  ],
   "category": [
     "skills"
   ],
@@ -23,22 +27,16 @@
   ],
   "risk_level": "high",
   "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "a9c6e3c7d24478dec9c313529ecb6f8da06e4c03661b1ede77dec41432f1393c"
+    "hash": "ca3f93f09ea22f59ca5250a3e6eafc2eaa2a0d252b47e7078dc2c14c4b975876"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "L/Ykao8/RYsAaVx7noeCZ4EQZdwZvRgfRXlBkzzg6HMyNkkxakBBJyFSBuTfMDXHobHPOnkB8gLMHAIdK2ptCA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:49:26.793Z",
+    "signature": "X4/Sv8vf4OH+s9VSCNH1pMBcooA961ojbiZHp+9CXFXRG5aYLxnNYs5lWsdaetV86XCI0h4zWNZC8UA5E5obCg==",
+    "public_key": "AL0Qv7hVlFUkPkb5g3YKy6C2SDgwjbreJAHOI/Ht37s=",
+    "signed_at": "2026-08-14T08:25:43.766Z",
     "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
@@ -50,7 +48,7 @@ Orchestrate a **set** of GitHub issues to merged PRs. This is the batch layer ab
 
 ## Project Parameters
 
-- **warmup_dossier**: `imboard-ai/git/warm-worktree` (generic; auto-detects package manager). For the imboard monorepo's pnpm + SSM path, override with `imboard-ai/imboard/warm-worktree`.
+- **warmup_dossier**: `imboard-ai/git/warm-worktree` (generic; auto-detects package manager). For the imboard monorepo's pnpm + SSM path, override with `imboard-ai/imboard/warm-worktree-pnpm-ssm`.
 
 ## Flags
 
