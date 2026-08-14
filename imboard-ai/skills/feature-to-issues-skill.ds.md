@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "feature-to-issues-skill",
   "title": "Feature to Issues",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "protocol_version": "1.0",
   "status": "Draft",
   "objective": "Multi-agent feature development pipeline: problem signal → discovery → PRD → specs → GH issues → implementation → review loop",
@@ -29,15 +29,14 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "8850e5ab7e70761eda3cf6b5608d5ac3ec0f3a9ae4e25ecf9badd592bf105c03"
+    "hash": "12f622641827ef7698cc9cc7728a405f5df8f93ae03e0c67ca0918526bf5d57a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "ani+P01aZ+iNfbgASImyVr4KBv+w7N1fAOsa6JXuA0GUXefd/U9+hEdCIwBQQIwW3u3GV2ZGN1GbVWD49YoMCg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:49:23.175Z",
+    "signature": "NKzsHahnl1uNKgnwPTGdVjTK3OZoE6kxcrJFwG6PdYdkg1ZMZr09GlYsv+36LAUuLVwUuuPV8UjrQ+MPEs4QDw==",
+    "public_key": "AL0Qv7hVlFUkPkb5g3YKy6C2SDgwjbreJAHOI/Ht37s=",
+    "signed_at": "2026-08-14T08:25:50.421Z",
     "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
@@ -61,7 +60,7 @@ This skill works **upstream** of the issue cycles — it creates the GH issues t
 
 ## Project Parameters
 
-- **warmup_dossier**: *(project-specific — set per project, e.g., `imboard-ai/imboard/warm-worktree`)*
+- **warmup_dossier**: *(project-specific — set per project, e.g., `imboard-ai/imboard/warm-worktree-pnpm-ssm`)*
 
 ## Flags
 
