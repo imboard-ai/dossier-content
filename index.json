@@ -853,7 +853,7 @@
     {
       "name": "imboard-ai/meta/create-dossier",
       "title": "Create New Dossier",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "path": "imboard-ai/meta/create-dossier.ds.md",
       "category": [
         "documentation"
