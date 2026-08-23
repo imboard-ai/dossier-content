@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, confirm the merge reached production, and clean up the worktree",
@@ -64,6 +64,11 @@
         "description": "Whether the worktree was claimed from the pool (affects cleanup)",
         "type": "boolean",
         "default": false
+      },
+      {
+        "name": "run_id",
+        "description": "Runstate run id minted by gate-issue; pass through unchanged",
+        "type": "string"
       }
     ]
   },
@@ -74,13 +79,14 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "19710492a8f1781a02af6f6ec7f5e71da3aa69bcb2a6df80b870ce201285e549"
+    "hash": "84187469cbebfb19370f0833ae1f91141b549b52183ea478c95a10382ee90987"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "+gGZ3r4M0C2cIEx7Tj3qOISPh9IT4OFSdxFbFX3EVCt2+BLKQWXl/2gMU1+5WQ/Kq9echASl+pZ76PHUpCljCA==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAT5MH6NyHt3zBur6eq+EVSNOA2AZbuSRpov+/BRFzLnY=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-08-05T11:04:47.017Z",
+    "signature": "fFfhsbZF78EVvnBbVxM4RvVYci3MLoxqkAuWVL719LLJ3Mqu5E+uLa63sakSHOUdzWqeqvClOS0dRiIEVr6iAw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-08-23T06:34:08.246Z",
+    "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
@@ -108,6 +114,7 @@ Ship the implementation: commit, push, create PR, wait for CI, merge, and clean 
 
 ### Step 1: Commit
 
+0. **If `scripts/ci-parity.sh` exists in the repo, run `bash scripts/ci-parity.sh` before committing.** It is the project's own definition of what CI enforces — catching a hygiene failure here costs seconds instead of a full CI round-trip. Fix and re-run until it passes. If the script does not exist, skip this and commit as usual.
 1. Stage relevant files (never `.env`, credentials, secrets)
 2. Commit with conventional commits format:
    ```
@@ -142,6 +149,24 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
+
+### Step 3b: Runstate Milestone (awaiting-merge)
+
+Post this BEFORE the CI wait — it is what tells a later reader that a PR exists and the run is parked on CI, even if this session dies mid-wait. Comments are append-only: never edit or delete a prior milestone.
+
+```bash
+gh issue comment <issue_number> --body "$(cat <<'EOF'
+<!-- runstate:v1 -->
+phase=ship status=awaiting-merge run=<run_id> at=<UTC ISO-8601>
+pr=<pr-number>
+head=<short sha of the pushed commit>
+ci_fix_attempts=0
+next=ship
+EOF
+)"
+```
+
+`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ### Step 4: Wait for CI — stable-confirmation gate (stay in this turn)
 
@@ -364,6 +389,25 @@ merge is confirmed.
    git push origin --delete <branch-name> 2>/dev/null || true
    ```
 
+### Step 8: Runstate Milestone (final)
+
+Post the second and final ship milestone, after merge and teardown. This is the last step of the phase — if ship aborts (CI red after 2 attempts, merge conflict, failed deploy), post `status=blocked` with `reason=<short-slug>` instead and stop. Do not skip this in nested or fleet mode — it is the only state that survives the session.
+
+```bash
+gh issue comment <issue_number> --body "$(cat <<'EOF'
+<!-- runstate:v1 -->
+phase=ship status=done run=<run_id> at=<UTC ISO-8601>
+pr=<pr-number>
+merge_commit=<short sha from Step 6b>
+ci_fix_attempts=<n>
+cleanup=pool_returned|worktree_removed|skipped
+next=report
+EOF
+)"
+```
+
+`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. `ci_fix_attempts` is how many Step 5 fix-and-push cycles ran (0 if CI was green first time). Values contain no spaces (use `-` or `,`); paths are absolute.
+
 ## Output
 
 - `pr_number`: the created PR number
@@ -371,6 +415,8 @@ merge is confirmed.
 - `merge_status`: merged | failed
 - `target_branch`: the branch merged into
 - `cleanup`: pool_returned | worktree_removed | skipped
+- `ci_fix_attempts`: number of CI fix-and-push cycles run in Step 5
+- Posts TWO runstate milestones to the issue (`phase=ship`: `awaiting-merge` before the CI wait, then `done`)
 
 ## Validation
 
@@ -386,6 +432,8 @@ merge is confirmed.
 - [ ] in-progress label removed
 - [ ] Worktree returned to pool or removed
 - [ ] Returned to original directory
+- [ ] `scripts/ci-parity.sh` was run before committing when present
+- [ ] Two runstate milestone comments were posted (`awaiting-merge` before the CI wait, final after teardown)
 
 ## Troubleshooting
 
