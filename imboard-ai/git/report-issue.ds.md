@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "report-issue",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment",
@@ -75,13 +75,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "ca07ce9c968e941e8410109bb8af1492d73fc9b525b31398ec42f23d427b2392"
+    "hash": "29dd9595588ab4d4936f1b8c44760dda96f3fce62e5839210f0bdb39e1275fdd"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "fUROzMCzoyL0rmbEsHp9+FButMAoRKz4t0H28dEoqNi2Fc3VNMMmjw09owtInw7/D0QcXn8HhYgPTHhDyCJ0DQ==",
+    "signature": "YiuHg6b6r7V+Ie+SoPMn0QAYi1o7pvrpPlAaVLIPnM/hX6sYMcLUtzgAaFY/tHYqqdwCWIHXvSf9Od2GIyIMBw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T06:31:53.719Z",
+    "signed_at": "2026-08-23T13:51:29.195Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -241,9 +241,9 @@ Report posted to conversation and PR #<pr_number>.
 Post the final phase milestone to the issue. This is the last step of the cycle. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<'EOF'
+gh issue comment <issue_number> --body "$(cat <<EOF
 <!-- runstate:v1 -->
-phase=report status=done run=<run_id> at=<UTC ISO-8601>
+phase=report status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 pr=<pr_number>
 traps_added=<n>
 next=done
@@ -251,7 +251,7 @@ EOF
 )"
 ```
 
-`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. `traps_added` is the count of regression traps (tests or guards added so this class of bug cannot return); use `0` if none. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `traps_added` is the count of regression traps (tests or guards added so this class of bug cannot return); use `0` if none. Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
