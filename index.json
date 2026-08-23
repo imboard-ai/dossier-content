@@ -353,7 +353,7 @@
     {
       "name": "imboard-ai/git/gate-issue",
       "title": "Gate Issue — Pre-Flight Safety Check",
-      "version": "1.0.3",
+      "version": "1.1.0",
       "path": "imboard-ai/git/gate-issue.ds.md",
       "category": [
         "development"
