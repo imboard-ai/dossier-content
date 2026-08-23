@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, confirm the merge reached production, and clean up the worktree",
@@ -85,13 +85,13 @@
   "last_updated": "2026-08-23",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e65cc1f73b72e6e87185e594cef5d4c36bedc68ceba9d23551052438720028b8"
+    "hash": "c1bd5f04e85278bdd6a58cb1de544a7c79abec06431abf5203bb4f7df6fbf248"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "/WydbZ9DwJF2YDtximvyqt9+EfxXAvkFsJL5Yb1GiOJILaNV9+s5BI1o3pO1EvVlgot7PuPisLCFFnn9rUIrBQ==",
+    "signature": "kfNkPbsATS/Km6UQ0VYEKZcXkm9vK627+pvmIg1ANqFmvylLS80FajuWdi22hOZbO7KqeDVaZSzlKKys1oCoDQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T15:34:13.081Z",
+    "signed_at": "2026-08-23T19:15:00.954Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -377,6 +377,14 @@ stranger's push. Every signal this workflow checks said "shipped".
 
 ### Step 7: Teardown
 
+**Step 7.0 — release per-worktree test resources first.** If the repo has `scripts/ensure-test-env.sh` (or `main/scripts/ensure-test-env.sh`), run it with `--teardown` from the worktree BEFORE removing the worktree:
+
+```bash
+bash scripts/ensure-test-env.sh --teardown
+```
+
+This drops the worktree's isolated test database and S3 prefix. Skipping it leaks one database per run; shared-tier Atlas clusters cap at 500 collections cluster-wide and every leaked `imboard_test_<slug>` DB eats ~40 of them — once full, every integration test fails with `cannot create a new collection -- already using 500 collections of 500`. Record `test_env=torn-down|none` in the final ship milestone.
+
 **Prerequisite: Step 6b (merge confirmed) AND Step 6c (deploy confirmed or `N/A`) must be
 complete.** Do not tear down before the
 merge is confirmed.
@@ -413,6 +421,7 @@ pr=<pr-number>
 merge_commit=<short sha from Step 6b>
 ci_fix_attempts=<n>
 cleanup=pool_returned|worktree_removed|skipped
+test_env=torn-down|none
 next=report
 EOF
 )"
