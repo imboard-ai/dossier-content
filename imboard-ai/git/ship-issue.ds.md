@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, confirm the merge reached production, and clean up the worktree",
@@ -82,15 +82,16 @@
       "name": "Yuval Dimnik"
     }
   ],
+  "last_updated": "2026-08-23",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "1175c7e412050ed0a5a818821b68b2a76da93867bac7c1b75572e9fe9dbd775a"
+    "hash": "e65cc1f73b72e6e87185e594cef5d4c36bedc68ceba9d23551052438720028b8"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "32fNSoRQf/kXGDkPQ2BAjcynIegumShj+GrAQUOxiZMmvR2wQHIOZAsb7mlDNrEWJjV2H+/3z/CyDz0I3MebCw==",
+    "signature": "/WydbZ9DwJF2YDtximvyqt9+EfxXAvkFsJL5Yb1GiOJILaNV9+s5BI1o3pO1EvVlgot7PuPisLCFFnn9rUIrBQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T14:03:51.355Z",
+    "signed_at": "2026-08-23T15:34:13.081Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -383,7 +384,7 @@ merge is confirmed.
 1. `cd` back to `original_dir` (if provided)
 2. **Try to return the worktree to the pool** (if `pool_claimed` is true):
    ```bash
-   npx worktree-pool return --path <worktree_path> 2>/dev/null
+   npx -y @ai-dossier/worktree-pool@^0.5.1 return --path <worktree_path> 2>/dev/null
    ```
    - If succeeds: worktree recycled for reuse. Skip steps 3-5.
    - If fails: continue with manual cleanup.
