@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, confirm the merge reached production, and clean up the worktree",
@@ -79,13 +79,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "84187469cbebfb19370f0833ae1f91141b549b52183ea478c95a10382ee90987"
+    "hash": "6126c62fb774b8c532ef10015ae7bd2bf304b6e34cf48e0d77ac2caac070033f"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "fFfhsbZF78EVvnBbVxM4RvVYci3MLoxqkAuWVL719LLJ3Mqu5E+uLa63sakSHOUdzWqeqvClOS0dRiIEVr6iAw==",
+    "signature": "32AaayhxbttYfhhl01rMJGnN/Sp2PxttZO/IjFgtSZ0lOklMekl1+8wV7m2eGbuV1vf/LeiW0nNGvCi3sPLOBQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T06:34:08.246Z",
+    "signed_at": "2026-08-23T13:51:27.845Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -155,9 +155,9 @@ EOF
 Post this BEFORE the CI wait — it is what tells a later reader that a PR exists and the run is parked on CI, even if this session dies mid-wait. Comments are append-only: never edit or delete a prior milestone.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<'EOF'
+gh issue comment <issue_number> --body "$(cat <<EOF
 <!-- runstate:v1 -->
-phase=ship status=awaiting-merge run=<run_id> at=<UTC ISO-8601>
+phase=ship status=awaiting-merge run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 pr=<pr-number>
 head=<short sha of the pushed commit>
 ci_fix_attempts=0
@@ -166,7 +166,7 @@ EOF
 )"
 ```
 
-`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ### Step 4: Wait for CI — stable-confirmation gate (stay in this turn)
 
@@ -394,9 +394,9 @@ merge is confirmed.
 Post the second and final ship milestone, after merge and teardown. This is the last step of the phase — if ship aborts (CI red after 2 attempts, merge conflict, failed deploy), post `status=blocked` with `reason=<short-slug>` instead and stop. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<'EOF'
+gh issue comment <issue_number> --body "$(cat <<EOF
 <!-- runstate:v1 -->
-phase=ship status=done run=<run_id> at=<UTC ISO-8601>
+phase=ship status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 pr=<pr-number>
 merge_commit=<short sha from Step 6b>
 ci_fix_attempts=<n>
@@ -406,7 +406,7 @@ EOF
 )"
 ```
 
-`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. `ci_fix_attempts` is how many Step 5 fix-and-push cycles ran (0 if CI was green first time). Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `ci_fix_attempts` is how many Step 5 fix-and-push cycles ran (0 if CI was green first time). Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
