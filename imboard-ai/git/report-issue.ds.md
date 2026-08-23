@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "report-issue",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment",
@@ -75,13 +75,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "29dd9595588ab4d4936f1b8c44760dda96f3fce62e5839210f0bdb39e1275fdd"
+    "hash": "bf044b483f2966225b3498e5019c212ab062e30da5dd189a24d0b1c4d513d7ab"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "YiuHg6b6r7V+Ie+SoPMn0QAYi1o7pvrpPlAaVLIPnM/hX6sYMcLUtzgAaFY/tHYqqdwCWIHXvSf9Od2GIyIMBw==",
+    "signature": "ffuzmK+wMqb/rGgKd68NgbbiXdihOaYBeRlUlB4Zq/GDFxHghwbLYMDMKGsvoSYouCFC5/gOn/ZEkEBeHyvKCw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T13:51:29.195Z",
+    "signed_at": "2026-08-23T14:05:54.575Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -230,6 +230,23 @@ EOF
 )"
 ```
 
+### Step 4b: Trap index write-back (mechanical trigger)
+
+First, check the trigger condition. Fetch the last `phase=ship` and `phase=implement` runstate milestones:
+
+```bash
+gh issue view <issue_number> --json comments \
+  --jq '[.comments[].body | select(startswith("<!-- runstate:v1 -->"))]'
+```
+
+Read `ci_fix_attempts` from the last `phase=ship status=done` milestone, and `ci_parity` from the `phase=implement` milestone.
+
+If the repo has `docs/agent-traps.md` AND (`ci_fix_attempts` ≥ 1 OR `ci_parity=fail-then-fixed`), you MUST append exactly one row: `| <the literal error string a future agent would grep> | <what actually went wrong> | <the fix, as a command or one sentence> | PR #<n> |`. Commit it on a tiny follow-up branch and open a PR (`docs(traps): …`), or if the repo allows, include it before merge. Otherwise `traps_added=0`. If the file does not exist, skip and note it.
+
+### Step 4c: Extract learnings + delete PLANNING file
+
+Per the repo's AGENTS.md rule if present; at minimum delete `PLANNING-<n>-*.md` from the worktree if still present (it never belongs in main).
+
 ### Step 5: Output
 
 ```
@@ -251,7 +268,7 @@ EOF
 )"
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `traps_added` is the count of regression traps (tests or guards added so this class of bug cannot return); use `0` if none. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `traps_added` is the number of rows appended to `docs/agent-traps.md` in Step 4b (0 or 1 normally). Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
@@ -272,6 +289,8 @@ EOF
 - [ ] Condensed report posted as PR comment
 - [ ] If base_branch != main: epic sub-issue note included
 - [ ] Review results accurately reflect what was fixed and clean
+- [ ] Trap index write-back checked: if `docs/agent-traps.md` exists and (`ci_fix_attempts` ≥ 1 OR `ci_parity=fail-then-fixed`), exactly one row was appended and shipped via a follow-up PR or pre-merge commit; otherwise `traps_added=0`
+- [ ] `PLANNING-<n>-*.md` was deleted from the worktree if still present
 - [ ] Runstate milestone comment was posted to the issue
 
 ## Troubleshooting
