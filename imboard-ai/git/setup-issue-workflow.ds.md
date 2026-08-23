@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
@@ -72,15 +72,16 @@
   "risk_factors": [
     "network_access"
   ],
+  "last_updated": "2026-08-23",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "5a9148858bbbb485866b7821c106c36066b376826db9401184202c55c4edcfec"
+    "hash": "b8374429a10783ecbbbf9525cf10920dedebff89f54afe154e6310f398332898"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "gcUHJ2RMA4OtuL7if/RfzAcgKo8BPjvpoplBZyQJ8992iTT9Ts5f/PCfLG/ugmFN2lyoZEs+bKm9KlXnFxpuCA==",
+    "signature": "W8sxCU2oRit+RTQaDNip6yn098EEnyZ2eBd8rr7y3nP+zY8z5Fm6K+V31z5/CgVkoEs9cSCAz95nQaBtr4T4BA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T13:51:22.559Z",
+    "signed_at": "2026-08-23T15:06:06.449Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -264,6 +265,8 @@ Based on the choice:
 - **Option 4 (Custom path)**: Skip to Step 7 (Create Git Branch), then create/navigate to custom path
 
 ### Step 5.1: Check Worktree Pool (Option 1 Only)
+
+> **Never run `worktree-pool gc`, `refresh`, or any command described as removing worktrees.** The pool directory is shared with developer worktrees; in `@ai-dossier/worktree-pool` ≤ 0.5.0 `gc` deleted every worktree it did not create (29 developer worktrees lost on 2026-08-23). Agents may only use `status`, `claim`, `return`, `replenish`, `detect`. If the pool looks broken (claim fails, orphaned entry, missing `.git` admin dir), **fall back to cold worktree creation (Step 6)** and mention the broken pool in the setup milestone (`pool_claimed=false pool_note=<reason>`); pool maintenance is a human task.
 
 **Skip this step unless user chose option 1.**
 
@@ -684,6 +687,7 @@ EOF
 
 **Worktree mode — pool-claimed (ALL required before showing success):**
 - [ ] `npx worktree-pool status` was checked
+- [ ] No `worktree-pool gc`/`refresh` was run (agents never run pool maintenance)
 - [ ] `npx worktree-pool claim` succeeded and returned a path
 - [ ] Steps 6-8.5 were skipped (pool worktree is pre-warmed)
 - [ ] Planning file is in the claimed worktree root
