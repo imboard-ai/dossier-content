@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.7.0",
+  "version": "3.7.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-23",
@@ -68,13 +68,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c9e8fe811c0b8c5251139a96e08c4984ce00df157017daa2640a2e0682f3934c"
+    "hash": "c40d3ecbff66f24c07fde842deb805af8286aab4a27d9a420be8d979f7cec122"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "vamOW2puWnthW5Wa5nh1ZvtTbxgz4HHmtpmY+TlrMI3LL4ADCv7dLyr2nZAFp91txH0RPvHakC6KT9XmI6RhBQ==",
+    "signature": "KVNbJprfXqZH5Ltc2ESHXOxrzdz7/+o77iAHjwTcdI1LB+4eiLNfXZ2kqxXfmszmBHUj68hXTuNL3Z67ppW8CA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T06:34:52.606Z",
+    "signed_at": "2026-08-23T13:51:30.474Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -123,9 +123,9 @@ descriptions, whether to proceed, or any other mechanical decision.
 Every phase ends by appending ONE comment to the GitHub issue. This is the only run state that survives the session — a nested or fleet-dispatched run must post them too.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<'EOF'
+gh issue comment <issue_number> --body "$(cat <<EOF
 <!-- runstate:v1 -->
-phase=<phase> status=<done|partial|blocked|awaiting-merge> run=<run_id> at=<UTC ISO-8601>
+phase=<phase> status=<done|partial|blocked|awaiting-merge> run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 <phase-specific key=value lines, one per line>
 next=<next phase name or "done">
 EOF
@@ -135,7 +135,7 @@ EOF
 Rules:
 
 - `run_id` is minted ONCE by gate-issue (`r-<issue_number>-$(openssl rand -hex 2)`) and passed to every later sub-dossier exactly like `base_branch`.
-- `at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`.
+- `at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values.
 - Append-only. Readers take the LAST `<!-- runstate:v1 -->` comment. Never edit or delete a prior milestone.
 - Values contain no spaces (use `-` or `,`); paths are absolute.
 - Posting the milestone is the last step of the phase. If a phase aborts, post `status=blocked` with `reason=<short-slug>` before stopping.
@@ -154,6 +154,15 @@ Per-phase keys:
 | report | done | `pr=` `traps_added=<n>` |
 
 `next=` is the following phase: gate → setup → plan → implement → review → ship → report → done.
+
+**Milestone gate (orchestrator duty).** Before starting each phase, confirm the previous phase's milestone exists — sub-dossiers sometimes skip it when run inline:
+
+```bash
+gh issue view <issue_number> --json comments \
+  --jq '[.comments[].body | select(startswith("<!-- runstate:v1 -->"))] | last'
+```
+
+If the last milestone is not `phase=<phase that just finished>`, post it yourself from the outputs you have before continuing. A run with missing milestones cannot be resumed.
 
 ## Prerequisites
 
