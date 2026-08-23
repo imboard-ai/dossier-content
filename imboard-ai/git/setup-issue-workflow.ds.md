@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.10.2",
+  "version": "1.10.3",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
@@ -75,13 +75,13 @@
   "last_updated": "2026-08-23",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "b8374429a10783ecbbbf9525cf10920dedebff89f54afe154e6310f398332898"
+    "hash": "e5242ca787a6b838e7cd2e298e1568d2dc8fcda9278d3b86396397d8ccffacde"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "W8sxCU2oRit+RTQaDNip6yn098EEnyZ2eBd8rr7y3nP+zY8z5Fm6K+V31z5/CgVkoEs9cSCAz95nQaBtr4T4BA==",
+    "signature": "/tz92bYwMsAhmXpTKh+gqxGBuer5caT9rpmkO/jCNVZeLu1XwNcDUeJa11N+VDS9KhoL/tqyyDy5nxzzoWTgCg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T15:06:06.449Z",
+    "signed_at": "2026-08-23T15:34:12.006Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -266,6 +266,9 @@ Based on the choice:
 
 ### Step 5.1: Check Worktree Pool (Option 1 Only)
 
+> Pool CLI invocation: always `npx -y @ai-dossier/worktree-pool@^0.5.1 <cmd>`. The bare `npx worktree-pool` only resolves where the package is installed locally (it 404s elsewhere), and versions before 0.5.1 have a data-loss bug in `gc`. Never pin an older version.
+
+
 > **Never run `worktree-pool gc`, `refresh`, or any command described as removing worktrees.** The pool directory is shared with developer worktrees; in `@ai-dossier/worktree-pool` ≤ 0.5.0 `gc` deleted every worktree it did not create (29 developer worktrees lost on 2026-08-23). Agents may only use `status`, `claim`, `return`, `replenish`, `detect`. If the pool looks broken (claim fails, orphaned entry, missing `.git` admin dir), **fall back to cold worktree creation (Step 6)** and mention the broken pool in the setup milestone (`pool_claimed=false pool_note=<reason>`); pool maintenance is a human task.
 
 **Skip this step unless user chose option 1.**
@@ -274,13 +277,13 @@ Before creating a cold worktree, check if a pre-warmed worktree pool is availabl
 
 1. **Check if the pool is configured and has warm worktrees**:
    ```bash
-   npx worktree-pool status 2>/dev/null
+   npx -y @ai-dossier/worktree-pool@^0.5.1 status 2>/dev/null
    ```
    If the command fails (pool not installed or not configured), skip to Step 6 (cold worktree creation).
 
 2. **If pool has warm worktrees available** (status shows `Warm: ≥ 1`):
    ```bash
-   CLAIMED_PATH=$(npx worktree-pool claim --issue <ISSUE_NUMBER> --branch <branch-name> 2>/dev/null)
+   CLAIMED_PATH=$(npx -y @ai-dossier/worktree-pool@^0.5.1 claim --issue <ISSUE_NUMBER> --branch <branch-name> 2>/dev/null)
    ```
    - If claim succeeds (exit code 0), `CLAIMED_PATH` contains the absolute path to the ready worktree.
    - The worktree is already on the correct branch with `node_modules`, `.env` files, and build artifacts.
@@ -686,9 +689,9 @@ EOF
 - [ ] Runstate milestone comment was posted to the issue
 
 **Worktree mode — pool-claimed (ALL required before showing success):**
-- [ ] `npx worktree-pool status` was checked
+- [ ] `npx -y @ai-dossier/worktree-pool@^0.5.1 status` was checked
 - [ ] No `worktree-pool gc`/`refresh` was run (agents never run pool maintenance)
-- [ ] `npx worktree-pool claim` succeeded and returned a path
+- [ ] `npx -y @ai-dossier/worktree-pool@^0.5.1 claim` succeeded and returned a path
 - [ ] Steps 6-8.5 were skipped (pool worktree is pre-warmed)
 - [ ] Planning file is in the claimed worktree root
 
@@ -739,11 +742,11 @@ EOF
 **Issue**: Worktree path already in use
 **Solution**: Check `git worktree list` and choose a different location
 
-**Issue**: `npx worktree-pool` command not found
+**Issue**: `npx -y @ai-dossier/worktree-pool@^0.5.1` command not found
 **Solution**: The worktree pool package is not installed. This is optional — the workflow falls back to cold worktree creation automatically.
 
 **Issue**: Pool claim fails (no warm worktrees)
-**Solution**: Run `npx worktree-pool replenish` to pre-warm spares, or let the workflow fall back to cold creation.
+**Solution**: Run `npx -y @ai-dossier/worktree-pool@^0.5.1 replenish` to pre-warm spares, or let the workflow fall back to cold creation.
 
 ## Examples
 
@@ -926,7 +929,7 @@ Next steps:
   - **Current directory mode**: Simplest option, works in place
   - **Custom path mode**: For users with their own directory structure
 - The planning file (PLANNING-{number}-{slug}.md) helps maintain focus and track progress
-- To pre-warm pool worktrees: `npx worktree-pool replenish --count N`
+- To pre-warm pool worktrees: `npx -y @ai-dossier/worktree-pool@^0.5.1 replenish --count N`
 - Consider adding this workflow to your `.claude.md` for easy access
 
 ## References
