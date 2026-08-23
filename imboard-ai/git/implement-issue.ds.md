@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-23",
@@ -53,13 +53,13 @@
   "name": "implement-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "9f6761050786880699f73fc44c7082e66fd917495760bf1f3ed993a4d8b4c426"
+    "hash": "6cf48a37b374707f533d5a5715353214cbd712187b300a517cc37f6402b2a83f"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "uLibY5uhQt0p5PS2rJj24C09B6oKVMR+kaHnCfkg38VxeFrUG+hhW0uqWX5sDOSy4TKU4piNGWRsZsS3+OcUAA==",
+    "signature": "mpvQ/wOWoULzkZX4tFo/4lPA0J+N7uYTPnI7tE5Ar0geGqZyhujDE7b0YsWyJRlMk4rUL6iyM/plXbfeqPWsDQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T06:33:04.347Z",
+    "signed_at": "2026-08-23T13:51:25.213Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -173,9 +173,9 @@ git diff --name-only
 Post the phase milestone to the issue. This is the last step of the phase — if implementation aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. The issue number is the `{number}` in the planning filename. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<'EOF'
+gh issue comment <issue_number> --body "$(cat <<EOF
 <!-- runstate:v1 -->
-phase=implement status=done run=<run_id> at=<UTC ISO-8601>
+phase=implement status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 head=<short sha of HEAD>
 files=<n>
 tests_added=<n>
@@ -186,7 +186,7 @@ EOF
 )"
 ```
 
-`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. With uncommitted work, use `$(git rev-parse --short HEAD)-dirty` for `head`. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. With uncommitted work, use `$(git rev-parse --short HEAD)-dirty` for `head`. Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
