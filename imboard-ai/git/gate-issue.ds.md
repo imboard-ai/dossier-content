@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow",
@@ -49,13 +49,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "320ffbcab92442dca138f90b1f32258c6b3413e57c24d6d43dbb77cc282d14ab"
+    "hash": "e0ecac7b84f6ad1f94896002c45e9467d042ce0eece2edea75ac7bc51eb63fd9"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "Y5hIJlb4+LUpsvc5g9B+8mepwlHLpZ6Y459wp6q0du1frHFdHAZS0VY/6ECpFX2p0Vhl/hxlBM4PMZua+G+vBw==",
+    "signature": "jO2/kPZ5e+l/CoRGr8PWcWWH9XdF8M+RRuPZMPwkoBLxgK/D/2DQVe/BUriL14rCPdfJaaSIstsGkSJV1eyHCg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T06:31:24.322Z",
+    "signed_at": "2026-08-23T13:51:19.875Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -163,9 +163,9 @@ Warnings: <count> (<list or "none">)
 Post the phase milestone to the issue. This is the last step of the phase — on a hard block, post it with `status=blocked` and a `reason=` before stopping. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<'EOF'
+gh issue comment <issue_number> --body "$(cat <<EOF
 <!-- runstate:v1 -->
-phase=gate status=done run=<run_id> at=<UTC ISO-8601>
+phase=gate status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 base_branch=<BASE_BRANCH>
 warnings=<n>
 next=setup
@@ -173,7 +173,7 @@ EOF
 )"
 ```
 
-`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. Values contain no spaces (use `-` or `,`); paths are absolute. On a hard block use `status=blocked`, `reason=<short-slug>`, and `next=done`.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. Values contain no spaces (use `-` or `,`); paths are absolute. On a hard block use `status=blocked`, `reason=<short-slug>`, and `next=done`.
 
 ## Output
 
