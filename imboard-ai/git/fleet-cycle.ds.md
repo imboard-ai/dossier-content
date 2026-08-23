@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle",
   "title": "Fleet Cycle — Orchestrate Multiple Issues",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-23",
@@ -87,13 +87,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "ed9a7893dccbae0bb63801e1a0f7f014837947659ff7fb0155db06953818f8f2"
+    "hash": "9143dd6bb1d19d7b770b68e8663c85307f51817b58378030a024026ceb3f4210"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "lXL12aTuU7tLJD9RvvltKAU24rXKL7iRFrVQlax/7QgfvIgmyne8r0GWUeSJeeNgAPO+tCRlfA+Qlh8Izn6mCw==",
+    "signature": "Rc6UepmV+4jm6csqEvapl2uizQhvNpCmuWkPKhzwL5ix6yKXyupdvyaCreasScQzCp1Zxi9YD+Z3IQjG0morAw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T06:37:16.031Z",
+    "signed_at": "2026-08-23T15:34:14.136Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -176,15 +176,18 @@ Respect `max_parallel`: if a wave has more issues than the cap, dispatch in batc
 
 ## Phase 3.5: Prewarm the Pool
 
+> Pool CLI invocation: always `npx -y @ai-dossier/worktree-pool@^0.5.1 <cmd>`. The bare `npx worktree-pool` only resolves where the package is installed locally (it 404s elsewhere), and versions before 0.5.1 have a data-loss bug in `gc`. Never pin an older version.
+
+
 Before dispatching each wave, from the **orchestrator** — not the agents:
 
 ```bash
 # N = the smaller of this wave's size and max_parallel
 N=$(( wave_size < max_parallel ? wave_size : max_parallel ))
-npx worktree-pool replenish --count "$N"
+npx -y @ai-dossier/worktree-pool@^0.5.1 replenish --count "$N"
 ```
 
-Then wait until `npx worktree-pool status` shows Warm >= N. Poll every 10s, max 10 min.
+Then wait until `npx -y @ai-dossier/worktree-pool@^0.5.1 status` shows Warm >= N. Poll every 10s, max 10 min.
 
 Replenish is serial by construction, so one orchestrator prewarm is strictly cheaper than N agents cold-starting behind the pool lock.
 
