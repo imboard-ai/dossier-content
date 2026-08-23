@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, confirm the merge reached production, and clean up the worktree",
@@ -69,6 +69,11 @@
         "name": "run_id",
         "description": "Runstate run id minted by gate-issue; pass through unchanged",
         "type": "string"
+      },
+      {
+        "name": "ac_results",
+        "description": "Per-acceptance-criterion checklist from review-issue's Agent 7 (Conformance) — criterion, verdict, file:line or reason. Used to populate the PR body's Acceptance Criteria section.",
+        "type": "string"
       }
     ]
   },
@@ -79,13 +84,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6126c62fb774b8c532ef10015ae7bd2bf304b6e34cf48e0d77ac2caac070033f"
+    "hash": "1175c7e412050ed0a5a818821b68b2a76da93867bac7c1b75572e9fe9dbd775a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "32AaayhxbttYfhhl01rMJGnN/Sp2PxttZO/IjFgtSZ0lOklMekl1+8wV7m2eGbuV1vf/LeiW0nNGvCi3sPLOBQ==",
+    "signature": "32fNSoRQf/kXGDkPQ2BAjcynIegumShj+GrAQUOxiZMmvR2wQHIOZAsb7mlDNrEWJjV2H+/3z/CyDz0I3MebCw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T13:51:27.845Z",
+    "signed_at": "2026-08-23T14:03:51.355Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -142,6 +147,10 @@ gh pr create --base <base_branch> --title "<short title>" --body "$(cat <<'EOF'
 
 Closes #<issue_number>
 
+## Acceptance Criteria
+- [x] AC1 <criterion> — <file:line>
+- [ ] AC2 <criterion> — not met / unverifiable: <reason>
+
 ## Test plan
 - <how to verify>
 
@@ -149,6 +158,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
+
+The Acceptance Criteria boxes come from `ac_results` (review-issue's Agent 7 output, passed through by full-cycle-issue): a checked box with `file:line` for each `met` AC, an unchecked box with the reason for `not-met`/`unverifiable`. If `ac_results` is empty (Agent 7 was skipped — no AC list existed), omit this section.
 
 ### Step 3b: Runstate Milestone (awaiting-merge)
 
@@ -423,6 +434,7 @@ EOF
 - [ ] Changes committed with conventional commits format
 - [ ] Branch pushed to remote
 - [ ] PR created targeting correct base_branch
+- [ ] PR body includes the Acceptance Criteria section from `ac_results` (when non-empty)
 - [ ] CI passed (or failures fixed within 2 attempts)
 - [ ] CI confirmed green on two consecutive stable polls — not a single transient success
 - [ ] CI wait done in-turn (foreground batch re-runs) — never backgrounded or deferred
