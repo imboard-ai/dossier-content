@@ -907,6 +907,43 @@
       ]
     },
     {
+      "name": "imboard-ai/meta/publish-dossier",
+      "title": "Publish an imboard-ai Dossier or Skill",
+      "version": "1.0.0",
+      "path": "imboard-ai/meta/publish-dossier.ds.md",
+      "category": [
+        "development",
+        "documentation"
+      ],
+      "tags": [
+        "dossier",
+        "registry",
+        "publish",
+        "sign",
+        "ed25519",
+        "skills",
+        "imboard-ai",
+        "meta"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "tools_required": [
+        {
+          "name": "ai-dossier",
+          "description": "Dossier CLI 0.9.1+",
+          "check_command": "ai-dossier --version"
+        },
+        {
+          "name": "ssh",
+          "description": "To refresh sibling machines (wls, hcc, occ)",
+          "check_command": "ssh -V"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/pm/feature-to-issues",
       "title": "Feature to Issues — Multi-Agent Feature Development Pipeline",
       "version": "1.0.2",
