@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
@@ -74,13 +74,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "51ea27a6a2232550cd483cc02b9851155caa25cd73e2ee79d19ef957bcdde1ba"
+    "hash": "5a9148858bbbb485866b7821c106c36066b376826db9401184202c55c4edcfec"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "QgNyRc001ynNRGJTSCbG5PM8C+xZX7ZZuxl5MPJQX3ug4Ei1RPEi/tM8OSpJm3HuFvkEhFGYP8s32L05q5gUAg==",
+    "signature": "gcUHJ2RMA4OtuL7if/RfzAcgKo8BPjvpoplBZyQJ8992iTT9Ts5f/PCfLG/ugmFN2lyoZEs+bKm9KlXnFxpuCA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T06:33:33.596Z",
+    "signed_at": "2026-08-23T13:51:22.559Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -657,9 +657,9 @@ Next steps:
 Post the phase milestone to the issue. This is the last step of the phase — if setup aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <NUMBER> --body "$(cat <<'EOF'
+gh issue comment <NUMBER> --body "$(cat <<EOF
 <!-- runstate:v1 -->
-phase=setup status=done run=<run_id> at=<UTC ISO-8601>
+phase=setup status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 branch=<branch-name>
 worktree=<absolute worktree path>
 pool_claimed=true|false
@@ -669,7 +669,7 @@ EOF
 )"
 ```
 
-`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. `pool_claimed=true` only when Step 5.1 claimed from the pool. In current-directory mode use the absolute repo root for `worktree`. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `pool_claimed=true` only when Step 5.1 claimed from the pool. In current-directory mode use the absolute repo root for `worktree`. Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Validation
 
