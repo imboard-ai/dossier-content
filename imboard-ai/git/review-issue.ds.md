@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-23",
@@ -47,13 +47,13 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "d369a3f3232c4dae527b33f92fc9b64a1b7ee38810e84ddf96860470debec572"
+    "hash": "57d8641710065ca0611c595ca87b5d3275c5913b3f78f37494fe5dc24e533506"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "beBC89hC9/yTOwlZRBk8/orjwGbNnnuaBFUd4mFbXUQVq95l5cXSz+0QW3F1+5PqlJtcmQI1I3cUhdizpCDZCw==",
+    "signature": "ktGafRbQplPWND+1CUYtqzSKekyc/OzPh+74wMUwtUv4XjRT9neEtMDsPpUMBodxBax0gT70llj45sWarvezDw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T06:32:25.494Z",
+    "signed_at": "2026-08-23T13:51:26.585Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -236,9 +236,9 @@ Escalated findings:
 Post the phase milestone to the issue. This is the last step of the phase — if review aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. Use `status=partial` when any agent did not finish. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<'EOF'
+gh issue comment <issue_number> --body "$(cat <<EOF
 <!-- runstate:v1 -->
-phase=review status=done run=<run_id> at=<UTC ISO-8601>
+phase=review status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 head=<short sha of HEAD>
 fixed=<n>
 escalated=<n>
@@ -249,7 +249,7 @@ EOF
 )"
 ```
 
-`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
