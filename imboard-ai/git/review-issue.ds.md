@@ -2,10 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-06-25",
+  "last_updated": "2026-08-23",
   "objective": "Run 6 parallel review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract) on uncommitted changes, fix findings in-place, and produce a review summary",
   "category": [
     "development"
@@ -26,7 +26,18 @@
   ],
   "inputs": {
     "required": [],
-    "optional": []
+    "optional": [
+      {
+        "name": "issue_number",
+        "description": "GitHub issue number the review belongs to; required to post the runstate milestone",
+        "type": "number"
+      },
+      {
+        "name": "run_id",
+        "description": "Runstate run id minted by gate-issue; pass through unchanged",
+        "type": "string"
+      }
+    ]
   },
   "authors": [
     {
@@ -36,13 +47,14 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "fff957a854d3bfaa11d1c1dc111103d7eaf0b0fd80a1b0d955fb154ae6af5fc3"
+    "hash": "d369a3f3232c4dae527b33f92fc9b64a1b7ee38810e84ddf96860470debec572"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "nxCGUJUGLxyBuviUr3bQrIsudC+pGDa3JxhFY+pmJDW5LsBabdh9mnxO/1tFSMqwmJHKiTl7vo6y2NqSIYXrBQ==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAT5MH6NyHt3zBur6eq+EVSNOA2AZbuSRpov+/BRFzLnY=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-08-05T11:04:48.303Z",
+    "signature": "beBC89hC9/yTOwlZRBk8/orjwGbNnnuaBFUd4mFbXUQVq95l5cXSz+0QW3F1+5PqlJtcmQI1I3cUhdizpCDZCw==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-08-23T06:32:25.494Z",
+    "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
@@ -219,11 +231,32 @@ Escalated findings:
 - [Agent]: <description> — Reason: <why all three escalation criteria apply>
 ```
 
+### Step 6: Runstate Milestone
+
+Post the phase milestone to the issue. This is the last step of the phase — if review aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. Use `status=partial` when any agent did not finish. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
+
+```bash
+gh issue comment <issue_number> --body "$(cat <<'EOF'
+<!-- runstate:v1 -->
+phase=review status=done run=<run_id> at=<UTC ISO-8601>
+head=<short sha of HEAD>
+fixed=<n>
+escalated=<n>
+agents_done=<comma list of agent names>
+agents_pending=<comma list or none>
+next=ship
+EOF
+)"
+```
+
+`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. Values contain no spaces (use `-` or `,`); paths are absolute.
+
 ## Output
 
 - `review_fixed`: number of findings fixed in-place
 - `review_escalated`: number of findings escalated to the user (ideally 0)
 - `review_clean`: list of agent names that found no issues
+- Posts runstate milestone to the issue (`phase=review`)
 
 ## Validation
 
@@ -238,6 +271,7 @@ Escalated findings:
 - [ ] Escalated findings (if any) each satisfy all three escalation criteria
 - [ ] No more than 2 findings were escalated total (re-evaluated if exceeded)
 - [ ] Final output includes counts for fixed, escalated, and clean
+- [ ] Runstate milestone comment was posted to the issue
 
 ## Troubleshooting
 
