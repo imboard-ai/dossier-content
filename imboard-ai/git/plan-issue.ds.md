@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Plan Issue — Rich Planning Document",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Read a GitHub issue and its comments, explore relevant codebase areas, confirm any new state/flow is actually reachable, and write a rich planning document for structured implementation",
@@ -48,6 +48,11 @@
         "description": "How to query this project's production data to confirm a new state/flow actually occurs (used by the reachability check). Bind this per-project to a concrete method — e.g. a read-only database MCP server, a read replica, or an analytics warehouse. If unset, the reachability check uses the generic default below and degrades to escalate-when-unverifiable.",
         "type": "string",
         "default": "If your environment exposes a read-only production data store (a database MCP server, read replica, or analytics warehouse), use it to run a read-only count of the triggering condition. If no such access exists, treat reachability as unverifiable and escalate rather than assuming the state occurs."
+      },
+      {
+        "name": "run_id",
+        "description": "Runstate run id minted by gate-issue; pass through unchanged",
+        "type": "string"
       }
     ]
   },
@@ -59,13 +64,13 @@
   "name": "plan-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c5301cef91cbe1fc3ae37d4e41c7e351a1c39d4c4b61ff72f3158f98fc8bfb4d"
+    "hash": "8cefdaab3d15cca3acdc2588a1d5f3a813766bd2110280133bd829f9f2bfe174"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "oUoApeO0Zmie90RhYBiFFLY47OAOgRTS2GPlKbMN3aE3jdMR3mz0MxP4PfVr6CXac7bkDLkbymdl4lrSaNFSAw==",
+    "signature": "+SX5Cwn4oGzTdLibdmtj6esQ/BPDdT/Pd+O6+c9eyNG7aKNfhMmOgQzaTufBHGOkvWTK+e86EZEHTusvX+9rDQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:43.066Z",
+    "signed_at": "2026-08-23T06:30:59.598Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -198,6 +203,25 @@ Open questions: <count> (or "none")
 Visual review: required / not required
 ```
 
+### Step 7: Runstate Milestone
+
+Post the phase milestone to the issue. This is the last step of the phase — if planning aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
+
+```bash
+gh issue comment <issue_number> --body "$(cat <<'EOF'
+<!-- runstate:v1 -->
+phase=plan status=done run=<run_id> at=<UTC ISO-8601>
+planning=<abs path to planning file>
+head=<short sha of base at plan time>
+open_questions=<n>
+visual_review=true|false
+next=implement
+EOF
+)"
+```
+
+`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. Values contain no spaces (use `-` or `,`); paths are absolute.
+
 ## Output
 
 - `planning_file`: path to the created planning file
@@ -205,6 +229,7 @@ Visual review: required / not required
 - `files_count`: number of files to modify
 - `open_questions_count`: number of open questions
 - `visual_review_required`: true/false
+- Posts runstate milestone to the issue (`phase=plan`)
 
 ## Validation
 
@@ -216,6 +241,7 @@ Visual review: required / not required
 - [ ] Existing utilities and patterns were identified in "Reusable Code" section
 - [ ] Open Questions section only contains genuinely ambiguous items
 - [ ] Visual Review checkbox reflects whether FE files are expected to change
+- [ ] Runstate milestone comment was posted to the issue
 
 ## Troubleshooting
 
