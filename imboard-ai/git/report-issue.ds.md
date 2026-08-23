@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "report-issue",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment",
@@ -60,6 +60,11 @@
         "description": "How the worktree was cleaned up: pool_returned, worktree_removed, or skipped",
         "type": "string",
         "default": "worktree_removed"
+      },
+      {
+        "name": "run_id",
+        "description": "Runstate run id minted by gate-issue; pass through unchanged",
+        "type": "string"
       }
     ]
   },
@@ -70,13 +75,14 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "46fa7b122425bf58c3331996dde6bbf6060ad4d3829bff2e1c6a2ac458cd3b8a"
+    "hash": "ca07ce9c968e941e8410109bb8af1492d73fc9b525b31398ec42f23d427b2392"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "GPmqiDX9IIbvCi3LaSGn+yYPUMPJNypIH2r7gVdM36jrB3/+Tw7RhvWtEgZHcjyPZwlHMjC5AUcqLF04mHVmDQ==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAT5MH6NyHt3zBur6eq+EVSNOA2AZbuSRpov+/BRFzLnY=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-08-05T11:05:13.430Z",
+    "signature": "fUROzMCzoyL0rmbEsHp9+FButMAoRKz4t0H28dEoqNi2Fc3VNMMmjw09owtInw7/D0QcXn8HhYgPTHhDyCJ0DQ==",
+    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
+    "signed_at": "2026-08-23T06:31:53.719Z",
+    "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
@@ -230,6 +236,23 @@ EOF
 Report posted to conversation and PR #<pr_number>.
 ```
 
+### Step 6: Runstate Milestone
+
+Post the final phase milestone to the issue. This is the last step of the cycle. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
+
+```bash
+gh issue comment <issue_number> --body "$(cat <<'EOF'
+<!-- runstate:v1 -->
+phase=report status=done run=<run_id> at=<UTC ISO-8601>
+pr=<pr_number>
+traps_added=<n>
+next=done
+EOF
+)"
+```
+
+`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. `traps_added` is the count of regression traps (tests or guards added so this class of bug cannot return); use `0` if none. Values contain no spaces (use `-` or `,`); paths are absolute.
+
 ## Output
 
 - `report_posted`: true
@@ -237,6 +260,7 @@ Report posted to conversation and PR #<pr_number>.
 - `deployed`: the deployed SHA when a deploy was confirmed; `null` when merged-but-not-deployed; `"n/a"` when the project has no deploy step. NEVER omit — a missing value reads as success.
 - `user_implications_count`: number of user-facing implications
 - `devops_implications_count`: number of dev/ops implications
+- Posts runstate milestone to the issue (`phase=report`)
 
 ## Validation
 
@@ -248,6 +272,7 @@ Report posted to conversation and PR #<pr_number>.
 - [ ] Condensed report posted as PR comment
 - [ ] If base_branch != main: epic sub-issue note included
 - [ ] Review results accurately reflect what was fixed and clean
+- [ ] Runstate milestone comment was posted to the issue
 
 ## Troubleshooting
 
