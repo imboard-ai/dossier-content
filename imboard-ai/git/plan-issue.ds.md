@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Plan Issue — Rich Planning Document",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Read a GitHub issue and its comments, explore relevant codebase areas, confirm any new state/flow is actually reachable, and write a rich planning document for structured implementation",
@@ -64,13 +64,13 @@
   "name": "plan-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "8cefdaab3d15cca3acdc2588a1d5f3a813766bd2110280133bd829f9f2bfe174"
+    "hash": "4dd0f7d97782e979074d586997bc9ef3fb711ca7f7b63375a0d935376d228ee7"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "+SX5Cwn4oGzTdLibdmtj6esQ/BPDdT/Pd+O6+c9eyNG7aKNfhMmOgQzaTufBHGOkvWTK+e86EZEHTusvX+9rDQ==",
+    "signature": "Z44k3wtmp/orzPAV2UOwy0tbfCb6w8PfMK/och52Q6ED7niSNrmg9o3oLw4bH3+Od1G7JTwyH16b0aYY6lGQDQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T06:30:59.598Z",
+    "signed_at": "2026-08-23T13:51:23.963Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -208,9 +208,9 @@ Visual review: required / not required
 Post the phase milestone to the issue. This is the last step of the phase — if planning aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<'EOF'
+gh issue comment <issue_number> --body "$(cat <<EOF
 <!-- runstate:v1 -->
-phase=plan status=done run=<run_id> at=<UTC ISO-8601>
+phase=plan status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 planning=<abs path to planning file>
 head=<short sha of base at plan time>
 open_questions=<n>
@@ -220,7 +220,7 @@ EOF
 )"
 ```
 
-`at` is `$(date -u +%Y-%m-%dT%H:%M:%SZ)`. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
