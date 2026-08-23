@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.7.1",
+  "version": "3.8.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-23",
@@ -68,13 +68,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c40d3ecbff66f24c07fde842deb805af8286aab4a27d9a420be8d979f7cec122"
+    "hash": "12c5e97cbf8e22282e2911e1fc257b4b546f9692c0b6930a08cf75d1420cc4b3"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "KVNbJprfXqZH5Ltc2ESHXOxrzdz7/+o77iAHjwTcdI1LB+4eiLNfXZ2kqxXfmszmBHUj68hXTuNL3Z67ppW8CA==",
+    "signature": "T1hk8Sc1P6Jw4S2tzZkAWQi9EOqmMi/WeyK+MVuNTJkLoexcts0BfVltpxOjakjZlgPSqCeroYQmzveSuVaFAg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T13:51:30.474Z",
+    "signed_at": "2026-08-23T14:03:50.120Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -164,6 +164,12 @@ gh issue view <issue_number> --json comments \
 
 If the last milestone is not `phase=<phase that just finished>`, post it yourself from the outputs you have before continuing. A run with missing milestones cannot be resumed.
 
+## Resuming
+
+Phase order: gate → setup → plan → implement → review → ship → report.
+
+Skip every phase that precedes `resume_from`. When skipping setup, take `branch`, `worktree`, `pool_claimed`, `base_branch` from `resume_context` and `cd` into the worktree (hard gate `pwd | grep -q worktree` still applies). When skipping plan, take `planning` from `resume_context`. Review with `agents_pending` → run only those agents. `ship-wait` → enter ship at Step 5 (CI wait) with `pr` from context; `ship-teardown` → enter ship at Step 7 post-merge cleanup.
+
 ## Prerequisites
 
 - [ ] Git is installed and configured
@@ -189,6 +195,8 @@ This workflow composes the following sub-dossiers in sequence:
 
 ### Phase 0: Gate
 
+Always runs — this phase determines `resume_from` in the first place, so there is nothing to skip it against.
+
 1. Extract the issue number from user input
 2. Run: `ai-dossier run imboard-ai/git/gate-issue`
 3. Provide the issue number
@@ -196,8 +204,11 @@ This workflow composes the following sub-dossiers in sequence:
 5. Note the `base_branch` from the gate output
 6. If a `base_branch` parameter was provided in context (and is not `"auto"`), use that instead
 7. Note `run_id` from the gate output; pass it to every subsequent sub-dossier
+8. Note `resume_from`, `run_id`, and `resume_context` from the gate output — see "## Resuming" above for how each later phase uses them
 
 ### Phase 1: Setup
+
+**Skip if `resume_from` is later than this phase.**
 
 1. **Pre-flight: clean stale worktrees.** Previous runs may have left zombie worktrees:
    ```bash
@@ -232,20 +243,26 @@ This workflow composes the following sub-dossiers in sequence:
 
 ### Phase 2: Plan
 
+**Skip if `resume_from` is later than this phase.**
+
 1. Run: `ai-dossier run imboard-ai/git/plan-issue`
 2. Pass through the issue number, base_branch, worktree path, and `run_id`. Also pass `prod_data_access` = "Use the `mongodb-prod` MCP (read-only `count`/`find`/`aggregate`) against the production cluster to confirm a new state/flow actually occurs before building it; 0 occurrences ⇒ don't build, escalate (retro #1632)" — this drives plan-issue's reachability check.
 3. **In full-cycle mode: proceed immediately.** Do not checkpoint with the user. If the issue is genuinely ambiguous, apply the Guiding Principle hand-off (stop, don't ask) rather than guessing. **Exception path is the same, not different:** if the reachability check escalated (a new state shows 0 prod occurrences), that is also a hand-off case — stop and record the decision needed before building; do not build an unreachable state.
 
 ### Phase 3: Implement
 
+**Skip if `resume_from` is later than this phase.**
+
 1. Run: `ai-dossier run imboard-ai/git/implement-issue`
 2. Pass through the planning file path, base_branch, and `run_id`
 
 ### Phase 4: Review
 
+**Skip if `resume_from` is later than this phase.**
+
 1. Run: `ai-dossier run imboard-ai/git/review-issue`
 2. Pass through the issue number and `run_id`
-3. Collect the review results: `review_fixed`, `review_escalated`, `review_clean`
+3. Collect the review results: `review_fixed`, `review_escalated`, `review_clean`, `ac_results` (the per-acceptance-criterion checklist — pass it through to Ship for the PR body)
 4. **If `review_escalated` is non-empty: apply the Guiding Principle hand-off and STOP —
    do not proceed to Phase 5.** review-issue already restricts escalation to findings
    that genuinely need a product/business decision (typically 0, rarely more than 2), so
@@ -256,11 +273,15 @@ This workflow composes the following sub-dossiers in sequence:
 
 ### Phase 5: Ship
 
+**Skip if `resume_from` is later than this phase.** `resume_from=ship-wait` enters at
+Step 5 (CI wait) with `pr` from `resume_context`; `resume_from=ship-teardown` enters at
+Step 7 (post-merge cleanup).
+
 **Only reached when `review_escalated` was empty at the end of Phase 4** — ship-issue's
 own prerequisites assume this and do not create GitHub issues for anything.
 
 1. Run: `ai-dossier run imboard-ai/git/ship-issue`
-2. Pass through: issue number, base_branch, worktree_path, original_dir, pool_claimed, `run_id`
+2. Pass through: issue number, base_branch, worktree_path, original_dir, pool_claimed, `run_id`, `ac_results` (from Phase 4 — used to build the PR body's Acceptance Criteria section)
 3. **Opening a PR is NOT completion, and neither is merging it. You are done
    when the merge has REACHED PRODUCTION** (or you have a hard blocker you
    escalated). A PR left green-but-unmerged is a FAILED run; a PR merged but
@@ -303,6 +324,9 @@ own prerequisites assume this and do not create GitHub issues for anything.
 
 ### Phase 6: Report
 
+**Skip if `resume_from` is later than this phase** (i.e. `resume_from=done` — see the
+Runstate Milestones table's `report done` row).
+
 **Only reached on a real completion** — if Phase 4 or Phase 5 stopped via the Guiding
 Principle hand-off, the run already ended there; do not run this phase.
 
@@ -342,6 +366,7 @@ Principle hand-off, the run already ended there; do not run this phase.
 - [ ] Rich report posted to conversation and PR comment
 - [ ] Returned to original working directory
 - [ ] A runstate milestone comment was posted after every phase (ship posted two)
+- [ ] On resume, no phase before `resume_from` was re-run
 
 ## Troubleshooting
 
