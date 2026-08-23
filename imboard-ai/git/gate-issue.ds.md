@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow",
@@ -18,6 +18,9 @@
     "gate"
   ],
   "risk_level": "low",
+  "risk_factors": [
+    "network_access"
+  ],
   "requires_approval": false,
   "inputs": {
     "required": [
@@ -34,15 +37,25 @@
       "name": "Yuval Dimnik"
     }
   ],
+  "content_scope": "references-external",
+  "external_references": [
+    {
+      "url": "https://cli.github.com/",
+      "description": "GitHub CLI documentation",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    }
+  ],
   "checksum": {
     "algorithm": "sha256",
     "hash": "250f5086b6ac01e4ab1a3389d321bbf168f519b71c7cd62ecd2f75b56e257dcc"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "bTRhZsay6uGLVBQWwdPsf5SmrIJWvtUx6JOGM4lJJzWYMPmbI9Yg/UyzV3LpOB+U/vlL8zbjJyxD+a9C9fgaDA==",
+    "signature": "obqrsN5tUvfFSmv0kQK7RbPWwgtIaVwKZamPlRXoys3g5wfZHKui1oXlrF8+sJr428NOdXgEJVO4wl9ZBp3SDw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:23.985Z",
+    "signed_at": "2026-08-23T05:15:40.891Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
