@@ -3,9 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Stable",
+  "last_updated": "2026-08-24",
   "objective": "Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow",
   "category": [
     "development"
@@ -49,13 +50,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "7543476b119ddc071a4f860d88183c3e2872964599e76cdd350f9009e200dca4"
+    "hash": "cad8cd141265a3eb46ecc81f230a59185a89afff25b506dd3605afd3eb20eb76"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "ggHHBfpxdHYgC04NvS5Yf68gBcWQjZNLaW0UgmgqLON9HKlmtH6/la2LB3y5nMG0RwB+TakpUFVxOsSdN/wTCw==",
+    "signature": "LWVFOxqyr0PvtcnFhibXSPygOz9Bfjzg2UjP9YzSXYt+oKbJ2Fm6L6f1k2DDg+QqAyApq6UXVemqBrH214/pAA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T14:03:49.686Z",
+    "signed_at": "2026-08-24T08:09:34.234Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -110,18 +111,24 @@ If `LAST` is empty: `resume_from=none`. Keep the `RUN_ID` minted in Step 1b and 
 
 Otherwise, parse `phase=`, `status=`, `run=`, and the phase-specific keys from `LAST`. **Reuse that `run=` value as `RUN_ID`** — discard the one minted in Step 1b. Then VERIFY the claim against reality — never trust the comment alone:
 
+Resume verification is **remote-first**: origin/<branch> is the durable copy of the work (see full-cycle-issue's WIP sync rule), so every check below verifies against the remote, not the local worktree.
+
 | last milestone | verify | if verified → | if not → |
 |---|---|---|---|
 | `gate` done | nothing to verify | `resume_from=setup` | — |
-| `setup` done | `git ls-remote --exit-code origin <branch>` AND `test -d <worktree>` | `resume_from=plan` | `resume_from=setup` |
-| `plan` done | setup checks AND `test -f <planning>` | `resume_from=implement` | `resume_from=plan` (or setup if those fail) |
-| `implement` done | setup checks AND `git -C <worktree> rev-parse --short HEAD` matches `head` (strip `-dirty`) | `resume_from=review` | `resume_from=implement` |
-| `review` done | setup checks | `resume_from=ship` | `resume_from=review` |
-| `review` partial | setup checks | `resume_from=review` with `agents_pending` passed through | `resume_from=review` |
+| `setup` done | `git ls-remote --exit-code origin <branch>` (remote is authoritative; local worktree existing is a bonus, not a requirement) | `resume_from=plan` | `resume_from=setup` |
+| `plan` done | `git fetch origin <branch>`, then remote branch exists AND `head` is reachable from it: `git ls-remote origin <branch>` sha == milestone `head`, OR (if not an exact match) `git merge-base --is-ancestor <head> FETCH_HEAD` succeeds | `resume_from=implement` | `resume_from=plan` (or setup if those fail) |
+| `implement` done | same remote sha/ancestor check as `plan` | `resume_from=review` | `resume_from=implement` |
+| `review` done | same remote sha/ancestor check as `plan` | `resume_from=ship` | `resume_from=review` |
+| `review` partial | same remote sha/ancestor check as `plan` | `resume_from=review` with `agents_pending` passed through | `resume_from=review` |
 | `ship` awaiting-merge | `gh pr view <pr> --json state,mergedAt,mergeable` | merged → `resume_from=ship-teardown`; open+MERGEABLE → `resume_from=ship-wait`; CONFLICTING/closed-unmerged → `resume_from=ship` | `resume_from=ship` |
 | `ship` done | — | `resume_from=report` | — |
 | `report` done | issue is CLOSED? | print "already complete" and STOP (status pass, `resume_from=done`) | `resume_from=report` |
 | any `blocked` | treat as the phase itself: `resume_from=<that phase>` | | |
+
+The planning-file check (`test -f <planning>`) is no longer part of this table — it happens AFTER the worktree is materialized, in full-cycle-issue's "## Resuming" section, since the worktree may not exist on this machine yet.
+
+Additionally, when the last milestone carried a `worktree=` path, check `test -d <worktree>` on this machine and report `local_worktree=present|absent` in the output. This is informational only — it never changes the `resume_from` decision above, since the remote check is authoritative.
 
 **Loop cap**: if the last THREE runstate milestones are all `status=blocked` on the same phase, hard block with `reason=resume-loop` — add label `decision-pending`, post the abort comment (Step 2), and stop.
 
@@ -221,6 +228,7 @@ EOF
 - `failure_reason`: reason for hard block (only if status=fail)
 - `resume_from`: phase to resume from, or `none` for a fresh run
 - `resume_context`: parsed key=value lines of the last runstate milestone, for later phases to consume
+- `local_worktree`: `present` | `absent` | `n/a` — whether the `worktree=` path from resume_context exists on this machine (informational; remote is authoritative)
 - Posts runstate milestone to the issue (`phase=gate`)
 
 ## Validation
@@ -228,6 +236,8 @@ EOF
 - [ ] Issue metadata was fetched
 - [ ] Resume detection (Step 1.5) ran before hard blocks, checking for prior runstate history
 - [ ] On resume: the prior `run_id` was reused, not re-minted, and the claimed milestone was verified against reality (not trusted blindly)
+- [ ] Resume verification is remote-first — `setup`/`plan`/`implement`/`review` milestones are verified against `origin/<branch>` (ls-remote / merge-base ancestor check), not a local worktree
+- [ ] `local_worktree=present|absent` was reported when a `worktree=` path existed in `resume_context` (bonus signal only, never gates the resume decision)
 - [ ] Resume loop cap enforced — 3 consecutive `blocked` on the same phase is a hard block with `reason=resume-loop`
 - [ ] A `run_id` was minted (fresh run) or reused (resumed run) and reported
 - [ ] All hard blocks were checked (with the resume exception for a closed issue at `resume_from=report`/`done`)
