@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.10.1",
+  "version": "3.11.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-24",
@@ -74,13 +74,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "7d7f205e9eb09b0d4a49104409a36e1afdd43d9ad5f02756e6293007da3be48a"
+    "hash": "13689e7847e231f955ef48888f7b0673ce7739f97ecaee99cd3826f428b66daf"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "PYoSXAT0iuMvvQqAeHFie39YNjQxE+eUTZih+sNIa8lxNBs25DqoE9zKGg/YytDchaYOjkomMG3PJp6pgBzvBw==",
+    "signature": "X0zDCijMODDEbwt58lXwX+Ne/bHd9uFIXxWlj+ARXp7GowWN5tIKr8dtHuajGypwf8wRGXmEX/12ElIttagsCQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T10:33:29.031Z",
+    "signed_at": "2026-08-24T12:33:08.648Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -128,11 +128,23 @@ descriptions, whether to proceed, or any other mechanical decision.
 and the run ends there (see Phase 5 and `ship_mode`). Solo runs stay attached unless the
 user passes `--detached`.
 
-**Model guidance.** Runs that skip milestones cannot be resumed or measured. Evidence so
-far: strongest-model runs are fully protocol-compliant; weaker-model runs skipped every
-milestone. Until milestone posting has been mechanical (runstate CLI) across ~10 runs,
-dispatch full-cycle runs on the strongest available model; mechanical phases may be
-revisited after that.
+### Model routing (by role, not by strength)
+
+Quality is bought through verification (runstate CLI, blind conformance, ci-parity, CI, version-bump guard), not through the generator's raw strength. Route accordingly:
+
+| Role | Phases | Tier |
+|---|---|---|
+| Mechanical | gate, setup, ship tail (teardown/merge-confirm), report, fleet supervision | cheapest available — these are CLI calls and templates |
+| Generation | plan, implement, review agents 1–6, ship (commit/PR/CI-fix) | by issue risk: docs/chore → cheap; standard bug/feature → mid-tier; security, payments/billing, migrations, auth, protocol/schema changes → strong |
+| Judgment | conformance review agent, escalation decisions, fleet dependency/DAG planning | ALWAYS the strongest available — it is the trust anchor and a small fraction of total tokens |
+
+**Escalation ladder.** Dispatch at the tier above; redispatch the SAME run one tier stronger (resume protocol carries the work forward) when any of these fire:
+- milestone non-compliance (a phase finished without its milestone and the milestone gate had to backfill),
+- a stall: no new milestone and no new pushed commit for 30+ minutes,
+- conformance `not-met` on the same AC twice,
+- an implausible review (see review-issue's duration floor).
+Cap: two escalations per run, then `status=blocked reason=escalation-cap` and hand off.
+The trade accepted here: occasional wall-clock loss to a redispatch, in exchange for large cost cuts — verification holds the quality bar. Tune tiers with `ai-dossier runstate stats --issues <set>` (per-`model=` breakdown) roughly every 20 runs.
 
 ## Runstate Milestones
 
