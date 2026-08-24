@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-24",
@@ -47,13 +47,13 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "9e45b9b933bd162128067ad8fa1f2b838ae6f3dd8cf680cd6326b83ac75ad134"
+    "hash": "ffe494651fee76231d8c7a975cf9c10a73aa70475b44881d12e35af917e1b84a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "xnMtPLzS8g4aIm6osu0pz6v0BrG9nvUlnTZxLFenf1lSwFPOiVt0a5Vo2uAi9wcc8iFSGyTJDJbe2SXG79BrAQ==",
+    "signature": "ueOz6KatqFp93N6FyeJZNHGnyQNgZAUiD73jw4Atz/UYbolfz353WjiTp81nl3szO9AWRH+66iVAgxU+v8wDAw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T09:01:58.621Z",
+    "signed_at": "2026-08-24T12:33:09.885Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -109,6 +109,10 @@ A sensitive path forces `full` regardless of size — a three-line migration or 
 State the tier and why in one line before launching, e.g. `Tier: small (2 files, 41 lines, no sensitive paths) — running conformance, dry, maintainability`.
 
 The tier decides which agents run; everything downstream follows from it. `agents_done`/`agents_pending` list only the tier's agents, and the runstate milestone carries `tier=`. (Agent 7 drops out of any tier when Step 2b found no AC list — the tier's remaining agents run as usual.)
+
+### Step 2d: Duration Sanity Floor
+
+A review that finishes implausibly fast was not performed: full tier < 5 minutes, small tier < 2 minutes (docs tier has no floor). If the floor is violated, the review is INVALID regardless of its findings — redo the review once at the strongest available tier; record `review_redone=true` in the milestone. (Evidence: a 63-second "full review" of a backend bugfix in production usage — imboard#3692.)
 
 ### Step 3: Run the Tier's Review Agents in Parallel
 
@@ -247,6 +251,8 @@ improvements, minor bugs, "consider doing X" opinions. Report them as "Fix now" 
 
 #### Agent 7: Conformance (blind)
 
+Run this agent on the strongest available model — it is the run's trust anchor.
+
 > You are verifying that the change does what the issue asked. You did NOT write this code. Your ONLY inputs are: (1) the issue body and comments — `gh issue view <N> --json title,body,comments`; (2) the diff — `git diff <base_branch>...HEAD` plus `git diff` for uncommitted changes; (3) this Acceptance Criteria list: <paste the `ac<n>=` lines fetched in Step 2b>. Do NOT read the planning document or any other agent's output.
 >
 > For each AC report exactly one of: `met <file:line>`, `not-met <why>`, `unverifiable <what test would prove it>`. `met` without a file:line citation is invalid — report it as `unverifiable`.
@@ -307,10 +313,11 @@ ai-dossier runstate post --issue <issue_number> --phase review --status done --r
   --kv agents_done=<comma list of the tier's agents that finished> \
   --kv agents_pending=<comma list or none> \
   --kv ac_met=<n> \
-  --kv ac_total=<n>
+  --kv ac_total=<n> \
+  --kv review_redone=<true|false>
 ```
 
-The CLI stamps `at=` and computes `next=ship` — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. `agents_done`/`agents_pending` cover only the tier's agent set (Step 2c), not all 7. `head=` is the pushed sha from Step 4 item 7 (`git rev-parse --short HEAD` after the push, or current `HEAD` if there was nothing to commit). Values contain no spaces (use `-` or `,`); paths are absolute.
+The CLI stamps `at=` and computes `next=ship` — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. `agents_done`/`agents_pending` cover only the tier's agent set (Step 2c), not all 7. `head=` is the pushed sha from Step 4 item 7 (`git rev-parse --short HEAD` after the push, or current `HEAD` if there was nothing to commit). Values contain no spaces (use `-` or `,`); paths are absolute. `review_redone=` is optional — pass it only when Step 2d's duration floor triggered a redo.
 
 ## Output
 
@@ -328,6 +335,8 @@ The CLI stamps `at=` and computes `next=ship` — do not pass either. It validat
 - [ ] Changed files list was obtained via `git diff --name-only`
 - [ ] Acceptance Criteria were fetched from the last `phase=plan` runstate milestone (Step 2b) before launching Agent 7
 - [ ] A tier was computed and stated in one line before launching (Step 2c); any sensitive path forced `full`
+- [ ] Duration sanity floor checked (Step 2d): full ≥5 min, small ≥2 min, docs no floor; a violation triggered one redo at the strongest tier with `review_redone=true`
+- [ ] Agent 7 (Conformance) ran on the strongest available model
 - [ ] Exactly the tier's agents were launched in parallel (Agent 7 skipped only when no AC list was found)
 - [ ] Every agent was report-only — no agent edited a file
 - [ ] Each agent classified findings using the Classification Criteria
