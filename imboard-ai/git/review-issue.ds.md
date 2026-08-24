@@ -2,10 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-08-23",
+  "last_updated": "2026-08-24",
   "objective": "Run 7 parallel review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract, Conformance) on uncommitted changes, fix findings in-place, and produce a review summary",
   "category": [
     "development"
@@ -47,13 +47,13 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "d782a0099aec77e5a53e8fb2ac206223cc4811e9356daf5267d984f4d9431d18"
+    "hash": "3c13eef78e498561a40fa0fd4a751da027dbc01f6c14f25a5fdf467901534bc7"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "odlTEvB1swo5DSOouU3FNcvhz6QnDY1saLuwwCSr7E8mYR4sfh6ieHvtxlzId9iDcMoKsQwJQu4H8DmDQPH0DA==",
+    "signature": "iRqaj7KiPYTc9XiQ5HIZU6prA0gMk+pguWjdfdPLxs+lc4CgcmOacNvognJ64QYwtTZ9S1SmcfFfeHNdAOsNDA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T14:03:50.939Z",
+    "signed_at": "2026-08-24T08:09:33.506Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -233,6 +233,7 @@ improvements, minor bugs, "consider doing X" opinions. Fix them or skip them.
    - Node.js with eslint: `npx eslint --fix .`
    - Python with ruff: `ruff check --fix .`
    - Or whatever the project's `lint:fix` script is (check package.json / Makefile)
+6. **Sync to origin** (WIP sync rule — see full-cycle-issue's Runstate Milestones): if there are changes (`git status --porcelain` non-empty), `git add -A && git commit -m "wip(review): apply review fixes [skip ci]" && git push`. Do this whether the phase is about to post `status=done` or `status=partial` — push before posting the milestone either way.
 
 ### Step 5: Output
 
@@ -273,7 +274,7 @@ EOF
 )"
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `head=` is the pushed sha from Step 4 item 6 (`git rev-parse --short HEAD` after the push, or current `HEAD` if there was nothing to commit). Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
@@ -301,6 +302,7 @@ EOF
 - [ ] Escalated findings (if any) each satisfy all three escalation criteria
 - [ ] No more than 2 findings were escalated total (re-evaluated if exceeded)
 - [ ] Final output includes counts for fixed, escalated, clean, and `ac_met`/`ac_total`
+- [ ] Any changes were committed and pushed to origin (`wip(review): ...`) before the milestone — on `done` and `partial` alike — and milestone `head=` is the pushed sha
 - [ ] Runstate milestone comment was posted to the issue
 
 ## Troubleshooting
