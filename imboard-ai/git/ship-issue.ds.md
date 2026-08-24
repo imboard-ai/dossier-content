@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, then either drive it to a confirmed merge and deploy (attached) or park it on auto-merge and stop (detached)",
@@ -91,13 +91,13 @@
   "last_updated": "2026-08-24",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "665083ee44fc7a7bec044dac8d885ef7e6e0b9faf409962ef841b75845046489"
+    "hash": "299bfc84ef3947fc2da8c363de8b4c6900b4b184ecb4e71d7120203e8e500c80"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "1oVYbziPCZmg6Ud0dE3HnacJLtdD19XKYeatH7PMbLIZkw/dd9SxEf/1TrJOJaNMZJjtlHsOTIuRTy7udEddCA==",
+    "signature": "Gk5jBFO4YrmlUDe0D0iP2CZD1siCSOP4gJiIq87NEvdWmNj0mL2rJ8zKls+rVLqzbs5o1POnI/FSbhzOoS1vCQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T09:02:02.171Z",
+    "signed_at": "2026-08-24T14:05:31.414Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -418,6 +418,8 @@ bash scripts/ensure-test-env.sh --teardown
 ```
 
 This drops the worktree's isolated test database and S3 prefix. Skipping it leaks one database per run; shared-tier Atlas clusters cap at 500 collections cluster-wide and every leaked `imboard_test_<slug>` DB eats ~40 of them — once full, every integration test fails with `cannot create a new collection -- already using 500 collections of 500`. Record `test_env=torn-down|none` in the final ship milestone.
+
+**Verify cleanup before claiming it.** `cleanup=pool_returned` may only be posted after confirming it: `npx -y @ai-dossier/worktree-pool@^0.5.1 status` no longer lists the entry as assigned AND `git worktree list` no longer contains the path. If the return errored or the state is inconsistent, post `cleanup=failed-<step>` instead — a milestone claiming completion is not proof of completion (imboard#3692, ai-dossier#453).
 
 **Prerequisite: Step 6b (merge confirmed) AND Step 6c (deploy confirmed or `N/A`) must be
 complete.** Do not tear down before the
