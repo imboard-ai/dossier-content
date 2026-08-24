@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
@@ -75,13 +75,13 @@
   "last_updated": "2026-08-24",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "213e2303553397283443753bfb5f2de33532bf727de25a9afa3a02fb12f87bdf"
+    "hash": "cb43a4552e53eb8d0bdd4f131c2a146934c83ac91f64c5d28694d8f2e1f616e0"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "nGptZlePiwDitC4+MIbkJdJuSyF7ZolqBYe90ljubVL0jUcVSflZESejE3lZwuOH1V73Na+vg9MP7HILcJLDCg==",
+    "signature": "YJrPqv2ApGcn19I7Eg8QS7uKl780bZra0fAIZ3Rb2Pzx4yq0ezFM9/fRhxgbZfzWOolBGP3gmjfpLUiUmzX5DQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T08:09:31.687Z",
+    "signed_at": "2026-08-24T09:02:00.348Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -672,23 +672,18 @@ Next steps:
 
 ### Step 11: Runstate Milestone
 
-Post the phase milestone to the issue. This is the last step of the phase — if setup aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
+Post the phase milestone to the issue. This is the last step of the phase — if setup aborts, post `--status blocked --kv reason=<short-slug>` instead and stop. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <NUMBER> --body "$(cat <<EOF
-<!-- runstate:v1 -->
-phase=setup status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-branch=<branch-name>
-worktree=<absolute worktree path>
-pool_claimed=true|false
-base_branch=<BASE_BRANCH>
-remote=pushed
-next=plan
-EOF
-)"
+ai-dossier runstate post --issue <NUMBER> --phase setup --status done --run <run_id> \
+  --kv branch=<branch-name> \
+  --kv worktree=<absolute worktree path> \
+  --kv pool_claimed=true|false \
+  --kv base_branch=<BASE_BRANCH> \
+  --kv remote=pushed
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `pool_claimed=true` only when Step 5.1 claimed from the pool. In current-directory mode use the absolute repo root for `worktree`. Values contain no spaces (use `-` or `,`); paths are absolute. `remote=pushed` confirms the branch was pushed to origin (Step 5.1 for pool-claim, Step 7 for cold/current-directory/custom-path) — do NOT commit anything in this phase, only publish the branch ref.
+The CLI stamps `at=` and computes `next=plan` — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. `pool_claimed=true` only when Step 5.1 claimed from the pool. In current-directory mode use the absolute repo root for `worktree`. Values contain no spaces (use `-` or `,`); paths are absolute. `remote=pushed` confirms the branch was pushed to origin (Step 5.1 for pool-claim, Step 7 for cold/current-directory/custom-path) — do NOT commit anything in this phase, only publish the branch ref.
 
 ## Validation
 
