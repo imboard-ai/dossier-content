@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-24",
@@ -53,13 +53,13 @@
   "name": "implement-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "b3d57f5e3fc66b8c8e76e19c3b0d74cecd8fdc0e492bdb5751149ac01de89ca9"
+    "hash": "ff4a8d9baa711919d151e16fd6d16fb570a2a933b87222f170c84383d864e27e"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "XXTIYKD9Ni/6GXGU8czXtPW3Aj4FK6TwjnDX5G0HazshlZqwGBnqweHhUnglpFIiqf2Ys4VdFLKtSUlurQL2Dw==",
+    "signature": "loL26IDzcjXzFOlc8J/tQY5uJ9oWNPcPcVASHo2ZIPDRRToV0QjMRJzPhalKOMcsh9bXBuxvP69f163NYdxbBw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T08:09:32.745Z",
+    "signed_at": "2026-08-24T09:01:54.260Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -188,23 +188,18 @@ git rev-parse --short HEAD
 
 ### Step 7: Runstate Milestone
 
-Post the phase milestone to the issue. This is the last step of the phase — if implementation aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. The issue number is the `{number}` in the planning filename. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
+Post the phase milestone to the issue. This is the last step of the phase — if implementation aborts, post `--status blocked --kv reason=<short-slug>` instead and stop. The issue number is the `{number}` in the planning filename. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<EOF
-<!-- runstate:v1 -->
-phase=implement status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-head=<short sha of HEAD>
-files=<n>
-tests_added=<n>
-tests_run=<n>
-ci_parity=pass|fail-then-fixed|skipped
-next=review
-EOF
-)"
+ai-dossier runstate post --issue <issue_number> --phase implement --status done --run <run_id> \
+  --kv head=<short sha of HEAD> \
+  --kv files=<n> \
+  --kv tests_added=<n> \
+  --kv tests_run=<n> \
+  --kv ci_parity=pass|fail-then-fixed|skipped
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `head=` is the pushed sha from Step 6b (`git rev-parse --short HEAD` after the push) — never a `-dirty` suffix; by protocol there is no uncommitted work left when this milestone posts. Values contain no spaces (use `-` or `,`); paths are absolute.
+The CLI stamps `at=` and computes `next=review` — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. On an aborted phase: `--status blocked --kv reason=<short-slug>`. `head=` is the pushed sha from Step 6b (`git rev-parse --short HEAD` after the push) — never a `-dirty` suffix; by protocol there is no uncommitted work left when this milestone posts. Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
