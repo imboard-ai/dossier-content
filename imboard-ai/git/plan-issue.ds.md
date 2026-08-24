@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Plan Issue — Rich Planning Document",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-24",
@@ -65,13 +65,13 @@
   "name": "plan-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "b17302ea4bb156bbc0e16ac93f47895d761e11114d0a4634f606e9fae20e023c"
+    "hash": "7c85e1da872db49b24603be6ca8c050e4dfaf06d6fd3df688b414b983060c8ec"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "hFU9TCx0Yj/gsbqgvyBKJpFtW3V+rf9Y8CjifKINbK8nnkR3RYGwNYmlR95/lVbEbpSCuzW4Xl2GVHl89VCdAQ==",
+    "signature": "IMl4oP/pgWbKX9GUh4GDykKzBUiIVQ6oL0aBh0RXLEvgL1tOcEeg/StlOVwIpom99xnE5IZIZvwoHFWX8qNWAg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T08:09:32.183Z",
+    "signed_at": "2026-08-24T09:01:55.672Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -227,25 +227,20 @@ Visual review: required / not required
 
 ### Step 7: Runstate Milestone
 
-Post the phase milestone to the issue. This is the last step of the phase — if planning aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
+Post the phase milestone to the issue. This is the last step of the phase — if planning aborts, post `--status blocked --kv reason=<short-slug>` instead and stop. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<EOF
-<!-- runstate:v1 -->
-phase=plan status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-planning=<abs path to planning file>
-head=<pushed sha>
-open_questions=<n>
-visual_review=true|false
-ac_count=<n>
-AC1=<criterion, verbatim>
-AC2=<criterion, verbatim>
-next=implement
-EOF
-)"
+ai-dossier runstate post --issue <issue_number> --phase plan --status done --run <run_id> \
+  --kv planning=<abs path to planning file> \
+  --kv head=<pushed sha> \
+  --kv open_questions=<n> \
+  --kv visual_review=true|false \
+  --kv ac_count=<n> \
+  --kv ac1="<criterion, verbatim>" \
+  --kv ac2="<criterion, verbatim>"
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `head=` is the sha ON ORIGIN — `git rev-parse --short HEAD` from Step 5b, after the push, never a local-only sha. Values contain no spaces (use `-` or `,`); paths are absolute — **except the `AC<n>=` lines, which are the one exception to the no-spaces rule: write each criterion verbatim, spaces included.** Emit one `AC<n>=` line per criterion (not exactly two — the template shows two for illustration).
+The CLI stamps `at=` and computes `next=implement` — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. `head=` is the sha ON ORIGIN — `git rev-parse --short HEAD` from Step 5b, after the push, never a local-only sha. Values contain no spaces (use `-` or `,`); paths are absolute — **except the `ac<n>=` values, which are the one exception to the no-spaces rule: quote each criterion and write it verbatim, spaces included.** Emit one `--kv ac<n>=` per criterion (not exactly two — the example shows two for illustration). Keys are lower_snake_case; the CLI rejects `AC1`.
 
 ## Output
 
@@ -255,7 +250,7 @@ EOF
 - `open_questions_count`: number of open questions
 - `visual_review_required`: true/false
 - `ac_count`: number of acceptance criteria written
-- Posts runstate milestone to the issue (`phase=plan`, including `ac_count` and one `AC<n>=` line per criterion)
+- Posts runstate milestone to the issue (`phase=plan`, including `ac_count` and one `ac<n>=` line per criterion)
 
 ## Validation
 
