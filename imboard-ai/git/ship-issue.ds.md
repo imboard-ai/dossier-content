@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "objective": "Commit changes, push, create a PR, wait for CI, merge, confirm the merge reached production, and clean up the worktree",
+  "objective": "Commit changes, push, create a PR, then either drive it to a confirmed merge and deploy (attached) or park it on auto-merge and stop (detached)",
   "category": [
     "development"
   ],
@@ -71,6 +71,12 @@
         "type": "string"
       },
       {
+        "name": "ship_mode",
+        "description": "attached (default) = open the PR, wait for CI, merge, confirm the deploy, and tear down in this run. detached = open the PR, park it on auto-merge, post the awaiting-merge milestone, and STOP — a later run (gate resumes at ship-teardown) finishes it.",
+        "type": "string",
+        "default": "attached"
+      },
+      {
         "name": "ac_results",
         "description": "Per-acceptance-criterion checklist from review-issue's Agent 7 (Conformance) — criterion, verdict, file:line or reason. Used to populate the PR body's Acceptance Criteria section.",
         "type": "string"
@@ -85,13 +91,13 @@
   "last_updated": "2026-08-24",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "24cbd4b58d05a546cde4c3344c404835766a0ed5b8d43e4ab6b417c40ff1a805"
+    "hash": "665083ee44fc7a7bec044dac8d885ef7e6e0b9faf409962ef841b75845046489"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "l5iNmXPctCs6+D5TAhZNxS6KGZEMcfs1yo/J+mwobkSCTrIAmY+hBcicLdV0KwxSQpzwNDYiVqepU4smecsVCw==",
+    "signature": "1oVYbziPCZmg6Ud0dE3HnacJLtdD19XKYeatH7PMbLIZkw/dd9SxEf/1TrJOJaNMZJjtlHsOTIuRTy7udEddCA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T08:09:35.083Z",
+    "signed_at": "2026-08-24T09:02:02.171Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -114,6 +120,7 @@ Ship the implementation: commit, push, create PR, wait for CI, merge, and clean 
   issues; it assumes the diff is ready to ship as-is.
 - You are in the worktree/working directory with uncommitted changes
 - GitHub CLI (gh) is installed and authenticated
+- `ai-dossier` CLI >= 0.10.0 is installed — both ship milestones are posted through it
 - You have push access
 
 ## Actions to Perform
@@ -173,18 +180,39 @@ The Acceptance Criteria boxes come from `ac_results` (review-issue's Agent 7 out
 Post this BEFORE the CI wait — it is what tells a later reader that a PR exists and the run is parked on CI, even if this session dies mid-wait. Comments are append-only: never edit or delete a prior milestone.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<EOF
-<!-- runstate:v1 -->
-phase=ship status=awaiting-merge run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-pr=<pr-number>
-head=<short sha of the pushed commit>
-ci_fix_attempts=0
-next=ship
-EOF
-)"
+ai-dossier runstate post --issue <issue_number> --phase ship --status awaiting-merge --run <run_id> \
+  --kv pr=<pr-number> \
+  --kv head=<short sha of the pushed commit> \
+  --kv ci_fix_attempts=0 \
+  --next ship
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. Values contain no spaces (use `-` or `,`); paths are absolute.
+The CLI stamps `at=` itself. `--next ship` is the one place a dossier overrides the computed `next=` — this milestone is mid-phase, so the next phase is still ship. The CLI validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. Values contain no spaces (use `-` or `,`); paths are absolute.
+
+In `ship_mode=detached` this is the run's LAST milestone (Step 3c) — it is what a later gate reads to resume at `ship-teardown`.
+
+### Step 3c: Ship Mode — attached or detached
+
+`ship_mode` decides whether this run drives the merge or hands it off.
+
+**`attached` (default)** — continue to Step 4 and run the phase to its end: CI wait, merge, merge confirmation, deploy confirmation, teardown, final milestone. Nothing below changes.
+
+**`detached`** — park the PR and end the run here:
+
+1. Hand the merge to the watcher / merge queue: `gh pr edit <pr-number> --add-label "auto-merge"` (create the label first if missing: `gh label create auto-merge --color 0E8A16 --force`). On a repo with a merge queue, enqueue instead.
+2. **Confirm the label is applied** — re-read the PR labels. If the apply failed, retry once; if it still fails, that is a hard blocker to escalate (do NOT fall back to waiting on CI yourself).
+3. The Step 3b `awaiting-merge` milestone is already posted — that is the durable state.
+4. Print the handoff line and STOP:
+
+   ```
+   Ship detached: PR #<pr-number> parked on auto-merge; run `full cycle issue <issue_number>` after merge to finish (resumes at ship-teardown), or let the fleet supervisor do it.
+   ```
+
+Do NOT wait for CI, do NOT merge, do NOT tear down, do NOT run report. **Leave the worktree in place** — the work is already pushed (WIP sync rule), and the tail run reuses or re-materializes it.
+
+What completes the run later is unchanged machinery: gate-issue reads the `ship awaiting-merge` milestone and maps a merged PR to `resume_from=ship-teardown` (still-open → `ship-wait`), so the tail run re-enters at Step 6b/Step 7 and finishes with the final milestone and the report.
+
+Steps 4 through 8 below are the **attached** path (and the tail run's path on resume).
 
 ### Step 4: Wait for CI — stable-confirmation gate (stay in this turn)
 
@@ -420,33 +448,29 @@ merge is confirmed.
 
 ### Step 8: Runstate Milestone (final)
 
-Post the second and final ship milestone, after merge and teardown. This is the last step of the phase — if ship aborts (CI red after 2 attempts, merge conflict, failed deploy), post `status=blocked` with `reason=<short-slug>` instead and stop. Do not skip this in nested or fleet mode — it is the only state that survives the session.
+Post the second and final ship milestone, after merge and teardown. (Not reached in `ship_mode=detached` — the tail run posts it.) This is the last step of the phase — if ship aborts (CI red after 2 attempts, merge conflict, failed deploy), post `--status blocked --kv reason=<short-slug>` instead and stop. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<EOF
-<!-- runstate:v1 -->
-phase=ship status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-pr=<pr-number>
-merge_commit=<short sha from Step 6b>
-ci_fix_attempts=<n>
-cleanup=pool_returned|worktree_removed|skipped
-test_env=torn-down|none
-next=report
-EOF
-)"
+ai-dossier runstate post --issue <issue_number> --phase ship --status done --run <run_id> \
+  --kv pr=<pr-number> \
+  --kv merge_commit=<short sha from Step 6b> \
+  --kv ci_fix_attempts=<n> \
+  --kv cleanup=pool_returned|worktree_removed|skipped \
+  --kv test_env=torn-down|none
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `ci_fix_attempts` is how many Step 5 fix-and-push cycles ran (0 if CI was green first time). Values contain no spaces (use `-` or `,`); paths are absolute.
+The CLI stamps `at=` and computes `next=report` — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. On an aborted phase: `--status blocked --kv reason=<short-slug>`. `ci_fix_attempts` is how many Step 5 fix-and-push cycles ran (0 if CI was green first time). Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
 - `pr_number`: the created PR number
 - `pr_url`: the PR URL
-- `merge_status`: merged | failed
+- `ship_mode`: attached | detached — which path ran
+- `merge_status`: merged | failed | parked (detached: PR open on auto-merge, no merge attempted)
 - `target_branch`: the branch merged into
 - `cleanup`: pool_returned | worktree_removed | skipped
 - `ci_fix_attempts`: number of CI fix-and-push cycles run in Step 5
-- Posts TWO runstate milestones to the issue (`phase=ship`: `awaiting-merge` before the CI wait, then `done`)
+- Posts TWO runstate milestones to the issue (`phase=ship`: `awaiting-merge` before the CI wait, then `done`) — in `detached` mode only the first, and the tail run posts the second
 
 ## Validation
 
@@ -454,6 +478,8 @@ EOF
 - [ ] Branch pushed to remote
 - [ ] PR created targeting correct base_branch
 - [ ] PR body includes the Acceptance Criteria section from `ac_results` (when non-empty)
+- [ ] `ship_mode` was honored: `detached` stopped after the label + `awaiting-merge` milestone with the handoff line printed (no CI wait, no merge, no teardown, no report); `attached` ran through to the final milestone
+- [ ] Detached only: the `auto-merge` label was applied and confirmed present, and the worktree was left in place
 - [ ] CI passed (or failures fixed within 2 attempts)
 - [ ] CI confirmed green on two consecutive stable polls — not a single transient success
 - [ ] CI wait done in-turn (foreground batch re-runs) — never backgrounded or deferred
@@ -464,7 +490,7 @@ EOF
 - [ ] Worktree returned to pool or removed
 - [ ] Returned to original directory
 - [ ] `scripts/ci-parity.sh` was run before committing when present
-- [ ] Two runstate milestone comments were posted (`awaiting-merge` before the CI wait, final after teardown)
+- [ ] Runstate milestones were posted via `ai-dossier runstate post` (`awaiting-merge` before the CI wait — with `--next ship` — and, on the attached/tail path, the final one after teardown)
 
 ## Troubleshooting
 
@@ -485,6 +511,8 @@ run it again immediately. Stay in the turn until `RESULT=green` (→ merge) or `
 **Merge conflicts**: Needs human judgment. Stop and hand off on the issue
 (`decision-pending` label + comment describing the conflicting files and why an
 automatic resolution isn't safe) — do not guess at a resolution, do not open a new issue.
+
+**Detached run looks unfinished**: it is — by design. A `ship awaiting-merge` milestone with no `ship done` after it is a parked PR, not a failure. The tail run (`full cycle issue <n>`) resumes at `ship-teardown` once the PR merges.
 
 **`--delete-branch` fails in worktree**: Expected — don't use it. Clean up in Step 7.
 
