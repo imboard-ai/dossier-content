@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-24",
@@ -50,13 +50,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "d8c08244bec8ee77f63f0af5ebb0c983d56d271a3ad73f7fcdb78d877eb7471a"
+    "hash": "b6b40542b5153e49261a18096a68ebaa8c6ff1e3a7c821ecfa88444156aafba4"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "YtE+3+sjuwGT5mGl9fNHou+gmcS4BTYP/gw/FZynLFV2DrEzCDmNFwR4FkZClg3HIqbYXe5vvqcI6gsXFMxZCA==",
+    "signature": "MduiBiDAw+uY4n139YhkA5xU+hidHut1VqM+NYBqQ1I3qJOxkG//Wi/iu/TNM23BaGbiXMA9eO5v0gqc7HcYCQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T09:01:52.918Z",
+    "signed_at": "2026-08-24T10:33:23.838Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -215,8 +215,11 @@ ai-dossier runstate post --issue <issue_number> --phase gate --status done --run
   --kv warnings=<n> \
   --kv resumed_from=<phase|none> \
   --kv prior_run=<run_id|none> \
-  --kv verified=<comma list of checks passed|none>
+  --kv verified=<comma list of checks passed|none> \
+  --kv model=<the model id you are running as, e.g. claude-opus-5; use "unknown" only if genuinely undeterminable>
 ```
+
+`model=` makes the whole trail analyzable by model over time (phase durations already fall out of the `at=` timestamps); state it honestly — it is the run's provenance, not a preference.
 
 The CLI stamps `at=` and computes `next=` (here `setup`) — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. Values contain no spaces (use `-` or `,`); paths are absolute. On a hard block: `--status blocked --kv reason=<short-slug>` (the CLI then sets `next=done`).
 
