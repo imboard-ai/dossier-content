@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-24",
@@ -50,13 +50,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "cad8cd141265a3eb46ecc81f230a59185a89afff25b506dd3605afd3eb20eb76"
+    "hash": "d8c08244bec8ee77f63f0af5ebb0c983d56d271a3ad73f7fcdb78d877eb7471a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "LWVFOxqyr0PvtcnFhibXSPygOz9Bfjzg2UjP9YzSXYt+oKbJ2Fm6L6f1k2DDg+QqAyApq6UXVemqBrH214/pAA==",
+    "signature": "YtE+3+sjuwGT5mGl9fNHou+gmcS4BTYP/gw/FZynLFV2DrEzCDmNFwR4FkZClg3HIqbYXe5vvqcI6gsXFMxZCA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T08:09:34.234Z",
+    "signed_at": "2026-08-24T09:01:52.918Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -73,6 +73,7 @@ Lightweight safety gate (~30s) — check issue metadata for blockers before comm
 ## Prerequisites
 
 - GitHub CLI (gh) is installed and authenticated
+- `ai-dossier` CLI >= 0.10.0 is installed (`ai-dossier runstate --help`) — this phase mints, reads, and posts runstate through it
 - You are in a git repository with GitHub as a remote
 
 ## Actions to Perform
@@ -88,9 +89,7 @@ gh issue view <issue_number> --json state,labels,body
 Mint the runstate `run_id` ONCE here. Every later phase of this issue reuses it unchanged.
 
 ```bash
-RUN_ID="r-<issue_number>-$(openssl rand -hex 2)"
-# fallback if openssl is unavailable:
-# RUN_ID="r-<issue_number>-$(date +%s | tail -c 5)"
+RUN_ID=$(ai-dossier runstate mint --issue <issue_number>)
 echo "Run ID: $RUN_ID"
 ```
 
@@ -103,15 +102,22 @@ Pass `run_id` to every subsequent sub-dossier exactly like `base_branch`.
 Check whether this issue already has runstate history before treating it as a fresh run:
 
 ```bash
-LAST=$(gh issue view <issue_number> --json comments \
-  --jq '[.comments[].body | select(startswith("<!-- runstate:v1 -->"))] | last // empty')
+LAST=$(ai-dossier runstate last --issue <issue_number> --json)
 ```
 
-If `LAST` is empty: `resume_from=none`. Keep the `RUN_ID` minted in Step 1b and continue to Step 2 (Hard Blocks) as today.
+If there is no milestone (empty output): `resume_from=none`. Keep the `RUN_ID` minted in Step 1b and continue to Step 2 (Hard Blocks) as today.
 
-Otherwise, parse `phase=`, `status=`, `run=`, and the phase-specific keys from `LAST`. **Reuse that `run=` value as `RUN_ID`** — discard the one minted in Step 1b. Then VERIFY the claim against reality — never trust the comment alone:
+Otherwise read `.phase`, `.status`, `.run`, and the phase-specific keys from that JSON. **Reuse `.run` as `RUN_ID`** — discard the one minted in Step 1b. Then VERIFY the claim against reality — never trust the comment alone:
+
+**Run the verification, do not hand-walk it.** `ai-dossier runstate verify --issue <issue_number> --json` performs the entire table below and prints `resume_from` plus the parsed `resume_context` — that is the supported way to resume. Use its answer.
+
+```bash
+ai-dossier runstate verify --issue <issue_number> --json
+```
 
 Resume verification is **remote-first**: origin/<branch> is the durable copy of the work (see full-cycle-issue's WIP sync rule), so every check below verifies against the remote, not the local worktree.
+
+*verify implements this table; run the command, read the table only when debugging.*
 
 | last milestone | verify | if verified → | if not → |
 |---|---|---|---|
@@ -157,7 +163,7 @@ If ANY of these are true, abort immediately with a comment on the issue:
 gh issue comment <issue_number> --body "**Workflow aborted**: <reason>. Resolve the blocker and re-run."
 ```
 
-Then post the blocked runstate milestone (Step 6) with `status=blocked` and `reason=closed|decomposed|needs-clarification|epic|open-dependency-<N>`.
+Then post the blocked runstate milestone (Step 6) with `--status blocked --kv reason=closed|decomposed|needs-clarification|epic|open-dependency-<N>`.
 
 Do NOT proceed.
 
@@ -201,23 +207,18 @@ Warnings: <count> (<list or "none">)
 
 ### Step 6: Runstate Milestone
 
-Post the phase milestone to the issue. This is the last step of the phase — on a hard block, post it with `status=blocked` and a `reason=` before stopping. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
+Post the phase milestone to the issue. This is the last step of the phase — on a hard block, post it with `--status blocked --kv reason=<short-slug>` before stopping. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<EOF
-<!-- runstate:v1 -->
-phase=gate status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-base_branch=<BASE_BRANCH>
-warnings=<n>
-resumed_from=<phase|none>
-prior_run=<run_id|none>
-verified=<comma list of checks passed|none>
-next=setup
-EOF
-)"
+ai-dossier runstate post --issue <issue_number> --phase gate --status done --run "$RUN_ID" \
+  --kv base_branch=<BASE_BRANCH> \
+  --kv warnings=<n> \
+  --kv resumed_from=<phase|none> \
+  --kv prior_run=<run_id|none> \
+  --kv verified=<comma list of checks passed|none>
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. Values contain no spaces (use `-` or `,`); paths are absolute. On a hard block use `status=blocked`, `reason=<short-slug>`, and `next=done`.
+The CLI stamps `at=` and computes `next=` (here `setup`) — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. Values contain no spaces (use `-` or `,`); paths are absolute. On a hard block: `--status blocked --kv reason=<short-slug>` (the CLI then sets `next=done`).
 
 ## Output
 
@@ -234,22 +235,24 @@ EOF
 ## Validation
 
 - [ ] Issue metadata was fetched
-- [ ] Resume detection (Step 1.5) ran before hard blocks, checking for prior runstate history
+- [ ] Resume detection (Step 1.5) ran before hard blocks, via `ai-dossier runstate last` + `ai-dossier runstate verify`
 - [ ] On resume: the prior `run_id` was reused, not re-minted, and the claimed milestone was verified against reality (not trusted blindly)
 - [ ] Resume verification is remote-first — `setup`/`plan`/`implement`/`review` milestones are verified against `origin/<branch>` (ls-remote / merge-base ancestor check), not a local worktree
 - [ ] `local_worktree=present|absent` was reported when a `worktree=` path existed in `resume_context` (bonus signal only, never gates the resume decision)
 - [ ] Resume loop cap enforced — 3 consecutive `blocked` on the same phase is a hard block with `reason=resume-loop`
-- [ ] A `run_id` was minted (fresh run) or reused (resumed run) and reported
+- [ ] A `run_id` was minted via `ai-dossier runstate mint` (fresh run) or reused (resumed run) and reported
 - [ ] All hard blocks were checked (with the resume exception for a closed issue at `resume_from=report`/`done`)
 - [ ] Soft warnings were counted
 - [ ] Base branch was extracted from issue body
 - [ ] On hard block: comment was posted and workflow stopped
 - [ ] On pass: output includes status, base_branch, run_id, warnings, resume_from, and resume_context
-- [ ] Runstate milestone comment was posted to the issue, including `resumed_from`/`prior_run`/`verified`
+- [ ] Runstate milestone was posted via `ai-dossier runstate post`, including `resumed_from`/`prior_run`/`verified`
 
 ## Troubleshooting
 
 **`gh` not found**: Install GitHub CLI: https://cli.github.com/
+
+**`ai-dossier runstate` not found**: the CLI is older than 0.10.0 — install it (`npm i -g @ai-dossier/cli`). Do not fall back to hand-written milestone comments.
 
 **Issue not found**: Verify the issue number and repository access
 
