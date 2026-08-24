@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-workflows-guide",
   "title": "Issue Workflows Guide",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Reference guide for the issue workflow family — explains when to use each workflow, how they compose from shared sub-dossiers, and available flags",
@@ -25,15 +25,16 @@
       "name": "Yuval Dimnik"
     }
   ],
+  "last_updated": "2026-08-24",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "9cf43454feadb5dddca5b699ca7903bdbf1427487ea46573497217958ca97dac"
+    "hash": "c7b2790ca6f4ca68097f195f3ff79ab625be89ebb3dfe83c35bca0d2ecc60e8a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "Oh70+lWhaA2ChlHrFm96S2E8e2Vf9OzEczFPbc63XYOODWxiPs15TEDGayMqJWnnXkYiuxFKi9yBhqvPq/6HDw==",
+    "signature": "IzSUUa8u8FKbttHaftr2NLxwh+T1O1BOy0EyvkcXFPw4qV1a+0FpQytFUkf0R5EoPbroDAvkE5x8TtKUT3x1BQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:36.818Z",
+    "signed_at": "2026-08-24T06:49:22.811Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -96,13 +97,13 @@ All three skills support:
 
 | Name | Registry Path | What it does | Used by |
 |---|---|---|---|
-| `gate-issue` | `imboard-ai/git/gate-issue` | Safety check: hard blocks (closed, decomposed, epic, deps), soft warnings, base branch extraction | all three |
+| `gate-issue` | `imboard-ai/git/gate-issue` | Safety check (hard blocks, soft warnings, base branch) + **resume detection**: reads the last runstate milestone, verifies it against git/PR reality, emits `resume_from` | all three |
 | `setup-issue-workflow` | `imboard-ai/git/setup-issue-workflow` | Branch + worktree (pool or cold) + warmup + claim issue label | all three |
 | `plan-issue` | `imboard-ai/git/plan-issue` | Read issue + comments + explore code → write rich `PLANNING-{N}-{slug}.md` | all three |
-| `implement-issue` | `imboard-ai/git/implement-issue` | Implement per plan + test + lint auto-fix | guided, full-cycle |
-| `review-issue` | `imboard-ai/git/review-issue` | 5 parallel review agents (DRY, Security, Supportability, Maintainability, Docs) + fix findings | guided, full-cycle |
-| `ship-issue` | `imboard-ai/git/ship-issue` | Commit → push → PR → CI wait → merge → teardown | guided, full-cycle |
-| `report-issue` | `imboard-ai/git/report-issue` | Rich summary: what changed, user implications, dev/ops implications → conversation + PR comment | guided, full-cycle |
+| `implement-issue` | `imboard-ai/git/implement-issue` | Implement per plan + affected-scoped tests + `scripts/ci-parity.sh` when the repo has it | guided, full-cycle |
+| `review-issue` | `imboard-ai/git/review-issue` | 7 parallel review agents (DRY, Security, Supportability, Maintainability, Docs, Convention, **blind Conformance vs the issue's Acceptance Criteria**) + fix findings | guided, full-cycle |
+| `ship-issue` | `imboard-ai/git/ship-issue` | ci-parity → commit → push → PR (with AC checklist) → `awaiting-merge` milestone → CI/merge → teardown (incl. `ensure-test-env.sh --teardown`) | guided, full-cycle |
+| `report-issue` | `imboard-ai/git/report-issue` | Rich summary → conversation + PR comment; mechanical trap write-back to `docs/agent-traps.md` when a CI fix was needed; deletes the PLANNING file | guided, full-cycle |
 
 ## Shared Parameter: `base_branch`
 
@@ -111,6 +112,23 @@ All sub-dossiers receive a `base_branch` parameter. This enables epic sub-issues
 - **Source**: Parsed from issue body (`merges into \`<branch>\``), or explicit `--base` flag
 - **Default**: `main`
 - **Flow**: gate extracts → setup branches from → plan explores on → implement tests against → ship PRs into → report mentions
+
+## Runstate Milestones & Resume (v3.8+)
+
+Every phase of a full-cycle run appends a `<!-- runstate:v1 -->` comment to the GitHub issue
+(`phase= status= run= at=` plus phase keys). The issue is therefore the durable run log:
+
+- **Resume**: re-running `full cycle issue N` after a dead session makes the gate read the last
+  milestone, VERIFY it (branch/worktree exist, HEAD matches, PR state), and skip every completed
+  phase (`resume_from=`). Ship posts `status=awaiting-merge` BEFORE the CI wait — the likeliest
+  death point — so even a mid-merge death resumes in seconds.
+- **Spec conformance**: plan extracts Acceptance Criteria; review's blind Conformance agent checks
+  the diff against them (`met <file:line>` required); the PR body carries the checked list.
+- **Knowledge**: repos may provide `scripts/ci-parity.sh` (exact CI gates, run locally),
+  `scripts/ensure-test-env.sh` (remote Atlas/S3 test env, per-worktree isolation + teardown), and
+  `docs/agent-traps.md` (grep-first symptom→trap→fix index; plan reads it, report writes it).
+- **Fleet prewarm**: fleet-cycle replenishes the worktree pool once per wave via
+  `npx -y @ai-dossier/worktree-pool@^0.5.1`; agents never run pool `gc`/`refresh`.
 
 ## Visual Review Checkpoint (guided-cycle only)
 
