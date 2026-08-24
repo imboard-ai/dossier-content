@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.10.3",
+  "version": "1.11.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
@@ -72,16 +72,16 @@
   "risk_factors": [
     "network_access"
   ],
-  "last_updated": "2026-08-23",
+  "last_updated": "2026-08-24",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e5242ca787a6b838e7cd2e298e1568d2dc8fcda9278d3b86396397d8ccffacde"
+    "hash": "213e2303553397283443753bfb5f2de33532bf727de25a9afa3a02fb12f87bdf"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "/tz92bYwMsAhmXpTKh+gqxGBuer5caT9rpmkO/jCNVZeLu1XwNcDUeJa11N+VDS9KhoL/tqyyDy5nxzzoWTgCg==",
+    "signature": "nGptZlePiwDitC4+MIbkJdJuSyF7ZolqBYe90ljubVL0jUcVSflZESejE3lZwuOH1V73Na+vg9MP7HILcJLDCg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T15:34:12.006Z",
+    "signed_at": "2026-08-24T08:09:31.687Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -300,6 +300,13 @@ Before creating a cold worktree, check if a pre-warmed worktree pool is availabl
    # Continue to Step 6 (cold worktree from BASE_BRANCH)
    ```
 
+   **Push the branch immediately** — origin/<branch> is the durable copy of the work from the moment the branch exists (WIP sync rule — see full-cycle-issue's Runstate Milestones):
+   ```bash
+   cd "$CLAIMED_PATH"
+   git push -u origin <branch-name>
+   ```
+   (Run this after the rebase above, if one happened, so origin gets the final state.)
+
    - **Skip Steps 6, 7, 8, and 8.5 entirely** — go directly to Step 9 (Generate Planning File) using `CLAIMED_PATH` as the worktree path.
    - Print: `⚡ Claimed pre-warmed worktree from pool (instant setup)`
    - If rebased: also print `Rebased onto $BASE_BRANCH`
@@ -433,6 +440,11 @@ git checkout -b <branch-name> origin/$BASE_BRANCH
 Verify branch was created:
 ```bash
 git branch --list <branch-name>
+```
+
+**Push the branch immediately** — publish the branch ref to origin now, right after creation and before any worktree/warmup work (WIP sync rule — origin/<branch> is the durable copy of the work from the moment the branch exists; see full-cycle-issue's Runstate Milestones):
+```bash
+git push -u origin <branch-name>
 ```
 
 ### Step 8: Create Git Worktree (New Worktree Mode Only)
@@ -670,12 +682,13 @@ branch=<branch-name>
 worktree=<absolute worktree path>
 pool_claimed=true|false
 base_branch=<BASE_BRANCH>
+remote=pushed
 next=plan
 EOF
 )"
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `pool_claimed=true` only when Step 5.1 claimed from the pool. In current-directory mode use the absolute repo root for `worktree`. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `pool_claimed=true` only when Step 5.1 claimed from the pool. In current-directory mode use the absolute repo root for `worktree`. Values contain no spaces (use `-` or `,`); paths are absolute. `remote=pushed` confirms the branch was pushed to origin (Step 5.1 for pool-claim, Step 7 for cold/current-directory/custom-path) — do NOT commit anything in this phase, only publish the branch ref.
 
 ## Validation
 
@@ -686,7 +699,8 @@ EOF
 - [ ] Planning file (PLANNING-{number}-{slug}.md) was created
 - [ ] Planning file contains all required sections
 - [ ] User was shown clear next steps
-- [ ] Runstate milestone comment was posted to the issue
+- [ ] Branch was pushed to origin (`git push -u origin <branch-name>`) immediately after creation — pool-claim path (Step 5.1) and cold/current-directory/custom-path (Step 7) both push, nothing is committed in this phase
+- [ ] Runstate milestone comment was posted to the issue, including `remote=pushed`
 
 **Worktree mode — pool-claimed (ALL required before showing success):**
 - [ ] `npx -y @ai-dossier/worktree-pool@^0.5.1 status` was checked
