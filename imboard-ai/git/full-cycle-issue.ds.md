@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-08-23",
+  "last_updated": "2026-08-24",
   "objective": "Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report",
   "category": [
     "development"
@@ -68,13 +68,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "12c5e97cbf8e22282e2911e1fc257b4b546f9692c0b6930a08cf75d1420cc4b3"
+    "hash": "46ea9baff1e800adbcdaf440913ff38acca2c1c07d836a4ca572bd13cc0eb074"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "T1hk8Sc1P6Jw4S2tzZkAWQi9EOqmMi/WeyK+MVuNTJkLoexcts0BfVltpxOjakjZlgPSqCeroYQmzveSuVaFAg==",
+    "signature": "EG2jkppfjjpwlBIsomeTFBIGW44991WQyDx7Q+eEJpIdVrhnd+gFYqKxosHe9AatUT4DpxVogkN8skMSveRSBQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T14:03:50.120Z",
+    "signed_at": "2026-08-24T08:09:34.661Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -145,7 +145,7 @@ Per-phase keys:
 | phase | status | keys |
 |---|---|---|
 | gate | done / blocked | `base_branch=` `warnings=<n>` (blocked: `reason=closed\|decomposed\|needs-clarification\|epic\|open-dependency-<N>`) |
-| setup | done / blocked | `branch=` `worktree=<abs path>` `pool_claimed=true\|false` `base_branch=` |
+| setup | done / blocked | `branch=` `worktree=<abs path>` `pool_claimed=true\|false` `base_branch=` `remote=pushed` |
 | plan | done / blocked | `planning=<abs path>` `head=<short sha of base at plan time>` `open_questions=<n>` `visual_review=true\|false` |
 | implement | done / blocked | `head=<short sha>` `files=<n>` `tests_added=<n>` `tests_run=<n>` `ci_parity=pass\|fail-then-fixed\|skipped` |
 | review | done / partial / blocked | `head=` `fixed=<n>` `escalated=<n>` `agents_done=<comma list>` `agents_pending=<comma list or none>` |
@@ -164,11 +164,19 @@ gh issue view <issue_number> --json comments \
 
 If the last milestone is not `phase=<phase that just finished>`, post it yourself from the outputs you have before continuing. A run with missing milestones cannot be resumed.
 
+## WIP Sync Rule
+
+**origin/<branch> is the durable copy of the work; the issue is the durable copy of the state.** A phase is not "done" until both are true — a resuming agent on another machine cannot reach uncommitted work sitting only in a local worktree, and a runstate milestone that records a local `worktree=` path is worthless to it otherwise.
+
+Every phase that changes the working tree ends by syncing the branch to origin BEFORE posting its milestone: `git add -A && git commit -m "wip(<phase>): <one line> [skip ci]" && git push -u origin <branch>` (commit only if there are changes). `git add -A` respects `.gitignore`; never force-add ignored files (`.env` etc). WIP commits are disposable — ship squash-merges, so they never reach the base branch. The milestone's `head=` is the sha ON ORIGIN (`git rev-parse --short HEAD` after the push), never a `-dirty` suffix.
+
+Concretely, per sub-dossier: setup pushes the freshly created branch (no commit — nothing to commit yet); plan commits+pushes the planning doc; implement commits+pushes everything (even on a `blocked`/partial ending); review commits+pushes any fixes (on `done` and `partial` alike); ship's own commit/push (Step 1-2) is unaffected — it lands on top of the WIP commits, and the eventual squash-merge collapses all of them into one commit on the base branch.
+
 ## Resuming
 
 Phase order: gate → setup → plan → implement → review → ship → report.
 
-Skip every phase that precedes `resume_from`. When skipping setup, take `branch`, `worktree`, `pool_claimed`, `base_branch` from `resume_context` and `cd` into the worktree (hard gate `pwd | grep -q worktree` still applies). When skipping plan, take `planning` from `resume_context`. Review with `agents_pending` → run only those agents. `ship-wait` → enter ship at Step 5 (CI wait) with `pr` from context; `ship-teardown` → enter ship at Step 7 post-merge cleanup.
+Skip every phase that precedes `resume_from`. When skipping setup, take `branch`, `pool_claimed`, `base_branch` from `resume_context`, then: `git fetch origin <branch>`. If the recorded `worktree=` path exists on THIS machine and its HEAD matches origin, `cd` into it. Otherwise create a fresh one from the synced branch: `git worktree add <repo>/worktrees/<branch-slug> <branch>` (after `git branch --track <branch> origin/<branch>` if needed), run the repo's warmup (pool claim is not applicable — this is an existing branch; use the warmup_dossier or `pnpm install`+build equivalent), and `cd` in (hard gate `pwd | grep -q worktree` still applies). Uncommitted work does not exist by protocol — every phase pushed before its milestone; if you find local uncommitted changes in an inherited worktree, commit and push them as `wip(recovered): [skip ci]` before proceeding. When skipping plan, take `planning` from `resume_context` (the planning-file check now happens here, after the worktree is materialized — see gate-issue's Step 1.5). Review with `agents_pending` → run only those agents. `ship-wait` → enter ship at Step 5 (CI wait) with `pr` from context; `ship-teardown` → enter ship at Step 7 post-merge cleanup.
 
 ## Prerequisites
 
@@ -366,7 +374,8 @@ Principle hand-off, the run already ended there; do not run this phase.
 - [ ] Rich report posted to conversation and PR comment
 - [ ] Returned to original working directory
 - [ ] A runstate milestone comment was posted after every phase (ship posted two)
-- [ ] On resume, no phase before `resume_from` was re-run
+- [ ] Every phase that touched the working tree synced to origin (WIP Sync Rule) before posting its milestone — `head=` values are pushed shas, never `-dirty`
+- [ ] On resume, no phase before `resume_from` was re-run; a skipped setup materialized the worktree from origin (cloned fresh if absent on this machine) rather than assuming local state
 
 ## Troubleshooting
 
