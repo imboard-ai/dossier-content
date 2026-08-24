@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "report-issue",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment",
@@ -73,15 +73,16 @@
       "name": "Yuval Dimnik"
     }
   ],
+  "last_updated": "2026-08-24",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "bf044b483f2966225b3498e5019c212ab062e30da5dd189a24d0b1c4d513d7ab"
+    "hash": "592e76f6c5775990362ba239a6f9a7cbca585a298b31ce57441184f46384774b"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "ffuzmK+wMqb/rGgKd68NgbbiXdihOaYBeRlUlB4Zq/GDFxHghwbLYMDMKGsvoSYouCFC5/gOn/ZEkEBeHyvKCw==",
+    "signature": "WJMPar8A1WnX4tK997nRw7Zk6711FLNSynKdAr55cZoRoPieEfd1Cb85y2VsFcsLMIUUj2sQKenOb+h7QVfDBA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T14:05:54.575Z",
+    "signed_at": "2026-08-24T09:01:57.179Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -108,6 +109,8 @@ The report is posted to BOTH the conversation (full version) and as a PR comment
 - The PR has been merged
 - All review data is available from previous phases
 - GitHub CLI (gh) is installed and authenticated
+
+This phase may run in a **later session than implement** — a detached ship (see ship-issue's `ship_mode`) parks the PR and ends the run, and the tail run that finishes it starts fresh at `resume_from=ship-teardown`. Nothing here assumes in-memory state: the context comes from the runstate milestones and the PR, which Step 1 and Step 4b already read.
 
 ## Actions to Perform
 
@@ -258,17 +261,12 @@ Report posted to conversation and PR #<pr_number>.
 Post the final phase milestone to the issue. This is the last step of the cycle. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
 ```bash
-gh issue comment <issue_number> --body "$(cat <<EOF
-<!-- runstate:v1 -->
-phase=report status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-pr=<pr_number>
-traps_added=<n>
-next=done
-EOF
-)"
+ai-dossier runstate post --issue <issue_number> --phase report --status done --run <run_id> \
+  --kv pr=<pr_number> \
+  --kv traps_added=<n>
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `traps_added` is the number of rows appended to `docs/agent-traps.md` in Step 4b (0 or 1 normally). Values contain no spaces (use `-` or `,`); paths are absolute.
+The CLI stamps `at=` and computes `next=done` — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. `traps_added` is the number of rows appended to `docs/agent-traps.md` in Step 4b (0 or 1 normally). Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
