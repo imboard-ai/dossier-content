@@ -2,10 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-08-23",
+  "last_updated": "2026-08-24",
   "objective": "Implement the solution described in the planning document, run tests, and auto-fix lint issues",
   "category": [
     "development"
@@ -53,13 +53,13 @@
   "name": "implement-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6cf48a37b374707f533d5a5715353214cbd712187b300a517cc37f6402b2a83f"
+    "hash": "b3d57f5e3fc66b8c8e76e19c3b0d74cecd8fdc0e492bdb5751149ac01de89ca9"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "mpvQ/wOWoULzkZX4tFo/4lPA0J+N7uYTPnI7tE5Ar0geGqZyhujDE7b0YsWyJRlMk4rUL6iyM/plXbfeqPWsDQ==",
+    "signature": "XXTIYKD9Ni/6GXGU8czXtPW3Aj4FK6TwjnDX5G0HazshlZqwGBnqweHhUnglpFIiqf2Ys4VdFLKtSUlurQL2Dw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T13:51:25.213Z",
+    "signed_at": "2026-08-24T08:09:32.745Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -168,6 +168,24 @@ List the changed files:
 git diff --name-only
 ```
 
+### Step 6b: Sync to Origin
+
+Before posting the milestone, commit everything and push so origin has the durable copy of this phase's work (WIP sync rule — see full-cycle-issue's Runstate Milestones):
+
+```bash
+git add -A && git commit -m "wip(implement): #<issue_number> <slug> [skip ci]" && git push
+```
+
+`git add -A` respects `.gitignore` — never force-add ignored files (`.env` etc). Commit only if there are changes.
+
+If this phase is ending `blocked` or a tests-failing partial state rather than clean `done`, STILL commit and push whatever exists, with message `wip(implement): partial — <reason> [skip ci]` — do this before posting the `status=blocked` milestone too.
+
+Note the pushed sha for the milestone:
+
+```bash
+git rev-parse --short HEAD
+```
+
 ### Step 7: Runstate Milestone
 
 Post the phase milestone to the issue. This is the last step of the phase — if implementation aborts, post `status=blocked` with `reason=<short-slug>` instead and stop. The issue number is the `{number}` in the planning filename. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
@@ -186,7 +204,7 @@ EOF
 )"
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. With uncommitted work, use `$(git rev-parse --short HEAD)-dirty` for `head`. Values contain no spaces (use `-` or `,`); paths are absolute.
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `head=` is the pushed sha from Step 6b (`git rev-parse --short HEAD` after the push) — never a `-dirty` suffix; by protocol there is no uncommitted work left when this milestone posts. Values contain no spaces (use `-` or `,`); paths are absolute.
 
 ## Output
 
@@ -211,6 +229,7 @@ EOF
 - [ ] CI-mode verification (check-only) passes — including any separate formatter (e.g. Prettier) and typecheck
 - [ ] Any newly added package/workspace/module is wired into PR CI (typecheck + tests), or the gap is recorded as a follow-up
 - [ ] `scripts/ci-parity.sh` was used when present, and `ci_parity` was recorded
+- [ ] Everything was committed (`git add -A`) and pushed to origin before the milestone — including on a `blocked`/partial ending — and milestone `head=` is the pushed sha, never a `-dirty` suffix
 - [ ] Runstate milestone comment was posted to the issue
 
 ## Troubleshooting
