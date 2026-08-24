@@ -2,9 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Plan Issue — Rich Planning Document",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "protocol_version": "1.0",
   "status": "Stable",
+  "last_updated": "2026-08-24",
   "objective": "Read a GitHub issue and its comments, explore relevant codebase areas, confirm any new state/flow is actually reachable, and write a rich planning document for structured implementation",
   "category": [
     "development"
@@ -64,13 +65,13 @@
   "name": "plan-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "d0c73545effd4fa495dded8c2bdc60863258414c42be3520e0234ac544e4b53f"
+    "hash": "b17302ea4bb156bbc0e16ac93f47895d761e11114d0a4634f606e9fae20e023c"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "hiC4BqTb6metwjCICbr/FDBA4k1yyzWy5KKnsyn39cQL7vGmPH+QnCCj4kGglFzHmf9COZ/CRGarjuibmEOfAw==",
+    "signature": "hFU9TCx0Yj/gsbqgvyBKJpFtW3V+rf9Y8CjifKINbK8nnkR3RYGwNYmlR95/lVbEbpSCuzW4Xl2GVHl89VCdAQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T14:03:50.547Z",
+    "signed_at": "2026-08-24T08:09:32.183Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -198,6 +199,20 @@ Prevents re-implementation of existing logic.>
 `<BASE_BRANCH>` — PRs for this issue target this branch.
 ```
 
+### Step 5b: Sync to Origin
+
+Commit and push the planning file so origin has a durable copy of this phase's work (WIP sync rule — see full-cycle-issue's Runstate Milestones):
+
+```bash
+git add PLANNING-*.md && git commit -m "wip(plan): planning doc for #<issue_number> [skip ci]" && git push
+```
+
+Note the pushed sha for the milestone:
+
+```bash
+git rev-parse --short HEAD
+```
+
 ### Step 6: Output
 
 Print the planning file path and a brief summary:
@@ -219,7 +234,7 @@ gh issue comment <issue_number> --body "$(cat <<EOF
 <!-- runstate:v1 -->
 phase=plan status=done run=<run_id> at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 planning=<abs path to planning file>
-head=<short sha of base at plan time>
+head=<pushed sha>
 open_questions=<n>
 visual_review=true|false
 ac_count=<n>
@@ -230,7 +245,7 @@ EOF
 )"
 ```
 
-`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. Values contain no spaces (use `-` or `,`); paths are absolute — **except the `AC<n>=` lines, which are the one exception to the no-spaces rule: write each criterion verbatim, spaces included.** Emit one `AC<n>=` line per criterion (not exactly two — the template shows two for illustration).
+`at` is filled in by the template (the heredoc is unquoted so `$(date …)` expands); put no other `$` in values. `head=` is the sha ON ORIGIN — `git rev-parse --short HEAD` from Step 5b, after the push, never a local-only sha. Values contain no spaces (use `-` or `,`); paths are absolute — **except the `AC<n>=` lines, which are the one exception to the no-spaces rule: write each criterion verbatim, spaces included.** Emit one `AC<n>=` line per criterion (not exactly two — the template shows two for illustration).
 
 ## Output
 
@@ -254,6 +269,7 @@ EOF
 - [ ] Existing utilities and patterns were identified in "Reusable Code" section
 - [ ] Open Questions section only contains genuinely ambiguous items
 - [ ] Visual Review checkbox reflects whether FE files are expected to change
+- [ ] Planning file was committed and pushed to origin (`wip(plan): ...`) before the milestone — milestone `head=` is the pushed sha
 - [ ] Runstate milestone comment was posted to the issue
 
 ## Troubleshooting
