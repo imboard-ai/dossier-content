@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle",
   "title": "Fleet Cycle — Orchestrate Multiple Issues",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-24",
@@ -68,6 +68,12 @@
         "description": "Default target branch for issues that do not declare their own. Passed through to each full-cycle-issue run.",
         "type": "string",
         "default": "auto"
+      },
+      {
+        "name": "dispatch_model_tier",
+        "description": "Model tier for dispatched full-cycle generation phases: cheap | mid | strong | auto. auto = per-issue by risk signals (labels, title, touched areas): docs/chore→cheap, standard→mid, security/payments/migrations/auth/schema→strong.",
+        "type": "string",
+        "default": "auto"
       }
     ]
   },
@@ -87,13 +93,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "49b9adcf7bb7df095b22c2ae81cfbe63645599011e5521f04dd030149cf1ada0"
+    "hash": "3e4c915828468aca19ef17fdebcc98de5bf4b693c67c13e46a96f3a471edd1d3"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "fBpeLu86jkrdn8p1HByfDxoIYse3RcPTRIcmW3q+cc3HrzOgUslT5z24BPmT8WBnEGBdaqqF5PLpfhqDgStNCA==",
+    "signature": "YdoBFFOe1rL0hnJepm/M+ipkt05UJrs7LNNSo24fameNnSkIlaLX7/y8VSTl8akqKPyasQEFu8EMya85uT8cAA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T09:01:50.012Z",
+    "signed_at": "2026-08-24T12:33:09.293Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -198,9 +204,11 @@ If the pool is not configured, say so once and continue — agents fall back to 
 For each wave, in order:
 
 1. Dispatch one **background agent per issue** in the wave (up to `max_parallel` concurrently). Each agent's task is exactly: run `full cycle issue <N>` — i.e. `ai-dossier run imboard-ai/git/full-cycle-issue --pull` for that issue, passing through `warmup_dossier`, the issue's resolved `base_branch`, and **`ship_mode=detached`**.
+1b. Dispatch each issue's full-cycle run at its tier per `dispatch_model_tier` (auto = judge per issue from its labels/title/likely paths, using the same risk signals as review tiering). The fleet's OWN work splits by role: dependency analysis and wave planning are judgment — do them at the strongest tier (i.e. the orchestrator itself); supervision, PR polling and tail dispatches are mechanical — tails and any watchdog run cheap.
 2. **Detached ship is the fleet default.** A dispatched run ends as soon as its PR is open and parked on auto-merge (full-cycle Phase 5 item 2b): no CI wait, no merge, no teardown, no report. The agent exits there and the orchestrator owns everything after the park. This is why a fleet agent going quiet is expected, not suspicious.
 3. For a **dependent** issue (one whose dependency just merged), its base must be the **updated** base branch — branch from the merged result, not from a stale snapshot. The dependency must be fully merged before the dependent is dispatched; this is why dependents live in a later wave.
 4. Supervise the wave: track every issue in exactly one state — **running** (agent working), **parked** (last milestone is `phase=ship status=awaiting-merge`; PR open on auto-merge, agent exited), **merged** (PR merged AND its tail run finished), **failed**, or **blocked**.
+4b. **Escalation ladder.** If a dispatched run stalls (no new milestone AND no new pushed commit for 30+ minutes) or completes a phase without its milestone, redispatch the same issue one tier stronger — the resume protocol carries the work forward. Two escalations per issue, then mark it failed and block dependents.
 5. **Poll the parked PRs** every 2–3 minutes:
    ```bash
    gh pr view <pr> --json state,mergedAt,mergeable
@@ -222,7 +230,7 @@ For each wave, in order:
 ## Phase 5: Aggregate Report
 
 Produce a single roll-up across the whole fleet:
-- **Per issue**: status (merged / parked / failed / blocked / skipped), PR link, one-line summary. A still-**parked** issue at report time means its PR never merged within the run — say what it is waiting on.
+- **Per issue**: status (merged / parked / failed / blocked / skipped), PR link, one-line summary, `model=` from its gate milestone(s), and any escalations. A still-**parked** issue at report time means its PR never merged within the run — say what it is waiting on.
 - **Merged**: count and PR links.
 - **Failed**: each with the failure reason and where it stopped.
 - **Blocked**: each with which failed dependency blocked it (so the user can re-run after fixing).
@@ -265,6 +273,8 @@ Post the roll-up to the conversation. Include direct PR URLs for every merged an
 - [ ] Wave plan computed and written to `~/.dossier/logs/fleet-cycle/{project}/FLEET-PLAN-{timestamp}.md.gz` (gzipped; older entries beyond the most recent 20 pruned)
 - [ ] Plan presented before dispatch
 - [ ] Each issue dispatched as a background `full-cycle-issue` run with `ship_mode=detached`
+- [ ] Each dispatch's generation-phase tier set per `dispatch_model_tier` (auto = risk-based); the fleet's own dependency/wave-planning judgment ran on the strongest tier, supervision/tails/watchdog ran cheap
+- [ ] Escalation ladder applied on a stalled or milestone-non-compliant dispatched run (redispatch one tier stronger; cap two escalations per issue, then fail + block dependents)
 - [ ] Parked PRs polled every 2–3 min (`gh pr view --json state,mergedAt,mergeable`)
 - [ ] Every merged parked PR got a tail run (`full cycle issue <N>`, resuming at `ship-teardown`) that completed teardown + report
 - [ ] Conflicting / closed-unmerged / `auto-merge-blocked` parked PRs marked failed, with dependents blocked
@@ -274,7 +284,7 @@ Post the roll-up to the conversation. Include direct PR URLs for every merged an
 - [ ] Failures blocked their transitive dependents; independents continued
 - [ ] Wave N+1 gated on wave N being MERGED (not merely parked)
 - [ ] Pool prewarmed before each wave (or the missing-pool case reported once)
-- [ ] Aggregate report posted with per-issue status, PR links, and last-runstate-comment links
+- [ ] Aggregate report posted with per-issue status, PR links, `model=` per issue, any escalations, and last-runstate-comment links
 
 ## Relationship to Other Dossiers
 
