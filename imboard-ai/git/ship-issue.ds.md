@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, wait for CI, merge, confirm the merge reached production, and clean up the worktree",
@@ -82,16 +82,16 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "last_updated": "2026-08-23",
+  "last_updated": "2026-08-24",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c1bd5f04e85278bdd6a58cb1de544a7c79abec06431abf5203bb4f7df6fbf248"
+    "hash": "24cbd4b58d05a546cde4c3344c404835766a0ed5b8d43e4ab6b417c40ff1a805"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "kfNkPbsATS/Km6UQ0VYEKZcXkm9vK627+pvmIg1ANqFmvylLS80FajuWdi22hOZbO7KqeDVaZSzlKKys1oCoDQ==",
+    "signature": "l5iNmXPctCs6+D5TAhZNxS6KGZEMcfs1yo/J+mwobkSCTrIAmY+hBcicLdV0KwxSQpzwNDYiVqepU4smecsVCw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T19:15:00.954Z",
+    "signed_at": "2026-08-24T08:09:35.083Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -130,6 +130,12 @@ Ship the implementation: commit, push, create PR, wait for CI, merge, and clean 
 
    Co-Authored-By: Claude <noreply@anthropic.com>
    ```
+
+   Note: earlier phases (plan/implement/review) already pushed `wip(...)` commits to this
+   branch as they ran (WIP sync rule — see full-cycle-issue's Runstate Milestones). This
+   final conventional commit lands on top of them; nothing about this step changes. Step 6's
+   squash-merge collapses the whole branch history — WIP commits included — into one commit
+   on the base branch.
 
 ### Step 2: Push
 
@@ -408,6 +414,9 @@ merge is confirmed.
    ```bash
    git push origin --delete <branch-name> 2>/dev/null || true
    ```
+   Deleting the remote branch also deletes the WIP history accumulated during this run
+   (plan/implement/review's `wip(...)` commits) — that is fine and intended; the squash-merge
+   commit already landed on the base branch as the durable artifact.
 
 ### Step 8: Runstate Milestone (final)
 
