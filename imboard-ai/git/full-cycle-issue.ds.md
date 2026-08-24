@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.10.0",
+  "version": "3.10.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-24",
@@ -74,13 +74,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6324ef55f305a7b9a62a2804d9dd1a5d2e33f342c6784c9b04c54a13ad9697d7"
+    "hash": "7d7f205e9eb09b0d4a49104409a36e1afdd43d9ad5f02756e6293007da3be48a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "vOVnkoEcHmFS3/9DK20iS34eSuW+fmUc859FyVFcBT/U3+SIaFLqJGPFMNGnRIOu6ZEruvbe3Px2sGB+TBGTDw==",
+    "signature": "PYoSXAT0iuMvvQqAeHFie39YNjQxE+eUTZih+sNIa8lxNBs25DqoE9zKGg/YytDchaYOjkomMG3PJp6pgBzvBw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T09:01:51.439Z",
+    "signed_at": "2026-08-24T10:33:29.031Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -166,7 +166,7 @@ Per-phase keys — these are the `--kv` keys each phase passes:
 
 | phase | status | keys |
 |---|---|---|
-| gate | done / blocked | `base_branch=` `warnings=<n>` (blocked: `reason=closed\|decomposed\|needs-clarification\|epic\|open-dependency-<N>`) |
+| gate | done / blocked | `base_branch=` `warnings=<n>` `model=<model id of the executing agent>` (blocked: `reason=closed\|decomposed\|needs-clarification\|epic\|open-dependency-<N>`) |
 | setup | done / blocked | `branch=` `worktree=<abs path>` `pool_claimed=true\|false` `base_branch=` `remote=pushed` |
 | plan | done / blocked | `planning=<abs path>` `head=<short sha of base at plan time>` `open_questions=<n>` `visual_review=true\|false` |
 | implement | done / blocked | `head=<short sha>` `files=<n>` `tests_added=<n>` `tests_run=<n>` `ci_parity=pass\|fail-then-fixed\|skipped` |
