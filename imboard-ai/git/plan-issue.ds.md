@@ -2,10 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Plan Issue — Rich Planning Document",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-08-24",
+  "last_updated": "2026-08-25",
   "objective": "Read a GitHub issue and its comments, explore relevant codebase areas, confirm any new state/flow is actually reachable, and write a rich planning document for structured implementation",
   "category": [
     "development"
@@ -65,13 +65,13 @@
   "name": "plan-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "7c85e1da872db49b24603be6ca8c050e4dfaf06d6fd3df688b414b983060c8ec"
+    "hash": "e94772f8684671846add86564572e7ad026d2fca267395a9f884a0e6790d2da7"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "IMl4oP/pgWbKX9GUh4GDykKzBUiIVQ6oL0aBh0RXLEvgL1tOcEeg/StlOVwIpom99xnE5IZIZvwoHFWX8qNWAg==",
+    "signature": "caC8yavfs29sXniiPdj7l/J0xYuyKB8mH++RZdLTFXNKF9UfNWRYNxG93a39cc5CS/SxLEmMyWin2yOMMV5sCg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T09:01:55.672Z",
+    "signed_at": "2026-08-25T06:10:38.324Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -83,7 +83,7 @@
 
 ## Objective
 
-Read a GitHub issue (body + all comments), explore the relevant codebase, and produce a rich `PLANNING-{number}-{slug}.md` document that serves as the implementation blueprint.
+Read a GitHub issue (body + all comments), explore the relevant codebase, and produce a rich `PLANNING-{number}-{slug}.md` — the implementation blueprint.
 
 ## Prerequisites
 
@@ -99,38 +99,32 @@ Read a GitHub issue (body + all comments), explore the relevant codebase, and pr
 gh issue view <issue_number> --json title,labels,body,assignees,comments
 ```
 
-Read the issue body AND all comments — comments often contain clarifications, updated requirements, or design decisions added after the issue was filed. Treat them as additional context with the same weight as the body.
+Read the issue body AND all comments — comments often carry clarifications, updated requirements, or design decisions added after filing. Weigh them the same as the body.
 
 ### Step 2: Determine Issue Slug
 
-Slugify the issue title:
-- Convert to lowercase
-- Replace spaces with hyphens
-- Remove special characters
-- Truncate to 50 chars max
+Slugify the issue title: lowercase, spaces → hyphens, remove special characters, truncate to 50 chars max.
 
 ### Step 3: Check for Existing Planning File
 
-Look for an existing `PLANNING-<issue_number>-*.md` in the worktree_path. If setup-issue-workflow already created a scaffold, read it and preserve any user-added content.
+Look for an existing `PLANNING-<issue_number>-*.md` in the worktree_path. If setup-issue-workflow created a scaffold, read it and preserve any user-added content.
 
 ### Step 4: Explore Relevant Code
 
-Based on the issue description and comments:
-1. Identify files, modules, or areas of the codebase likely affected
-2. Read key files to understand current implementation
-3. Check for existing patterns, utilities, or abstractions that should be reused
+From the issue description and comments:
+1. Identify files, modules, or areas likely affected
+2. Read key files to understand the current implementation
+3. Check for existing patterns, utilities, or abstractions to reuse
 4. If `base_branch` is not `main`, ensure you are exploring code on `base_branch` (it may have changes not yet on main)
 5. If `docs/agent-traps.md` exists, read it in full (it is small by design) and grep it for terms from the issue title and the affected paths. Mention any hit under Risk Areas.
 
 ### Step 4b: Reachability Check (REQUIRED before planning any new state/flow)
 
-If the issue introduces a NEW state, branch, flow, or user-reachable condition, establish that real input can actually reach it **before** planning the build. Building unreachable states is a top source of wasted work — code that gets shipped and then ripped out once it turns out nothing ever triggers it.
+If the issue introduces a NEW state, branch, flow, or user-reachable condition, establish that real input can actually reach it **before** planning the build. Building unreachable states is a top source of wasted work. For each new state/flow:
 
-For each new state/flow the change would introduce:
-
-1. **What real input reaches this state?** Trace the concrete trigger — which user action, API payload, data-record shape, or config produces it.
-2. **Does production data confirm it happens?** Do not reason from first principles — query real data. Use the access method described by the `prod_data_access` parameter to run a **read-only** count of the triggering condition.
-3. **Record the evidence** (the query and the result count) in the planning document's "Reachability Evidence" section.
+1. **What real input reaches this state?** Trace the concrete trigger — the user action, API payload, data-record shape, or config that produces it.
+2. **Does production data confirm it happens?** Do not reason from first principles — query real data, using the `prod_data_access` method to run a **read-only** count of the triggering condition.
+3. **Record the evidence** (query and result count) in the planning document's "Reachability Evidence" section.
 
 Decision rule:
 
@@ -201,15 +195,10 @@ Prevents re-implementation of existing logic.>
 
 ### Step 5b: Sync to Origin
 
-Commit and push the planning file so origin has a durable copy of this phase's work (WIP sync rule — see full-cycle-issue's Runstate Milestones):
+Commit and push the planning file so origin has a durable copy of this phase's work (WIP sync rule — see full-cycle-issue's Runstate Milestones), and note the pushed sha for the milestone:
 
 ```bash
 git add PLANNING-*.md && git commit -m "wip(plan): planning doc for #<issue_number> [skip ci]" && git push
-```
-
-Note the pushed sha for the milestone:
-
-```bash
 git rev-parse --short HEAD
 ```
 
@@ -240,7 +229,7 @@ ai-dossier runstate post --issue <issue_number> --phase plan --status done --run
   --kv ac2="<criterion, verbatim>"
 ```
 
-The CLI stamps `at=` and computes `next=implement` — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. `head=` is the sha ON ORIGIN — `git rev-parse --short HEAD` from Step 5b, after the push, never a local-only sha. Values contain no spaces (use `-` or `,`); paths are absolute — **except the `ac<n>=` values, which are the one exception to the no-spaces rule: quote each criterion and write it verbatim, spaces included.** Emit one `--kv ac<n>=` per criterion (not exactly two — the example shows two for illustration). Keys are lower_snake_case; the CLI rejects `AC1`.
+Let the CLI stamp `at=` and compute `next=implement` — do not pass either; never hand-write the comment. `head=` is the sha ON ORIGIN — `git rev-parse --short HEAD` from Step 5b, after the push, never a local-only sha. Values contain no spaces (use `-` or `,`); paths are absolute — **except the `ac<n>=` values, which are the one exception to the no-spaces rule: quote each criterion and write it verbatim, spaces included.** Emit one `--kv ac<n>=` per criterion (not exactly two — the example shows two for illustration). Keys are lower_snake_case; the CLI rejects `AC1`.
 
 ## Output
 
@@ -269,6 +258,8 @@ The CLI stamps `at=` and computes `next=implement` — do not pass either. It va
 
 ## Troubleshooting
 
-**No comments on issue**: This is fine — the body alone may be sufficient. Note it but proceed.
-**Can't determine affected files**: Read the issue more carefully. If truly unclear, add to Open Questions.
-**Base branch doesn't exist locally**: Run `git fetch origin <base_branch>` first.
+| Symptom | Fix |
+|---|---|
+| No comments on issue | Fine — the body alone may be sufficient. Note it but proceed. |
+| Can't determine affected files | Read the issue more carefully. If truly unclear, add to Open Questions. |
+| Base branch doesn't exist locally | Run `git fetch origin <base_branch>` first. |
