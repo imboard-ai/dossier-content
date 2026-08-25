@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, then either drive it to a confirmed merge and deploy (attached) or park it on auto-merge and stop (detached)",
@@ -91,13 +91,13 @@
   "last_updated": "2026-08-25",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "41807376e87dad92dbbd8450ef4437966ce7ebd8ff1f89a988845ca92fb15a54"
+    "hash": "51a9e4a90d4fab10580af75eca6912a607f44eb70a7ceb83e4b1f679c969726e"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "2nIa27vyCD5CpoHs5Z35RejD0nTUIxKwUgO/VpQixo8FFDccoFnLBzkFcklQXE8wz+om3u+CTMd3aLoziawOBQ==",
+    "signature": "MOIzPN9VGPY8PoXALGJXbYWBItremrZSXk7EhS0sHcyvdU7mN8qN9TT8t5gKZIubwayAcUyvGvf/LyIqNVWIDg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T06:10:36.743Z",
+    "signed_at": "2026-08-25T07:08:42.308Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -123,6 +123,10 @@ Ship the implementation: commit, push, create PR, wait for CI, merge, and clean 
 ## Actions to Perform
 
 ### Step 1: Commit
+
+**PR-head `[skip ci]` guard.** By protocol the tree may already be clean (all work landed as `wip … [skip ci]` commits). The PR's head commit must NOT contain `[skip ci]` — GitHub then skips the entire `pull_request` CI run, and the green-gate reads only third-party checks (this shipped a CI-less merge once). If the tree is clean or the head message contains `skip ci`, make the final commit empty: `git commit --allow-empty -m "<type>: <summary>"`. Verify: `git log -1 --format=%B | grep -ci 'skip ci'` must print 0.
+
+**Remove the planning doc before committing**: `git rm -f PLANNING-<issue_number>-*.md` — planning files never land on the base branch (they are already preserved in the branch history and the issue trail).
 
 0. **If `scripts/ci-parity.sh` exists in the repo, run `bash scripts/ci-parity.sh` before committing.** It is the project's own definition of what CI enforces. Fix and re-run until it passes. If the script does not exist, skip this and commit as usual.
 1. Stage relevant files (never `.env`, credentials, secrets)
@@ -286,11 +290,11 @@ landed), return to Step 4; never merge on a stale green.
 All checks confirmed green — merge, then clean up issue labels:
 
 ```bash
-gh pr merge <pr-number> --squash
+gh pr merge <pr-number> --squash --subject "<conventional PR title> (#<pr-number>)" --body "Closes #<issue_number>"
 gh issue edit <issue_number> --remove-label "in-progress"
 ```
 
-Do NOT use `--delete-branch` — it fails from worktrees. Branch cleanup happens in Step 7.
+Always pass an explicit `--subject`/`--body`: the default squash body concatenates the wip commit messages, and a leaked `[skip ci]` in the merge commit silently suppresses EVERY push-triggered workflow on the base branch (publishes, deploys) — this stalled two npm releases. Do NOT use `--delete-branch` — it fails from worktrees. Branch cleanup happens in Step 7.
 
 ### Step 6b: Confirm the merge before doing ANYTHING else
 
@@ -335,6 +339,8 @@ Never emit an idle notification, end your turn, or proceed to Teardown (Step 7) 
 
 **Only now is the work shipped.**
 
+**Deploy exists but you cannot trigger it** (permission/classifier-blocked dispatch): this is NOT a blocker and NOT a failed deploy — post ship `done` with `--kv deploy=blocked-<short-reason>`, and the report's Shipped line must read `NOT DEPLOYED — <the exact command a human must run>`.
+
 ### Step 7: Teardown
 
 **Prerequisite: Step 6b (merge confirmed) AND Step 6c (deploy confirmed or `N/A`) must be complete.** Do not tear down before the merge is confirmed.
@@ -364,6 +370,7 @@ ai-dossier runstate post --issue <issue_number> --phase ship --status done --run
   --kv pr=<pr-number> \
   --kv merge_commit=<short sha from Step 6b> \
   --kv ci_fix_attempts=<n> \
+  --kv deploy=<confirmed-sha|n/a|blocked-<reason>> \
   --kv cleanup=pool_returned|worktree_removed|skipped \
   --kv test_env=torn-down|none
 ```
