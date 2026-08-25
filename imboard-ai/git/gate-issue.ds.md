@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-25",
@@ -50,13 +50,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "a236842e25f63178a14421ec8a073e709839509c34c27e3edc808304c404a26d"
+    "hash": "8e15a7aa2ff5ee803df5c19e79e448aebea0d40bd4a5308931b3e28b62ad5b52"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "4k79Aj/yJEib5f/MpD5nXFgnC12nAZI0Ck+4HiAXRf4F0Wgfq27ayG1h/vnIw9DZ1VB8q5q4a1g5wmUaFWwSAw==",
+    "signature": "+v3C64kvk28WGpcB4pOghBHWj91RG0TAtM9b61ZXioBv0rJ125tGKuhx/VNmyiuWZa5ijANHqzelEE+5padtDg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T06:10:37.952Z",
+    "signed_at": "2026-08-25T07:08:45.731Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -203,7 +203,7 @@ ai-dossier runstate post --issue <issue_number> --phase gate --status done --run
   --kv resumed_from=<phase|none> \
   --kv prior_run=<run_id|none> \
   --kv verified=<comma list of checks passed|none> \
-  --kv model=<the model id you are running as, e.g. claude-opus-5; use "unknown" only if genuinely undeterminable>
+  --kv model=<the model id you are running as, e.g. claude-opus-5; use "unknown" only if genuinely undeterminable; strip any context suffix such as `[1m]` — bare model id only>
 ```
 
 `model=` makes the trail analyzable by model over time; state it honestly — it is the run's provenance, not a preference.
