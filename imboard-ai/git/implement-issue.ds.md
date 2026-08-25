@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.7.0",
+  "version": "1.7.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-25",
@@ -53,13 +53,13 @@
   "name": "implement-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e08182c85f48ecc7c36adbeff5ce9022f5f641d681d411915197229ccc3b2e36"
+    "hash": "5956115a9cdcf70c3188810d87aa80a5fda46487c073323d2d871e5e7c02137b"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "kHLJ+CUte2LwY2dhVhRoYmuhxmI5J3wlnlVoki2cLosyUaEBIh4/G5ghxIseIvms8E1cQLHB/e7aotunE1glBQ==",
+    "signature": "5WxbkadA8xzBSasCGd0o3vYg3hKwucnMEMLmEvpBCHfQHfLbb4h/1fDCMNhXiBG1RSrUyZRKOMVjZzKN4PaqAQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T06:10:38.727Z",
+    "signed_at": "2026-08-25T19:26:53.630Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -96,7 +96,7 @@ Read `planning_file`. Extract: the approach, files to modify, reusable code to l
 
 **Before building**, run the project's auto-fixer to avoid lint iteration loops.
 
-**If `scripts/ci-parity.sh` exists, run `bash scripts/ci-parity.sh` instead of detecting the toolchain** — it is the project's own definition of what CI enforces. Record `ci_parity=pass` (passed first time), `fail-then-fixed` (you fixed and re-ran), or `skipped` (no script — then use the fallback below), and carry it to the runstate milestone.
+**If `scripts/ci-parity.sh` exists, run `bash scripts/ci-parity.sh` instead of detecting the toolchain** — it is the project's own definition of what CI enforces. Record `ci_parity=pass` (passed first time), `fail-then-fixed` (you fixed and re-ran), `blocked-external` (the script aborts on a pre-existing shared-resource condition — e.g. the test-cluster collection cap — and you ran its gates individually instead; name the condition in the milestone as `ci_parity_note=`), or `skipped` (no script — use the fallback below), and carry it to the runstate milestone.
 
 **If no ci-parity script, prefer the project's combined script.** Grep `package.json` / `Makefile` for one script bundling everything CI runs — `hygiene`, `hygiene:ci`, `check`, `lint:fix`, `format`, `precommit`. Run it (or its `:fix` / `:write` variant): single source of truth, matching what CI checks.
 
@@ -175,7 +175,7 @@ ai-dossier runstate post --issue <issue_number> --phase implement --status done 
   --kv files=<n> \
   --kv tests_added=<n> \
   --kv tests_run=<n> \
-  --kv ci_parity=pass|fail-then-fixed|skipped
+  --kv ci_parity=pass|fail-then-fixed|blocked-external|skipped
 ```
 
 Let the CLI stamp `at=` and compute `next=review` — do not pass either; never hand-write the comment. `head=` is the pushed sha from Step 6b (`git rev-parse --short HEAD` after the push) — never a `-dirty` suffix; by protocol there is no uncommitted work left when this milestone posts.
