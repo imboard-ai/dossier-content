@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, then either drive it to a confirmed merge and deploy (attached) or park it on auto-merge and stop (detached)",
@@ -91,13 +91,13 @@
   "last_updated": "2026-08-25",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "51a9e4a90d4fab10580af75eca6912a607f44eb70a7ceb83e4b1f679c969726e"
+    "hash": "108d99458c6ad74ba6c9d5f5d909d16a1f8a0a4944431b30bfb74c9c9eba51da"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "MOIzPN9VGPY8PoXALGJXbYWBItremrZSXk7EhS0sHcyvdU7mN8qN9TT8t5gKZIubwayAcUyvGvf/LyIqNVWIDg==",
+    "signature": "oSgWbddTwxs3KCWqWZUiBhLMztuYdeZK7Hh943Iq/+zxnIYvENgw31smZp1ynXoe3o8TajVfkMoeCm4/dPr5Dg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T07:08:42.308Z",
+    "signed_at": "2026-08-25T19:26:54.881Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -196,7 +196,7 @@ In `ship_mode=detached` this is the run's LAST milestone (Step 3c) — it is wha
 
 **`detached`** — park the PR and end the run here:
 
-1. Hand the merge to the watcher / merge queue: `gh pr edit <pr-number> --add-label "auto-merge"` (create the label first if missing: `gh label create auto-merge --color 0E8A16 --force`). On a repo with a merge queue, enqueue instead.
+1. Hand the merge to the watcher / merge queue via REST — on repos with Projects-classic, `gh pr edit --add-label` fails on a GraphQL deprecation: `gh api -X POST repos/{owner}/{repo}/issues/<pr-number>/labels -f "labels[]=auto-merge"` (create the label first if missing: `gh label create auto-merge --color 0E8A16 --force`). Then CONFIRM the label is present in the response. On a repo with a merge queue, enqueue instead. Same deprecation hits `gh pr view`/`gh issue view` without field selection — always pass `--json <fields>`.
 2. **Confirm the label is applied** — re-read the PR labels. If the apply failed, retry once; if it still fails, that is a hard blocker to escalate (do NOT fall back to waiting on CI yourself).
 3. The Step 3b `awaiting-merge` milestone is already posted — that is the durable state.
 4. Print the handoff line and STOP:
