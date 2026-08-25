@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-25",
@@ -50,13 +50,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "8e15a7aa2ff5ee803df5c19e79e448aebea0d40bd4a5308931b3e28b62ad5b52"
+    "hash": "59818fd7baf7aed2e95c35897f7d5d5ba7083f15f29aaff8fb522911ce480ab9"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "+v3C64kvk28WGpcB4pOghBHWj91RG0TAtM9b61ZXioBv0rJ125tGKuhx/VNmyiuWZa5ijANHqzelEE+5padtDg==",
+    "signature": "kxWscHWS+6PAZHUrDSzX5t8v3XHiBEHDEcRoXF/YySE7FKtgF1PBIaedPbe2sO01dMwkt8+rYQAQZkhKg6szCg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T07:08:45.731Z",
+    "signed_at": "2026-08-25T19:26:52.174Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -157,6 +157,17 @@ gh issue comment <issue_number> --body "**Workflow aborted**: <reason>. Resolve 
 Then post the blocked runstate milestone (Step 6) with `--status blocked --kv reason=closed|decomposed|needs-clarification|epic|open-dependency-<N>`.
 
 Do NOT proceed.
+
+### Step 2b: Duplicate In-Flight Work Check
+
+Search for other open work on the same surface BEFORE committing a run to it:
+
+```bash
+gh issue list --state open --search "<2-3 distinctive terms from the title>" --json number,title
+gh pr list --state open --search "<same terms>" --json number,title
+```
+
+If an open issue or PR plausibly fixes the same root cause, add a **soft warning** naming it (`overlap=<#n,...>` in the milestone) and instruct the plan phase to read it first — two independent fixes for one bug surface as a merge conflict two phases later (#3671/#3650). If the overlap is near-certain (same symptom, same component, PR already open), treat it as a hard block: comment on the issue linking the duplicate and stop.
 
 ### Step 3: Soft Warnings
 
