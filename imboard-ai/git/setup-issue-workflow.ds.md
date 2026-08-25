@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
@@ -75,13 +75,13 @@
   "last_updated": "2026-08-25",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "83d0a301ea9254eaee2056c009c8be086f962cfaf85b5c24c18666f34df82e7e"
+    "hash": "a5ce12cd16c064ae568f184609e7722a90634fb22cd13070e69d7e170aed169a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "lcL/FN29IHXs2Zm7pStVbMRohBuBFjifZpMHXOf76WUNrHnQfJj6FexbGTOmf0PMougUsnx9NAWtAhTRks6zDg==",
+    "signature": "gTRfpGo4V9cBlfCs3xtmi5dckLpFvehlL7g45i8Bot0TwMfDztvhinZGJx5y3Uyzoy6P1n7F2Muo2VpY41aUBQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T06:10:35.971Z",
+    "signed_at": "2026-08-25T07:08:46.866Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -166,7 +166,7 @@ Option 1 → Step 5.1. Options 2, 3, 4 → Step 5b.
 
 > Pool CLI invocation: always `npx -y @ai-dossier/worktree-pool@^0.5.1 <cmd>`. The bare `npx worktree-pool` only resolves where the package is installed locally (it 404s elsewhere), and versions before 0.5.1 have a data-loss bug in `gc`. Never pin an older version.
 
-> **Never run `worktree-pool gc`, `refresh`, or any command described as removing worktrees.** The pool directory is shared with developer worktrees; in `@ai-dossier/worktree-pool` ≤ 0.5.0 `gc` deleted every worktree it did not create (ai-dossier#453). Agents may only use `status`, `claim`, `return`, `replenish`, `detect`. If the pool looks broken (claim fails, orphaned entry, missing `.git` admin dir), **fall back to cold worktree creation (Step 6)** and mention the broken pool in the setup milestone (`pool_claimed=false pool_note=<reason>`); pool maintenance is a human task.
+> **Never run `worktree-pool gc`, `refresh`, or any command described as removing worktrees.** The pool directory is shared with developer worktrees; in `@ai-dossier/worktree-pool` ≤ 0.5.0 `gc` deleted every worktree it did not create (ai-dossier#438). Agents may only use `status`, `claim`, `return`, `replenish`, `detect`. If the pool looks broken (claim fails, orphaned entry, missing `.git` admin dir), **fall back to cold worktree creation (Step 6)** and mention the broken pool in the setup milestone (`pool_claimed=false pool_note=<reason>`); pool maintenance is a human task.
 
 Pool worktrees already have `node_modules`, `.env` files and build artifacts — ~2 seconds vs ~3-5 minutes cold.
 
