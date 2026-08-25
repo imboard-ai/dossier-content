@@ -2,11 +2,11 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-25",
-  "objective": "Run a tiered set of report-only review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract, Conformance) on uncommitted changes, then dedupe their findings and apply the fixes serially",
+  "objective": "Run a tiered set of report-only review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract, Conformance) on the branch diff, then dedupe their findings and apply the fixes serially",
   "category": [
     "development"
   ],
@@ -47,13 +47,13 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "307490f196e37fabe82e2ea9987ca0e4efd5ddc5cccd3599ba72a59847e1a67e"
+    "hash": "4f06086681a09f2fedbebaf355a4c044f5e6724e7445764db6c52e542aebb5ab"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "EV814scKTpyCvAyCR91wVEz8ZXmOFHzv8p205csv5sLOpk/EAH1ezza7v6xki8nIdLp/F+qmaFjPyQBJyuwrDQ==",
+    "signature": "YNbYfZpVB8cDpat+DHnwIwZxoQbCgYavS8FzXULByLbPw9p3SyUS64t9kndXyfATQ9Suawyp8dXQ/ayAlFEPAA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T06:10:37.123Z",
+    "signed_at": "2026-08-25T07:08:44.581Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -65,12 +65,12 @@
 
 ## Objective
 
-Run a tier-appropriate set of focused review agents in parallel on uncommitted changes. Each agent reviews from a different quality dimension and **reports** findings — it does not edit. After all agents complete, this phase dedupes their findings and applies the fixes itself, serially, then re-runs tests and lint once.
+Run a tier-appropriate set of focused review agents in parallel on the branch diff. Each agent reviews from a different quality dimension and **reports** findings — it does not edit. After all agents complete, this phase dedupes their findings and applies the fixes itself, serially, then re-runs tests and lint once.
 
 ## Prerequisites
 
 - You are in the correct worktree/directory for this issue
-- There are uncommitted changes to review (`git diff --name-only` returns files)
+- The branch has changes to review (`git diff <base_branch>...HEAD --name-only`, plus any uncommitted `git diff --name-only`)
 - The codebase builds and tests pass before this phase begins
 
 ## Actions to Perform
@@ -85,7 +85,7 @@ Run `pwd` to confirm you are in the worktree. If not, `cd` back into it.
 git diff --name-only
 ```
 
-This lists unstaged changes — we have not committed yet. If the list is empty, there is nothing to review. Stop and report "No uncommitted changes to review."
+Review the FULL branch diff: `git diff <base_branch>...HEAD --name-only` plus any uncommitted `git diff --name-only` (by protocol implement already synced to origin, so the tree is typically clean — an empty uncommitted diff alone means nothing). Only if BOTH are empty: stop and report "No changes to review."
 
 ### Step 2b: Fetch Acceptance Criteria (for Agent 7)
 
@@ -152,7 +152,7 @@ improvements, minor bugs, "consider doing X" opinions. Report them as "Fix now" 
 
 #### Agent 1: DRY Review
 
-> Review the uncommitted changes for DRY (Don't Repeat Yourself) violations — AI agents frequently rewrite code that already exists in the codebase. For each changed file:
+> Review the branch changes for DRY (Don't Repeat Yourself) violations — AI agents frequently rewrite code that already exists in the codebase. For each changed file:
 > 1. Read the file fully
 > 2. Search the **entire codebase** for existing functions, utilities, or patterns that do the same thing
 > 3. Flag duplicated logic (>5 similar lines), reimplemented helpers, or missed utility reuse
