@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-workflows-guide",
   "title": "Issue Workflows Guide",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Reference guide for the issue workflow family — explains when to use each workflow, how they compose from shared sub-dossiers, and available flags",
@@ -25,16 +25,16 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "last_updated": "2026-08-24",
+  "last_updated": "2026-08-25",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c7b2790ca6f4ca68097f195f3ff79ab625be89ebb3dfe83c35bca0d2ecc60e8a"
+    "hash": "a860c049fe6f7a9c3ab1d4f90d810f985f24d35b450566496587a9f02e38209a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "IzSUUa8u8FKbttHaftr2NLxwh+T1O1BOy0EyvkcXFPw4qV1a+0FpQytFUkf0R5EoPbroDAvkE5x8TtKUT3x1BQ==",
+    "signature": "AEJSV4gMLctopmTJ9qo/dFqC0eHQtTjmp9Ms0Vw+4M2zokSrQPNowUOR5V5GygOlEmectJIUw5bNQiuesJm+Aw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T06:49:22.811Z",
+    "signed_at": "2026-08-25T06:10:39.467Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -145,3 +145,16 @@ The `report-issue` sub-dossier produces:
 - **Dev/Ops Implications**: new env vars, commands, schema changes, dependencies
 - **Review Results**: fixed findings, escalated issues, clean categories
 - Posted to both conversation and PR comment
+
+## Design rationale (moved from the executing dossiers)
+
+The dossiers carry the rules; the reasons live here.
+- **Verification buys quality, not the generator's raw strength** — why full-cycle routes by role (mechanical cheapest, generation by risk, judgment strongest). The trade: occasional wall-clock loss to a redispatch for large cost cuts, with the runstate CLI, blind conformance, ci-parity, CI and the version-bump guard holding the bar. **Tune tiers** with `ai-dossier runstate stats --issues <set>` every ~20 runs.
+- **Why the WIP sync rule exists.** A resuming agent on another machine cannot reach uncommitted work in a local worktree, and a milestone recording a local `worktree=` path is worthless to it — hence origin/<branch> is the durable work copy, the issue the durable state copy.
+- **Why milestones are CLI-posted, never hand-written.** The comment is the only run state surviving the session, so it must parse. A hand-written milestone that looks right but parses wrong makes the run unresumable; the raw `<!-- runstate:v1 -->` format is reader documentation, not a template.
+- **Pool `gc` deleted 29 developer worktrees** (2026-08-23): the pool directory is shared with developer worktrees and `@ai-dossier/worktree-pool` ≤ 0.5.0 removed everything it did not create (ai-dossier#453). Hence `status`/`claim`/`return`/`replenish`/`detect` only, always `@^0.5.1`; maintenance is a human task.
+- **Rename-then-repair.** Repurposing renames a worktree's directory, breaking git's internal tracking; `git worktree repair` fixes it.
+- **Merged is not shipped.** Where a bot token merges, GitHub does not fire `on: push`, so the deploy never runs on its own — four PRs merged green, zero deploys, 2026-07-17 (imboard#2714). That release gap is why ship-issue has Step 6c and the report's `Shipped` line is mandatory.
+- **Review is report-then-apply because parallel writers collide.** Two agents each "fixing" one problem add their own helper; the loser's ships uncalled as dead code (ai-dossier#447). One serial applier is the fix.
+- **Cleanup and duration must be verified, not claimed.** A 63-second "full review" and an untrue `cleanup=pool_returned` both looked fine in the trail (imboard#3692) — hence review's duration floor and ship's confirm-before-claiming rule.
+- **Detached ship economics.** A parked PR costs nothing to hold; an agent waiting ~20 min on CI costs a concurrency slot. So the run ends at `awaiting-merge` and a cheap tail run does teardown + report — why fleet dispatches detached, and why a quiet fleet agent is normal.
