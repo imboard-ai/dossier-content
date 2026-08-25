@@ -2,10 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Implement Issue — Code and Test",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-08-24",
+  "last_updated": "2026-08-25",
   "objective": "Implement the solution described in the planning document, run tests, and auto-fix lint issues",
   "category": [
     "development"
@@ -53,13 +53,13 @@
   "name": "implement-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "ff4a8d9baa711919d151e16fd6d16fb570a2a933b87222f170c84383d864e27e"
+    "hash": "e08182c85f48ecc7c36adbeff5ce9022f5f641d681d411915197229ccc3b2e36"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "loL26IDzcjXzFOlc8J/tQY5uJ9oWNPcPcVASHo2ZIPDRRToV0QjMRJzPhalKOMcsh9bXBuxvP69f163NYdxbBw==",
+    "signature": "kHLJ+CUte2LwY2dhVhRoYmuhxmI5J3wlnlVoki2cLosyUaEBIh4/G5ghxIseIvms8E1cQLHB/e7aotunE1glBQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T09:01:54.260Z",
+    "signed_at": "2026-08-25T06:10:38.727Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -83,12 +83,7 @@ Implement the solution described in the planning document. Code the changes, run
 
 ### Step 1: Read the Plan
 
-Read the planning file at `planning_file` path. Extract:
-
-- The approach (what to implement)
-- Files to modify
-- Reusable code to leverage
-- Test strategy
+Read `planning_file`. Extract: the approach, files to modify, reusable code to leverage, the test strategy.
 
 ### Step 2: Implement
 
@@ -101,9 +96,9 @@ Read the planning file at `planning_file` path. Extract:
 
 **Before building**, run the project's auto-fixer to avoid lint iteration loops.
 
-**If `scripts/ci-parity.sh` exists in the repo, run `bash scripts/ci-parity.sh` instead of detecting the toolchain.** It is the project's own definition of what CI enforces. Record `ci_parity=pass` if it passed first time, `ci_parity=fail-then-fixed` if you had to fix and re-run, `ci_parity=skipped` if the script does not exist (then use the detection fallback below, as today). Carry the value to the runstate milestone.
+**If `scripts/ci-parity.sh` exists, run `bash scripts/ci-parity.sh` instead of detecting the toolchain** — it is the project's own definition of what CI enforces. Record `ci_parity=pass` (passed first time), `fail-then-fixed` (you fixed and re-ran), or `skipped` (no script — then use the fallback below), and carry it to the runstate milestone.
 
-**If no ci-parity script, prefer the project's combined script.** Grep `package.json` / `Makefile` for a single script that bundles everything CI runs — common names: `hygiene`, `hygiene:ci`, `check`, `lint:fix`, `format`, `precommit`. If one exists, run it (or its `:fix` / `:write` variant) — this is the single source of truth and matches what CI will check.
+**If no ci-parity script, prefer the project's combined script.** Grep `package.json` / `Makefile` for one script bundling everything CI runs — `hygiene`, `hygiene:ci`, `check`, `lint:fix`, `format`, `precommit`. Run it (or its `:fix` / `:write` variant): single source of truth, matching what CI checks.
 
 **If no combined script, detect the toolchain and run ALL configured fixers** — running only the linter when the project also uses a separate formatter is the #1 reason CI hygiene fails after local checks pass:
 
@@ -116,8 +111,8 @@ Check config files to identify the toolchain: `biome.json`, `.eslintrc*` / `esli
 
 ### Step 4: Test
 
-1. **Detect test framework**: Look for jest.config, vitest.config, .mocharc, pytest.ini, or test scripts in package.json / pyproject.toml
-2. **If tests exist for changed files** — run them. Fix failures (max 2 attempts). If still failing with unclear path, escalate to user.
+1. **Detect the test framework**: jest.config, vitest.config, .mocharc, pytest.ini, or test scripts in package.json / pyproject.toml
+2. **If tests exist for changed files** — run them, fixing failures (max 2 attempts). Still failing with no clear path → escalate to user.
 3. **If no tests exist for the changed code** — create focused unit tests:
    - Test the public API of changed/new modules
    - Cover happy path + key edge cases + error paths
@@ -140,20 +135,17 @@ Check config files to identify the toolchain: `biome.json`, `.eslintrc*` / `esli
 
 1. Run lint auto-fixer one more time after tests (test creation may introduce lint issues) — same commands as Step 3.
 
-2. **Verify in CI-check mode before reporting complete.** Run the same checks CI will run, in check (read-only) mode — if anything reports issues that the fixer didn't resolve, fix manually before continuing. CI WILL fail otherwise.
+2. **Verify in CI-check mode before reporting complete.** Run the same checks CI runs, read-only; fix anything the auto-fixer didn't resolve before continuing. CI WILL fail otherwise.
    - If `scripts/ci-parity.sh` exists, run `bash scripts/ci-parity.sh` — it is the authority; update `ci_parity` accordingly.
    - Otherwise prefer the project's CI script if one exists (e.g., `npm run hygiene:ci`, `npm run check`).
-   - Otherwise run check-mode equivalents of every tool in Step 3:
-     - Biome: `npx biome check .`
-     - ESLint + Prettier: `npx eslint . && npx prettier --check .`
-     - Ruff: `ruff check . && ruff format --check .`
+   - Otherwise run check-mode equivalents of every tool in Step 3 — Biome: `npx biome check .`; ESLint + Prettier: `npx eslint . && npx prettier --check .`; Ruff: `ruff check . && ruff format --check .`
    - Also run typecheck if the project has one (`npx tsc --noEmit`, `mypy .`, etc.) — auto-fix doesn't catch type errors.
 
-3. **If this change added a NEW package / workspace / module**, confirm its typecheck and tests are wired into the PR CI pipeline — not just runnable locally. A package that CI never typechecks or tests is a silent blind spot that breaks only under feature pressure later. If the CI wiring is missing and you can add it, do so in this change; otherwise record it in the output as an explicit follow-up.
+3. **If this change added a NEW package / workspace / module**, confirm its typecheck and tests are wired into the PR CI pipeline, not just runnable locally — a package CI never checks is a silent blind spot. Add the wiring in this change if you can; otherwise record it in the output as an explicit follow-up.
 
 ### Step 6: Output
 
-Report what was done:
+Report what was done, and list the changed files with `git diff --name-only`:
 
 ```
 Implementation complete.
@@ -162,29 +154,16 @@ Tests: <created N new / ran N existing> — all passing
 Pre-existing failures: <count ignored or "none">
 ```
 
-List the changed files:
-
-```bash
-git diff --name-only
-```
-
 ### Step 6b: Sync to Origin
 
 Before posting the milestone, commit everything and push so origin has the durable copy of this phase's work (WIP sync rule — see full-cycle-issue's Runstate Milestones):
 
 ```bash
 git add -A && git commit -m "wip(implement): #<issue_number> <slug> [skip ci]" && git push
+git rev-parse --short HEAD   # note the pushed sha for the milestone
 ```
 
-`git add -A` respects `.gitignore` — never force-add ignored files (`.env` etc). Commit only if there are changes.
-
-If this phase is ending `blocked` or a tests-failing partial state rather than clean `done`, STILL commit and push whatever exists, with message `wip(implement): partial — <reason> [skip ci]` — do this before posting the `status=blocked` milestone too.
-
-Note the pushed sha for the milestone:
-
-```bash
-git rev-parse --short HEAD
-```
+`git add -A` respects `.gitignore` — never force-add ignored files (`.env` etc). Commit only if there are changes. If the phase is ending `blocked` or tests-failing-partial rather than clean `done`, STILL commit and push whatever exists as `wip(implement): partial — <reason> [skip ci]`, before posting the `status=blocked` milestone.
 
 ### Step 7: Runstate Milestone
 
@@ -199,7 +178,7 @@ ai-dossier runstate post --issue <issue_number> --phase implement --status done 
   --kv ci_parity=pass|fail-then-fixed|skipped
 ```
 
-The CLI stamps `at=` and computes `next=review` — do not pass either. It validates phase, status, and keys and refuses a malformed milestone; never hand-write the comment instead. On an aborted phase: `--status blocked --kv reason=<short-slug>`. `head=` is the pushed sha from Step 6b (`git rev-parse --short HEAD` after the push) — never a `-dirty` suffix; by protocol there is no uncommitted work left when this milestone posts. Values contain no spaces (use `-` or `,`); paths are absolute.
+Let the CLI stamp `at=` and compute `next=review` — do not pass either; never hand-write the comment. `head=` is the pushed sha from Step 6b (`git rev-parse --short HEAD` after the push) — never a `-dirty` suffix; by protocol there is no uncommitted work left when this milestone posts.
 
 ## Output
 
@@ -212,10 +191,8 @@ The CLI stamps `at=` and computes `next=review` — do not pass either. It valid
 
 ## Validation
 
-- [ ] Planning file was read and approach was followed
-- [ ] Implementation addresses the issue requirements
-- [ ] Existing code patterns were followed
-- [ ] Reusable code from the plan was leveraged (not re-implemented)
+- [ ] Planning file was read and its approach followed; implementation addresses the issue requirements
+- [ ] Existing code patterns were followed; reusable code from the plan was leveraged (not re-implemented)
 - [ ] Lint auto-fixer was run before AND after testing
 - [ ] Tests exist and pass for changed code (created if missing)
 - [ ] Any new/changed backend registry route ships with an integration test in the same PR (route-coverage ratchet stays green)
@@ -229,12 +206,10 @@ The CLI stamps `at=` and computes `next=review` — do not pass either. It valid
 
 ## Troubleshooting
 
-**No test framework detected**: Default to vitest (Node.js) or pytest (Python); install if needed.
-
-**Pre-existing test failures**: Run tests on the base branch to confirm. Only fix failures caused by your changes.
-
-**Lint auto-fix breaks code**: Review the changes — some auto-fixes may be incorrect. Revert problematic auto-fixes.
-
-**Tests fail after 2 attempts**: Escalate to user — may need design discussion.
-
-**ESLint passes locally but CI hygiene fails on Prettier**: You skipped Step 3's "ESLint + Prettier are two tools, run BOTH" rule. ESLint does not format. Re-run `npx prettier --write .` then verify with `npx prettier --check .`.
+| Symptom | Fix |
+|---|---|
+| No test framework detected | Default to vitest (Node.js) or pytest (Python); install if needed. |
+| Pre-existing test failures | Run tests on the base branch to confirm. Only fix failures caused by your changes. |
+| Lint auto-fix breaks code | Review the changes — some auto-fixes may be incorrect. Revert problematic auto-fixes. |
+| Tests fail after 2 attempts | Escalate to user — may need design discussion. |
+| ESLint passes locally but CI hygiene fails on Prettier | You skipped Step 3's "ESLint + Prettier are two tools, run BOTH" rule. ESLint does not format. Re-run `npx prettier --write .` then verify with `npx prettier --check .`. |
