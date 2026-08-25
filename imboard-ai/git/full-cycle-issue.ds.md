@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.12.2",
+  "version": "3.12.3",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-25",
@@ -74,13 +74,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "69254186dbca9150210c6aa53d69d9378f79cbeca383ce0a4e8e9c5a58bc603a"
+    "hash": "955a49e93ab9aa270da9431aec8fb7f47ef46395d9af06345c8d3ce457e0bade"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "Z8DV1pMUyoUvH5+yUF/ZzjhGwryA+K3wWxeHtRjltginqLpbNNC8TKug0OwAlKcfm/NAhGHOY03T5dyM4u1MDQ==",
+    "signature": "fEb6cRHrRwtm0+qsRrRrvRwoMFJNXahe8cNTxZSdbDY6ie8rn061acE2WJ33gt/SSAIHQ7B08qRdHRKJvBghBw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T19:26:57.349Z",
+    "signed_at": "2026-08-25T20:14:34.603Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -149,7 +149,7 @@ Per-phase `--kv` keys:
 | setup | done / blocked | `branch=` `worktree=<abs path>` `pool_claimed=true\|false` `base_branch=` `remote=pushed` |
 | plan | done / blocked | `planning=<abs path>` `head=<short sha of base at plan time>` `open_questions=<n>` `visual_review=true\|false` |
 | implement | done / blocked | `head=<short sha>` `files=<n>` `tests_added=<n>` `tests_run=<n>` `ci_parity=pass\|fail-then-fixed\|blocked-external\|skipped` |
-| review | done / partial / blocked | `head=` `fixed=<n>` `escalated=<n>` `tier=docs\|small\|full` `agents_done=<comma list>` `agents_pending=<comma list or none>` (lists cover only the tier's agents) |
+| review | done / partial / blocked | `head=` `fixed=<n>` `escalated=<n>` `tier=micro\|docs\|small\|full` `agents_done=<comma list>` `agents_pending=<comma list or none>` (lists cover only the tier's agents) |
 | ship (1st, BEFORE the CI/merge wait) | awaiting-merge | `pr=<n>` `head=<pushed sha>` `ci_fix_attempts=0` |
 | ship (2nd, after merge + teardown) | done / blocked | `pr=` `merge_commit=` `ci_fix_attempts=<n>` `cleanup=pool_returned\|worktree_removed\|skipped` |
 | report | done | `pr=` `traps_added=<n>` |
@@ -222,7 +222,7 @@ Always runs — it determines `resume_from`.
 **Skip if `resume_from` is later than this phase.**
 
 1. Run `ai-dossier run imboard-ai/git/review-issue`, passing the issue number and `run_id`.
-2. **This is a tiered review (2–7 report-only agents + serial apply), not a fixed parallel fan-out.** review-issue picks the `docs`/`small`/`full` tier and applies fixes itself; no agent edits files. Expect `tier=` and agent lists covering only that tier in the milestone.
+2. **This is a tiered review (1–7 report-only agents + serial apply), not a fixed parallel fan-out.** review-issue applies a risk floor then per-dimension relevance (`micro`/`docs`/`small`/`full`) and applies fixes itself; no agent edits files. Expect `tier=` and agent lists covering only that tier in the milestone.
 3. Collect `review_tier`, `review_fixed`, `review_escalated`, `review_clean`, `ac_results` (per-AC checklist — pass through to Ship for the PR body).
 4. **If `review_escalated` is non-empty: apply the Guiding Principle hand-off and STOP — do not proceed to Phase 5.** review-issue restricts escalation to findings that genuinely need a product/business decision, so reaching this step means a real decision is needed, not a fan-out of side issues. List each escalated finding in the comment (file/lines, description, why it needs a human call), grouped by category if more than one.
 
