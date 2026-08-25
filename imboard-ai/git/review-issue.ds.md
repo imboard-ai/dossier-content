@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-25",
@@ -47,13 +47,13 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "4f06086681a09f2fedbebaf355a4c044f5e6724e7445764db6c52e542aebb5ab"
+    "hash": "f45cbd3191d13d94594bef117633e966670144095e98903f7cb1d9b22fe90bb3"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "YNbYfZpVB8cDpat+DHnwIwZxoQbCgYavS8FzXULByLbPw9p3SyUS64t9kndXyfATQ9Suawyp8dXQ/ayAlFEPAA==",
+    "signature": "cNh61EEX8Zg5fqVUfncKrVbqPtKrhQc2P6t5f8+HWhU9iKmv3d0B7k3zaA0/bAbDXtS8GfQjGWUvPOXu2TzCCg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T07:08:44.581Z",
+    "signed_at": "2026-08-25T20:14:18.422Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -96,21 +96,30 @@ gh issue view <issue_number> --json comments \
 
 Parse the `ac<n>=` lines from that milestone (written verbatim, spaces included — see plan-issue's runstate milestone; match case-insensitively, since milestones from runs before CLI 0.10.0 wrote `AC<n>=`). This is the Acceptance Criteria list Agent 7 verifies against. If no such milestone exists or it has zero `ac<n>=` lines (e.g. a refactor/infra issue where plan-issue judged AC not applicable), skip Agent 7 entirely and report `ac_total=0`.
 
-### Step 2c: Select the Review Tier
+### Step 2c: Select the Review Agents (risk floor, then relevance)
 
-Not every diff earns seven agents. Compute the tier from `git diff <base_branch>... --stat` plus Step 2's changed-file list:
+Not every diff earns seven agents — and not every dimension applies to every diff. Two stages, from `git diff <base_branch>... --stat` plus Step 2's changed-file list:
 
-- **docs** — every changed file is documentation (`*.md`, anything under `docs/`, or comments-only changes). Agents: **Conformance + Documentation**.
-- **small** — ≤3 changed files AND ≤150 changed lines AND no sensitive path. Agents: **Conformance + DRY + Maintainability**.
-- **full** — everything else, and ALWAYS when any changed path touches a sensitive area: auth, payment/billing, migrations, `.github/**`, security, crypto, secrets, infra/terraform. Agents: **all 7**.
+**Stage 1 — risk floor.** Any changed path touching a sensitive area (auth, payment/billing, migrations, `.github/**`, security, crypto, secrets, infra/terraform) → tier `full`, **all 7 agents**, regardless of size. Stop here.
 
-A sensitive path forces `full` regardless of size — a three-line migration or workflow edit gets the whole set.
+**Stage 2 — relevance selection.** Otherwise, Conformance ALWAYS runs (it is the trust anchor; it drops out only when Step 2b found no AC list), and each other agent runs only if its trigger fires:
 
-State the tier and why in one line before launching, e.g. `Tier: small (2 files, 41 lines, no sensitive paths) — running conformance, dry, maintainability`. `agents_done`/`agents_pending` list only the tier's agents, and the milestone carries `tier=`. (Agent 7 drops out of any tier when Step 2b found no AC list — the tier's remaining agents run as usual.)
+| Agent | Runs only if the diff… |
+|---|---|
+| Documentation | touches `*.md`/`docs/`, a README'd surface, or changes public/user-visible behavior |
+| Security | touches input handling, subprocess/shell execution, network calls, auth, secrets, deps/lockfiles |
+| DRY | adds > 30 lines of code |
+| Maintainability | changes > 30 lines or > 2 files of code |
+| Supportability | touches error paths, logging, retries, or adds an operation someone will run/debug |
+| Convention/Contract | changes a public API, schema, CLI flag, or cross-package contract |
+
+Name the tier by the resulting set: **micro** (Conformance only — typical for a ≤20-line single-file tweak with no triggers), **docs** (Conformance + Documentation), **small** (2–3 agents), **full** (all 7). A trigger you are unsure about fires — uncertainty selects the agent, it never deselects it.
+
+State the selection and why in one line before launching, e.g. `Tier: micro (1 file, 9 lines, shell — security trigger fired? no: no input/exec change) — running conformance only`. `agents_done`/`agents_pending` list only the selected agents; the milestone carries `tier=micro|docs|small|full`.
 
 ### Step 2d: Duration Sanity Floor
 
-A review that finishes implausibly fast was not performed: full tier < 5 minutes, small tier < 2 minutes (docs tier has no floor). If the floor is violated, the review is INVALID regardless of its findings — redo the review once at the strongest available tier; record `review_redone=true` in the milestone. (imboard#3692)
+A review that finishes implausibly fast was not performed: full tier < 5 minutes, small tier < 2 minutes (docs and micro tiers have no floor). If the floor is violated, the review is INVALID regardless of its findings — redo the review once at the strongest available tier; record `review_redone=true` in the milestone. (imboard#3692)
 
 ### Step 3: Run the Tier's Review Agents in Parallel
 
