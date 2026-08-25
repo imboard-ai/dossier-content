@@ -485,7 +485,7 @@
     {
       "name": "imboard-ai/git/plan-issue",
       "title": "Plan Issue — Rich Planning Document",
-      "version": "1.5.0",
+      "version": "1.6.0",
       "path": "imboard-ai/git/plan-issue.ds.md",
       "category": [
         "development"
