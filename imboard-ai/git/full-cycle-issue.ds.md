@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.12.1",
+  "version": "3.12.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-25",
@@ -74,13 +74,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6b18b8cc57b4138ad0b1d6e7a336ab0d9f918a55aa8d94adbcf633b13242c724"
+    "hash": "69254186dbca9150210c6aa53d69d9378f79cbeca383ce0a4e8e9c5a58bc603a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "i4vUjByx+yIeSEreFrqoN70Die9bypJceFSOnBDkLDMUyNsqQlPi57BtqYOe04WWjy1fM23q9sBFAvuUreHFAw==",
+    "signature": "Z8DV1pMUyoUvH5+yUF/ZzjhGwryA+K3wWxeHtRjltginqLpbNNC8TKug0OwAlKcfm/NAhGHOY03T5dyM4u1MDQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T07:08:43.470Z",
+    "signed_at": "2026-08-25T19:26:57.349Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -148,7 +148,7 @@ Per-phase `--kv` keys:
 | gate | done / blocked | `base_branch=` `warnings=<n>` `model=<model id of the executing agent>` (blocked: `reason=closed\|decomposed\|needs-clarification\|epic\|open-dependency-<N>`) |
 | setup | done / blocked | `branch=` `worktree=<abs path>` `pool_claimed=true\|false` `base_branch=` `remote=pushed` |
 | plan | done / blocked | `planning=<abs path>` `head=<short sha of base at plan time>` `open_questions=<n>` `visual_review=true\|false` |
-| implement | done / blocked | `head=<short sha>` `files=<n>` `tests_added=<n>` `tests_run=<n>` `ci_parity=pass\|fail-then-fixed\|skipped` |
+| implement | done / blocked | `head=<short sha>` `files=<n>` `tests_added=<n>` `tests_run=<n>` `ci_parity=pass\|fail-then-fixed\|blocked-external\|skipped` |
 | review | done / partial / blocked | `head=` `fixed=<n>` `escalated=<n>` `tier=docs\|small\|full` `agents_done=<comma list>` `agents_pending=<comma list or none>` (lists cover only the tier's agents) |
 | ship (1st, BEFORE the CI/merge wait) | awaiting-merge | `pr=<n>` `head=<pushed sha>` `ci_fix_attempts=0` |
 | ship (2nd, after merge + teardown) | done / blocked | `pr=` `merge_commit=` `ci_fix_attempts=<n>` `cleanup=pool_returned\|worktree_removed\|skipped` |
