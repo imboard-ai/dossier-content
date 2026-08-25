@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.12.0",
+  "version": "3.12.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-25",
@@ -74,13 +74,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "b7f6721d343a18f8a0f23757b0b913f522c31d3f3ec6b3930e9ade579404a0b4"
+    "hash": "6b18b8cc57b4138ad0b1d6e7a336ab0d9f918a55aa8d94adbcf633b13242c724"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "swwLHWN7aYk+ZFTofzbJc2GUnLUtACEl8teYC1rk7gD9y+eJZG5agAMRVj3ctKH+Rbd4uqrbKnU1QE+Qu5BOCw==",
+    "signature": "i4vUjByx+yIeSEreFrqoN70Die9bypJceFSOnBDkLDMUyNsqQlPi57BtqYOe04WWjy1fM23q9sBFAvuUreHFAw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T06:10:36.342Z",
+    "signed_at": "2026-08-25T07:08:43.470Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -189,7 +189,7 @@ Always runs — it determines `resume_from`.
 
 **Skip if `resume_from` is later than this phase.**
 
-1. **Pre-flight: clean stale worktrees.** `git worktree list`; for each stale one (on `main` but not repo root, or branch merged/deleted): `git worktree remove <path> --force` and `git worktree prune`.
+1. **Pre-flight: clean stale worktrees.** `git worktree list`; a worktree is stale ONLY if ALL hold: its branch is gone from the remote (`git ls-remote --exit-code origin <branch>` fails) AND `git -C <wt> status --porcelain` is empty AND it is not pool-managed (not in `.pool-state.json`) AND its issue has no mid-run runstate trail. In squash-merge repos `merge-base --is-ancestor` is meaningless — never use it as a staleness signal. When unsure, leave the worktree; `git worktree prune` alone is always safe.
 2. **Claim the issue** — make it visible that work is in progress:
    ```bash
    gh label create "in-progress" --color "FBCA04" --description "Actively being worked on" --force
@@ -236,6 +236,7 @@ Always runs — it determines `resume_from`.
 2. Pass through: issue number, base_branch, worktree_path, original_dir, pool_claimed, `run_id`, `ship_mode`, `ac_results` (from Phase 4 — builds the PR body's Acceptance Criteria section).
 2b. **`ship_mode=detached` ends the run here** (ship-issue Step 3c): PR opened, parked on a confirmed `auto-merge` label, `awaiting-merge` milestone posted, run STOPS — no CI wait, no merge, no teardown, **no Phase 6**. The worktree is left in place (work already pushed). gate-issue maps a merged PR on that milestone to `resume_from=ship-teardown`, so a later `full cycle issue <n>` re-enters at teardown and runs Phase 6. Items 3–7 are the **attached** path (and what that tail run executes).
 3. **Opening a PR is NOT completion, and neither is merging it. You are done when the merge has REACHED PRODUCTION** (or you have a hard blocker you escalated). A PR left green-but-unmerged is a FAILED run; a PR merged but never deployed is code live to nobody — see ship-issue Step 6c.
+**Merge authority**: items 4–5 apply ONLY when the repo has an auto-merge watcher (`.github/workflows/auto-merge-watcher.yml` exists). Without one, attached mode self-merges per ship-issue Step 6 and these items are moot.
 4. **Both ship milestones still get posted** on the watcher path: `awaiting-merge` when the PR opens (ship Step 3b), `done` once merge and teardown are confirmed (Step 8) — or `blocked` with a `reason=` if the watcher blocks or the PR is unmerged at hand-off.
 5. **Hand off the merge to the auto-merge watcher — do NOT babysit CI and do NOT merge the PR yourself.** An `auto-merge-watcher` Action (every 5 min) squash-merges green, clean PRs server-side and deletes the branch. Your terminal action: apply and **confirm** the `auto-merge` label (ship Step 3c items 1–2 — retry once on failure, then escalate as a hard blocker; do NOT fall back to self-merging / CI polling), then exit the polling loop. Do NOT re-run `gh pr checks` / `statusCheckRollup` in a loop, do NOT `gh pr merge` yourself, do NOT background a CI monitor.
 6. **Confirm the merge before reporting done** (passive, not CI babysitting): poll `gh pr view <pr_number> --json mergedAt` every ~3–5 min, up to ~25 min, until non-null. ship Step 6b must pass, then Step 6c ALSO — a successful deploy must carry `MERGE_COMMIT`, dispatched by you if nothing else does. Where a bot token merges, GitHub does not fire `on: push`, so the deploy NEVER runs by itself. Do not confuse "merged" with "shipped".
