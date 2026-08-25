@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "report-issue",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment",
@@ -76,13 +76,13 @@
   "last_updated": "2026-08-25",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "1dfe6749ef2e593d6a7e19636bf329aee0694d5ec3cf0f7570e2d4593bfe83bd"
+    "hash": "e9779eb1647cc113a7ec8164809035d1d45bfd0c59221be81b467c761fcd6042"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "ZifjQ84I/S1Xg3O7vwkItHeIDklNRPOkITw4AGCcHEoaPYsih6/8fn2+0s5H8noPYXG5kJA6sHA15Zk3JldrAw==",
+    "signature": "PsgGVVcGFNK49ffyZUMcQvWfNQCXcOaNRJEfzeJcQYDmoGZIOdTP9f+QpPv+QTUxmFBS7nxsXDj83sf+gRJnDQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T06:10:39.103Z",
+    "signed_at": "2026-08-25T19:26:56.100Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -225,7 +225,7 @@ gh issue view <issue_number> --json comments \
 
 Read `ci_fix_attempts` from the last `phase=ship status=done` milestone, and `ci_parity` from the `phase=implement` milestone.
 
-If the repo has `docs/agent-traps.md` AND (`ci_fix_attempts` ≥ 1 OR `ci_parity=fail-then-fixed`), you MUST append exactly one row: `| <the literal error string a future agent would grep> | <what actually went wrong> | <the fix, as a command or one sentence> | PR #<n> |`. Commit it on a tiny follow-up branch and open a PR (`docs(traps): …`), or if the repo allows, include it before merge. Otherwise `traps_added=0`. If the file does not exist, skip and note it.
+If the repo has `docs/agent-traps.md` AND (`ci_fix_attempts` ≥ 1 OR `ci_parity=fail-then-fixed` OR the run surfaced a finding a future agent would grep for — a masked failure mode, a vacuous test pattern, a tool workaround), you MUST append one row per qualifying finding (mechanical triggers guarantee at least one; judgment findings add more — err toward writing the row): `| <the literal error string a future agent would grep> | <what actually went wrong> | <the fix, as a command or one sentence> | PR #<n> |`. Commit it on a tiny follow-up branch and open a PR (`docs(traps): …`), or if the repo allows, include it before merge. Otherwise `traps_added=0`. If the file does not exist, skip and note it.
 
 ### Step 4c: Extract learnings + delete PLANNING file
 
@@ -265,7 +265,7 @@ Let the CLI stamp `at=` and compute `next=done` — do not pass either; never ha
 - [ ] Full report printed to conversation; condensed report posted as PR comment
 - [ ] If base_branch != main: epic sub-issue note included
 - [ ] Review results accurately reflect what was fixed and clean
-- [ ] Trap index write-back checked: if `docs/agent-traps.md` exists and (`ci_fix_attempts` ≥ 1 OR `ci_parity=fail-then-fixed`), exactly one row was appended and shipped via a follow-up PR or pre-merge commit; otherwise `traps_added=0`
+- [ ] Trap index write-back checked: if `docs/agent-traps.md` exists and (`ci_fix_attempts` ≥ 1 OR `ci_parity=fail-then-fixed`), a row per qualifying finding (mechanical OR judgment-flagged) was appended and shipped via a follow-up PR or pre-merge commit; otherwise `traps_added=0`
 - [ ] `PLANNING-<n>-*.md` was deleted from the worktree if still present
 - [ ] Runstate milestone comment was posted to the issue
 
