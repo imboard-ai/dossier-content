@@ -2,10 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-08-25",
+  "last_updated": "2026-08-26",
   "objective": "Run a tiered set of report-only review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract, Conformance) on the branch diff, then dedupe their findings and apply the fixes serially",
   "category": [
     "development"
@@ -47,7 +47,7 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "f45cbd3191d13d94594bef117633e966670144095e98903f7cb1d9b22fe90bb3"
+    "hash": "4287b88411a24d57b7eecc8d19a0d62ab295a960bee53361d94df52ab0265034"
   },
   "signature": {
     "algorithm": "ed25519",
@@ -124,6 +124,8 @@ A review that finishes implausibly fast was not performed: full tier < 5 minutes
 ### Step 3: Run the Tier's Review Agents in Parallel
 
 Launch the tier's agents simultaneously using the Agent tool, each receiving the changed-files list and operating independently. Agents outside the tier do not run at all — do not launch them "just in case". **All review agents are report-only**: they return findings and never touch the working tree; Step 4 applies the fixes.
+
+**Do NOT pass a `name:` parameter to any of these Agent calls.** Naming an agent puts it on the named-teammate/mailbox delivery path — the agent still runs and finishes normally, but its final report is delivered to a mailbox instead of returned as this call's tool_result, and a review-phase runner (itself usually a dispatched subagent) has no inbox-read tool to retrieve it. The observed failure mode is a run that waits 30+ minutes for review agents that already finished minutes ago, with nothing to show for it. Issue all of this step's Agent calls unnamed, in a single batch (one assistant turn, multiple tool calls) — each then runs concurrently and returns its findings directly as a normal tool_result, which is what Step 4 consumes. Confirmed via RCA on two independent full-cycle-issue runs (imboard-monorepo issues #3723, #3762 — 2026-08-25/26): all 7 named teammates completed in 2–7 minutes each time, but zero results ever reached the spawning run.
 
 ---
 
@@ -336,3 +338,4 @@ Let the CLI stamp `at=` and compute `next=ship` — do not pass either; never ha
 | Fix breaks tests | Revert that fix (`git checkout -- <file>`, re-apply the others) and reclassify it as Escalate, explaining the test failure. |
 | Too many escalated findings | If more than 2, re-read each against the three-part test. Most findings that feel like escalations are "Fix now" — code quality, naming, missing validation and documentation gaps are always fixed directly. |
 | Lint auto-fixer introduces changes | Expected. Skim the auto-fix diff to ensure nothing was mangled, then proceed. |
+| Review agents "running" for 30+ minutes with no findings | You (or a prior run) passed `name:` to the Agent tool in Step 3 — that routes to the mailbox path, not a returned tool_result. Do not wait it out. If you still have context on this run, redispatch the pending agents WITHOUT `name:`, in one batch. If you cannot re-dispatch (e.g. you are a fresh resumed run with no handle on the stuck agents), perform the review yourself across the pending tier's dimensions and record `review_substituted=dispatch-nonresponsive` in the milestone rather than blocking further. |
