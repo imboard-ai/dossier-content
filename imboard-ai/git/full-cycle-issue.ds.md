@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.11.0",
+  "version": "3.12.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-08-24",
+  "last_updated": "2026-08-25",
   "objective": "Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report",
   "category": [
     "development"
@@ -74,13 +74,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "13689e7847e231f955ef48888f7b0673ce7739f97ecaee99cd3826f428b66daf"
+    "hash": "b7f6721d343a18f8a0f23757b0b913f522c31d3f3ec6b3930e9ade579404a0b4"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "X0zDCijMODDEbwt58lXwX+Ne/bHd9uFIXxWlj+ARXp7GowWN5tIKr8dtHuajGypwf8wRGXmEX/12ElIttagsCQ==",
+    "signature": "swwLHWN7aYk+ZFTofzbJc2GUnLUtACEl8teYC1rk7gD9y+eJZG5agAMRVj3ctKH+Rbd4uqrbKnU1QE+Qu5BOCw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T12:33:08.648Z",
+    "signed_at": "2026-08-25T06:10:36.342Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -92,65 +92,41 @@
 
 ## Objective
 
-Take a GitHub issue from start to merged PR autonomously. For small-to-medium issues where requirements are clear. Composed from shared sub-dossiers — each sub-dossier is independently versioned and reusable.
+Take a GitHub issue from start to merged PR autonomously. For small-to-medium issues with clear requirements. Composed from shared, independently versioned sub-dossiers.
 
 ## Guiding Principle
 
-**Do not ask the user interactively, at any phase.** This workflow runs unattended —
-there may be no one present to answer. If the run cannot complete autonomously, STOP
-and hand the decision back through the issue itself; never wait on a reply in this
-conversation.
+**Do not ask the user interactively, at any phase.** This runs unattended — there may be no one present to answer. If the run cannot complete autonomously, STOP and hand the decision back through the issue itself; never wait on a reply in this conversation.
 
-Stop and hand off when:
-- The issue description is too vague to implement
-- A business/product/design decision is genuinely ambiguous — including anything the
-  review phase escalates (Phase 4) or a CI/merge blocker that needs judgment (Phase 5)
-- Tests fail after 2 fix attempts with unclear path forward
-- Merge conflicts require human judgment
+Stop and hand off when: the issue is too vague to implement · a business/product/design decision is genuinely ambiguous, including anything review escalates (Phase 4) or a CI/merge blocker needing judgment (Phase 5) · tests fail after 2 fix attempts with no clear path · merge conflicts require human judgment.
 
-**How to hand off** (the same procedure every time, regardless of which phase triggers it):
-1. Push whatever work exists so nothing is lost; note the branch name in the comment (Step 2 below).
-2. `gh label create decision-pending --color "5319E7" --description "Blocked on a human decision" --force`
-   then `gh issue edit <number> --add-label "decision-pending" --remove-label "in-progress"`.
-3. Post ONE comment on the ORIGINAL issue — never a new issue — stating exactly what
-   decision is needed: file/line references, the options, and enough context that a
-   human (or a future run) can act on it without re-deriving your reasoning.
+**How to hand off** (same procedure every time, whichever phase triggers it):
+1. Push whatever work exists so nothing is lost; note the branch name in the comment (Step 2).
+2. `gh label create decision-pending --color "5319E7" --description "Blocked on a human decision" --force` then `gh issue edit <number> --add-label "decision-pending" --remove-label "in-progress"`.
+3. Post ONE comment on the ORIGINAL issue — never a new issue — stating exactly what decision is needed: file/line references, the options, and enough context that a human (or a future run) can act without re-deriving your reasoning.
 4. End the run. Do NOT open a PR if one doesn't exist yet, and do NOT proceed to Ship or Report.
 
-**Never open a new GitHub issue as a substitute for this.** One issue in, at most that
-same issue updated — with the decision recorded in its comments — never fanned out
-into follow-up issues.
+**Never open a new GitHub issue as a substitute for this.** One issue in, at most that same issue updated — decision recorded in its comments — never fanned out into follow-up issues.
 
-Do NOT ask about (just proceed): file names, branch names, commit messages, PR
-descriptions, whether to proceed, or any other mechanical decision.
+Do NOT ask about (just proceed): file names, branch names, commit messages, PR descriptions, whether to proceed, or any other mechanical decision.
 
-**Ship attachment.** In fleet context ship runs detached — the PR is parked on auto-merge
-and the run ends there (see Phase 5 and `ship_mode`). Solo runs stay attached unless the
-user passes `--detached`.
+**Ship attachment.** In fleet context ship runs detached — PR parked on auto-merge, run ends there (Phase 5, `ship_mode`). Solo runs stay attached unless the user passes `--detached`.
 
 ### Model routing (by role, not by strength)
 
-Quality is bought through verification (runstate CLI, blind conformance, ci-parity, CI, version-bump guard), not through the generator's raw strength. Route accordingly:
-
 | Role | Phases | Tier |
 |---|---|---|
-| Mechanical | gate, setup, ship tail (teardown/merge-confirm), report, fleet supervision | cheapest available — these are CLI calls and templates |
+| Mechanical | gate, setup, ship tail (teardown/merge-confirm), report, fleet supervision | cheapest available — CLI calls and templates |
 | Generation | plan, implement, review agents 1–6, ship (commit/PR/CI-fix) | by issue risk: docs/chore → cheap; standard bug/feature → mid-tier; security, payments/billing, migrations, auth, protocol/schema changes → strong |
-| Judgment | conformance review agent, escalation decisions, fleet dependency/DAG planning | ALWAYS the strongest available — it is the trust anchor and a small fraction of total tokens |
+| Judgment | conformance review agent, escalation decisions, fleet dependency/DAG planning | ALWAYS the strongest available — the trust anchor, a small fraction of total tokens |
 
-**Escalation ladder.** Dispatch at the tier above; redispatch the SAME run one tier stronger (resume protocol carries the work forward) when any of these fire:
-- milestone non-compliance (a phase finished without its milestone and the milestone gate had to backfill),
-- a stall: no new milestone and no new pushed commit for 30+ minutes,
-- conformance `not-met` on the same AC twice,
-- an implausible review (see review-issue's duration floor).
-Cap: two escalations per run, then `status=blocked reason=escalation-cap` and hand off.
-The trade accepted here: occasional wall-clock loss to a redispatch, in exchange for large cost cuts — verification holds the quality bar. Tune tiers with `ai-dossier runstate stats --issues <set>` (per-`model=` breakdown) roughly every 20 runs.
+**Escalation ladder.** Dispatch at the tier above; redispatch the SAME run one tier stronger (resume protocol carries the work forward) on any of: milestone non-compliance (a phase finished without its milestone and the milestone gate had to backfill) · a stall (no new milestone and no new pushed commit for 30+ minutes) · conformance `not-met` on the same AC twice · an implausible review (review-issue's duration floor). Cap: two escalations per run, then `status=blocked reason=escalation-cap` and hand off. (Rationale and tuning cadence: `imboard-ai/git/issue-workflows-guide`.)
 
 ## Runstate Milestones
 
-Every phase ends by posting ONE milestone comment to the GitHub issue. This is the only run state that survives the session — a nested or fleet-dispatched run must post them too.
+Every phase ends by posting ONE milestone comment to the issue — the only run state surviving the session. Nested and fleet-dispatched runs post them too.
 
-**Post milestones ONLY via `ai-dossier runstate post`.** It validates phase/status/keys and refuses malformed milestones. If the command is unavailable, install the CLI (`npm i -g @ai-dossier/cli`) — do not fall back to hand-written comments.
+**Post milestones ONLY via `ai-dossier runstate post`.** It validates phase/status/keys and refuses malformed milestones. If unavailable, install the CLI (`npm i -g @ai-dossier/cli`) — do not fall back to hand-written comments.
 
 ```bash
 ai-dossier runstate post --issue <issue_number> --phase <phase> --status <done|partial|blocked|awaiting-merge> \
@@ -160,21 +136,12 @@ ai-dossier runstate post --issue <issue_number> --phase <phase> --status <done|p
 Rules:
 
 - `run_id` is minted ONCE by gate-issue (`ai-dossier runstate mint --issue <issue_number>`) and passed to every later sub-dossier exactly like `base_branch`.
-- The CLI stamps `at=` itself and computes `next=`. Pass `--next` only where a sub-dossier overrides it — ship's first milestone uses `--next ship`.
+- The CLI stamps `at=` and computes `next=`. Pass `--next` only where a sub-dossier overrides it — ship's first milestone uses `--next ship`.
 - Append-only. Readers take the LAST milestone (`ai-dossier runstate last --issue <n> --json`). Never edit or delete a prior milestone.
-- Values contain no spaces (use `-` or `,`); paths are absolute. The one exception is plan's `ac<n>=` criteria, which are quoted and written verbatim.
+- Values contain no spaces (use `-` or `,`); paths are absolute. The one exception is plan's `ac<n>=` criteria, quoted and verbatim.
 - Posting the milestone is the last step of the phase. If a phase aborts, post `--status blocked --kv reason=<short-slug>` before stopping.
 
-**What the CLI posts — for readers.** This is the raw comment format the command produces. It is documentation of the wire format, not a template to copy: never hand-write one.
-
-```
-<!-- runstate:v1 -->
-phase=<phase> status=<done|partial|blocked|awaiting-merge> run=<run_id> at=<UTC timestamp>
-<phase-specific key=value lines, one per line>
-next=<next phase name or "done">
-```
-
-Per-phase keys — these are the `--kv` keys each phase passes:
+Per-phase `--kv` keys:
 
 | phase | status | keys |
 |---|---|---|
@@ -189,233 +156,114 @@ Per-phase keys — these are the `--kv` keys each phase passes:
 
 `next=` is the following phase: gate → setup → plan → implement → review → ship → report → done.
 
-**Milestone gate (orchestrator duty).** Before starting each phase, confirm the previous phase's milestone exists — sub-dossiers sometimes skip it when run inline:
-
-```bash
-ai-dossier runstate last --issue <issue_number> --json
-```
-
-Inspect `.phase`. If it is not the phase that just finished, post that milestone yourself (`ai-dossier runstate post`) from the outputs you have before continuing. A run with missing milestones cannot be resumed.
+**Milestone gate (orchestrator duty).** Before each phase, run `ai-dossier runstate last --issue <issue_number> --json` and inspect `.phase` — sub-dossiers sometimes skip the milestone when run inline. If it is not the phase that just finished, post it yourself from the outputs you have before continuing; a run with missing milestones cannot be resumed.
 
 ## WIP Sync Rule
 
-**origin/<branch> is the durable copy of the work; the issue is the durable copy of the state.** A phase is not "done" until both are true — a resuming agent on another machine cannot reach uncommitted work sitting only in a local worktree, and a runstate milestone that records a local `worktree=` path is worthless to it otherwise.
+**origin/<branch> is the durable copy of the work; the issue is the durable copy of the state.** A phase is not "done" until both are true.
 
-Every phase that changes the working tree ends by syncing the branch to origin BEFORE posting its milestone: `git add -A && git commit -m "wip(<phase>): <one line> [skip ci]" && git push -u origin <branch>` (commit only if there are changes). `git add -A` respects `.gitignore`; never force-add ignored files (`.env` etc). WIP commits are disposable — ship squash-merges, so they never reach the base branch. The milestone's `head=` is the sha ON ORIGIN (`git rev-parse --short HEAD` after the push), never a `-dirty` suffix.
-
-Concretely, per sub-dossier: setup pushes the freshly created branch (no commit — nothing to commit yet); plan commits+pushes the planning doc; implement commits+pushes everything (even on a `blocked`/partial ending); review commits+pushes any fixes (on `done` and `partial` alike); ship's own commit/push (Step 1-2) is unaffected — it lands on top of the WIP commits, and the eventual squash-merge collapses all of them into one commit on the base branch.
+Every phase that changes the working tree syncs to origin BEFORE posting its milestone: `git add -A && git commit -m "wip(<phase>): <one line> [skip ci]" && git push -u origin <branch>` (commit only if there are changes). `git add -A` respects `.gitignore`; never force-add ignored files (`.env` etc). WIP commits are disposable — ship squash-merges, so they never reach the base branch. The milestone's `head=` is the sha ON ORIGIN (`git rev-parse --short HEAD` after the push), never `-dirty`. Ship's commit lands on top of the WIP commits; the squash-merge collapses them into one.
 
 ## Resuming
 
-Phase order: gate → setup → plan → implement → review → ship → report.
+Phase order: gate → setup → plan → implement → review → ship → report. Skip every phase preceding `resume_from`.
 
-Skip every phase that precedes `resume_from`. When skipping setup, take `branch`, `pool_claimed`, `base_branch` from `resume_context`, then: `git fetch origin <branch>`. If the recorded `worktree=` path exists on THIS machine and its HEAD matches origin, `cd` into it. Otherwise create a fresh one from the synced branch: `git worktree add <repo>/worktrees/<branch-slug> <branch>` (after `git branch --track <branch> origin/<branch>` if needed), run the repo's warmup (pool claim is not applicable — this is an existing branch; use the warmup_dossier or `pnpm install`+build equivalent), and `cd` in (hard gate `pwd | grep -q worktree` still applies). Uncommitted work does not exist by protocol — every phase pushed before its milestone; if you find local uncommitted changes in an inherited worktree, commit and push them as `wip(recovered): [skip ci]` before proceeding. When skipping plan, take `planning` from `resume_context` (the planning-file check now happens here, after the worktree is materialized — see gate-issue's Step 1.5). Review with `agents_pending` → run only those agents. `ship-wait` → enter ship at Step 5 (CI wait) with `pr` from context; `ship-teardown` → enter ship at Step 7 post-merge cleanup.
+**Skipping setup**: take `branch`, `pool_claimed`, `base_branch` from `resume_context`, then `git fetch origin <branch>`. If the recorded `worktree=` path exists on THIS machine and its HEAD matches origin, `cd` in. Otherwise create one from the synced branch — `git worktree add <repo>/worktrees/<branch-slug> <branch>` (after `git branch --track <branch> origin/<branch>` if needed) — run the repo's warmup (pool claim does not apply to an existing branch; use the warmup_dossier or `pnpm install`+build equivalent), and `cd` in (hard gate `pwd | grep -q worktree` still applies). Uncommitted work does not exist by protocol; if an inherited worktree has local changes, commit and push them as `wip(recovered): [skip ci]` first. **Skipping plan**: take `planning` from `resume_context` (the planning-file check happens here, after the worktree is materialized — gate-issue Step 1.5). **Review with `agents_pending`** → run only those agents. **`ship-wait`** → ship Step 5 (CI wait) with `pr` from context; **`ship-teardown`** → ship Step 7 post-merge cleanup.
 
 ## Prerequisites
 
-- [ ] Git is installed and configured
-- [ ] GitHub CLI (gh) is installed and authenticated
+- [ ] Git and GitHub CLI (gh) installed, configured, authenticated
 - [ ] `ai-dossier` CLI >= 0.10.0 — confirm with `ai-dossier runstate --help`; every phase posts its milestone through it
-- [ ] You are in a git repository with GitHub as a remote
-- [ ] You have push access
-
-## Sub-Dossiers Used
-
-This workflow composes the following sub-dossiers in sequence:
-
-| Phase | Sub-Dossier | Purpose |
-|-------|-------------|---------|
-| 0 | `imboard-ai/git/gate-issue` | Safety check — hard blocks and soft warnings |
-| 1 | `imboard-ai/git/setup-issue-workflow` | Branch + worktree + warmup + claim issue |
-| 2 | `imboard-ai/git/plan-issue` | Read issue + explore code + write planning doc |
-| 3 | `imboard-ai/git/implement-issue` | Implement + test + lint |
-| 4 | `imboard-ai/git/review-issue` | Tiered review (2–7 report-only agents + serial apply) |
-| 5 | `imboard-ai/git/ship-issue` | Commit + push + PR + apply `auto-merge` label + confirm merge + teardown |
-| 6 | `imboard-ai/git/report-issue` | Rich completion report |
+- [ ] In a git repository with GitHub as a remote, with push access
 
 ## Actions to Perform
 
 ### Phase 0: Gate
 
-Always runs — this phase determines `resume_from` in the first place, so there is nothing to skip it against.
+Always runs — it determines `resume_from`.
 
-1. Extract the issue number from user input
-2. Run: `ai-dossier run imboard-ai/git/gate-issue`
-3. Provide the issue number
-4. If the gate fails, stop — do NOT proceed
-5. Note the `base_branch` from the gate output
-6. If a `base_branch` parameter was provided in context (and is not `"auto"`), use that instead
-7. Note `run_id` from the gate output; pass it to every subsequent sub-dossier
-8. Note `resume_from`, `run_id`, and `resume_context` from the gate output — see "## Resuming" above for how each later phase uses them
+1. Extract the issue number from user input; run `ai-dossier run imboard-ai/git/gate-issue` with it. If the gate fails, stop — do NOT proceed.
+2. Note `base_branch` (a `base_branch` parameter provided in context, and not `"auto"`, wins instead), `run_id` (pass to every subsequent sub-dossier), `resume_from` and `resume_context` — see "## Resuming".
 
 ### Phase 1: Setup
 
 **Skip if `resume_from` is later than this phase.**
 
-1. **Pre-flight: clean stale worktrees.** Previous runs may have left zombie worktrees:
-   ```bash
-   git worktree list
-   ```
-   For each stale worktree (checking out `main` but is not repo root, or branch was merged/deleted): remove with `git worktree remove <path> --force` and `git worktree prune`.
-
+1. **Pre-flight: clean stale worktrees.** `git worktree list`; for each stale one (on `main` but not repo root, or branch merged/deleted): `git worktree remove <path> --force` and `git worktree prune`.
 2. **Claim the issue** — make it visible that work is in progress:
    ```bash
    gh label create "in-progress" --color "FBCA04" --description "Actively being worked on" --force
    gh issue edit <number> --add-label "in-progress" --add-assignee "@me"
    gh issue comment <number> --body "**Agent pickup** — work started (full-cycle-issue v3.0)"
    ```
-
-3. **Record the original working directory** — you will return here after merge
-
-4. Run: `ai-dossier run imboard-ai/git/setup-issue-workflow`
-   - Pass through `warmup_dossier`, `base_branch`, and `run_id` parameters
-   - When asked where to work, always choose option 1 (new git worktree)
-
-5. Note the worktree path and branch name
-6. Note whether the worktree was claimed from the pool
-7. `cd` into the worktree directory
-
-8. **Verify you are in a worktree** — hard gate:
+3. **Record the original working directory** — you return here after merge.
+4. Run `ai-dossier run imboard-ai/git/setup-issue-workflow`, passing `warmup_dossier`, `base_branch`, `run_id`. When asked where to work, always choose option 1 (new git worktree).
+5. Note the worktree path, branch name, and `pool_claimed`; `cd` into the worktree.
+6. **Verify you are in a worktree** — hard gate:
    ```bash
    pwd | grep -q "worktree" && echo "OK: in worktree" || echo "FAIL: not in worktree"
    ```
    If FAIL: abort, comment on issue, remove in-progress label. Do NOT work in current directory.
-
-9. Update the issue comment with the branch name
+7. Update the issue comment with the branch name.
 
 ### Phase 2: Plan
 
 **Skip if `resume_from` is later than this phase.**
 
-1. Run: `ai-dossier run imboard-ai/git/plan-issue`
-2. Pass through the issue number, base_branch, worktree path, and `run_id`. Also pass `prod_data_access` = "Use the `mongodb-prod` MCP (read-only `count`/`find`/`aggregate`) against the production cluster to confirm a new state/flow actually occurs before building it; 0 occurrences ⇒ don't build, escalate (retro #1632)" — this drives plan-issue's reachability check.
-3. **In full-cycle mode: proceed immediately.** Do not checkpoint with the user. If the issue is genuinely ambiguous, apply the Guiding Principle hand-off (stop, don't ask) rather than guessing. **Exception path is the same, not different:** if the reachability check escalated (a new state shows 0 prod occurrences), that is also a hand-off case — stop and record the decision needed before building; do not build an unreachable state.
+1. Run `ai-dossier run imboard-ai/git/plan-issue`, passing the issue number, base_branch, worktree path, `run_id`, and `prod_data_access` = "Use the `mongodb-prod` MCP (read-only `count`/`find`/`aggregate`) against the production cluster to confirm a new state/flow actually occurs before building it; 0 occurrences ⇒ don't build, escalate (retro #1632)" — this drives plan-issue's reachability check.
+2. **In full-cycle mode: proceed immediately.** Do not checkpoint with the user. If the issue is genuinely ambiguous, apply the Guiding Principle hand-off (stop, don't ask) rather than guessing. **Exception path is the same, not different:** a reachability escalation (new state, 0 prod occurrences) is also a hand-off case — stop and record the decision needed; do not build an unreachable state.
 
 ### Phase 3: Implement
 
-**Skip if `resume_from` is later than this phase.**
-
-1. Run: `ai-dossier run imboard-ai/git/implement-issue`
-2. Pass through the planning file path, base_branch, and `run_id`
+**Skip if `resume_from` is later than this phase.** Run `ai-dossier run imboard-ai/git/implement-issue`, passing the planning file path, base_branch, and `run_id`.
 
 ### Phase 4: Review
 
 **Skip if `resume_from` is later than this phase.**
 
-1. Run: `ai-dossier run imboard-ai/git/review-issue`
-2. Pass through the issue number and `run_id`
-3. **This is a tiered review (2–7 report-only agents + serial apply), not a fixed parallel fan-out.** review-issue picks a `docs` / `small` / `full` tier from the diff (any sensitive path forces `full`), runs only that tier's agents, and those agents report findings without editing; review-issue then dedupes and applies the fixes itself, serially. Expect the milestone to carry `tier=` and agent lists covering only that tier.
-4. Collect the review results: `review_tier`, `review_fixed`, `review_escalated`, `review_clean`, `ac_results` (the per-acceptance-criterion checklist — pass it through to Ship for the PR body)
-5. **If `review_escalated` is non-empty: apply the Guiding Principle hand-off and STOP —
-   do not proceed to Phase 5.** review-issue already restricts escalation to findings
-   that genuinely need a product/business decision (typically 0, rarely more than 2), so
-   reaching this step means a real decision is needed, not a fan-out of side issues. The
-   comment posted to the issue should list each escalated finding (file/lines,
-   description, why it needs a human call), grouped by review category if there is more
-   than one.
+1. Run `ai-dossier run imboard-ai/git/review-issue`, passing the issue number and `run_id`.
+2. **This is a tiered review (2–7 report-only agents + serial apply), not a fixed parallel fan-out.** review-issue picks the `docs`/`small`/`full` tier and applies fixes itself; no agent edits files. Expect `tier=` and agent lists covering only that tier in the milestone.
+3. Collect `review_tier`, `review_fixed`, `review_escalated`, `review_clean`, `ac_results` (per-AC checklist — pass through to Ship for the PR body).
+4. **If `review_escalated` is non-empty: apply the Guiding Principle hand-off and STOP — do not proceed to Phase 5.** review-issue restricts escalation to findings that genuinely need a product/business decision, so reaching this step means a real decision is needed, not a fan-out of side issues. List each escalated finding in the comment (file/lines, description, why it needs a human call), grouped by category if more than one.
 
 ### Phase 5: Ship
 
-**Skip if `resume_from` is later than this phase.** `resume_from=ship-wait` enters at
-Step 5 (CI wait) with `pr` from `resume_context`; `resume_from=ship-teardown` enters at
-Step 7 (post-merge cleanup).
+**Skip if `resume_from` is later than this phase.** `ship-wait` enters ship at Step 5 (CI wait) with `pr` from `resume_context`; `ship-teardown` at Step 7 (post-merge cleanup).
 
-**Only reached when `review_escalated` was empty at the end of Phase 4** — ship-issue's
-own prerequisites assume this and do not create GitHub issues for anything.
+**Only reached when `review_escalated` was empty at the end of Phase 4** — ship-issue's own prerequisites assume this and do not create GitHub issues for anything.
 
-1. Run: `ai-dossier run imboard-ai/git/ship-issue`
-2. Pass through: issue number, base_branch, worktree_path, original_dir, pool_claimed, `run_id`, `ship_mode`, `ac_results` (from Phase 4 — used to build the PR body's Acceptance Criteria section)
-2b. **`ship_mode=detached` ends the run here.** ship-issue opens the PR, applies + confirms the
-   `auto-merge` label, posts the `awaiting-merge` milestone, prints the handoff line, and STOPS —
-   no CI wait, no merge, no teardown, and **no Phase 6**. The worktree is left in place; the work
-   is already pushed. What finishes the run later is the normal resume path: gate-issue maps a
-   merged PR on an `awaiting-merge` milestone to `resume_from=ship-teardown`, so a later
-   `full cycle issue <n>` re-enters at teardown and runs Phase 6. Items 3–7 below are the
-   **attached** path (and what that later tail run executes).
-3. **Opening a PR is NOT completion, and neither is merging it. You are done
-   when the merge has REACHED PRODUCTION** (or you have a hard blocker you
-   escalated). A PR left green-but-unmerged is a FAILED run; a PR merged but
-   never deployed is code live to nobody — see ship-issue Step 6c.
-4. **The two ship runstate milestones still get posted** even on the watcher path:
-   `status=awaiting-merge` right after the PR is opened (ship-issue Step 3b), and the
-   final `status=done` once the merge is confirmed and teardown is complete
-   (ship-issue Step 8). If the watcher blocks or the PR is still unmerged at hand-off,
-   the final one is `status=blocked` with a `reason=`.
-5. **Hand off the merge to the auto-merge watcher — do NOT babysit CI and do
-   NOT merge the PR yourself.** The repo runs an `auto-merge-watcher` GitHub
-   Action (every 5 min) that squash-merges green, clean PRs server-side and
-   deletes the branch. Your terminal action for the merge is:
-   1. Open the PR (ship-issue does the commit + push + `gh pr create`).
-   2. Apply the `auto-merge` label: `gh pr edit <pr_number> --add-label "auto-merge"`
-      (create it first if missing: `gh label create auto-merge --color 0E8A16 --force`).
-   3. **Confirm the label is applied** — re-read the PR labels and verify
-      `auto-merge` is present. If the apply failed, retry once; if it still
-      fails, that is a hard blocker to escalate (do NOT fall back to
-      self-merging / CI polling).
-   4. Exit the polling loop. Do NOT re-run `gh pr checks` / `statusCheckRollup`
-      in a loop, do NOT `gh pr merge` yourself, do NOT background a CI monitor.
-6. **Confirm the merge before reporting done** (passive, not CI babysitting):
-   poll `gh pr view <pr_number> --json mergedAt` at a coarse interval (every
-   ~3–5 min, up to ~25 min) until `mergedAt` is non-null. This is confirming
-   the watcher did its job, NOT polling CI statuses. ship-issue Step 6b
-   (`mergedAt` non-null) must pass before this phase is considered complete.
-   Then ship-issue Step 6c must ALSO pass: confirm a successful deploy carries
-   `MERGE_COMMIT`, dispatching the deploy yourself if nothing does. On repos
-   where a bot token performs the merge, GitHub does not fire `on: push`, so the
-   deploy NEVER runs by itself — merged code then sits until an unrelated human
-   push carries it out. Do not confuse "merged" with "shipped".
-7. **If the watcher blocks the merge** — the watcher leaves an
-   `auto-merge-blocked` label + a comment with the reason (failing checks,
-   conflict, branch-update failure) and removes `auto-merge` — **or the PR is
-   still unmerged after ~25 min**: apply the Guiding Principle hand-off (the PR
-   already exists, so skip the "push work" step — just label and comment). Do
-   NOT silently exit on an unmerged PR. Capture the blocker in the report with
-   `MERGE_COMMIT` empty.
+1. Run `ai-dossier run imboard-ai/git/ship-issue`.
+2. Pass through: issue number, base_branch, worktree_path, original_dir, pool_claimed, `run_id`, `ship_mode`, `ac_results` (from Phase 4 — builds the PR body's Acceptance Criteria section).
+2b. **`ship_mode=detached` ends the run here** (ship-issue Step 3c): PR opened, parked on a confirmed `auto-merge` label, `awaiting-merge` milestone posted, run STOPS — no CI wait, no merge, no teardown, **no Phase 6**. The worktree is left in place (work already pushed). gate-issue maps a merged PR on that milestone to `resume_from=ship-teardown`, so a later `full cycle issue <n>` re-enters at teardown and runs Phase 6. Items 3–7 are the **attached** path (and what that tail run executes).
+3. **Opening a PR is NOT completion, and neither is merging it. You are done when the merge has REACHED PRODUCTION** (or you have a hard blocker you escalated). A PR left green-but-unmerged is a FAILED run; a PR merged but never deployed is code live to nobody — see ship-issue Step 6c.
+4. **Both ship milestones still get posted** on the watcher path: `awaiting-merge` when the PR opens (ship Step 3b), `done` once merge and teardown are confirmed (Step 8) — or `blocked` with a `reason=` if the watcher blocks or the PR is unmerged at hand-off.
+5. **Hand off the merge to the auto-merge watcher — do NOT babysit CI and do NOT merge the PR yourself.** An `auto-merge-watcher` Action (every 5 min) squash-merges green, clean PRs server-side and deletes the branch. Your terminal action: apply and **confirm** the `auto-merge` label (ship Step 3c items 1–2 — retry once on failure, then escalate as a hard blocker; do NOT fall back to self-merging / CI polling), then exit the polling loop. Do NOT re-run `gh pr checks` / `statusCheckRollup` in a loop, do NOT `gh pr merge` yourself, do NOT background a CI monitor.
+6. **Confirm the merge before reporting done** (passive, not CI babysitting): poll `gh pr view <pr_number> --json mergedAt` every ~3–5 min, up to ~25 min, until non-null. ship Step 6b must pass, then Step 6c ALSO — a successful deploy must carry `MERGE_COMMIT`, dispatched by you if nothing else does. Where a bot token merges, GitHub does not fire `on: push`, so the deploy NEVER runs by itself. Do not confuse "merged" with "shipped".
+7. **If the watcher blocks the merge** (`auto-merge-blocked` label + reason comment, `auto-merge` removed) **or the PR is still unmerged after ~25 min**: apply the Guiding Principle hand-off — the PR exists, so skip the "push work" step, just label and comment. Do NOT silently exit on an unmerged PR. Capture the blocker in the report with `MERGE_COMMIT` empty.
 
 ### Phase 6: Report
 
-**Skip if `resume_from` is later than this phase** (i.e. `resume_from=done` — see the
-Runstate Milestones table's `report done` row).
+**Skip if `resume_from` is later than this phase** (`resume_from=done`).
 
-**Only reached on a real completion** — if Phase 4 or Phase 5 stopped via the Guiding
-Principle hand-off, the run already ended there; do not run this phase. A `ship_mode=detached`
-run also ends before this phase: the tail run that resumes at `ship-teardown` reports instead.
+**Only reached on a real completion** — if Phase 4 or 5 stopped via the Guiding Principle hand-off, the run already ended there; do not run this phase. A `ship_mode=detached` run also ends before this phase: the tail run resuming at `ship-teardown` reports instead.
 
-1. Run: `ai-dossier run imboard-ai/git/report-issue`
-2. Pass through: issue number, pr_number, base_branch, review_fixed, review_clean, cleanup_method, `run_id`
-3. **The structured report MUST include a `MERGE_COMMIT` field** set to the
-   squash-merge commit SHA (`gh pr view <pr_number> --json mergeCommit --jq '.mergeCommit.oid'`).
-   An empty / `N/A` / missing `MERGE_COMMIT` is a **FAILURE**, not a success —
-   it means the PR was not merged. If you are reporting with `MERGE_COMMIT`
-   empty, you must also be reporting a hard blocker you escalated (Phase 5.7);
-   a clean exit with an unmerged PR is a failed run.
-4. **The report MUST also carry `DEPLOYED`** (report-issue's `Shipped` line):
-   the deployed SHA + run URL, `N/A — <reason>` when the project genuinely has
-   no deploy step, or an explicit `NOT DEPLOYED` warning naming what a human must
-   run. `MERGE_COMMIT` present + `DEPLOYED` absent is the failure this field
-   exists to catch: it reads as a clean run while the change is live to nobody.
+1. Run `ai-dossier run imboard-ai/git/report-issue`, passing: issue number, pr_number, base_branch, review_fixed, review_clean, cleanup_method, `run_id`.
+2. **The structured report MUST include a `MERGE_COMMIT` field** — the squash-merge SHA (`gh pr view <pr_number> --json mergeCommit --jq '.mergeCommit.oid'`). Empty / `N/A` / missing is a **FAILURE**, not a success: it means the PR was not merged. Reporting it empty requires that you are also reporting a hard blocker you escalated (Phase 5.7); a clean exit with an unmerged PR is a failed run.
+3. **The report MUST also carry `DEPLOYED`** (report-issue's `Shipped` line): the deployed SHA + run URL, `N/A — <reason>` when the project genuinely has no deploy step, or an explicit `NOT DEPLOYED` warning naming what a human must run. `MERGE_COMMIT` present + `DEPLOYED` absent is the failure this field exists to catch — it reads as a clean run while the change is live to nobody.
 
 ## Validation
 
-- [ ] Phase 0 gate passed (no hard blocks)
-- [ ] Issue claimed with in-progress label
-- [ ] Branch and worktree created (via pool claim or cold creation)
-- [ ] Verified in worktree before proceeding
-- [ ] Planning doc created
-- [ ] Implementation addresses requirements
-- [ ] Tests exist and all pass
-- [ ] Review tier selected and stated; only that tier's agents ran, all report-only
-- [ ] Review findings deduped, then applied serially by the review phase (no agent edited files)
-- [ ] Tests re-run once after review fixes
-- [ ] Committed with conventional commit message
+Orchestration-level only — each sub-dossier validates its own phase.
+
+- [ ] Phase 0 gate passed (no hard blocks); issue claimed with in-progress label
+- [ ] Branch and worktree created (pool claim or cold), and verified in worktree before proceeding
+- [ ] Review tier selected and stated; only that tier's agents ran, all report-only; findings deduped, then applied serially by the review phase (no agent edited files)
 - [ ] PR created targeting correct base_branch
-- [ ] Zero escalated findings reached Ship — any escalation stopped the run at Phase 4 with a decision-pending hand-off on the issue (see Guiding Principle), not a new GH issue
+- [ ] Zero escalated findings reached Ship — any escalation stopped the run at Phase 4 with a decision-pending hand-off on the issue (Guiding Principle), not a new GH issue
 - [ ] `auto-merge` label applied to PR and confirmed present
-- [ ] PR merged by the watcher — `MERGE_COMMIT` captured (merge confirmed via `mergedAt` non-null, ship-issue Step 6b). Empty `MERGE_COMMIT` = FAILED run (unless a hard blocker was escalated)
-- [ ] Merge REACHED PRODUCTION — a successful deploy carries `MERGE_COMMIT`, and `DEPLOYED` is in the report (ship-issue Step 6c). Merged ≠ shipped; `N/A` is valid only when the project has no deploy step
-- [ ] Worktree returned to pool or removed
-- [ ] Rich report posted to conversation and PR comment
-- [ ] Returned to original working directory
+- [ ] PR merged by the watcher — `MERGE_COMMIT` captured (`mergedAt` non-null, ship Step 6b). Empty `MERGE_COMMIT` = FAILED run unless a hard blocker was escalated
+- [ ] Merge REACHED PRODUCTION — a successful deploy carries `MERGE_COMMIT`, and `DEPLOYED` is in the report (ship Step 6c). Merged ≠ shipped; `N/A` only when the project has no deploy step
+- [ ] Worktree returned to pool or removed; returned to original working directory; rich report posted to conversation and PR comment
 - [ ] A runstate milestone was posted via `ai-dossier runstate post` after every phase (ship posted two — one only, on a detached run)
 - [ ] Every phase that touched the working tree synced to origin (WIP Sync Rule) before posting its milestone — `head=` values are pushed shas, never `-dirty`
 - [ ] `ship_mode` honored: `detached` ended the run at the `awaiting-merge` milestone with the PR parked on auto-merge (Phase 5 item 2b) and left Phase 6 to the tail run; `attached` drove the merge, deploy, and report
@@ -423,13 +271,13 @@ run also ends before this phase: the tail run that resumes at `ship-teardown` re
 
 ## Troubleshooting
 
-**`gh` not found**: Install GitHub CLI: https://cli.github.com/
-**CI fails after fixes**: Apply the Guiding Principle hand-off — may be an infrastructure issue rather than a code issue; say so in the comment.
-**Merge conflicts**: Apply the Guiding Principle hand-off — needs human judgment, do not guess at a resolution.
-**Vague issue**: Apply the Guiding Principle hand-off rather than guessing at intent.
-**No test framework detected**: Default to vitest (Node.js) or pytest (Python)
-**Pre-existing test failures**: Run tests on the base branch to confirm
-**Review fix breaks tests**: Revert the fix and reclassify as Escalate (this feeds the Phase 4 hand-off, not a new issue)
-**Pool return fails**: Fall back to manual `git worktree remove`
-**`auto-merge-blocked` label appeared**: The watcher did not merge — read its comment for the reason (failing check, conflict, branch-update failure). Fix the root cause, then re-apply `gh pr edit <pr_number> --add-label "auto-merge"` to re-queue. Do NOT self-merge as a workaround.
-**PR still unmerged after ~25 min**: Apply the Guiding Principle hand-off (Phase 5 item 6) — the watcher may be down or the PR may be stuck BEHIND. Do NOT silently exit.
+| Symptom | Fix |
+|---|---|
+| `gh` not found | Install GitHub CLI: https://cli.github.com/ |
+| Vague issue · merge conflicts · CI fails after fixes | Apply the Guiding Principle hand-off — do not guess at intent or at a conflict resolution; for CI, say in the comment whether it looks like infrastructure rather than code |
+| No test framework detected | Default to vitest (Node.js) or pytest (Python) |
+| Pre-existing test failures | Run tests on the base branch to confirm |
+| Review fix breaks tests | Revert the fix and reclassify as Escalate (feeds the Phase 4 hand-off, not a new issue) |
+| Pool return fails | Fall back to manual `git worktree remove` |
+| `auto-merge-blocked` label appeared | The watcher did not merge — read its comment for the reason (failing check, conflict, branch-update failure). Fix the root cause, then re-apply `gh pr edit <pr_number> --add-label "auto-merge"` to re-queue. Do NOT self-merge as a workaround. |
+| PR still unmerged after ~25 min | Apply the Guiding Principle hand-off (Phase 5 item 6) — the watcher may be down or the PR may be stuck BEHIND. Do NOT silently exit. |
