@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle",
   "title": "Fleet Cycle — Orchestrate Multiple Issues",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-08-24",
+  "last_updated": "2026-08-25",
   "objective": "Take a SET of GitHub issues to merged PRs by building a dependency-aware wave plan, dispatching detached full-cycle-issue runs across background agents, and supervising the parked PRs through merge — serial, parallel, or mixed",
   "category": [
     "development"
@@ -93,13 +93,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "3e4c915828468aca19ef17fdebcc98de5bf4b693c67c13e46a96f3a471edd1d3"
+    "hash": "66db021d8f4da8f388b6be9bb85663bca0716bf84ed0709ae6f554f17212981a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "YdoBFFOe1rL0hnJepm/M+ipkt05UJrs7LNNSo24fameNnSkIlaLX7/y8VSTl8akqKPyasQEFu8EMya85uT8cAA==",
+    "signature": "qF2sNkqBom2AjgZq2cD+JVV0vws/z0kq3F1wMSfmM5jHfnRKdhS0Un/H8DFrTai55PkfBsM1nRnpFVRXZ+qNAw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-24T12:33:09.293Z",
+    "signed_at": "2026-08-25T06:10:37.530Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -111,13 +111,11 @@
 
 ## Objective
 
-Take a **set** of GitHub issues to merged PRs. This dossier is the orchestration layer **above** `full-cycle-issue`: it does not re-implement the cycle. It resolves the issue set, builds a dependency-aware **wave plan**, and dispatches one `full-cycle-issue` run per issue across background agents — running independent issues in parallel and dependent issues in order.
-
-Each individual issue is still handled end-to-end by `imboard-ai/git/full-cycle-issue` (gate → setup → plan → implement → review → ship → report). Fleet-cycle owns only what a single run cannot: **set resolution, dependency analysis, scheduling, dispatch, supervision, and aggregate reporting.**
+Take a **set** of GitHub issues to merged PRs. The orchestration layer **above** `full-cycle-issue`: it does not re-implement the cycle. Each issue is still handled end-to-end by `imboard-ai/git/full-cycle-issue` (gate → setup → plan → implement → review → ship → report); fleet-cycle owns only what a single run cannot — **set resolution, dependency analysis, scheduling, dispatch, supervision, and aggregate reporting** — dispatching one run per issue across background agents, parallel where independent and ordered where dependent.
 
 ## Guiding Principle
 
-**Plan, then auto-run.** Resolve the set, build the wave plan, write it to a file, present it — then dispatch automatically without waiting for approval. Mirror full-cycle's no-checkpoint philosophy. The user interrupts only if they disagree with the plan.
+**Plan, then auto-run.** Resolve the set, build the wave plan, write it to a file, present it — then dispatch automatically without waiting for approval, mirroring full-cycle's no-checkpoint philosophy. The user interrupts only if they disagree with the plan.
 
 Pause to ask only when:
 - An issue number is invalid, closed, or does not exist
@@ -135,17 +133,13 @@ Do NOT ask about: wave composition, branch order, concurrency level, or any mech
 
 ## Phase 1: Resolve the Issue Set
 
-1. Parse `issues` into a concrete list of integers:
-   - Explicit list: `1,2,3` → `[1,2,3]`
-   - Range: `1..9` → `[1,2,3,4,5,6,7,8,9]`
-   - Mixed: `1,2,5..8` → `[1,2,5,6,7,8]`
-   - De-duplicate and sort ascending.
+1. Parse `issues` into a concrete list of integers — explicit list `1,2,3` → `[1,2,3]`; range `1..9` → `[1..9]`; mixed `1,2,5..8` → `[1,2,5,6,7,8]`. De-duplicate and sort ascending.
 2. For each issue, fetch title, body, labels, linked issues, and state (`gh issue view`).
 3. Drop any issue that is closed or non-existent — report it as skipped with the reason. Do not silently omit.
 
 ## Phase 2: Build the Dependency Graph
 
-Determine, for every pair of issues in the set, whether one must merge **before** the other. Use both explicit signals and judgment. **When uncertain, prefer adding a dependency edge (serialize) over assuming independence** — a false parallel is far more expensive than a false serial.
+For every pair of issues, determine whether one must merge **before** the other, using explicit signals and judgment. **When uncertain, prefer adding a dependency edge (serialize) over assuming independence** — a false parallel is far more expensive than a false serial.
 
 **Explicit dependency signals (authoritative):**
 - "depends on #X", "blocked by #X", "after #X" in the issue body or comments
@@ -166,12 +160,7 @@ Topologically partition the DAG into **waves**:
 - Within a wave, issues are mutually independent → safe to run in parallel.
 - Across waves, execution is gated: wave `N+1` does not start until wave `N` has resolved.
 
-Apply `mode`:
-- `auto` (default): the wave plan as computed.
-- `serial`: collapse to one issue per wave, ascending number order.
-- `parallel`: a single wave with all issues (only when the user asserts independence).
-
-Respect `max_parallel`: if a wave has more issues than the cap, dispatch in batches within the wave, refilling as runs finish.
+Apply `mode`: `auto` (default) = the wave plan as computed; `serial` = one issue per wave, ascending number order; `parallel` = a single wave with all issues (only when the user asserts independence). Respect `max_parallel`: if a wave has more issues than the cap, dispatch in batches within the wave, refilling as runs finish.
 
 **Write the wave plan to `~/.dossier/logs/fleet-cycle/{project}/FLEET-PLAN-{timestamp}.md`** capturing: the resolved set, the dependency edges with their justification (explicit vs inferred), the wave breakdown, the concurrency cap, and the failure policy.
 - `{project}` = repo slug `<owner>-<repo>` from `gh repo view --json owner,name -q '.owner.login + "-" + .name'`; if that fails (no remote / no `gh`), fall back to the basename of `git rev-parse --show-toplevel`.
@@ -184,8 +173,7 @@ Respect `max_parallel`: if a wave has more issues than the cap, dispatch in batc
 
 > Pool CLI invocation: always `npx -y @ai-dossier/worktree-pool@^0.5.1 <cmd>`. The bare `npx worktree-pool` only resolves where the package is installed locally (it 404s elsewhere), and versions before 0.5.1 have a data-loss bug in `gc`. Never pin an older version.
 
-
-Before dispatching each wave, from the **orchestrator** — not the agents:
+Before dispatching each wave, from the **orchestrator** — not the agents (replenish is serial by construction, so one orchestrator prewarm is strictly cheaper than N agents cold-starting behind the pool lock):
 
 ```bash
 # N = the smaller of this wave's size and max_parallel
@@ -193,11 +181,7 @@ N=$(( wave_size < max_parallel ? wave_size : max_parallel ))
 npx -y @ai-dossier/worktree-pool@^0.5.1 replenish --count "$N"
 ```
 
-Then wait until `npx -y @ai-dossier/worktree-pool@^0.5.1 status` shows Warm >= N. Poll every 10s, max 10 min.
-
-Replenish is serial by construction, so one orchestrator prewarm is strictly cheaper than N agents cold-starting behind the pool lock.
-
-If the pool is not configured, say so once and continue — agents fall back to cold worktrees.
+Then wait until `npx -y @ai-dossier/worktree-pool@^0.5.1 status` shows Warm >= N. Poll every 10s, max 10 min. If the pool is not configured, say so once and continue — agents fall back to cold worktrees.
 
 ## Phase 4: Dispatch and Supervise
 
@@ -205,8 +189,8 @@ For each wave, in order:
 
 1. Dispatch one **background agent per issue** in the wave (up to `max_parallel` concurrently). Each agent's task is exactly: run `full cycle issue <N>` — i.e. `ai-dossier run imboard-ai/git/full-cycle-issue --pull` for that issue, passing through `warmup_dossier`, the issue's resolved `base_branch`, and **`ship_mode=detached`**.
 1b. Dispatch each issue's full-cycle run at its tier per `dispatch_model_tier` (auto = judge per issue from its labels/title/likely paths, using the same risk signals as review tiering). The fleet's OWN work splits by role: dependency analysis and wave planning are judgment — do them at the strongest tier (i.e. the orchestrator itself); supervision, PR polling and tail dispatches are mechanical — tails and any watchdog run cheap.
-2. **Detached ship is the fleet default.** A dispatched run ends as soon as its PR is open and parked on auto-merge (full-cycle Phase 5 item 2b): no CI wait, no merge, no teardown, no report. The agent exits there and the orchestrator owns everything after the park. This is why a fleet agent going quiet is expected, not suspicious.
-3. For a **dependent** issue (one whose dependency just merged), its base must be the **updated** base branch — branch from the merged result, not from a stale snapshot. The dependency must be fully merged before the dependent is dispatched; this is why dependents live in a later wave.
+2. **Detached ship is the fleet default.** A dispatched run ends as soon as its PR is open and parked on auto-merge (full-cycle Phase 5 item 2b): no CI wait, no merge, no teardown, no report. The agent exits there and the orchestrator owns everything after the park.
+3. A **dependent** issue must branch from the **updated** base — the merged result, not a stale snapshot. Its dependency must be fully merged before it is dispatched; this is why dependents live in a later wave.
 4. Supervise the wave: track every issue in exactly one state — **running** (agent working), **parked** (last milestone is `phase=ship status=awaiting-merge`; PR open on auto-merge, agent exited), **merged** (PR merged AND its tail run finished), **failed**, or **blocked**.
 4b. **Escalation ladder.** If a dispatched run stalls (no new milestone AND no new pushed commit for 30+ minutes) or completes a phase without its milestone, redispatch the same issue one tier stronger — the resume protocol carries the work forward. Two escalations per issue, then mark it failed and block dependents.
 5. **Poll the parked PRs** every 2–3 minutes:
@@ -216,20 +200,17 @@ For each wave, in order:
    - **Merged** (`mergedAt` non-null and `state` `MERGED`) → dispatch a **tail run**: one background agent whose task is exactly `full cycle issue <N>`. gate-issue reads the `awaiting-merge` milestone, sees the PR merged, and resumes at `resume_from=ship-teardown` — so the tail does teardown + report only, and posts the final `ship done` and `report done` milestones. Nothing earlier is re-run. The issue counts as **merged** once its tail run finishes.
    - **Open and `MERGEABLE`** → still parked; keep waiting.
    - **`mergeable=CONFLICTING`, closed-unmerged, or the watcher left `auto-merge-blocked`** → mark the issue **failed**, record the reason, and block its dependents (rule 6). Do not self-merge around a conflict.
-6. **Failure policy — block dependents.** When an issue fails:
-   - Mark every issue that depends on it (directly or transitively) as **blocked** and do **not** dispatch them.
-   - Issues with no dependency on the failure continue normally.
-   - Record the failure and the blocked set for the final report.
+6. **Failure policy — block dependents.** When an issue fails: mark every issue that depends on it (directly or transitively) as **blocked** and do **not** dispatch them; issues with no dependency on the failure continue normally; record the failure and the blocked set for the final report.
 7. **Wave gating is on MERGE, not on park.** A wave is resolved — and wave `N+1` may start — only when every issue in it is merged, failed, or blocked. **A parked PR does not resolve a wave**: dependents must branch from a base that already contains the dependency, and a parked PR is not in the base yet.
 8. **An agent exiting is NOT proof of merge.** Under detached ship its exit means *parked*, nothing more. Before marking an issue **merged**, advancing to the next wave, or dispatching dependents, the orchestrator MUST independently verify `gh pr view <pr> --json mergedAt,state` shows `mergedAt` non-null **and** `state` `MERGED`, **and** the issue is CLOSED. Never treat an idle/"done" signal as merge confirmation.
 
-**Runstate is per-run, not per-fleet.** Each `full-cycle-issue` run mints its own `run_id` at its gate phase; fleet-cycle neither mints nor passes one. A tail run reuses the parked run's `run_id` automatically (gate-issue reuses the id it finds on resume), so the trail stays continuous. The orchestrator reads runstate, it does not write it.
+**Runstate is per-run, not per-fleet.** Each run mints its own `run_id` at its gate phase; fleet-cycle neither mints nor passes one. A tail run reuses the parked run's `run_id` automatically (gate-issue reuses the id it finds on resume), so the trail stays continuous. The orchestrator reads runstate, it does not write it.
 
-**Concurrency discipline:** `max_parallel` bounds **live agents**, not open PRs — **parked runs do not count against it.** Their agent has already exited, so the wave can dispatch tail runs and the next batch of issues sooner instead of holding slots for PRs waiting on a watcher. Two things still bound you: never exceed worktree-pool capacity (a detached run leaves its worktree in place until its tail run tears it down, so parked runs DO still hold pool slots), and never exceed `max_parallel` live agents counting tails. If the pool is exhausted, queue and dispatch as worktrees free up rather than cold-starting many worktrees at once.
+**Concurrency discipline:** `max_parallel` bounds **live agents**, not open PRs — **parked runs do not count against it**, since their agent has already exited, so tail runs and the next batch dispatch sooner. Two bounds still hold: never exceed worktree-pool capacity (a detached run holds its worktree until its tail run tears it down, so parked runs DO still hold pool slots), and never exceed `max_parallel` live agents counting tails. If the pool is exhausted, queue and dispatch as worktrees free up rather than cold-starting many at once.
 
 ## Phase 5: Aggregate Report
 
-Produce a single roll-up across the whole fleet:
+A single roll-up across the whole fleet:
 - **Per issue**: status (merged / parked / failed / blocked / skipped), PR link, one-line summary, `model=` from its gate milestone(s), and any escalations. A still-**parked** issue at report time means its PR never merged within the run — say what it is waiting on.
 - **Merged**: count and PR links.
 - **Failed**: each with the failure reason and where it stopped.
@@ -237,39 +218,29 @@ Produce a single roll-up across the whole fleet:
 - **The wave plan as executed**, including any divergence from the original plan.
 - **Runstate**: a direct link to each issue's LAST `<!-- runstate:v1 -->` comment, so the exact phase each run reached is one click away (including failed and blocked issues).
 
-Post the roll-up to the conversation. Include direct PR URLs for every merged and failed issue.
+Post it to the conversation, with direct PR URLs for every merged and failed issue.
 
-## Known Pitfalls
+## Pitfalls and Decision Points
 
-- **Parallel merges into the same base race.** Two PRs that both merge into `main` and touch the same file will conflict even if dispatched "independently." This is why file-overlap is a dependency edge, not a parallel — serialize on any plausible overlap.
-- **Stale base for dependents.** A dependent issue branched before its dependency merged will miss the dependency's code and likely conflict. Dependents must wait for the merge and branch from the updated base — enforced by wave gating.
-- **Worktree-pool exhaustion.** Dispatching more parallel runs than the pool can serve causes cold-start storms and disk pressure. Bound concurrency by `max_parallel` and pool capacity, whichever is smaller.
-- **`gh` / CI rate limits and contention.** Many simultaneous runs hammer the API and CI queue. Keep `max_parallel` modest (default 3).
-- **Optimistic independence.** The most expensive failure mode is assuming two issues are independent when they aren't — you discover it at merge time after both ran. When in doubt, serialize.
-- **Background agent visibility.** Long-running background runs can fail silently. Supervise actively; surface failures as they happen, not only at the end.
-- **Parked read as merged.** Under detached ship every run exits with its PR still open — that exit is the *normal* end of a dispatched run, not success. The orchestrator must independently verify `mergedAt` is non-null (Phase 4, rule 8) before counting an issue as merged, and must dispatch the tail run that does teardown + report. An un-tailed merge leaves a worktree behind and no completion report.
-- **Starting the next wave on parked PRs.** A parked PR is not in the base branch. Gating wave `N+1` on "all agents exited" instead of "all PRs merged" branches dependents off a base missing their dependency — the exact stale-base failure wave gating exists to prevent.
-- **Partial fleet success is normal.** Blocking dependents on failure means a run may end with some issues merged, some failed, some blocked. The report must make the blocked set and its cause explicit so the user can re-run the remainder.
-
-## Decision Points
-
-| Situation | Decision |
+| Situation | Decision / why |
 |---|---|
-| Uncertain whether two issues collide | Add a dependency edge (serialize). False serial < false parallel. |
+| Uncertain whether two issues collide, or they merge into the same base and touch the same file | Add a dependency edge (serialize). False serial < false parallel; optimistic independence is the most expensive failure mode — you discover it at merge time after both ran. |
 | Issue declares `merges into <branch>` | That branch is its base; honor epic/sub-issue chains. |
 | Dependency cycle detected | Surface it and ask — cannot be auto-ordered. |
 | Wave wider than `max_parallel` | Batch within the wave; refill as runs complete. |
-| An issue fails mid-wave | Block its transitive dependents; let independents continue. |
-| A dispatched agent exits with its PR open | Expected — the run is parked, not done. Poll the PR; dispatch the tail run once it merges. |
+| An issue fails mid-wave | Block its transitive dependents; let independents continue. Partial fleet success is normal — the report must make the blocked set and its cause explicit so the user can re-run the remainder. |
+| A dispatched agent exits with its PR open | Expected — the run is parked, not done. Poll the PR; dispatch the tail run once it merges (Phase 4 rule 8). An un-tailed merge leaves a worktree behind and no completion report. |
 | A parked PR goes `CONFLICTING` or gets `auto-merge-blocked` | Mark the issue failed and block dependents. Do not self-merge around it. |
-| Wave has parked PRs but no live agents | The wave is NOT resolved. Keep polling; do not start wave N+1. Parked runs do free up `max_parallel` slots for tails. |
+| Wave has parked PRs but no live agents | The wave is NOT resolved. Keep polling; do not start wave N+1 — a parked PR is not in the base branch, so dependents would branch off a base missing their dependency. Parked runs do free up `max_parallel` slots for tails. |
+| A dependent branched before its dependency merged | Stale base — it will miss the code and likely conflict. Wave gating exists to prevent this; re-branch from the updated base. |
+| More parallel runs than the pool can serve | Cold-start storms and disk pressure. Bound concurrency by `max_parallel` and pool capacity, whichever is smaller; keep `max_parallel` modest (default 3) — many simultaneous runs also hammer the `gh` API and CI queue. |
+| A background run goes quiet | Long-running background runs can fail silently. Supervise actively; surface failures as they happen, not only at the end. (Under detached ship, quiet-after-park is expected — verify the PR, don't assume failure.) |
 | User passed `mode=parallel` | Trust the assertion of independence; single wave, all at once. |
 
 ## Validation
 
 - [ ] Issue set resolved from list/range; closed/missing issues reported as skipped
-- [ ] Dependency graph built from explicit + inferred signals
-- [ ] No undetected dependency cycle
+- [ ] Dependency graph built from explicit + inferred signals; no undetected dependency cycle
 - [ ] Wave plan computed and written to `~/.dossier/logs/fleet-cycle/{project}/FLEET-PLAN-{timestamp}.md.gz` (gzipped; older entries beyond the most recent 20 pruned)
 - [ ] Plan presented before dispatch
 - [ ] Each issue dispatched as a background `full-cycle-issue` run with `ship_mode=detached`
