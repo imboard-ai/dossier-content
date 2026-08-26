@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.10.2",
+  "version": "1.11.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, then either drive it to a confirmed merge and deploy (attached) or park it on auto-merge and stop (detached)",
@@ -88,10 +88,10 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "last_updated": "2026-08-25",
+  "last_updated": "2026-08-26",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "108d99458c6ad74ba6c9d5f5d909d16a1f8a0a4944431b30bfb74c9c9eba51da"
+    "hash": "dd1689ca0ff2980c1249287e88ef99fc91c9e074a02862a7625260bfceafdd8f"
   },
   "signature": {
     "algorithm": "ed25519",
@@ -124,7 +124,7 @@ Ship the implementation: commit, push, create PR, wait for CI, merge, and clean 
 
 ### Step 1: Commit
 
-**PR-head `[skip ci]` guard.** By protocol the tree may already be clean (all work landed as `wip … [skip ci]` commits). The PR's head commit must NOT contain `[skip ci]` — GitHub then skips the entire `pull_request` CI run, and the green-gate reads only third-party checks (this shipped a CI-less merge once). If the tree is clean or the head message contains `skip ci`, make the final commit empty: `git commit --allow-empty -m "<type>: <summary>"`. Verify: `git log -1 --format=%B | grep -ci 'skip ci'` must print 0.
+**PR-head skip-marker guard.** By protocol the tree may already be clean (all work landed as `wip … [skip ci]` commits). GitHub evaluates CI skip markers **per commit, against the head commit only** — if the branch head carries one, the whole `pull_request` event is suppressed and the PR opens with ZERO `pull_request`-triggered runs. It fails silently: no red check, no failed run, nothing for an auto-merge watcher that only looks for failures to catch, so the PR merges untested. This has shipped CI-less merges more than once. So: if the tree is clean, or the commit you are about to make would carry a skip marker, make the final commit empty instead — `git commit --allow-empty -m "<type>: <summary>"` — and never put a skip marker in ship's own commit message. Step 2.5 re-checks this as a blocking gate; do not rely on remembering it here.
 
 **Remove the planning doc before committing**: `git rm -f PLANNING-<issue_number>-*.md` — planning files never land on the base branch (they are already preserved in the branch history and the issue trail).
 
@@ -146,6 +146,25 @@ Ship the implementation: commit, push, create PR, wait for CI, merge, and clean 
 ```bash
 git push -u origin <branch-name>
 ```
+
+### Step 2.5: CI-Trigger Gate (BLOCKING — nothing goes between this and `gh pr create`)
+
+The branch head at the moment the PR is created decides whether CI runs at all. Every phase before ship pushes `wip(<phase>): … [skip ci]` commits (WIP Sync Rule) — correct while the run is in flight, fatal if one is still the head when the PR opens. Run this last, after the push, immediately before Step 3:
+
+```bash
+SKIP_RE='\[(skip[ -]ci|ci[ -]skip|no[ -]ci|skip[ -]actions|actions[ -]skip)\]|skip-checks: *true'
+if git log -1 --format=%B | grep -Eqi "$SKIP_RE"; then
+  git commit --allow-empty -m "chore: enable CI for PR head" && git push
+fi
+git log -1 --format=%B | grep -Eqi "$SKIP_RE" && echo "CI-TRIGGER-BLOCKED" || echo "CI-TRIGGER-OK"
+```
+
+**Do NOT run `gh pr create` until that last line prints `CI-TRIGGER-OK`.** `CI-TRIGGER-BLOCKED` means the empty commit did not land (a commit hook rejected it, detached HEAD, wrong directory) — diagnose and fix it; never proceed anyway, and never resolve it by re-adding a skip marker to the new commit.
+
+Two rules on the remedy:
+
+- **Empty commit on top, never `git commit --amend`.** Amending rewrites the head sha, and the `head=` shas recorded in earlier phases' runstate milestones stop being ancestors of the branch — which breaks gate-issue's remote check (`git merge-base --is-ancestor <head> FETCH_HEAD`) on any later resume. Appending is free and keeps the ancestry intact.
+- **This gate applies on every entry into Step 3**, including a resumed run that skipped Steps 1–2 because the branch was already pushed. That resume path is exactly how a `wip(review): … [skip ci]` commit reaches a PR head.
 
 ### Step 3: Create PR
 
@@ -172,6 +191,21 @@ EOF
 
 The Acceptance Criteria boxes come from `ac_results` (review-issue's Agent 7 output, passed through by full-cycle-issue): a checked box with `file:line` for each `met` AC, an unchecked box with the reason for `not-met`/`unverifiable`. If `ac_results` is empty (Agent 7 was skipped — no AC list existed), omit this section.
 
+### Step 3a: Confirm CI Actually Triggered
+
+Step 2.5 is the prevention; this is the proof. Run it right after the PR exists, before anything else:
+
+```bash
+HEAD_SHA=$(gh pr view <pr-number> --json headRefOid -q .headRefOid)
+sleep 45
+gh api "repos/{owner}/{repo}/actions/runs?head_sha=$HEAD_SHA" \
+  --jq '[.workflow_runs[] | select(.event=="pull_request")] | length'
+```
+
+Expect **>= 1**. A `0` is only acceptable if the repo has no `pull_request`-triggered workflow at all — prove that with `grep -rl "pull_request" .github/workflows` returning nothing before accepting it. Otherwise: `git commit --allow-empty -m "chore: enable CI for PR head" && git push`, wait, and re-check (once; if it is still 0, escalate as a hard blocker).
+
+Do not post the `awaiting-merge` milestone, apply the `auto-merge` label, or hand off in `detached` mode until this passes. Detached mode never reaches the Step 5 CI wait, so this is the only point in the run where a CI-less PR can still be caught.
+
 ### Step 3b: Runstate Milestone (awaiting-merge)
 
 Post this BEFORE the CI wait — it is what tells a later reader that a PR exists and the run is parked on CI, even if this session dies mid-wait. Comments are append-only: never edit or delete a prior milestone.
@@ -194,7 +228,7 @@ In `ship_mode=detached` this is the run's LAST milestone (Step 3c) — it is wha
 
 **`attached` (default)** — continue to Step 4 and run the phase to its end: CI wait, merge, merge confirmation, deploy confirmation, teardown, final milestone. Nothing below changes.
 
-**`detached`** — park the PR and end the run here:
+**`detached`** — park the PR and end the run here. Precondition: Step 3a passed. Handing a PR with zero `pull_request` runs to the watcher is how a change reaches the base branch with no CI at all — do not apply `auto-merge` until Step 3a is satisfied.
 
 1. Hand the merge to the watcher / merge queue via REST — on repos with Projects-classic, `gh pr edit --add-label` fails on a GraphQL deprecation: `gh api -X POST repos/{owner}/{repo}/issues/<pr-number>/labels -f "labels[]=auto-merge"` (create the label first if missing: `gh label create auto-merge --color 0E8A16 --force`). Then CONFIRM the label is present in the response. On a repo with a merge queue, enqueue instead. Same deprecation hits `gh pr view`/`gh issue view` without field selection — always pass `--json <fields>`.
 2. **Confirm the label is applied** — re-read the PR labels. If the apply failed, retry once; if it still fails, that is a hard blocker to escalate (do NOT fall back to waiting on CI yourself).
@@ -391,6 +425,8 @@ Let the CLI stamp `at=` and compute `next=report` — do not pass either; never 
 ## Validation
 
 - [ ] Changes committed with conventional commits format; branch pushed to remote
+- [ ] Step 2.5 CI-trigger gate printed `CI-TRIGGER-OK` immediately before `gh pr create` — the PR head commit carries no skip marker, and no `git commit --amend` was used to get there
+- [ ] Step 3a confirmed >= 1 `pull_request`-triggered workflow run exists for the PR head sha (or the repo provably has no `pull_request` workflow) — checked BEFORE the `auto-merge` label / `awaiting-merge` milestone / detached handoff
 - [ ] PR created targeting correct base_branch
 - [ ] PR body includes the Acceptance Criteria section from `ac_results` (when non-empty)
 - [ ] `ship_mode` was honored: `detached` stopped after the label + `awaiting-merge` milestone with the handoff line printed (no CI wait, no merge, no teardown, no report); `attached` ran through to the final milestone
