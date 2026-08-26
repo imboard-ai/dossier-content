@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, then either drive it to a confirmed merge and deploy (attached) or park it on auto-merge and stop (detached)",
@@ -95,9 +95,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "oSgWbddTwxs3KCWqWZUiBhLMztuYdeZK7Hh943Iq/+zxnIYvENgw31smZp1ynXoe3o8TajVfkMoeCm4/dPr5Dg==",
+    "signature": "4EpRzoQZ5lkkD847/XHNrsJ/cN+xo1eCCQnA22l9Xs+DMwEq0BYRUWTDkviNkisMphZkd6VaRJ998vNh1ZoyDA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T19:26:54.881Z",
+    "signed_at": "2026-08-26T10:41:16.356Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
