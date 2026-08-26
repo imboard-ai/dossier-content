@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.13.0",
+  "version": "3.14.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-26",
@@ -74,7 +74,7 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "a96fc023591241fec5dd79eb9c9dba0efe02d230e0b582c1527e7b899939d93a"
+    "hash": "5698bcd7df81a6b1f98232e676ac9256c504c17f76719b197472c0995e09e598"
   },
   "signature": {
     "algorithm": "ed25519",
@@ -163,6 +163,8 @@ Per-phase `--kv` keys:
 **origin/<branch> is the durable copy of the work; the issue is the durable copy of the state.** A phase is not "done" until both are true.
 
 Every phase that changes the working tree syncs to origin BEFORE posting its milestone: `git add -A && git commit -m "wip(<phase>): <one line> [skip ci]" && git push -u origin <branch>` (commit only if there are changes). `git add -A` respects `.gitignore`; never force-add ignored files (`.env` etc). WIP commits are disposable — ship squash-merges, so they never reach the base branch. The milestone's `head=` is the sha ON ORIGIN (`git rev-parse --short HEAD` after the push), never `-dirty`. Ship's commit lands on top of the WIP commits; the squash-merge collapses them into one.
+
+**The `[skip ci]` marker is correct on every WIP commit and forbidden on the PR head.** It exists so a long run does not fire a full CI suite on each intermediate push — keep it. But GitHub evaluates skip markers **per commit, against the head commit only**: if a `wip(...) [skip ci]` commit is still the branch head when `gh pr create` runs, the `pull_request` event is suppressed entirely and the PR opens with ZERO CI runs — silently, with no failed check for an auto-merge watcher to catch. ship-issue Step 2.5 is the blocking gate that must clear this (empty commit on top — never `--amend`, which would break the `head=` ancestry that gate-issue's remote check relies on), and Step 3a is the post-create proof that a `pull_request` run actually exists. Neither is optional, and neither may be satisfied by removing `[skip ci]` from the WIP commits themselves.
 
 ## Resuming
 
@@ -268,6 +270,7 @@ Orchestration-level only — each sub-dossier validates its own phase.
 - [ ] Worktree returned to pool or removed; returned to original working directory; rich report posted to conversation and PR comment
 - [ ] A runstate milestone was posted via `ai-dossier runstate post` after every phase (ship posted two — one only, on a detached run)
 - [ ] Every phase that touched the working tree synced to origin (WIP Sync Rule) before posting its milestone — `head=` values are pushed shas, never `-dirty`
+- [ ] The PR head commit carried NO CI skip marker at `gh pr create` time (ship Step 2.5 printed `CI-TRIGGER-OK`), and >= 1 `pull_request`-triggered run exists for that sha (ship Step 3a). A PR with zero `pull_request` runs is a FAILED run even if it merged green
 - [ ] `ship_mode` honored: `detached` ended the run at the `awaiting-merge` milestone with the PR parked on auto-merge (Phase 5 item 2b) and left Phase 6 to the tail run; `attached` drove the merge, deploy, and report
 - [ ] On resume, no phase before `resume_from` was re-run; a skipped setup materialized the worktree from origin (cloned fresh if absent on this machine) rather than assuming local state
 
