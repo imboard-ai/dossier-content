@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle",
   "title": "Fleet Cycle — Orchestrate Multiple Issues",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-08-25",
+  "last_updated": "2026-08-26",
   "objective": "Take a SET of GitHub issues to merged PRs by building a dependency-aware wave plan, dispatching detached full-cycle-issue runs across background agents, and supervising the parked PRs through merge — serial, parallel, or mixed",
   "category": [
     "development"
@@ -93,13 +93,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "66db021d8f4da8f388b6be9bb85663bca0716bf84ed0709ae6f554f17212981a"
+    "hash": "917677d4904cc80578adcf95e44c65ab0c754b82afbff4991db0773f3310b964"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "qF2sNkqBom2AjgZq2cD+JVV0vws/z0kq3F1wMSfmM5jHfnRKdhS0Un/H8DFrTai55PkfBsM1nRnpFVRXZ+qNAw==",
+    "signature": "wey+z2xWurZiof42iwtvuAVi5/hLQtO4v28CEaaiLc8GUev2LTEE8HwIUmGzwfeP7VwBZbb/N0xUTzOZzAIcBw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T06:10:37.530Z",
+    "signed_at": "2026-08-26T06:48:18.626Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -126,7 +126,7 @@ Do NOT ask about: wave composition, branch order, concurrency level, or any mech
 
 ## Prerequisites
 
-- [ ] `full-cycle-issue` and its sub-dossiers are available in the registry
+- [ ] `full-cycle-issue` and its sub-dossiers, and `imboard-ai/git/watch-task`, are available in the registry
 - [ ] GitHub CLI (`gh`) installed and authenticated; push access to the repo
 - [ ] A worktree pool is configured (recommended) so parallel runs get instant worktrees rather than cold-starting and contending
 - [ ] The environment can spawn background agents (the orchestrator dispatches one per concurrent issue)
@@ -181,11 +181,13 @@ N=$(( wave_size < max_parallel ? wave_size : max_parallel ))
 npx -y @ai-dossier/worktree-pool@^0.5.1 replenish --count "$N"
 ```
 
-Then wait until `npx -y @ai-dossier/worktree-pool@^0.5.1 status` shows Warm >= N. Poll every 10s, max 10 min. If the pool is not configured, say so once and continue — agents fall back to cold worktrees.
+Then wait until `npx -y @ai-dossier/worktree-pool@^0.5.1 status` shows Warm >= N — as an **armed watch** (one bounded blocking loop, poll every 10s, max 10 min; see Phase 4 rule 0), never an unarmed "check later". If the pool is not configured, say so once and continue — agents fall back to cold worktrees.
 
 ## Phase 4: Dispatch and Supervise
 
 For each wave, in order:
+
+0. **Every wait in this phase is an armed watch — run it per `imboard-ai/git/watch-task`.** This is the fleet's known lost-time failure: the orchestrator dispatches, says "waiting", ends its turn — and nothing ever wakes it, so finished runs sit un-tailed and hung runs are never noticed. Between dispatch and wave resolution the orchestrator must always be inside a blocking poll loop, a harness monitor/wait call, or covered by a verified scheduled wakeup — completion notifications alone don't cover hangs, so pair them with a timer. Per watch-task: check commands are the runstate trail + `gh pr view` (read-only); the progress signal is a new milestone or newly pushed commit; the stall timeout is 30 min feeding rule 4b's escalation ladder (its cap = watch-task's `max_recoveries`); watchdog work runs on the cheap tier (rule 1b).
 
 1. Dispatch one **background agent per issue** in the wave (up to `max_parallel` concurrently). Each agent's task is exactly: run `full cycle issue <N>` — i.e. `ai-dossier run imboard-ai/git/full-cycle-issue --pull` for that issue, passing through `warmup_dossier`, the issue's resolved `base_branch`, and **`ship_mode=detached`**.
 1b. Dispatch each issue's full-cycle run at its tier per `dispatch_model_tier` (auto = judge per issue from its labels/title/likely paths, using the same risk signals as review tiering). The fleet's OWN work splits by role: dependency analysis and wave planning are judgment — do them at the strongest tier (i.e. the orchestrator itself); supervision, PR polling and tail dispatches are mechanical — tails and any watchdog run cheap.
@@ -193,7 +195,7 @@ For each wave, in order:
 3. A **dependent** issue must branch from the **updated** base — the merged result, not a stale snapshot. Its dependency must be fully merged before it is dispatched; this is why dependents live in a later wave.
 4. Supervise the wave: track every issue in exactly one state — **running** (agent working), **parked** (last milestone is `phase=ship status=awaiting-merge`; PR open on auto-merge, agent exited), **merged** (PR merged AND its tail run finished), **failed**, or **blocked**.
 4b. **Escalation ladder.** If a dispatched run stalls (no new milestone AND no new pushed commit for 30+ minutes) or completes a phase without its milestone, redispatch the same issue one tier stronger — the resume protocol carries the work forward. Two escalations per issue, then mark it failed and block dependents.
-5. **Poll the parked PRs** every 2–3 minutes:
+5. **Poll the parked PRs** every 2–3 minutes, as an armed watch (rule 0):
    ```bash
    gh pr view <pr> --json state,mergedAt,mergeable
    ```
@@ -234,7 +236,8 @@ Post it to the conversation, with direct PR URLs for every merged and failed iss
 | Wave has parked PRs but no live agents | The wave is NOT resolved. Keep polling; do not start wave N+1 — a parked PR is not in the base branch, so dependents would branch off a base missing their dependency. Parked runs do free up `max_parallel` slots for tails. |
 | A dependent branched before its dependency merged | Stale base — it will miss the code and likely conflict. Wave gating exists to prevent this; re-branch from the updated base. |
 | More parallel runs than the pool can serve | Cold-start storms and disk pressure. Bound concurrency by `max_parallel` and pool capacity, whichever is smaller; keep `max_parallel` modest (default 3) — many simultaneous runs also hammer the `gh` API and CI queue. |
-| A background run goes quiet | Long-running background runs can fail silently. Supervise actively; surface failures as they happen, not only at the end. (Under detached ship, quiet-after-park is expected — verify the PR, don't assume failure.) |
+| A background run goes quiet | Long-running background runs can fail silently. Supervise actively via the armed watch (Phase 4 rule 0) — probe the runstate trail and pushed commits, escalate per the ladder; surface failures as they happen, not only at the end. (Under detached ship, quiet-after-park is expected — verify the PR, don't assume failure.) |
+| The orchestrator "waits" with nothing armed | The classic lost-time bug: turn ends after dispatch, no loop, no monitor, no scheduled wakeup — merged PRs sit un-tailed and hung agents run forever. watch-task's Iron Rule: a wait is legitimate only while armed. |
 | User passed `mode=parallel` | Trust the assertion of independence; single wave, all at once. |
 
 ## Validation
@@ -246,6 +249,7 @@ Post it to the conversation, with direct PR URLs for every merged and failed iss
 - [ ] Each issue dispatched as a background `full-cycle-issue` run with `ship_mode=detached`
 - [ ] Each dispatch's generation-phase tier set per `dispatch_model_tier` (auto = risk-based); the fleet's own dependency/wave-planning judgment ran on the strongest tier, supervision/tails/watchdog ran cheap
 - [ ] Escalation ladder applied on a stalled or milestone-non-compliant dispatched run (redispatch one tier stronger; cap two escalations per issue, then fail + block dependents)
+- [ ] Every wait ran as an armed watch per `watch-task` (blocking loop, monitor call, or verified scheduled wakeup) — at no point did the orchestrator idle on a dispatched wave with nothing armed
 - [ ] Parked PRs polled every 2–3 min (`gh pr view --json state,mergedAt,mergeable`)
 - [ ] Every merged parked PR got a tail run (`full cycle issue <N>`, resuming at `ship-teardown`) that completed teardown + report
 - [ ] Conflicting / closed-unmerged / `auto-merge-blocked` parked PRs marked failed, with dependents blocked
@@ -259,6 +263,6 @@ Post it to the conversation, with direct PR URLs for every merged and failed iss
 
 ## Relationship to Other Dossiers
 
-- **Composes**: `imboard-ai/git/full-cycle-issue` (one run per issue).
+- **Composes**: `imboard-ai/git/full-cycle-issue` (one run per issue); `imboard-ai/git/watch-task` (the armed-watch discipline for all Phase 4 supervision waits).
 - **Sits above**: the whole issue-workflow family (`gate`, `setup`, `plan`, `implement`, `review`, `ship`, `report`) — fleet-cycle never calls these directly; it only orchestrates full-cycle runs.
 - **See**: `imboard-ai/git/issue-workflows-guide` for the single-issue workflow family.
