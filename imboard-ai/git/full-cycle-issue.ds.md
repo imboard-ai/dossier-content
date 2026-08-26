@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.12.3",
+  "version": "3.13.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-08-25",
+  "last_updated": "2026-08-26",
   "objective": "Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report",
   "category": [
     "development"
@@ -74,13 +74,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "955a49e93ab9aa270da9431aec8fb7f47ef46395d9af06345c8d3ce457e0bade"
+    "hash": "a96fc023591241fec5dd79eb9c9dba0efe02d230e0b582c1527e7b899939d93a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "fEb6cRHrRwtm0+qsRrRrvRwoMFJNXahe8cNTxZSdbDY6ie8rn061acE2WJ33gt/SSAIHQ7B08qRdHRKJvBghBw==",
+    "signature": "xv2h1q8D+wsAM9qUzIC6G2JGj/2rLaUAtG6JEBuuZWBTWygUVUwzlkYg5PIDe6o8vjO28BToKIpscpJnMjcyAg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T20:14:34.603Z",
+    "signed_at": "2026-08-26T06:48:20.019Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -239,7 +239,7 @@ Always runs — it determines `resume_from`.
 **Merge authority**: items 4–5 apply ONLY when the repo has an auto-merge watcher (`.github/workflows/auto-merge-watcher.yml` exists). Without one, attached mode self-merges per ship-issue Step 6 and these items are moot.
 4. **Both ship milestones still get posted** on the watcher path: `awaiting-merge` when the PR opens (ship Step 3b), `done` once merge and teardown are confirmed (Step 8) — or `blocked` with a `reason=` if the watcher blocks or the PR is unmerged at hand-off.
 5. **Hand off the merge to the auto-merge watcher — do NOT babysit CI and do NOT merge the PR yourself.** An `auto-merge-watcher` Action (every 5 min) squash-merges green, clean PRs server-side and deletes the branch. Your terminal action: apply and **confirm** the `auto-merge` label (ship Step 3c items 1–2 — retry once on failure, then escalate as a hard blocker; do NOT fall back to self-merging / CI polling), then exit the polling loop. Do NOT re-run `gh pr checks` / `statusCheckRollup` in a loop, do NOT `gh pr merge` yourself, do NOT background a CI monitor.
-6. **Confirm the merge before reporting done** (passive, not CI babysitting): poll `gh pr view <pr_number> --json mergedAt` every ~3–5 min, up to ~25 min, until non-null. ship Step 6b must pass, then Step 6c ALSO — a successful deploy must carry `MERGE_COMMIT`, dispatched by you if nothing else does. Where a bot token merges, GitHub does not fire `on: push`, so the deploy NEVER runs by itself. Do not confuse "merged" with "shipped".
+6. **Confirm the merge before reporting done** (passive, not CI babysitting): poll `gh pr view <pr_number> --json mergedAt` every ~3–5 min, up to ~25 min, until non-null — run this as an **armed watch per `imboard-ai/git/watch-task`**: a single bounded blocking poll loop or harness monitor/wait call that holds you until resolution or timeout. Never end the turn "waiting for the watcher" with nothing armed — an unarmed wait strands a green-but-unmerged PR (or a merged one) indefinitely, the run's known lost-time failure. The same rule covers ship's CI wait (Step 5) and the deploy watch in attached mode. Then ship Step 6b must pass, then Step 6c ALSO — a successful deploy must carry `MERGE_COMMIT`, dispatched by you if nothing else does. Where a bot token merges, GitHub does not fire `on: push`, so the deploy NEVER runs by itself. Do not confuse "merged" with "shipped".
 7. **If the watcher blocks the merge** (`auto-merge-blocked` label + reason comment, `auto-merge` removed) **or the PR is still unmerged after ~25 min**: apply the Guiding Principle hand-off — the PR exists, so skip the "push work" step, just label and comment. Do NOT silently exit on an unmerged PR. Capture the blocker in the report with `MERGE_COMMIT` empty.
 
 ### Phase 6: Report
@@ -262,6 +262,7 @@ Orchestration-level only — each sub-dossier validates its own phase.
 - [ ] PR created targeting correct base_branch
 - [ ] Zero escalated findings reached Ship — any escalation stopped the run at Phase 4 with a decision-pending hand-off on the issue (Guiding Principle), not a new GH issue
 - [ ] `auto-merge` label applied to PR and confirmed present
+- [ ] Every in-run wait (CI, merge confirm, deploy) ran as an armed watch per `imboard-ai/git/watch-task` — blocking loop or monitor call, never a turn ended with nothing armed
 - [ ] PR merged by the watcher — `MERGE_COMMIT` captured (`mergedAt` non-null, ship Step 6b). Empty `MERGE_COMMIT` = FAILED run unless a hard blocker was escalated
 - [ ] Merge REACHED PRODUCTION — a successful deploy carries `MERGE_COMMIT`, and `DEPLOYED` is in the report (ship Step 6c). Merged ≠ shipped; `N/A` only when the project has no deploy step
 - [ ] Worktree returned to pool or removed; returned to original working directory; rich report posted to conversation and PR comment
