@@ -304,7 +304,7 @@
     {
       "name": "imboard-ai/git/fleet-cycle",
       "title": "Fleet Cycle — Orchestrate Multiple Issues",
-      "version": "1.6.0",
+      "version": "1.7.0",
       "path": "imboard-ai/git/fleet-cycle.ds.md",
       "category": [
         "development"
