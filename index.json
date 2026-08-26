@@ -720,6 +720,29 @@
       ]
     },
     {
+      "name": "imboard-ai/git/watch-task",
+      "title": "Watch Task — Armed Watchdog on a Long-Running Task",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/watch-task.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "watchdog",
+        "supervision",
+        "polling",
+        "background-agents",
+        "orchestration",
+        "autonomous",
+        "stall-detection"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/worktree-pool",
       "title": "Worktree Pool",
       "version": "1.0.1",
