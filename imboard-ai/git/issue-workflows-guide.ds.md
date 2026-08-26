@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-workflows-guide",
   "title": "Issue Workflows Guide",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Reference guide for the issue workflow family — explains when to use each workflow, how they compose from shared sub-dossiers, and available flags",
@@ -32,9 +32,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "w6gX85Z5EJzmREEOmId/mCxbrhfT9bh4BaqEQtjIV/w5Q8ag4yogRhJJhGwpVa2lg9ehHnC93UaKaEyowOD3Bw==",
+    "signature": "IJicDbTRWFL9R31srrxB5z5bDALZ2LsD4w25k0TP5txspSCLJTt2PxD8WRYW2RB60GpayzmUThMU1WJOBW+lDQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-26T06:48:21.218Z",
+    "signed_at": "2026-08-26T10:41:19.780Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
