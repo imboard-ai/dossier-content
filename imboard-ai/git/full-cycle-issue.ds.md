@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.14.0",
+  "version": "3.14.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-08-26",
@@ -78,9 +78,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "xv2h1q8D+wsAM9qUzIC6G2JGj/2rLaUAtG6JEBuuZWBTWygUVUwzlkYg5PIDe6o8vjO28BToKIpscpJnMjcyAg==",
+    "signature": "LZs1JBp4VDULtSfP1HMZhRnUi5horYA6beDv1VRAqivJbW4kx3LZ6EtMie6FB7dE1BY2RvgjJmzouMpkwC0YAw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-26T06:48:20.019Z",
+    "signed_at": "2026-08-26T10:41:17.483Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
