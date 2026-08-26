@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "last_updated": "2026-08-26",
@@ -47,7 +47,7 @@
   "name": "review-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "4287b88411a24d57b7eecc8d19a0d62ab295a960bee53361d94df52ab0265034"
+    "hash": "0763a1550f1e8cdb83d3b9b80b74433264ba61aba374aba6ebbd4dccbbfc7d27"
   },
   "signature": {
     "algorithm": "ed25519",
@@ -258,6 +258,8 @@ The agents reported; you apply. **You are the only writer in this worktree** —
 5. **Re-run tests ONCE**, after all fixes are applied — not per fix. If a fix breaks tests, revert that specific fix and reclassify as Escalate, then re-run.
 6. **Run the lint auto-fixer ONCE**, after the tests pass — biome: `npx biome check --write .`; eslint: `npx eslint --fix .`; ruff: `ruff check --fix .`; or the project's own `lint:fix` script (check package.json / Makefile).
 7. **Sync to origin** (WIP sync rule — see full-cycle-issue's Runstate Milestones): if there are changes (`git status --porcelain` non-empty), `git add -A && git commit -m "wip(review): apply review fixes [skip ci]" && git push`. Do this whether the phase is about to post `status=done` or `status=partial` — push before posting the milestone either way.
+
+   Keep the `[skip ci]` here — it is what stops each in-run push from firing a full CI suite. But be aware this is the LAST wip commit before the PR opens, so it is the one that most often ends up as the PR head, and a skip marker on a PR head suppresses the `pull_request` event entirely (zero CI runs, silently). Clearing it is ship-issue's job, not this phase's: **do not** drop `[skip ci]` from this commit, and **do** make sure ship-issue Step 2.5 (CI-trigger gate) runs — it is the blocking check that has to print `CI-TRIGGER-OK` before `gh pr create`.
 
 ### Step 5: Output
 
