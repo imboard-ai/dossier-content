@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "warm-worktree-pnpm-ssm",
   "title": "Imboard Warm Worktree (pnpm + SSM)",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Prepare a fresh imboard-monorepo worktree for development using pnpm content-addressable store and AWS SSM secrets — no .env copying needed",
@@ -18,7 +18,7 @@
   ],
   "estimated_duration": {
     "min_minutes": 0,
-    "max_minutes": 1
+    "max_minutes": 2
   },
   "risk_level": "low",
   "requires_approval": false,
@@ -38,7 +38,7 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "08d35dabe411bba33955cfa9b91a629f105cf38cfd8ac2c5dd33bed93b79ee35"
+    "hash": "23ef71c54e774c5d74628773a203fb84caba8a0280b5a06e09ad12dcc901aa86"
   },
   "signature": {
     "algorithm": "ed25519",
@@ -87,18 +87,30 @@ pnpm run typecheck
 
 If this passes, the worktree is ready for development.
 
+### Step 4: Provision the pooled test environment
+
+```bash
+cd <target_worktree>/main
+bash scripts/ensure-test-env.sh
+```
+
+This writes `<target_worktree>/main/.env.test` — including `IMBOARD_TEST_POOL_URI` (fetched from SSM `mongodb-pool-uri`), which is what makes `pnpm test:integration` use the shared leased test-DB pool instead of minting a fresh per-worktree database (imboard#3757/#3763). **Run this unconditionally, even if `.env.test` already exists** — a worktree reused from before this step existed, or one whose `.env.test` predates the pool migration, has a file that satisfies every downstream guard but carries no `IMBOARD_TEST_POOL_URI`. Nothing else in the chain detects that: `test-runner.ts`'s `.env.test` guard only checks the file exists, and `jest.globalSetup.ts` silently falls back to the legacy isolated-DB path with no warning when the pool var is absent. Re-running `ensure-test-env.sh` is idempotent and safe to repeat.
+
+If this step fails (e.g. `ssm_get` can't reach the pool secret), warmup is still usable for non-test work — but say so explicitly rather than silently continuing, and do not assume tests will use the pool.
+
 ## What This Does NOT Do (and why)
 
-- **No .env file copying** — Secrets come from AWS SSM via `chamber exec`. Run `pnpm run dev:ssm` to start servers with injected secrets.
+- **No general secret copying** — App secrets (SSM-backed) come via `chamber exec`. Run `pnpm run dev:ssm` to start servers with injected secrets. (`.env.test` is the one exception — Step 4 provisions it directly, since the pooled test path needs it present before any test command runs.)
 - **No server startup verification** — `dev:ssm` handles secret injection at runtime; verifying here adds no value.
 - **No full test suite** — Testing happens after implementation, not during warmup.
-- **No worktree pool** — With pnpm, cold starts are ~15 seconds. Pool infrastructure adds complexity for marginal gain.
+- **No worktree pool for the warmed worktree itself** — With pnpm, cold starts are ~15 seconds. Worktree-pool infrastructure adds complexity for marginal gain here. (Unrelated to the *test-DB* pool that Step 4 wires up — same word, different pool.)
 
 ## Validation
 
 - [ ] `pnpm install` completed without errors
 - [ ] `pnpm run build:libs` completed without errors
 - [ ] `pnpm run typecheck` passes (all packages)
+- [ ] `main/.env.test` exists and contains `IMBOARD_TEST_POOL_URI` (or Step 4's failure was surfaced explicitly, not silently skipped)
 
 ## Troubleshooting
 
@@ -108,3 +120,4 @@ If this passes, the worktree is ready for development.
 | Node version mismatch | This project uses `packageManager: pnpm@10.32.1` — ensure compatible Node |
 | `build:libs` fails | Check for uncommitted type changes in `shared-types`/`emails` on the source branch |
 | typecheck fails | May indicate pre-existing errors on main — check `git log` for recent changes |
+| `ensure-test-env.sh` fails on `ssm_get mongodb-pool-uri` | Check SSM/chamber access is configured for this environment; report it rather than proceeding with an unpooled `.env.test` unremarked |
