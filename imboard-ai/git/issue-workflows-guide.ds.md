@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-workflows-guide",
   "title": "Issue Workflows Guide",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Reference guide for the issue workflow family — explains when to use each workflow, how they compose from shared sub-dossiers, and available flags",
@@ -25,16 +25,16 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "last_updated": "2026-08-25",
+  "last_updated": "2026-08-26",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "a860c049fe6f7a9c3ab1d4f90d810f985f24d35b450566496587a9f02e38209a"
+    "hash": "18c7a6c3f58ee0fb244eae1a69ab13bb914957435db0766b5f091ccdd4d49d24"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "AEJSV4gMLctopmTJ9qo/dFqC0eHQtTjmp9Ms0Vw+4M2zokSrQPNowUOR5V5GygOlEmectJIUw5bNQiuesJm+Aw==",
+    "signature": "w6gX85Z5EJzmREEOmId/mCxbrhfT9bh4BaqEQtjIV/w5Q8ag4yogRhJJhGwpVa2lg9ehHnC93UaKaEyowOD3Bw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T06:10:39.467Z",
+    "signed_at": "2026-08-26T06:48:21.218Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -104,6 +104,7 @@ All three skills support:
 | `review-issue` | `imboard-ai/git/review-issue` | 7 parallel review agents (DRY, Security, Supportability, Maintainability, Docs, Convention, **blind Conformance vs the issue's Acceptance Criteria**) + fix findings | guided, full-cycle |
 | `ship-issue` | `imboard-ai/git/ship-issue` | ci-parity → commit → push → PR (with AC checklist) → `awaiting-merge` milestone → CI/merge → teardown (incl. `ensure-test-env.sh --teardown`) | guided, full-cycle |
 | `report-issue` | `imboard-ai/git/report-issue` | Rich summary → conversation + PR comment; mechanical trap write-back to `docs/agent-traps.md` when a CI fix was needed; deletes the PLANNING file | guided, full-cycle |
+| `watch-task` | `imboard-ai/git/watch-task` | Armed-watchdog discipline for every long wait: blocking poll loop / harness monitor / verified scheduled wakeup, stall detection on progress signals, bounded recovery — kills the "waiting with nothing armed" lost-time failure | full-cycle (merge confirm), fleet-cycle (all supervision) |
 
 ## Shared Parameter: `base_branch`
 
