@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-workflows-guide",
   "title": "Issue Workflows Guide",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Reference guide for the issue workflow family — explains when to use each workflow, how they compose from shared sub-dossiers, and available flags",
@@ -28,7 +28,7 @@
   "last_updated": "2026-08-26",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "18c7a6c3f58ee0fb244eae1a69ab13bb914957435db0766b5f091ccdd4d49d24"
+    "hash": "546add053607fb4c0a450df6405aa5c2fca5d117d688982373148ac193641506"
   },
   "signature": {
     "algorithm": "ed25519",
@@ -152,6 +152,7 @@ The `report-issue` sub-dossier produces:
 The dossiers carry the rules; the reasons live here.
 - **Verification buys quality, not the generator's raw strength** — why full-cycle routes by role (mechanical cheapest, generation by risk, judgment strongest). The trade: occasional wall-clock loss to a redispatch for large cost cuts, with the runstate CLI, blind conformance, ci-parity, CI and the version-bump guard holding the bar. **Tune tiers** with `ai-dossier runstate stats --issues <set>` every ~20 runs.
 - **Why the WIP sync rule exists.** A resuming agent on another machine cannot reach uncommitted work in a local worktree, and a milestone recording a local `worktree=` path is worthless to it — hence origin/<branch> is the durable work copy, the issue the durable state copy.
+- **Why `[skip ci]` on WIP commits is right and on the PR head is fatal.** WIP commits carry `[skip ci]` so a long run does not fire a full CI suite on every intermediate push — that part is deliberate, keep it. But GitHub evaluates skip keywords (`[skip ci]`, `[ci skip]`, `[no ci]`, `[skip actions]`, `[actions skip]`, `skip-checks: true`) **per commit, against the head commit only**. If the last `wip(...)` commit is still the branch head when `gh pr create` runs, the `pull_request` event is suppressed entirely: the PR opens with ZERO `pull_request` runs. It fails silently — no red check, no failed run — so an auto-merge watcher that gates on absence-of-failure merges it untested. 8 of 200 merged PRs did exactly this (imboard#3799, 2026-08-25), all with a `wip(review): … [skip ci]` head. Hence ship-issue Step 2.5 (blocking gate before `gh pr create`) and Step 3a (post-create proof a `pull_request` run exists). The remedy is an **empty commit on top, never `git commit --amend`** — amending rewrites the head sha and the `head=` shas in earlier milestones stop being ancestors, breaking gate-issue's remote check on resume. The repo-side half (watchers must require check-run *presence*, not just absence-of-failure) is a separate fix; a dossier cannot assume it is in place.
 - **Why milestones are CLI-posted, never hand-written.** The comment is the only run state surviving the session, so it must parse. A hand-written milestone that looks right but parses wrong makes the run unresumable; the raw `<!-- runstate:v1 -->` format is reader documentation, not a template.
 - **Pool `gc` deleted 29 developer worktrees** (2026-08-23): the pool directory is shared with developer worktrees and `@ai-dossier/worktree-pool` ≤ 0.5.0 removed everything it did not create (ai-dossier#453). Hence `status`/`claim`/`return`/`replenish`/`detect` only, always `@^0.5.1`; maintenance is a human task.
 - **Rename-then-repair.** Repurposing renames a worktree's directory, breaking git's internal tracking; `git worktree repair` fixes it.
