@@ -447,6 +447,27 @@
       ]
     },
     {
+      "name": "imboard-ai/git/issue-cycle-classifier",
+      "title": "Issue Cycle Classifier — Structured Full/Slot Verdict",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/issue-cycle-classifier.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "issue",
+        "workflow",
+        "classification",
+        "batch-cycles",
+        "runstate"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/issue-workflows-guide",
       "title": "Issue Workflows Guide",
       "version": "1.5.2",
