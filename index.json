@@ -1122,29 +1122,6 @@
       ]
     },
     {
-      "name": "imboard-ai/review-issue",
-      "title": "Review Issue — Parallel Code Review",
-      "version": "1.12.0",
-      "path": "imboard-ai/review-issue.ds.md",
-      "category": [
-        "development"
-      ],
-      "tags": [
-        "issue",
-        "workflow",
-        "git",
-        "github",
-        "review",
-        "security",
-        "code-quality"
-      ],
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
-    },
-    {
       "name": "imboard-ai/scaffold-project",
       "title": "Scaffold TypeScript Project",
       "version": "1.0.1",
