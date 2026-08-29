@@ -641,7 +641,7 @@
     {
       "name": "imboard-ai/git/setup-issue-workflow",
       "title": "Setup Issue Workflow",
-      "version": "1.14.0",
+      "version": "1.14.1",
       "path": "imboard-ai/git/setup-issue-workflow.ds.md",
       "category": [
         "development"
