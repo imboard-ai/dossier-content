@@ -3,11 +3,11 @@
   "dossier_schema_version": "1.0.0",
   "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-08-25",
-  "objective": "Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow",
+  "last_updated": "2026-08-29",
+  "objective": "Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow; recognizes classify, slot-mode, and batch-anchor runstate trails so a full-cycle run never resumes into a nonexistent batch",
   "category": [
     "development"
   ],
@@ -50,13 +50,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "59818fd7baf7aed2e95c35897f7d5d5ba7083f15f29aaff8fb522911ce480ab9"
+    "hash": "25a3b2ff5a405d9fc7a36d8d915e691e8c12e70149c0413ed7b07e19dc1fc8e1"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "kxWscHWS+6PAZHUrDSzX5t8v3XHiBEHDEcRoXF/YySE7FKtgF1PBIaedPbe2sO01dMwkt8+rYQAQZkhKg6szCg==",
+    "signature": "ZdJ2K8bhJ0rgyZu+m/sGphUFxBeqRUH9CtSBCt06vm0amzZR/593GgnF7j77pLnX1K7Jb7GHxh27rT5JOMiZDA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T19:26:52.174Z",
+    "signed_at": "2026-08-29T18:04:13.029Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -111,6 +111,14 @@ Otherwise read `.phase`, `.status`, `.run`, and the phase-specific keys from tha
 ai-dossier runstate verify --issue <issue_number> --json
 ```
 
+**Fresh-entry trails (classify / slot-mode / batch anchors).** Three trail shapes have no full-cycle phases to resume into; `verify` reports them as `resume_from=none` with a `note` (and `slot_trail: true` where marked). Handle each explicitly — never map a resume into a batch:
+
+- **`phase=classify` record** (any `mode=`): a classification verdict, not a run — the cycle dispatched from it mints its own run. Enter FRESH. When `mode=slot`, `verify` also sets `slot_trail=true` (the member was evicted/requeued before any slot milestone landed).
+- **Slot-mode member trail** — last milestone carries `mode=slot` or `batch=<id>` (a full-cycle-line phase; **including `status=blocked`** — the state machine that posted it is not the one resuming): the batch worktree is machine-local and an evicted member is requeued as full-cycle from scratch, so there is nothing to resume. Enter FRESH with `slot_trail=true`. This is the requeue-with-context path: carry a pointer to the prior trail (see Step 6) so the plan phase reads the member's plan artifact and failure evidence instead of re-deriving them.
+- **Batch anchor trail** — last milestone is a batch phase (`batch-setup`, `batch-validate`, `batch-review`, `batch-ship`, `batch-report`): the issue is a batch ANCHOR, not an implementable issue. Hard block with `reason=batch-anchor` (Step 2) — anchors are driven by the scheduler, never by full-cycle.
+
+On any fresh entry, keep the `run_id` minted in Step 1b — do NOT reuse the trail's `.run` (it belongs to the classify/slot run and its phases). Fresh-entry checks outrank the blocked rule (a blocked slot-mode milestone still enters fresh); only the resume loop cap outranks them.
+
 Verification is **remote-first**: origin/<branch> is the durable copy of the work (WIP sync rule), so every check runs against the remote, not the local worktree. The **remote check** is: the branch exists on origin (`git ls-remote --exit-code origin <branch>`; a local worktree is a bonus, not a requirement) and, for milestones carrying `head`, `git fetch origin <branch>` then `head` equals the `git ls-remote origin <branch>` sha or `git merge-base --is-ancestor <head> FETCH_HEAD` succeeds.
 
 *verify implements this table; run the command, read the table only when debugging.*
@@ -126,7 +134,12 @@ Verification is **remote-first**: origin/<branch> is the durable copy of the wor
 | `ship` awaiting-merge | `gh pr view <pr> --json state,mergedAt,mergeable` | merged → `resume_from=ship-teardown`; open+MERGEABLE → `resume_from=ship-wait`; CONFLICTING/closed-unmerged → `resume_from=ship` | `resume_from=ship` |
 | `ship` done | — | `resume_from=report` | — |
 | `report` done | issue is CLOSED? | print "already complete" and STOP (status pass, `resume_from=done`) | `resume_from=report` |
+| `classify` record | — | `resume_from=none` FRESH (new run id; `slot_trail` when `mode=slot`) | — |
+| slot-mode (`mode=slot` or `batch=<id>` on the last milestone, any status) | — | `resume_from=none` FRESH, `slot_trail=true` — never resume into the batch | — |
+| batch phase (`batch-*`) | — | batch anchor — not a full-cycle run → hard block `reason=batch-anchor` | — |
 | any `blocked` | treat as the phase itself: `resume_from=<that phase>` | | |
+
+The three fresh-entry rows outrank the blocked row — a `status=blocked` slot-mode milestone still enters fresh (the state machine that posted it is not the one resuming). Only the resume loop cap outranks fresh-entry checks.
 
 The planning-file check (`test -f <planning>`) is not in this table — it happens AFTER the worktree is materialized, in full-cycle-issue's "## Resuming", since the worktree may not exist on this machine yet.
 
@@ -146,6 +159,7 @@ If ANY of these are true, abort immediately with a comment on the issue:
 - **Has label `decomposed`**: Issue was already decomposed into sub-issues by triage
 - **Has label `needs-clarification`**: Issue was triaged as not ready
 - **Has label `epic`**: Issue is an epic, not directly implementable
+- **Has label `batch-epic`**, or its runstate trail ends with a `batch-*` phase: the issue is a batch ANCHOR — driven by the batch scheduler, never by full-cycle
 - **Has open dependency**: Body contains `Depends on #N` (case-insensitive) where issue #N is still open — for each one found, `gh issue view <N> --json state --jq '.state'`; state `OPEN` is a hard block.
 
 **On hard block**: Post a comment and stop:
@@ -154,7 +168,7 @@ If ANY of these are true, abort immediately with a comment on the issue:
 gh issue comment <issue_number> --body "**Workflow aborted**: <reason>. Resolve the blocker and re-run."
 ```
 
-Then post the blocked runstate milestone (Step 6) with `--status blocked --kv reason=closed|decomposed|needs-clarification|epic|open-dependency-<N>`.
+Then post the blocked runstate milestone (Step 6) with `--status blocked --kv reason=closed|decomposed|needs-clarification|epic|batch-anchor|open-dependency-<N>`.
 
 Do NOT proceed.
 
@@ -214,10 +228,14 @@ ai-dossier runstate post --issue <issue_number> --phase gate --status done --run
   --kv resumed_from=<phase|none> \
   --kv prior_run=<run_id|none> \
   --kv verified=<comma list of checks passed|none> \
-  --kv model=<the model id you are running as, e.g. claude-opus-5; use "unknown" only if genuinely undeterminable; strip any context suffix such as `[1m]` — bare model id only>
+  --kv model=<the model id you are running as, e.g. claude-opus-5; use "unknown" only if genuinely undeterminable; strip any context suffix such as `[1m]` — bare model id only> \
+  --kv slot_trail=true \
+  --kv batch=<batch_id>
 ```
 
 `model=` makes the trail analyzable by model over time; state it honestly — it is the run's provenance, not a preference.
+
+The last two keys are the **slot-trail context pointer** — add them ONLY on a fresh entry over a slot-mode trail (Step 1.5): `slot_trail=true`, and `batch=<batch_id>` taken from the trail's `resume_context` (omit the key entirely when the trail carries no batch id). The gate milestone's `prior_run=<slot run id>` (the `.run` verify reported, NOT the fresh mint) completes the pointer — the plan phase reads the prior trail's comments for the member's plan artifact and failure evidence instead of re-deriving them. An ordinary fresh run (no trail) keeps `resumed_from=none prior_run=none` and adds neither key.
 
 Let the CLI stamp `at=` and compute `next=` (here `setup`) — do not pass either; never hand-write the comment. On a hard block: `--status blocked --kv reason=<short-slug>` (the CLI then sets `next=done`).
 
@@ -230,6 +248,7 @@ Let the CLI stamp `at=` and compute `next=` (here `setup`) — do not pass eithe
 - `failure_reason`: reason for hard block (only if status=fail)
 - `resume_from`: phase to resume from, or `none` for a fresh run
 - `resume_context`: parsed key=value lines of the last runstate milestone, for later phases to consume
+- `slot_trail`: true when the prior trail was slot-mode (fresh entry — never a resume; pass the pointer keys to plan so it reads the prior trail's plan artifact + failure evidence)
 - `local_worktree`: `present` | `absent` | `n/a` — whether the `worktree=` path from resume_context exists on this machine (informational; remote is authoritative)
 - Posts runstate milestone to the issue (`phase=gate`)
 
@@ -237,6 +256,8 @@ Let the CLI stamp `at=` and compute `next=` (here `setup`) — do not pass eithe
 
 - [ ] Issue metadata fetched; soft warnings counted; base branch extracted from issue body
 - [ ] Resume detection (Step 1.5) ran before hard blocks, via `ai-dossier runstate last` + `ai-dossier runstate verify`
+- [ ] Fresh-entry trails handled per the decision table: classify → FRESH; slot-mode (`mode=slot`/`batch=`, any status) → FRESH with `slot_trail=true` and the context pointer keys (`prior_run`, `batch`) on the milestone; batch phase → hard block `reason=batch-anchor`
+- [ ] On a fresh entry over a slot trail: the Step 1b mint was kept as `run_id` (the trail's `.run` was NOT reused) and the context pointer keys were posted
 - [ ] On resume: the prior `run_id` was reused, not re-minted, and the claimed milestone was verified against reality (not trusted blindly)
 - [ ] Resume verification is remote-first — `setup`/`plan`/`implement`/`review` milestones are verified against `origin/<branch>` (ls-remote / merge-base ancestor check), not a local worktree
 - [ ] `local_worktree=present|absent` was reported when a `worktree=` path existed in `resume_context` (bonus signal only, never gates the resume decision)
