@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "report-issue",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment",
+  "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment; in batch mode (batch_id set): one batch report on the anchor plus one short completion comment per member issue",
   "category": [
     "development"
   ],
@@ -65,6 +65,16 @@
         "name": "run_id",
         "description": "Runstate run id minted by gate-issue; pass through unchanged",
         "type": "string"
+      },
+      {
+        "name": "batch_id",
+        "description": "Batch id slug. When set, run the BATCH VARIANT: one batch report on the anchor + one short completion comment per member issue. issue_number is the batch ANCHOR; pr_number is the batch PR. Unset = ordinary per-issue report.",
+        "type": "string"
+      },
+      {
+        "name": "members",
+        "description": "Batch mode only: comma-separated member issue numbers (e.g. 101,102,104). Falls back to the PR body's 'Closes #N' list when omitted.",
+        "type": "string"
       }
     ]
   },
@@ -73,16 +83,16 @@
       "name": "Yuval Dimnik"
     }
   ],
-  "last_updated": "2026-08-25",
+  "last_updated": "2026-08-29",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e9779eb1647cc113a7ec8164809035d1d45bfd0c59221be81b467c761fcd6042"
+    "hash": "cf9da113143a89b676a1d91e015806fa8d3784f718fd9109b468e000fd9b86ac"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "PsgGVVcGFNK49ffyZUMcQvWfNQCXcOaNRJEfzeJcQYDmoGZIOdTP9f+QpPv+QTUxmFBS7nxsXDj83sf+gRJnDQ==",
+    "signature": "tA+vl/INAovU+Zg/7ofb+qtV7kfn+h75l/GHvLpK5EqpFRPIH9t63+H9ISW9dufW+s+dpgg7S7ekWz+aoL6vAw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T19:26:56.100Z",
+    "signed_at": "2026-08-29T18:04:15.155Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -103,6 +113,52 @@ Generate a completion report covering: **what was done** (code changes), **user-
 - GitHub CLI (gh) is installed and authenticated
 
 This phase may run in a **later session than implement** — a detached ship (ship-issue's `ship_mode`) parks the PR and ends the run, and the tail run finishing it starts fresh at `resume_from=ship-teardown`. Nothing assumes in-memory state: context comes from the runstate milestones and the PR, read in Step 1 and Step 4b.
+
+## Batch Variant (batch_id set)
+
+When the `batch_id` input is set, this dossier runs the **batch variant**: ONE batch report + ONE short completion comment per member issue. `issue_number` is the batch ANCHOR issue; `pr_number` is the batch PR. The per-issue flow below does not run — the batch variant replaces Steps 1–6.
+
+**Batch Step 1: Gather context.** Fetch the batch PR and the member list:
+
+```bash
+gh pr view <pr_number> --json title,body,files,additions,deletions,mergedAt,mergeCommit
+```
+
+Members come from the `members` input; when omitted, parse the PR body's `Closes #N` / `Fixes #N` lines.
+
+**Batch Step 2: Compose the batch report.** Same skeleton and honesty gates as Step 3 below, adapted:
+
+- **What Changed** — one line per member issue (`#<n> — <one-line summary>`, from the PR's per-issue sections or per-issue commits), plus a 1-2 sentence batch-level summary.
+- **User-Facing / Dev-Ops Implications** — analyzed over the COMBINED diff, not per issue; a change shipped by any member is a change the batch ships.
+- **Review Results** — the aggregate review's findings (tier, fixed, clean), from the batch trail.
+- **`Shipped` line covers the BATCH deploy** — one deploy carries every member (deploy coupling). Deploy confirmed → the deploy SHA + run URL; no deploy step → `N/A — <reason>`; merged but not deployed → the explicit `NOT DEPLOYED` warning, first line, exactly as below.
+- **`MERGE_COMMIT` gate unchanged**: an empty merge commit is a FAILED batch report, never a clean one. Batch PRs rebase-merge (per-issue commits land individually in main): record the batch PR's merge head SHA and note that per-issue commits are individually revertable — do not assume a single squash commit.
+
+**Batch Step 3: Post it** — full version to the conversation, condensed version as a comment on the batch PR (Step 4's shape).
+
+**Batch Step 4: One short completion comment per member issue** (traceability — the issue↔PR relation is N:1, so each issue needs its own closing record):
+
+```bash
+gh issue comment <member> --body "Shipped in batch <batch_id> — batch PR #<pr_number>, MERGE_COMMIT <sha>, Shipped <deployed SHA + run URL | NOT DEPLOYED — <what a human must run> | N/A — <reason>>. Full batch report: <link to the PR comment>."
+```
+
+Short means short — the full analysis lives in the batch report; each member comment carries exactly the honesty gates (merge commit + deployed state) and the pointer. Never post a member's completion comment before the batch's deploy state is determined.
+
+**Batch Step 5: Traps + cleanup.** Step 4b's mechanical trigger applies to the batch trail — read the ship-like milestone that exists (`batch-ship` once ship's batch mode lands; until then, whatever ship evidence the trail carries) and the batch's aggregate CI evidence. Step 4c is N/A: the batch worktree has no per-issue `PLANNING-*` files.
+
+**Batch Step 6: Milestone on the ANCHOR:**
+
+```bash
+ai-dossier runstate post --issue <anchor_number> --phase batch-report --status done --run <run_id> \
+  --kv batch=<batch_id> \
+  --kv pr=<pr_number> \
+  --kv merge_commit=<sha> \
+  --kv deployed=<sha|not-deployed|n-a> \
+  --kv members=<n> \
+  --kv traps_added=<n>
+```
+
+`<run_id>` is the batch's run id; the CLI stamps `next=done`. `merge_commit` empty is the same failure it is in the report body — a blocked milestone with `reason=no-merge-commit` is the honest posting, not `done`.
 
 ## Actions to Perform
 
@@ -261,6 +317,7 @@ Let the CLI stamp `at=` and compute `next=done` — do not pass either; never ha
 ## Validation
 
 - [ ] `Shipped` line present and accurate — deployed SHA, `N/A — <reason>`, or an explicit `NOT DEPLOYED` warning. Merged is not shipped.
+- [ ] Batch variant (batch_id set): ONE batch report posted (conversation + PR comment) with per-issue What Changed lines, aggregate implications over the combined diff, and the batch-deploy `Shipped` line; ONE short completion comment per member issue carrying merge-commit + deployed state; milestone posted as `phase=batch-report` on the anchor with `batch=`, `pr=`, `merge_commit=`, `deployed=`, `members=`, `traps_added=`; `MERGE_COMMIT`/`DEPLOYED` honesty-gate semantics identical to the per-issue report (rebase-merge: record the batch PR merge head, not an assumed squash commit)
 - [ ] PR details were fetched; changed files analyzed for user-facing and dev/ops implications
 - [ ] Full report printed to conversation; condensed report posted as PR comment
 - [ ] If base_branch != main: epic sub-issue note included
