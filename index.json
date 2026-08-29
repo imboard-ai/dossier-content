@@ -676,6 +676,28 @@
       ]
     },
     {
+      "name": "imboard-ai/git/slot-cycle",
+      "title": "Slot Cycle — Per-Issue Execution Unit Inside a Batch",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/slot-cycle.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "issue",
+        "workflow",
+        "batch-cycles",
+        "slot",
+        "runstate",
+        "conformance"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/start-issue",
       "title": "Start Issue Workflow",
       "version": "1.1.2",
