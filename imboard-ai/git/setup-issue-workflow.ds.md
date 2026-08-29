@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.13.1",
+  "version": "1.14.0",
   "protocol_version": "1.0",
   "status": "Stable",
-  "objective": "Create a workflow for GitHub issues that fetches issue details, creates appropriately named branches, optionally sets up git worktrees with environment warmup (or claims from a pre-warmed pool), and generates planning files for structured development",
+  "objective": "Create a workflow for GitHub issues: fetch issue details, create appropriately named branches, set up git worktrees with environment warmup (or claim from a pre-warmed pool), and generate planning files; in batch mode (batch_id) it creates the shared batch branch for the batch anchor instead",
   "category": [
     "development"
   ],
@@ -28,7 +28,12 @@
       },
       {
         "name": "run_id",
-        "description": "Runstate run id minted by gate-issue; pass through unchanged",
+        "description": "Runstate run id minted by gate-issue; pass through unchanged. In batch mode this is the batch's run id (minted against the anchor issue).",
+        "type": "string"
+      },
+      {
+        "name": "batch_id",
+        "description": "Batch id slug (e.g. b-2026-08-29-01). When set, run in BATCH MODE: one run per batch against the batch ANCHOR issue — creates the shared branch batch/<batch_id>-<date> from base, skips per-issue branch naming and the planning scaffold, and posts phase=batch-setup on the anchor. Unset = ordinary per-issue mode.",
         "type": "string"
       }
     ]
@@ -72,16 +77,16 @@
   "risk_factors": [
     "network_access"
   ],
-  "last_updated": "2026-08-25",
+  "last_updated": "2026-08-29",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "a5ce12cd16c064ae568f184609e7722a90634fb22cd13070e69d7e170aed169a"
+    "hash": "8eb9922ad8683d95015861c570e2bdc5b3783efa5a2a47f221e4286311bd8e11"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "gTRfpGo4V9cBlfCs3xtmi5dckLpFvehlL7g45i8Bot0TwMfDztvhinZGJx5y3Uyzoy6P1n7F2Muo2VpY41aUBQ==",
+    "signature": "ZWj3l1lHpboGgIToEjm6YXsMdXd3fl60i2pIHgeUSqhpFORRUY3HyOFSLgnkhBctjU9VzMaLf6Q258+NmlJQAA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-25T07:08:46.866Z",
+    "signed_at": "2026-08-29T18:04:14.072Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -134,7 +139,22 @@ Extract `title` (branch naming), `labels` (check for "bug" or "feature"), `body`
 
 Store `BASE_BRANCH` for Steps 5.1, 5b, 7 and 8, and report it in the Step 10 summary so downstream dossiers can use it.
 
+### Step 2b: Batch Mode (batch_id set)
+
+If the `batch_id` input is set, this run is **batch mode**: it runs ONCE per batch, and `<ISSUE_NUMBER>` is the batch ANCHOR issue (created by batch-issues-preparation, labeled `batch-epic`) — not a member issue. Member issues never run this dossier; their work happens in the batch worktree via slot-cycle.
+
+- **Branch name**: `batch/<batch_id>-<YYYYMMDD>` (UTC date at creation) — e.g. `batch/b1-20260829`. Branch from `BASE_BRANCH`. No type prefix, no issue number, no title slug — those are per-issue concepts.
+- **Worktree path**: `$REPO_ROOT/worktrees/batch-<batch_id>-<YYYYMMDD>`.
+- **Steps 3 and 4 are SKIPPED** (branch type and title slug do not apply).
+- Steps 5.1 (pool claim), 6, 7, 8 and 8.5 run unchanged with the batch branch name — the pool claim or cold path is identical to per-issue mode. The anchor issue number is passed to `worktree-pool claim --issue`.
+- **Step 9 (planning scaffold) is SKIPPED** — the batch worktree carries no `PLANNING-*` file. Member issues' plans live on the issues themselves as `plan:v1` artifact comments (produced by batch-prep or plan-issue).
+- The Step 11 milestone posts `phase=batch-setup` on the ANCHOR issue (see Step 11).
+
+If `batch_id` is not set, everything below is ordinary per-issue mode — unchanged.
+
 ### Step 3: Determine Branch Type
+
+*Per-issue mode only — skipped in batch mode (Step 2b names the branch).*
 
 `bug` label → `bug/` prefix. `feature` label → `feature/` prefix. Both or neither → prompt:
 
@@ -146,6 +166,8 @@ Choice (1-2):
 ```
 
 ### Step 4: Create Branch Name
+
+*Per-issue mode only — skipped in batch mode (Step 2b names the branch).*
 
 Slugify the title: lowercase, spaces → hyphens, remove special characters, truncate to 50 chars max. Construct `{type}/{issue-number}-{slugified-title}` — e.g. `bug/123-fix-login-redirect-issue`, `feature/456-add-user-dashboard`.
 
@@ -288,6 +310,8 @@ Provide **source_worktree** (the repository root, where .env files exist) and **
 
 ### Step 9: Generate Planning File
 
+*Per-issue mode only — SKIPPED in batch mode: the batch worktree carries no `PLANNING-*` file (member issues' plans live on the issues as `plan:v1` artifact comments).*
+
 Create a scaffold named `PLANNING-{issue-number}-{slug}.md` — in the worktree root (worktree mode, including pool-claimed and repurposed), the current directory, or the custom path, per the mode chosen. Stub only; **plan-issue owns the full planning template** and rewrites this file, preserving any user-added content.
 
 ```markdown
@@ -303,6 +327,23 @@ Create a scaffold named `PLANNING-{issue-number}-{slug}.md` — in the worktree 
 ### Step 10: Display Results
 
 One summary; fill the parenthesised slots for the mode taken.
+
+**Batch mode** — print the batch summary instead of the per-issue one:
+
+```
+Batch setup complete!
+
+Batch:      <batch_id>
+Anchor:     #<NUMBER> - <TITLE>
+Branch:     batch/<batch_id>-<date>   (from <BASE_BRANCH>)
+Worktree:   <worktree-path>          (+ " (claimed from pool)")
+Warmup:     <WARMUP-STATUS.md path>  (cold worktree mode only)
+Planning:   none — batch mode skips the per-issue scaffold (member plans live on their issues)
+
+Next steps: the scheduler dispatches slot-cycle members in this worktree, one at a time.
+```
+
+**Per-issue mode:**
 
 ```
 Issue workflow setup complete!
@@ -338,6 +379,22 @@ Next steps:
 
 Post the phase milestone to the issue. This is the last step of the phase — if setup aborts, post `--status blocked --kv reason=<short-slug>` instead and stop. Comments are append-only: never edit or delete a prior milestone. Do not skip this in nested or fleet mode — it is the only state that survives the session.
 
+**Batch mode** — post on the ANCHOR issue, phase `batch-setup`, carrying the batch id:
+
+```bash
+ai-dossier runstate post --issue <ANCHOR_NUMBER> --phase batch-setup --status done --run <run_id> \
+  --kv batch=<batch_id> \
+  --kv branch=<branch-name> \
+  --kv worktree=<absolute worktree path> \
+  --kv pool_claimed=true|false \
+  --kv base_branch=<BASE_BRANCH> \
+  --kv remote=pushed
+```
+
+`<run_id>` is the batch's run id (minted against the anchor issue). The same keys, rules, and `blocked` fallback apply as below; the CLI stamps `next=batch-validate`.
+
+**Per-issue mode:**
+
 ```bash
 ai-dossier runstate post --issue <NUMBER> --phase setup --status done --run <run_id> \
   --kv branch=<branch-name> \
@@ -351,10 +408,16 @@ Let the CLI stamp `at=` and compute `next=plan` — do not pass either; never ha
 
 ## Validation
 
-**All modes:** issue details fetched · branch name follows `{type}/{number}-{slug}` and the branch was created · planning file `PLANNING-{number}-{slug}.md` created in the mode's location with all required sections · user shown clear next steps.
+**All modes:** issue details fetched · branch name follows `{type}/{number}-{slug}` (per-issue) or `batch/<batch_id>-<date>` (batch) and the branch was created · planning file `PLANNING-{number}-{slug}.md` created in the mode's location with all required sections (per-issue mode only) · user shown clear next steps.
 
 - [ ] Branch was pushed to origin (`git push -u origin <branch-name>`) immediately after creation — pool-claim (5.1), cold (7) and current-directory/custom-path (5b) all push; nothing is committed in this phase
 - [ ] Runstate milestone comment was posted to the issue, including `remote=pushed`
+
+**Batch mode (batch_id set):**
+- [ ] Branch named `batch/<batch_id>-<YYYYMMDD>` from `BASE_BRANCH` — no type prefix, no issue number, no title slug
+- [ ] Steps 3, 4 and 9 skipped (no branch-type prompt, no title slug, no `PLANNING-*` scaffold)
+- [ ] Milestone posted as `phase=batch-setup` on the ANCHOR issue carrying `batch=<batch_id>`
+- [ ] Pool claim or cold path ran unchanged (5.1 / 6–8.5, warmup REQUIRED on the cold path)
 
 **Worktree mode — pool-claimed (ALL required before showing success):**
 - [ ] `npx -y @ai-dossier/worktree-pool@^0.5.1 status` was checked
