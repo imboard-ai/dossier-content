@@ -427,7 +427,7 @@
     {
       "name": "imboard-ai/git/git-sync",
       "title": "Git Sync — Reconcile Local State with Origin",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/git/git-sync.ds.md",
       "category": [
         "development"
