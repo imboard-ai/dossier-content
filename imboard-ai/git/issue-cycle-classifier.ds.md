@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-cycle-classifier",
   "title": "Issue Cycle Classifier — Structured Full/Slot Verdict",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-01",
@@ -56,13 +56,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "7cd0f51424930dffda0c9ce1ab32b6fd896932a27bf90d875bf0df35602ad2ac"
+    "hash": "372e1c267cc2a173857baf1c625568da3f334dcc21f4637728cf1459e489bd95"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "9HfFt/NhyFPpOFdtjmkLdgi/2C6F1EgmX9wOoOmDrNepCsRMQhQSr1uFjpIYsWSTJ223omrg0vkbfG3urrFjAA==",
+    "signature": "KMgM2lrP1Fns6nzTLaZWspSjh1N+MT2UOWGun/BPVnmyhX+T+4j4jmCwG/OvN010JI7vjwyUOjm8Ze6idPGyDw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-01T22:48:38.265Z",
+    "signed_at": "2026-09-01T23:10:56.802Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -81,7 +81,7 @@ Score ONE issue for execution mode (`full` vs `slot`). A deterministic pre-scree
 ## Prerequisites
 
 - GitHub CLI (gh) installed and authenticated
-- `ai-dossier` CLI >= 0.25.0 (`ai-dossier classify prescreen`, #538; also carries the `--phase classify` runstate vocabulary, ai-dossier#461)
+- `ai-dossier` CLI >= 0.26.0 (`ai-dossier classify prescreen`, #538; also carries the `--phase classify` runstate vocabulary, ai-dossier#461)
 - Run from the repository that owns the issue — only Step 4b's escalated pass touches it (`git grep`, path probes); Step 3's pre-screen and Step 4's bounded inspect never do
 - `ai-dossier whoami` works (not needed for `dry_run`)
 - **Dispatch tier**: run the WHOLE dossier — Steps 1–3, 4, and 5–8 — at **mechanical tier**. Step 4b's escalated pass is the sole exception and the only part that should ever run at mid tier. Running the whole dossier at mid tier by default is the exact cost this version exists to cut (#538 / `docs/reports/batch-pilot-2-execution.md` §4.1: ~64k tokens/dispatch measured at mid tier before this change, over the same §2.2 15-issue set).
@@ -296,7 +296,7 @@ text-floor`).
 
 | Symptom | Fix |
 |---|---|
-| `classify prescreen` — unknown command | CLI older than 0.25.0 — upgrade (`npm i -g @ai-dossier/cli`); use the global binary by absolute path if a repo-local `node_modules/.bin` shadow exists. Do NOT skip Step 3 and go straight to Step 4 — that silently reverts to the pre-#538 unbounded-exploration cost on every issue. |
+| `classify prescreen` — unknown command | CLI older than 0.26.0 — upgrade (`npm i -g @ai-dossier/cli`); use the global binary by absolute path if a repo-local `node_modules/.bin` shadow exists. Do NOT skip Step 3 and go straight to Step 4 — that silently reverts to the pre-#538 unbounded-exploration cost on every issue. |
 | `runstate post` rejects `--phase classify` | CLI older than 0.14.0 — upgrade (`npm i -g @ai-dossier/cli`) |
 | `est_diff`/`est_files` rejected | Must be non-negative integers — no ranges, no "about", no `+`/`k` suffixes |
 | `confidence` rejected | Decimal between 0 and 1 (`0.85`), not a percentage |
