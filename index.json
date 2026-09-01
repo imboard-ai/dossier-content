@@ -172,6 +172,37 @@
       ]
     },
     {
+      "name": "imboard-ai/git-sync",
+      "title": "Git Sync — Reconcile Local State with Origin",
+      "version": "1.0.3",
+      "path": "imboard-ai/git-sync.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "git",
+        "github",
+        "sync",
+        "commit",
+        "gitignore",
+        "worktree",
+        "cleanup"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "tools_required": [
+        {
+          "name": "git"
+        },
+        {
+          "name": "gh"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/add-git-worktree-support",
       "title": "Add Git Worktree Support to Project",
       "version": "1.3.0",
