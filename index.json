@@ -1066,7 +1066,7 @@
     {
       "name": "imboard-ai/pm/idea-to-prd",
       "title": "Idea to PRD — PM discovery loop with a go/kill gate",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "path": "imboard-ai/pm/idea-to-prd.ds.md",
       "category": [
         "development"
