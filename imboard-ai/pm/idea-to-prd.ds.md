@@ -2,7 +2,7 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Idea to PRD — PM discovery loop with a go/kill gate",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-07-07",
@@ -96,16 +96,7 @@
   "name": "idea-to-prd",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c8259b979e69f2778cf297a587e1943065dcc25bd8a518c492b7f305f096b7cc"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "gzHNHDcRR7HE+XWNHPYCd2dBnQR0vqmaJrOCF7a8EXfXbF/DjhjREeLYVHHdwBtZ3+WazX0oysnncDRYfXNUAg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:59.802Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+    "hash": "843b5ebe36490df75c12bad97ff4833f6adbefa8fcd729c2ea38096c216a4ac2"
   }
 }
 ---
@@ -123,7 +114,7 @@ This is a **funnel, not a conveyor belt** — most ideas should not become PRDs.
 
 ## Guiding Principles
 
-- **Grounded, not generic.** Every stage runs against imboard's real business context (`brief.md`), never generic best-practice.
+- **Grounded, not generic.** Every stage runs against imboard's real, CURRENT business context — the canonical strategy doc for the active initiative (e.g. `nonprofit-pivot-plan.md`), NOT a superseded brief — never generic best-practice.
 - **Kill is a first-class outcome.** A well-argued kill is a success. Never quietly drop an idea — record the reasoning and the revisit trigger.
 - **Show the work.** Both the go/kill rationale and the PRD are arguments with assumptions and confidence, not verdicts.
 - **Un-gate the output.** The durable artifact is a GitHub issue (+ committed doc), not a message in a session.
@@ -138,7 +129,7 @@ This is a **funnel, not a conveyor belt** — most ideas should not become PRDs.
 
 ## Phase 0: Ground
 
-Load `pm-business-context` (`brief.md` + any `grounding_docs`). Fix the source of truth: the master brief, not stale in-repo product docs. State the ICP, positioning, stage, and hard constraints the idea must live within. Identify the **live data the feature would reason over** (map to real product entities/KPIs) — an idea that needs data the product does not and will not have is a feasibility flag for the gate.
+Load `pm-business-context` and the CURRENT canonical strategy doc (e.g. `nonprofit-pivot-plan.md`) + any `grounding_docs`. Fix the source of truth: the active-initiative strategy doc, treating any superseded brief (e.g. an old startup-era `brief.md`) as dead. State the ICP, positioning, stage, hard constraints, and any explicit non-goals / punt list the idea must live within. Identify the **live data the feature would use** — an idea that needs data the product does not and will not have is a feasibility flag for the gate.
 
 ## Phase 1: Frame
 
@@ -206,7 +197,7 @@ Surface the converged PRD + critic verdict + top open questions for a human sign
 
 ## Validation
 
-- [ ] Grounded in `brief.md` (cited), not generic
+- [ ] Grounded in the current canonical strategy doc (cited), not generic or a superseded brief
 - [ ] Explicit GO/KILL decision with reasoning + confidence
 - [ ] KILL → kill memo filed with revisit trigger; loop stops
 - [ ] GO → investment thesis generated
