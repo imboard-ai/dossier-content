@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues",
   "title": "Batch Issue Orchestration — SUPERSEDED (pre-RFC-0001)",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "protocol_version": "1.0",
   "status": "Deprecated",
   "last_updated": "2026-09-08",
@@ -36,15 +36,32 @@
       "name": "Yuval Dimnik"
     }
   ],
+  "content_scope": "references-external",
+  "external_references": [
+    {
+      "url": "https://github.com/imboard-ai/ai-dossier/blob/main/scripts/batch-issues.sh",
+      "description": "Legacy batch-issues driver script (pre-RFC-0001)",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    },
+    {
+      "url": "https://raw.githubusercontent.com/imboard-ai/ai-dossier/main/scripts/batch-issues.sh",
+      "description": "Raw legacy batch-issues driver script (pre-RFC-0001)",
+      "type": "documentation",
+      "trust_level": "trusted",
+      "required": false
+    }
+  ],
   "checksum": {
     "algorithm": "sha256",
     "hash": "f8d175b07c41905b5ca0cb8d40aac8742ea789ef2216890fda1608cfb9be0365"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "+mSDR5nQZTd1TcWm2Y+7u+0Jj+n+zYrRLcP/UJ+FFmgFd6/E6ActpGZQn4qXublYMS5Sd7bSt7cCWJOob9PSBA==",
+    "signature": "E0ko/UwL4Bs3W/uJ2Tiy3+X6o3gnZ/dcs2sz+hCCtrkPjZZPgVM41TDM/KZ4ZdEzN2wAZyXBadL+8IM+59tGAQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-08T22:46:03.699Z",
+    "signed_at": "2026-09-08T22:47:02.952Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
