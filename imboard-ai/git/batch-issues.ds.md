@@ -2,12 +2,12 @@
 {
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues",
-  "title": "Batch Issue Orchestration",
-  "version": "2.0.2",
+  "title": "Batch Issue Orchestration — SUPERSEDED (pre-RFC-0001)",
+  "version": "2.1.0",
   "protocol_version": "1.0",
-  "status": "Stable",
-  "last_updated": "2026-03-06",
-  "objective": "Batch-process GitHub issues via Claude Code headless agents, with parallel and sequential (epic) modes",
+  "status": "Deprecated",
+  "last_updated": "2026-09-08",
+  "objective": "SUPERSEDED. Pre-RFC-0001 batch orchestration via headless agents, predating the batch-cycles programme entirely. For batching issues into ONE PR with one verification run use imboard-ai/skills/batch-cycle-skill. For N issues to N PRs use imboard-ai/skills/fleet-cycle-skill. Kept for reference only.",
   "category": [
     "development",
     "orchestration"
@@ -38,13 +38,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "22479a07c9df5f439caf8c1fa27c8d4006b401272a94130222ccc578b366cd40"
+    "hash": "f8d175b07c41905b5ca0cb8d40aac8742ea789ef2216890fda1608cfb9be0365"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "LsDF323wca2ibMc+Aa75Uxoi6HzWXrcXV+tdtV8c+H4rzxK9jjJns/gdMFWV3eMc9AktVmJQdeIgeuXr1TsKCA==",
+    "signature": "+mSDR5nQZTd1TcWm2Y+7u+0Jj+n+zYrRLcP/UJ+FFmgFd6/E6ActpGZQn4qXublYMS5Sd7bSt7cCWJOob9PSBA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:46:57.476Z",
+    "signed_at": "2026-09-08T22:46:03.699Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -53,6 +53,17 @@
 ---
 
 # Batch Issue Orchestration
+
+> ## ⚠️ SUPERSEDED — this is probably not what you want
+>
+> This dossier predates RFC-0001 batch-cycles and orchestrates a different thing. It sorts early in a
+> registry search for "batch"; it is **not** the current entry point.
+>
+> - **N issues → ONE PR, one expensive verification run** → `imboard-ai/skills/batch-cycle-skill`
+> - **N issues → N PRs, one per issue** → `imboard-ai/skills/fleet-cycle-skill`
+>
+> Retained for reference; do not dispatch.
+
 
 ## Problem
 
