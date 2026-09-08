@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "member-cycle",
   "title": "Member Cycle — One Issue Inside a Batch, Verified Only Where It Is Cheap",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-08",
@@ -62,13 +62,13 @@
   "content_scope": "self-contained",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "74c48dc690e36fd34a506e8441682c55be62925d1cac694af18712358f0775fe"
+    "hash": "450e853bd5ab9863d2879547e4fb31e1eb8968616b656045c6cef343adc833ce"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "wePbtacITRzdAM3L5F4Jl0rpjzs+AehBKDfEtkPGbGxyZrSd/iEG5GC7+WbzSmaiyBNMuFY+MpV/zWHzBIXhCQ==",
+    "signature": "3fasJRNk/Jbnj2syqApJCoCFpxBjWuc2MxBx4DK1fWeDTitRne4c24w3v775OiObZokzBqU3rFOBr9v4UzFmAw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-08T22:36:23.346Z",
+    "signed_at": "2026-09-08T23:26:46.973Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -141,6 +141,30 @@ Plan, implement, write tests, run them, iterate until you are genuinely confiden
 Do **not** run: the repo-wide suite, the repo's CI-parity or full-gate script, full e2e matrices, cross-package integration, deploy. Those cost tens of minutes and run **once** at batch level. Running one yourself is the exact duplication this workflow exists to eliminate. If you believe one is genuinely needed, **say so in the handover instead of running it.**
 
 **Lint and format your changed files explicitly**, and note the command and the paths it covered. A member's unformatted file fails a shared gate and costs the parent an entire expensive cycle to discover.
+
+### Step 2b: Prove every test you wrote actually runs
+
+**Writing a test is not running it.** Before you move on, for each test you added:
+
+1. **Observe it FAIL against the unfixed code** — revert your change, or neuter the line the
+   test targets, and watch the test go red for the reason you expect. Then restore and watch
+   it go green.
+2. If a test cannot be made to fail, it is asserting nothing. Find out why before keeping it.
+
+This is the single cheapest defect check in this workflow, and skipping it is the most common
+way a member ships a broken batch. Two measured failures, both from tests authored against an
+*imagined* contract rather than an executed one:
+
+- a test pinned the exact wording of a UI string that the code never produced
+- a test asserted an emit sequence behind a request validator its fixture never satisfied, so
+  the handler diverted to the error path and **neither assertion was ever reachable** — the
+  test had never passed, from the moment it was written
+
+Both looked correct in review. Both were caught by a shared gate long after the member
+declared success, at the cost of an entire batch verification cycle.
+
+Say in your handover that you did this, and what you saw. "Proved red by neutering X, restored,
+green" is the sentence a parent needs.
 
 ### Step 3: Conformance — your own verdict on your own ACs
 
