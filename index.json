@@ -237,7 +237,7 @@
     {
       "name": "imboard-ai/git/batch-issues",
       "title": "Batch Issue Orchestration — SUPERSEDED (pre-RFC-0001)",
-      "version": "2.1.0",
+      "version": "2.1.1",
       "path": "imboard-ai/git/batch-issues.ds.md",
       "category": [
         "development",
