@@ -212,6 +212,29 @@
       ]
     },
     {
+      "name": "imboard-ai/git/batch-integrate",
+      "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/batch-integrate.ds.md",
+      "category": [
+        "development",
+        "orchestration"
+      ],
+      "tags": [
+        "batch-cycles",
+        "integration-branch",
+        "parent",
+        "verification",
+        "handover",
+        "conformance"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/batch-issues",
       "title": "Batch Issue Orchestration",
       "version": "2.0.2",
