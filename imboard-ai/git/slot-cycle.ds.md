@@ -2,12 +2,12 @@
 {
   "dossier_schema_version": "1.0.0",
   "name": "slot-cycle",
-  "title": "Slot Cycle — Per-Issue Execution Unit Inside a Batch",
-  "version": "1.0.0",
+  "title": "Slot Cycle — SUPERSEDED by member-cycle",
+  "version": "1.1.0",
   "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-08-29",
-  "objective": "Execute ONE member issue inside a scheduler-provided batch worktree: validate the issue's plan:v1 artifact, implement with changed-file discipline, run the per-issue blind conformance check, and land exactly one commit at the issue boundary — the minimum issue-specific work that creates confidence while the batch owns the expensive lifecycle",
+  "status": "Deprecated",
+  "last_updated": "2026-09-08",
+  "objective": "SUPERSEDED by imboard-ai/git/member-cycle. Executed one member issue inside a SHARED batch worktree, members serialised. RFC-0001 §J replaced that with per-member worktrees off an integration branch. Kept for reference only.",
   "category": [
     "development"
   ],
@@ -65,13 +65,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "0f8f801fc965258b46cda050a356573a6c4f8d0c33ec78bc5d9c70265cc82701"
+    "hash": "5790108ae08e10d1cf81e4cc324c7488c5469467e05355e265011b60727f9e61"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "q+yHDHwfYDbjd83eU6Nb5YPjRo46Hb0EX66NSuh1bKs1CJbyvWogxCNcIyWaoOxbNgXz5x5hCh8zGWGugWJIAQ==",
+    "signature": "/IqIODjti6t052GS6MurGkjztwYb0UOIeuEPTxj6SYfm9tdRlxkeXwf2wIpKrB2Oau5UWzBWSINlHkQ7vMCRCQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-29T18:12:23.961Z",
+    "signed_at": "2026-09-08T22:45:41.558Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -80,6 +80,16 @@
 ---
 
 # Slot Cycle — Per-Issue Execution Unit Inside a Batch
+
+> ## ⚠️ SUPERSEDED
+>
+> This dossier describes the **shared-worktree, serial-member** model that RFC-0001 §J replaced.
+> Use **`imboard-ai/git/member-cycle`** instead — own worktree per member off an integration branch,
+> relevance-scoped verification, and a `handover:v1` artifact for the parent orchestrator
+> (**`imboard-ai/git/batch-integrate`**). Entry point for operators: **`imboard-ai/skills/batch-cycle-skill`**.
+>
+> Retained for reference; do not dispatch.
+
 
 ## Objective
 
