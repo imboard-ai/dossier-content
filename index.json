@@ -1317,6 +1317,31 @@
       "tools_required": []
     },
     {
+      "name": "imboard-ai/skills/batch-cycle-skill",
+      "title": "Batch Cycle",
+      "version": "1.0.0",
+      "path": "imboard-ai/skills/batch-cycle-skill.ds.md",
+      "description": "Batch several issues into ONE PR with ONE expensive verification run. Each issue gets its own agent and worktree off a shared integration branch; a parent orchestrator merges them, runs the repo's full gate once, repairs what breaks, and ships a single PR. Use when the user says 'batch cycle', 'batch these issues into one PR', 'run these issues as a batch', 'one PR for these issues', or asks to avoid paying CI/verification per issue. NOT for when each issue needs its own PR — that is fleet-cycle.",
+      "category": [
+        "skills"
+      ],
+      "tags": [
+        "github",
+        "workflow",
+        "autonomous",
+        "orchestration",
+        "batch",
+        "integration-branch",
+        "verification",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/skills/feature-to-issues-skill",
       "title": "Feature to Issues",
       "version": "1.0.3",
