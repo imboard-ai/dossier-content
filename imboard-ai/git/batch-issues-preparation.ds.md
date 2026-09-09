@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues-preparation",
   "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-01",
+  "last_updated": "2026-09-09",
   "objective": "Turn a raw issue list/range into classified, dependency-ordered, batched queue entries for the scheduler (RFC-0001 C.3): resolve the set, build the dependency DAG, classify every issue, ensure a plan:v1 artifact on each, compose batches per E.4, create batch-epic anchor issues, write the audit file, and enqueue via sched enqueue --from-manifest",
   "category": [
     "development"
@@ -63,13 +63,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "d4dfc4bc7209d40e5cff37cf893752e13a69e487bba69e4eba5254eb4a71ead2"
+    "hash": "9c58d1d625948b07c08d1ce7c5acf3b351bd2261edbf08c2c8da644bdf34f84a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "e5Zt6frvuUBTYrasOY3JKQe/WCdVdJF4jdmxAC/z5TU9HCyb+0MKUWpJAXRjZL9+Sq+tNOvABdPHMi0xTd3gDA==",
+    "signature": "f/aic6lVkI+bVlZpiRSAo6zIpUnr3f3jVKqm1TWAf1YeC9bcfJHuIpRvGt7kCbhOEChdfIGdxnyGqicRuH+9DQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-01T22:48:38.791Z",
+    "signed_at": "2026-09-09T07:45:12.094Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -81,7 +81,7 @@
 
 ## Objective
 
-The judgment-heavy front door of Batch Cycles (RFC-0001 C.3): turn a raw issue list/range — potentially hundreds — into classified, dependency-ordered, batched queue entries for the deterministic scheduler (`ai-dossier sched`, #460). Everything after the queue is the scheduler's; everything deeper than a light plan is slot-cycle's or full-cycle's.
+The judgment-heavy front door of Batch Cycles (RFC-0001 C.3): turn a raw issue list/range — potentially hundreds — into classified, dependency-ordered, batched queue entries for the deterministic scheduler (`ai-dossier sched`, #460). Everything after the queue is the scheduler's; everything deeper than a light plan is member-cycle's or full-cycle's.
 
 **Non-responsibilities (RFC-0001 C.3):** execution and supervision (the scheduler's), deep per-issue planning (slot/full cycle's). This dossier never dispatches a cycle, never creates worktrees, branches, or PRs, and never posts batch milestones on anchors — the scheduler owns the batch lifecycle from `batch-setup` onward.
 
@@ -137,7 +137,7 @@ For every edge A→B, resolve B's state: edges to merged/closed deps are **satis
 
 ### Step 4: Ensure a plan:v1 Artifact on Every Issue (#462)
 
-1. `ai-dossier plan get --issue <n>` per remaining issue; exit 0 → an artifact exists, keep it (validate-and-refine belongs to plan-issue / slot-cycle, not here).
+1. `ai-dossier plan get --issue <n>` per remaining issue; exit 0 → an artifact exists, keep it (validate-and-refine belongs to plan-issue / member-cycle, not here).
 2. Missing → author a **light** artifact and post it:
    - **Problem** — 1-2 sentences from the issue body
    - **Acceptance Criteria** — verbatim from the issue's requirements/AC checkboxes; else the minimal testable set
@@ -154,16 +154,53 @@ Split the classified set:
 - Issues with an **open dependency outside the submitted set** (classifier floor rule 9 has already forced them full) are **deferred**: classified and planned, but NOT enqueued — an out-of-graph dep stays permanently unsatisfied in the queue (enqueue semantics), so enqueueing them would strand them blocked forever. Report as `deferred-external-dep`; re-run prep once the dep merges. **Deferral is transitive**: an issue whose open in-set dependency is deferred is itself deferred (reported as `deferred-external-dep` with the chain) — enqueueing it would strand it on a dep that never enters the queue.
 - The remaining `mode=slot` issues are packed into batches.
 
+**Readiness screen — judge from the BODY, not the labels.** A survey of 118 open issues in a
+real backlog yielded 11 batchable, and **almost nothing was excluded for being too big**: ~53
+features/epics, 11 assigned or in progress, 8 decisions, 7 CI-machinery, 6 trackers, 3
+data-mutation. Size is not the constraint; readiness is. Four cheap deterministic checks, all
+against the issue body:
+
+- **Does every artifact the body names exist on the base branch?** An issue saying "migrate onto
+  the helper extracted by #N" depends on #N whether or not it says "depends on". Verify the named
+  symbol or file exists; do not trust the prose. This is the single highest-yield check.
+- **Does the body enumerate a countable work list?** Count it. A "documentation" issue naming
+  eight resource families is not small.
+- **Is it assigned, in progress, or already shipped?** An issue whose work merged under another
+  number is live bait — check for commits referencing it before batching it.
+- **Is it a tracker or a decision?** A body listing many independent findings gives an agent no
+  stopping point; one headed "Decision needed" with an options table is not implementable.
+
+Drop what fails and say why. A dropped issue costs nothing; a member forcing work against a
+missing dependency costs an agent run and a share of the batch's verification cycle.
+
 **Hard constraints — ALL must hold for every batch:**
 
 1. Same `base_branch`
 2. Every member's external deps satisfied: merged, a full-mode entry in this run, or a member of an **earlier** batch (never a later one)
-3. ≤ 4 members (initial cap; raise only with measured eviction rate < 10%)
-4. Σ `est_diff` ≤ 1,200 predicted lines
-5. ≤ 1 eviction group: members with overlapping predicted paths MAY share a batch deliberately (they see each other's changes in the shared worktree — this eliminates cross-PR merge conflicts) but form an **eviction group**; a batch may contain at most one overlapping cluster
+3. **≤ 6 members** (raise further only on measured evidence). Measured across three batch
+   executions: 1.9-3.3x wall-clock saving at N=3 versus **3.3-5.7x at N=6**, with the shared
+   verification growing only ~15% while the batch doubled, and a member break rate of 2 in 6.
+   Member count is not the binding constraint — deploy blast radius and the capacity of the
+   repo's shared test infrastructure are.
+4. **Combined predicted diff is a REVIEW bound, not a cost bound.** Diff size predicts neither
+   cost nor conflict: measured members have run 92 turns for a net −29 lines and 59 turns for
+   +193, and a 6,289-line combined batch merged cleanly. Cap it only so the aggregate review
+   stays tractable, and say that is what the cap is for.
+5. **≤ 1 eviction group.** Members do NOT share a worktree — each works in its own worktree off
+   the integration branch and sees no one else's changes until the parent merges (RFC-0001
+   §J.3). Overlapping members are therefore permitted but will conflict at integration, which
+   the parent resolves. Two shapes must be kept apart:
+   - **Slices of one designed sequence** (PR1/PR2/PR3 of a feature) are not independent and
+     conflict by construction — never place two in the same batch.
+   - **Members sharing a structural landmark** — the same component, registry or list — form an
+     eviction group even when their predicted file sets are disjoint. The only conflict observed
+     in 14 members was three members each anchoring an addition to the same component, one of
+     which relocated it; predicted-path intersection would have cleared that cohort.
 6. No two members with `risk=med`+ touching the same area
 
 **Packing (deterministic first-fit):** walk slot issues in topological order. For each, first-fit into the earliest existing batch with the same `base_branch` that still satisfies all six constraints with the candidate added — prefer file-disjoint placement; an overlapping candidate may join only if it creates no second overlap cluster and all its slot-mode deps are members of this batch or of earlier batches (a candidate must never land in a batch earlier than a batch holding its dependency — that would create a backward batch edge). No batch fits → open a new batch. Intra-batch deps stay intra-batch: member order encodes them.
+
+**Prefer MIXED cohorts.** A batch's value is a function of the union of its members' affected scopes, not of member count. A cohort whose members all avoid the repo's expensive verification stage amortizes almost nothing — one measured batch of six frontend/docs members resolved to 3 of 9 workspaces and never triggered the expensive stage at all. Once ONE member triggers it, every further member rides along at nearly no additional gate cost. Compose so at least one member touches the expensive surface.
 
 **Member order within a batch:** dependency order → ascending risk (safest first — evicting a late risky member never invalidates early safe ones) → issue number.
 
@@ -275,7 +312,7 @@ Example:
 | Slot issue depends on a full-mode entry | Allowed — the member entry carries the dep; the scheduler gates on that entry's completion. |
 | No slot-eligible issues | Valid outcome — manifest carries full-mode entries only, zero batches. |
 | Everything skipped/deferred/full | Report honestly; an empty batch plan is not an error — and skip the enqueue call (it rejects a zero-entry manifest). |
-| Classifier floor rule hits after reuse of an old classify record | Trust the record — re-classification buries trails; the slot-cycle tripwires catch stale verdicts at execution time. |
+| Classifier floor rule hits after reuse of an old classify record | Trust the record — re-classification buries trails; the member-cycle tripwires catch stale verdicts at execution time. |
 
 ## Validation
 
