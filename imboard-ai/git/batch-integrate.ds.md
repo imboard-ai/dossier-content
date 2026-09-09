@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-integrate",
   "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-08",
+  "last_updated": "2026-09-09",
   "objective": "Merge a batch's members onto its integration branch, run the repo's expensive verification ONCE for all of them, repair mechanical failures, escalate semantic ones, never evict on a signal the verification cannot stand behind, and ship one PR",
   "category": [
     "development",
@@ -63,13 +63,13 @@
   "content_scope": "self-contained",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "1fabcc6b25384bfacbed2a16182a248a400045b2521aff46dc49fbfa8129e804"
+    "hash": "c070b233364133c792bfab2d930919517fb20b343604b6b0c3a795c1d2a5692d"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "77PWnU1mAor7DUL+10JnQ1ZJhcSgKhxAas3ZI6t3tG7PbAj1Z6o/pob+PKn9eqKfuUh5It6IRyaR++W535bDBw==",
+    "signature": "0d3NeVAadm8yr0H66/M7rGuoiH7QBipwdTXc7IOx75ZI4C9STN8SxItGq3XwRbjYPslJ6z0NE8snrtAnAKqrAg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-08T22:38:22.085Z",
+    "signed_at": "2026-09-09T07:43:19.518Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -102,6 +102,15 @@ A conflict is **not** grounds for eviction. Resolve it so every member's intent 
 
 Then bring the base up to date. **A batch that outlives another batch's merge inherits its changes** — on an active repo the base can move by several commits during a single batch's lifetime. Merge the base branch in and resolve; additive collisions in shared constant or registry files are the common case and resolve by union.
 
+**Bring the base up to date by REBASING, not merging.** A branch that accumulates merge commits from the base can no longer be rebase-merged at ship time (Step 6), and once those merge commits carry your conflict resolutions a local rebase re-conflicts too. Rebase while the branch is still linear and you keep both options; merge and you have chosen your ship strategy without noticing.
+
+A batch that outlives another batch's merge inherits its changes, and on an active repo the base can move by several commits during one batch's lifetime. Re-check the base immediately before shipping — and treat a long-lived batch as a reason to ship what you have rather than to add members.
+
+**Three resolutions, not two.** Beyond "keep both" and "escalate" (Step 4):
+
+- **Union — but only for FLAT regions.** Concatenating both sides is safe for adjacent top-level declarations or a list of constants. When the conflict sits INSIDE a syntactic construct — an interface, an object literal, a call expression — *your* block's closing delimiter lies past the `=======` marker and concatenating silently drops it. The result looks like a clean resolution and fails to compile at a line far from the conflict. Recover the exact closing from the pre-merge version (`git show <branch>:<path>` on the side that owned the block) and typecheck each resolved file individually.
+- **Supersession.** The base may have ALREADY implemented what a member was written to do — a second issue solving the same problem, often better factored, landing while the batch ran. Take the base's implementation, drop the member's, and keep any tests the member added that still assert the behaviour: a different implementation of an equivalent contract makes them added coverage, not dead weight. Close that member's issue as superseded, naming what actually shipped — a reader tracing the member's commit must not conclude it is what is live.
+
 ### Step 2: Cheap gates first
 
 Run the repo's cheap checks over the combined branch — typecheck, lint/format, and any fast repo-wide guard — **before** paying for the expensive suite.
@@ -109,6 +118,10 @@ Run the repo's cheap checks over the combined branch — typecheck, lint/format,
 This ordering is not a nicety. Members' real defects are disproportionately caught here: formatting that fails a shared gate, a repo-wide convention guard, a compile error at a merge seam. Finding one of those *inside* the expensive run costs the whole run.
 
 Repair what these surface (Step 3), then proceed.
+
+**Run the cheap gates to completion, repair, re-run them, and only then start the expensive verification.** This is not merely sequencing — measured across three batches, **every real member defect was caught by a hygiene/typecheck-class gate and none was ever first caught by the integration suites**: a mongoose call needing an `ordered` flag, a repo-wide formatting-convention violation, and a set of assertions that were unreachable because the fixture never satisfied the handler's own validator.
+
+Yet two of those three batches burned a **full expensive cycle** discovering one, because the cheap pass ran as a stage *inside* the expensive run rather than before it. A 6-8 minute pass that prevents one 50-90 minute cycle pays for itself on the first defect, and on this evidence there is roughly one per batch.
 
 ### Step 3: Run the expensive verification ONCE, and read its result in four states
 
@@ -152,6 +165,8 @@ Review the combined diff for **cross-member interaction** — seams, duplicated 
 Open a single PR closing every member issue that survived. **Merge with rebase, never squash** — per-issue commits carry the attribution eviction, revert, and bisect all depend on, and squashing destroys it.
 
 The PR body should carry a section per member and name every batch-level repair with its cause.
+
+**If rebase-merge is refused, ship with a MERGE COMMIT — never a squash.** A host will refuse to rebase a branch containing merge commits; on an otherwise-green PR, a message to the effect of *"this branch can't be rebased"* means merge commits, not a conflict. The requirement here is that **per-issue commits survive**, because eviction, revert and bisect all depend on them. A merge commit preserves every one of them and satisfies that requirement. A squash destroys them and never does.
 
 **The PR's own CI is not redundant with your run.** It typically runs a different selection, in a clean environment, against its own infrastructure. It will catch things your run did not, and it is the trustworthy signal when your own run was degraded by contention. Your job is not finished when your local gate is green.
 
