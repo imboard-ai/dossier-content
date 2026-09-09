@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues-preparation",
   "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-09",
@@ -63,13 +63,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "9c58d1d625948b07c08d1ce7c5acf3b351bd2261edbf08c2c8da644bdf34f84a"
+    "hash": "f9bd27d9cdb39befefa8e41f03548053f6c262f8c9fb4cdaa1ca02677a9e5398"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "f/aic6lVkI+bVlZpiRSAo6zIpUnr3f3jVKqm1TWAf1YeC9bcfJHuIpRvGt7kCbhOEChdfIGdxnyGqicRuH+9DQ==",
+    "signature": "ToqLrdjKiMVzlCNEexzBFRuPjuJmSoO1obhFJ1C1nEzs9v57bbZ1QItF241jnnThlVjyJhz2R+NoXpB7DT0WBw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-09T07:45:12.094Z",
+    "signed_at": "2026-09-09T11:54:25.372Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -128,10 +128,25 @@ Detect cycles over the combined graph; a true cycle is **surfaced and STOPS the 
 
 For every edge A→B, resolve B's state: edges to merged/closed deps are **satisfied — drop them** from the manifest-facing graph; open deps outside the submitted set make A un-preparable (Step 5 defers it).
 
-### Step 3: Classify Every Issue (parallel mechanical-tier dispatches)
+### Step 3: Classify Every Issue (parallel dispatches, on a DECISION-grade model)
 
 1. **Reuse**: if an issue's LATEST runstate milestone is `phase=classify status=done`, take the verdict from that record — do not re-classify (re-posting would bury the trail).
-2. Otherwise dispatch **one mechanical-tier agent per issue** (bounded: at most 8 concurrent — the `mechanical` `ModelTier`, `packages/sched/src/types.ts`, the same value Step 8's manifest `tier` field carries; `--tier` itself is a `sched enqueue` flag and has no meaning on this ad-hoc `ai-dossier run` dispatch, so choose the mechanical-tier agent/model directly at dispatch time — not the vague "cheap-tier" this line used to say before #538, which in practice ran at mid tier, see `docs/reports/batch-pilot-2-execution.md` §4.1), each running exactly `ai-dossier run imboard-ai/git/issue-cycle-classifier` for that one issue, **passing the submitted set in the dispatch context** (e.g. `submitted set: 1,2,5..8`) — the classifier's Step 3 pre-screen translates that into `ai-dossier classify prescreen --submitted-set <selection>` so an open in-set dep (floor rule 9, "outside the submitted set") is exempted rather than forcing `full`. The classifier's own deterministic pre-screen (#538) rejects obvious `full` cases before spending a single mechanical-tier token, and escalates to mid tier only for the rare issue whose classification confidence genuinely needs a repo probe — mechanical tier is now safe as the default dispatch, not just an aspiration. Classification is cheap and safe to parallelize; the classifier posts its own records, labels, and rationale (#465). DAG analysis stays with the orchestrator at the strongest tier (fleet 1b routing: judgment here, mechanical elsewhere).
+2. Otherwise dispatch **one agent per issue on a decision-grade model** (bounded: at most 8
+   concurrent). **Do NOT use the cheapest tier here.** What this step decides is the RFC-0001
+   E.2 risk floor — auth, payments, migrations, security, architecture — and the `tier` every
+   downstream member inherits. Running the risk *judgment* on the cheapest model while its
+   answer selects the model that does the *work* is inverted: the decision is where capability
+   is worth paying for, not the typing.
+
+   This is not a hypothetical. A full backlog sweep classified 7 of 111 issues as `slot`, and
+   the supervisor pre-registered that only ONE was truly implementable — the other six carried
+   readiness blockers the classifier could not see. The standing diagnosis is that the
+   classifier *"finds 'small', not 'ready'"*. That is a judgment failure, not a throughput one.
+
+   Model selection belongs to the operator's dispatch config; name a model suited to product
+   and architectural decisions rather than a cheap tier alias. Record which model produced each
+   verdict so the weekly scorecard's model x tier bucketing can measure whether slot rate and
+   misclassification actually improve.
 3. Collect each verdict from `ai-dossier runstate last --issue <n> --json`: `mode`, `risk`, `est_files`, `est_diff`, `areas`, `test_scope`, `deps`, `confidence`.
 4. A classifier `blocked` record (e.g. `unreadable-issue`) drops the issue — reported as skipped. One failed dispatch is retried once; a persistent failure skips that issue, never the whole run.
 
@@ -239,7 +254,9 @@ For batches Step 5 matched to an existing anchor, skip creation entirely — rec
 2. Write the manifest (schema below) to `~/.dossier/logs/batch-prep/<project>/manifest-<ts>.json` (plain JSON — machine-consumed):
    - full-mode entries: `{issue, mode: "full", deps, tier, base_branch}` — deps list only OPEN set-internal deps (edges to merged issues were dropped in Step 2)
    - slot members: `{issue, mode: "slot", batch: <batch_id>, anchor: <anchor_issue_number>, deps, tier, base_branch}` — deps list only OPEN deps **outside this member's own batch** (same-batch deps are encoded in member order); `anchor` is the batch's anchor issue number from Step 6, emitted on **every** member of the batch (not just the first) — the final skip-check in item 1 below can drop any individual member, and only emitting `anchor` on one entry risks losing the binding if that entry is the one dropped
-   - tier: docs/test/chore-only areas + `risk=low` → `mechanical`; `risk=high` → `strong`; otherwise `mid`
+   - tier: docs/test/chore-only areas + `risk=low` → `mechanical`; `risk=high` → `strong`; otherwise `mid`.
+  Note this mapping is only as good as the `risk` verdict feeding it — which is why Step 3 must not
+  be run on the cheapest model.
 
    Zero entries after skips/deferrals → do NOT invoke `sched enqueue` (it rejects an empty manifest); report the run as a no-op with the audit file.
 
