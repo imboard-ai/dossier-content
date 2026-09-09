@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues-preparation",
   "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-09",
@@ -63,13 +63,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "f9bd27d9cdb39befefa8e41f03548053f6c262f8c9fb4cdaa1ca02677a9e5398"
+    "hash": "0e523ad74eda1ac1d020c8b3b141882da5114d2d171e7f7f3b6c5655cb9ebb02"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "ToqLrdjKiMVzlCNEexzBFRuPjuJmSoO1obhFJ1C1nEzs9v57bbZ1QItF241jnnThlVjyJhz2R+NoXpB7DT0WBw==",
+    "signature": "jpgNvGEWa4CrfBlwNGKzB1IN0H2/u42Hrk/7Te/aWDO6c5h9N8YNH2zZodVACSwASar5Y5lnhxfj7hh6edH4BQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-09T11:54:25.372Z",
+    "signed_at": "2026-09-09T11:55:32.076Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -143,10 +143,20 @@ For every edge A→B, resolve B's state: edges to merged/closed deps are **satis
    readiness blockers the classifier could not see. The standing diagnosis is that the
    classifier *"finds 'small', not 'ready'"*. That is a judgment failure, not a throughput one.
 
-   Model selection belongs to the operator's dispatch config; name a model suited to product
-   and architectural decisions rather than a cheap tier alias. Record which model produced each
-   verdict so the weekly scorecard's model x tier bucketing can measure whether slot rate and
-   misclassification actually improve.
+   **Dispatch this step on `fable`** (`--model fable`, verified to resolve to `claude-fable-5-1`).
+   It is the model to reach for where a major product or technical decision is due, where the
+   change is architectural, or where risk is elevated — which is exactly this step, and is a
+   different axis from `ModelTier`. Tier grades how hard something is to WRITE; this grades how
+   consequential it is to DECIDE. The two do not have to agree, and here they actively disagree:
+   the cheapest tier was deciding the risk floor.
+
+   The same rule applies wherever a phase is separately dispatched and its output is a JUDGMENT
+   rather than an implementation — batch composition (Step 5), and the aggregate review in
+   `imboard-ai/git/batch-integrate`. It does NOT apply to member implementation, where the
+   member's own `tier` governs.
+
+   Record which model produced each verdict: the weekly scorecard buckets by model x repo x
+   tier from the run rows, so this change measures itself once it runs.
 3. Collect each verdict from `ai-dossier runstate last --issue <n> --json`: `mode`, `risk`, `est_files`, `est_diff`, `areas`, `test_scope`, `deps`, `confidence`.
 4. A classifier `blocked` record (e.g. `unreadable-issue`) drops the issue — reported as skipped. One failed dispatch is retried once; a persistent failure skips that issue, never the whole run.
 
