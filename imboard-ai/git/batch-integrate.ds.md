@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-integrate",
   "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-09",
@@ -63,13 +63,13 @@
   "content_scope": "self-contained",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c070b233364133c792bfab2d930919517fb20b343604b6b0c3a795c1d2a5692d"
+    "hash": "53a51f855a0dfddbd2664631b7c0a51986182c9c5885582e5e953d7942b1def2"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "0d3NeVAadm8yr0H66/M7rGuoiH7QBipwdTXc7IOx75ZI4C9STN8SxItGq3XwRbjYPslJ6z0NE8snrtAnAKqrAg==",
+    "signature": "ihyj79oKkXIgRuB32y8Oie6hAhw5hjti/SVCO9XdEuR1rRJl5EwRGvhBie2Yqz2pXJWQNszHILdVvy14iMoiAQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-09T07:43:19.518Z",
+    "signed_at": "2026-09-09T11:55:56.847Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -155,6 +155,24 @@ Escalate a semantic failure to a bounded member-tier agent with the failure evid
 Commit repairs as batch-level commits, attributable to no member.
 
 **Bound the repair budget per member.** Exhausting it is the signal to evict, not to keep trying. Evicting means reverting that member's commits, re-running verification, and requeueing the issue with the failure evidence attached — the rest of the batch still ships.
+
+### Step 4b: Which model decides — a different axis from tier
+
+`ModelTier` grades how hard something is to **write**. It does not grade how consequential
+something is to **decide**, and the two come apart exactly where this dossier does its work.
+
+**Dispatch on `fable` (`--model fable`) wherever the output is a JUDGMENT:** the aggregate
+review below, the fix-vs-evict call, and any conflict resolution that turns on what a feature
+*should* do. Reach for it where a major product or technical decision is due, where the change
+is architectural, or where risk is elevated — security or otherwise.
+
+**Do not** apply it to member implementation: there the member's own `tier` governs, and a
+member writing a small fix does not need a decision-grade model to type it.
+
+The distinction is not cosmetic. In the sibling `batch-issues-preparation` dossier the risk
+floor — auth, payments, migrations, security — was being decided by the CHEAPEST tier, whose
+answer then selected the model that did the work. A judgment feeding a capability choice should
+never be the least capable step in the chain.
 
 ### Step 5: Aggregate review
 
