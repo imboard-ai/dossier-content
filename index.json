@@ -672,7 +672,7 @@
     {
       "name": "imboard-ai/git/review-issue",
       "title": "Review Issue — Parallel Code Review",
-      "version": "1.13.0",
+      "version": "1.13.1",
       "path": "imboard-ai/git/review-issue.ds.md",
       "category": [
         "development"
