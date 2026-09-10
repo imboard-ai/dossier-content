@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "member-cycle",
   "title": "Member Cycle — One Issue Inside a Batch, Verified Only Where It Is Cheap",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-08",
+  "last_updated": "2026-09-10",
   "objective": "Implement ONE issue in its own worktree off a shared integration branch, test it thoroughly but scoped by relevance rather than volume, and hand over to a parent orchestrator that owns all expensive verification — so N issues pay the repo's expensive gate once instead of N times",
   "category": [
     "development"
@@ -62,16 +62,15 @@
   "content_scope": "self-contained",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "450e853bd5ab9863d2879547e4fb31e1eb8968616b656045c6cef343adc833ce"
+    "hash": "805ddd63b8e68b64dfc2678e34d5701f8d880be19afe1d61f25250336346a72d"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "3fasJRNk/Jbnj2syqApJCoCFpxBjWuc2MxBx4DK1fWeDTitRne4c24w3v775OiObZokzBqU3rFOBr9v4UzFmAw==",
+    "signature": "K7XIWPucyeelg7dA/32aDjOdR9xgWdE3f3O2yHbJepxnCF58OSc7ID66VLHL+csRgO8v49my9dXXWteiLYm+Bw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-08T23:26:46.973Z",
+    "signed_at": "2026-09-10T06:56:36.858Z",
     "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+    "signed_by": "(not specified)"
   }
 }
 ---
@@ -109,7 +108,25 @@ git status --porcelain                   # must be empty
 
 Any failure: post `runstate ... --status blocked --kv reason=<slug> --kv batch=<batch>` and hand back **without touching a file**. A dirty tree is the parent's call to recover, not yours.
 
-Confirm the dependency marker a fresh clone lacks (`node_modules/`, `vendor/`, `.venv/`) is present. Absent → `reason=env-cold`; warm-up was owed to you.
+Confirm a dependency marker a fresh clone lacks is present. **Search the worktree, do not assume it
+sits at the worktree root** — a monorepo's workspace root is often a subdirectory:
+
+```bash
+MARKER=$(find . -maxdepth 3 \( -name node_modules -o -name vendor -o -name .venv \) -type d -print -quit)
+[ -n "$MARKER" ] || echo "env-cold"
+```
+
+Nothing found → `reason=env-cold`; warm-up was owed to you.
+
+> Two traps, both hit in practice (ai-dossier#676):
+>
+> - **Do not check the worktree root only.** Batch `b-20260909-01` evicted `#4159` for `env-cold`
+>   while `main/node_modules` held 1173 packages. The same issue then completed as a standalone
+>   full-cycle on the same machine and shipped a PR.
+> - **Do not locate the root by "nearest lockfile" either.** imboard carries a stray
+>   `package-lock.json` at the worktree root that shadows the real `main/pnpm-lock.yaml`, so a
+>   lockfile search resolves to the wrong directory and reports cold on a warm tree. Searching for
+>   the marker itself cannot be shadowed this way.
 
 Record where you started — every later diff is scoped to it:
 
