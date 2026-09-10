@@ -3,11 +3,11 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues-preparation",
   "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-09",
-  "objective": "Turn a raw issue list/range into classified, dependency-ordered, batched queue entries for the scheduler (RFC-0001 C.3): resolve the set, build the dependency DAG, classify every issue, ensure a plan:v1 artifact on each, compose batches per E.4, create batch-epic anchor issues, write the audit file, and enqueue via sched enqueue --from-manifest",
+  "last_updated": "2026-09-10",
+  "objective": "Turn a raw issue list/range into classified, dependency-ordered, batched queue entries for the scheduler (RFC-0001 C.3): resolve the set, build the dependency DAG, classify every issue, ensure a plan:v1 artifact on each, compose batches per E.4, create batch-epic anchor issues, write the audit file, claim every enqueued member at manifest time, and enqueue via sched enqueue --from-manifest",
   "category": [
     "development"
   ],
@@ -27,6 +27,7 @@
   "destructive_operations": [
     "Creates batch-epic anchor issues and applies labels in the target repo",
     "Posts classify records, rationale comments, and plan:v1 artifacts on prepared issues",
+    "Claims each enqueued batch member with the in-progress label and a pickup comment (skipped under dry_run)",
     "Writes scheduler queue entries via sched enqueue --from-manifest (skipped under dry_run)"
   ],
   "inputs": {
@@ -63,13 +64,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "0e523ad74eda1ac1d020c8b3b141882da5114d2d171e7f7f3b6c5655cb9ebb02"
+    "hash": "dd644b184a70d8c44c920255421e88e4552604b46fab2bb2bf68af0cdb470940"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "jpgNvGEWa4CrfBlwNGKzB1IN0H2/u42Hrk/7Te/aWDO6c5h9N8YNH2zZodVACSwASar5Y5lnhxfj7hh6edH4BQ==",
+    "signature": "axwpDowCM7CNabN/Ev5rhJ3NkR9mvT8Xh4wTNyaG2DTcArFptkOhq+rfbBjNrLmjxGTYmnyRz12veKksVkT1Cg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-09T11:55:32.076Z",
+    "signed_at": "2026-09-10T14:48:12.264Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -268,16 +269,30 @@ For batches Step 5 matched to an existing anchor, skip creation entirely — rec
   Note this mapping is only as good as the `risk` verdict feeding it — which is why Step 3 must not
   be run on the cheapest model.
 
-   Zero entries after skips/deferrals → do NOT invoke `sched enqueue` (it rejects an empty manifest); report the run as a no-op with the audit file.
+    Zero entries after skips/deferrals → do NOT invoke `sched enqueue` (it rejects an empty manifest); report the run as a no-op with the audit file.
 
-3. Enqueue, from the target repo:
+3. **Claim every enqueued member at manifest time (batch members only).** The readiness screen in Step 1 READS the `in-progress` claim marker; this step WRITES it — at the moment the run commits the members to the queue, so the forming window (selection → dispatch, which can trail by hours) is never unprotected. For every slot member being enqueued, in the same pass, immediately BEFORE item 4:
+
+   ```bash
+   gh label create "in-progress" --color "FBCA04" --description "Actively being worked on" --force
+   gh issue edit <n> --add-label "in-progress"
+   gh issue comment <n> --body "**Batch claim** — selected into batch <batch_id> (anchor #<anchor>)"
+   ```
+
+   - **No `--add-assignee "@me"`** — `@me` does not translate to a batch: there is no single agent behind it. The honest marker is the label plus the pickup comment naming the batch id, so a human tracing a claim reaches the batch rather than guessing at a member.
+   - **Full-mode entries are NOT claimed here** — a pickup comment naming a batch id is meaningless without a batch, and full-cycle claims a full-mode issue itself at pickup (its Phase 1 Step 2). The claim here covers slot members only.
+   - **`dry_run=true` → nothing is claimed** — nothing is enqueued, so nothing is spoken for.
+   - **If item 4's enqueue fails**, it is atomic (nothing was saved) — RELEASE the claims this item just added before stopping: `gh issue edit <n> --remove-label "in-progress"` plus a one-line release comment naming the batch id and `enqueue-failed`. An EnqueueError must never leave claimed issues with no queue entry behind them.
+   - **Never claim by hand outside this step.** Adding `in-progress` to candidates while a prep run is still executing trips the readiness rule (Step 1) against that run's own selections and drops them. The manifest step is the single claim point.
+
+4. Enqueue, from the target repo:
    ```bash
    ai-dossier sched enqueue --from-manifest <manifest-path>
    ```
 
-   On `EnqueueError` STOP and surface the error plus the manifest path — enqueue is atomic (nothing was saved); fix the cause (e.g. duplicate active issue) and re-run. Never silently retry with a trimmed manifest.
-4. Verify: `ai-dossier sched status` shows the new entries and batches; note the result in the output.
-5. `dry_run=true` → items 1-2 run (the manifest is written and reported), items 3-4 (enqueue and verify) are skipped. Everything before Step 8 — classify records, plan artifacts, anchors, audit — is REAL under dry_run; that is the shadow-mode deliverable (RFC-0001 G Step 2).
+   On `EnqueueError` STOP and surface the error plus the manifest path — enqueue is atomic (nothing was saved; release the item-3 claims first); fix the cause (e.g. duplicate active issue) and re-run. Never silently retry with a trimmed manifest.
+5. Verify: `ai-dossier sched status` shows the new entries and batches; note the result in the output.
+6. `dry_run=true` → items 1-2 run (the manifest is written and reported), items 3-5 (claims, enqueue and verify) are skipped. Everything before Step 8 — classify records, plan artifacts, anchors, audit — is REAL under dry_run; that is the shadow-mode deliverable (RFC-0001 G Step 2).
 
 ### Step 9: Output
 
@@ -287,9 +302,31 @@ Skipped:   <issue: reason, ...>
 Deferred:  <issue: open external dep #X, ...>
 Batches:   <per batch: id, members in order, eviction group, deps, anchor #>
 Full-mode: <issue → tier, ...>
+Claims:    <enqueued members claimed at manifest time, or "none (dry-run)">
 Manifest:  <path> (enqueued | dry-run — NOT enqueued)
 Audit:     ~/.dossier/logs/batch-prep/<project>/BATCH-PLAN-<ts>.md.gz
 ```
+
+## Stale claims — recovery
+
+A batch that dies between enqueue and dispatch (prep crashed after claiming, the host rebooted, the scheduler queue was wiped) leaves members carrying `in-progress` with nothing behind the claim — the "looks busy but is not" state. The recovery is deterministic — claim provenance plus two checks — not label archaeology:
+
+**Identify.** An issue's claim is STALE when ALL of:
+
+1. It carries the `in-progress` label AND a `**Batch claim**` pickup comment naming batch `<id>` (the claim's provenance — this is why the comment is not optional);
+2. `ai-dossier sched status --json` shows NO active (non-terminal) entry for the issue — nothing queued, nothing dispatched for it;
+3. Its latest runstate milestone (`ai-dossier runstate last --issue <n> --json`) is still `phase=classify` — no member/slot trail ever started.
+
+(If the batch DID dispatch, the member's trail exists and the claim is live: any disposal — ship, eviction, supersession — releases it. Nothing here applies to a batch that is merely still forming; prep itself claims at enqueue and a forming batch's claims are correct.)
+
+**Clear.** Release the claim and return the issue to the pool:
+
+```bash
+gh issue edit <n> --remove-label "in-progress"
+gh issue comment <n> --body "Claim released — batch <id> did not reach dispatch (stale-claim recovery); issue returned to the pool"
+```
+
+The next prep run over the backlog then re-selects it normally — its readiness screen sees no `in-progress` and a `classify` record it can reuse.
 
 ## The Enqueue Manifest Schema
 
@@ -334,6 +371,7 @@ Example:
 | Uncertain whether two issues collide | Add the dependency edge (serialize). False serial < false parallel. |
 | Dependency cycle detected | Surface it and STOP the run. |
 | Issue in-flight (label or runstate trail) | Skip it — a classify record on an active trail breaks the run's resume. |
+| Issue carries `in-progress` from a batch claim | Skip it at Step 1 — that is the claim's read side doing its job; the claim was written by the earlier prep run's Step 8. If the two stale-claim checks (sched status + `classify` trail) prove the batch died before dispatch, release it per "Stale claims — recovery" and re-run. |
 | Open dep outside the submitted set | Classify and plan it, but defer enqueue — out-of-graph deps stay permanently unsatisfied in the queue. |
 | One overlap cluster would become two | Refuse the candidate — ≤ 1 eviction group per batch, hard. |
 | Slot issue depends on a full-mode entry | Allowed — the member entry carries the dep; the scheduler gates on that entry's completion. |
@@ -350,6 +388,8 @@ Example:
 - [ ] One `batch-epic` anchor per batch (label created idempotently) with task-list body of members — reused from a matching open anchor when Step 5's idempotency check found one, never duplicated
 - [ ] Audit file written and gzipped under `~/.dossier/logs/batch-prep/<project>/` (retention 20), showing the anchor # per batch
 - [ ] Manifest written per the schema, with `anchor` on every slot member of every batch; `sched enqueue --from-manifest` invoked and verified via `sched status` (batch shows a non-null `anchor`) — or explicitly skipped under `dry_run`
+- [ ] Every enqueued slot member was claimed at manifest time — `in-progress` label plus a pickup comment naming the batch id, never `--add-assignee "@me"`; full-mode entries NOT claimed; nothing claimed under `dry_run`; an `EnqueueError` released the claims it had just added
+- [ ] Deferred (`deferred-external-dep`) issues were NOT claimed — they never reach Step 8's manifest, and the output/audit show them as deferred, not claimed
 
 ## Troubleshooting
 
@@ -362,3 +402,4 @@ Example:
 | `runstate last` returns a classify record with missing keys | Stale or hand-written record — re-dispatch the classifier for that issue |
 | No `sched` state for the project | Fresh project — treat `sched status` as an empty queue and proceed |
 | Batch stuck with `anchor: null`, `claimAndSetup`/dispatch refuses it | The manifest's slot entries omitted `anchor` — Step 8 must emit it on every member (#536). Re-enqueue is not possible once a batch left `forming`; fix the manifest for future runs. |
+| Issues carry `in-progress` but nothing is in the queue | A batch died between enqueue and dispatch — apply "Stale claims — recovery": confirm no active sched entry and a `classify` trail, then release the label with a recovery comment. Do not hand-add `in-progress` to a forming batch's members — that trips this dossier's own readiness rule. |
