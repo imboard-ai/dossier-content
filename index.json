@@ -537,7 +537,7 @@
     {
       "name": "imboard-ai/git/member-cycle",
       "title": "Member Cycle — One Issue Inside a Batch, Verified Only Where It Is Cheap",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "path": "imboard-ai/git/member-cycle.ds.md",
       "category": [
         "development"
