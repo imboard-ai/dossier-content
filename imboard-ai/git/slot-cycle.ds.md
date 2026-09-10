@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "slot-cycle",
   "title": "Slot Cycle — SUPERSEDED by member-cycle",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "protocol_version": "1.0",
   "status": "Deprecated",
-  "last_updated": "2026-09-08",
+  "last_updated": "2026-09-10",
   "objective": "SUPERSEDED by imboard-ai/git/member-cycle. Executed one member issue inside a SHARED batch worktree, members serialised. RFC-0001 §J replaced that with per-member worktrees off an integration branch. Kept for reference only.",
   "category": [
     "development"
@@ -65,16 +65,15 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "5790108ae08e10d1cf81e4cc324c7488c5469467e05355e265011b60727f9e61"
+    "hash": "4c326b19b12c93b6a79e622f77b4c3375a2c8ae54c50d2f92655fb74f65a9969"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "/IqIODjti6t052GS6MurGkjztwYb0UOIeuEPTxj6SYfm9tdRlxkeXwf2wIpKrB2Oau5UWzBWSINlHkQ7vMCRCQ==",
+    "signature": "wK6eYwtmKmLujnHN2c3dvwLX+9CQd+fmF4c6+/QzBlPJKu+6JLlfQNhJTAvbN1605wSCZc+ZiLb6b1KdgxbWAQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-08T22:45:41.558Z",
+    "signed_at": "2026-09-10T06:58:03.162Z",
     "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
+    "signed_by": "(not specified)"
   }
 }
 ---
@@ -119,7 +118,7 @@ Assert every precondition the scheduler owes you, in order — any failure posts
 
 1. **Worktree exists and is a git worktree** — `test -d "<worktree>"` and `git rev-parse --is-inside-work-tree`. Failure: `reason=worktree-missing`.
 2. **Batch branch checked out** — `git branch --show-current` contains the `batch` input's id and is NOT the default branch (`git symbolic-ref --short refs/remotes/origin/HEAD`) — a concrete predicate, not a naming convention. Failure: `reason=not-batch-branch`.
-3. **Environment warm** — the repo's dependency marker is present (e.g. `node_modules/`, `vendor/`, `.venv/` — whatever a fresh clone lacks). A cold environment means warm-up was skipped. Failure: `reason=env-cold`.
+3. **Environment warm** — a dependency marker a fresh clone lacks is present **somewhere in the worktree, not necessarily at its root**: `find . -maxdepth 3 \( -name node_modules -o -name vendor -o -name .venv \) -type d -print -quit` returns non-empty. A monorepo's workspace root is often a subdirectory, and checking the worktree root alone is a false negative — batch `b-20260909-01` evicted `#4159` for `env-cold` while `main/node_modules` held 1173 packages, and that issue then completed as a standalone full-cycle on the same machine. Do **not** locate the root by nearest lockfile either: imboard carries a stray root `package-lock.json` that shadows the real `main/pnpm-lock.yaml`. Nothing found anywhere → warm-up was genuinely skipped. Failure: `reason=env-cold`. (ai-dossier#676)
 4. **Clean working tree** — `git status --porcelain` empty. A dirty tree means the previous member crashed mid-issue; recovery (revert, requeue) is the scheduler's call, not yours. Failure: `reason=dirty-worktree`.
 5. **Plan artifact available** — `ai-dossier plan get --issue <issue_number>` exits 0. batch-issues-preparation owes every member a plan:v1 artifact; a missing one is prep's failure, not yours to fix. Failure: `reason=no-plan-artifact`.
 6. **Classify record available** — `ai-dossier runstate last --issue <issue_number> --json` shows `mode=slot` on the latest milestone: `phase=classify` (first dispatch) OR a prior slot-mode milestone (crash-restart re-dispatch or re-batch — resume at Step 4, which squashes any intermediate commits). `runstate last` returns only the latest milestone, so after any partial slot run the classify record itself is buried — that is expected. `mode=slot` absent entirely (never classified, or classified `full`) → Failure: `reason=no-classify-record`. **Capture `est_files` and `est_diff` now** (from the classify record on first dispatch, from your notes on a re-dispatch) — the Step 1 and Step 2 tripwires compare against them, and `runstate last` will not return the classify record again once your own milestones post.
