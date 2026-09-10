@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "slot-cycle",
   "title": "Slot Cycle — SUPERSEDED by member-cycle",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "protocol_version": "1.0",
   "status": "Deprecated",
   "last_updated": "2026-09-10",
@@ -65,15 +65,16 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "4c326b19b12c93b6a79e622f77b4c3375a2c8ae54c50d2f92655fb74f65a9969"
+    "hash": "fc0a97532e19d51396d7dd9181d08e41e41d183b3cea0d3e2b3e887844699a5f"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "wK6eYwtmKmLujnHN2c3dvwLX+9CQd+fmF4c6+/QzBlPJKu+6JLlfQNhJTAvbN1605wSCZc+ZiLb6b1KdgxbWAQ==",
+    "signature": "pp/SiL1iDToAOQkKGjoj0DhBEG4oRsT7PegGkZHrBCz7tfSjKRWlRjij5lGcVuaT0uMg4YC/Mnp2E0iplmyYDA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-10T06:58:03.162Z",
+    "signed_at": "2026-09-10T16:09:50.249Z",
     "covers": "frontmatter+body",
-    "signed_by": "(not specified)"
+    "key_id": "imboard-ai",
+    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
   }
 }
 ---
@@ -320,7 +321,8 @@ On a hand-back, the blocked milestone IS the output — state which step posted 
 | `error: unknown command 'plan'` | CLI older than 0.16.0 — same upgrade/shadow-copy fix |
 | `plan validate` reports `missing-file` errors | Predicted paths don't exist at this boundary — refine the artifact's paths (`plan post` a superseding one); never build to a stale plan |
 | `plan validate` reports an `artifact` error | No plan:v1 comment exists at all — `blocked reason=no-plan-artifact`; refinement cannot fix this (batch-prep's contract) |
-| `blocked reason=worktree-missing` / `not-batch-branch` / `env-cold` | Scheduler-side contract failure — dispatch promised a warm worktree on the batch branch; fix the scheduler's setup/claim step and re-dispatch. Not a member failure: the member correctly refused to touch anything |
+| `blocked reason=worktree-missing` / `not-batch-branch` | Scheduler-side contract failure — dispatch promised a worktree on the batch branch; fix the scheduler's setup/claim step and re-dispatch. Not a member failure: the member correctly refused to touch anything |
+| `blocked reason=env-cold` on a worktree you believe is warm | A root-level marker check in a nested-workspace repo is a FALSE NEGATIVE, not a cold pool — the dependency marker lives at the workspace root, which is often a subdirectory of the worktree (imboard: `main/node_modules`). Run Step 0 precondition 3's search-the-worktree `find` first; only a search that returns nothing is a genuine scheduler warmup failure. Do not go pool-hunting before that (ai-dossier#676) |
 | Re-dispatch posts `no-classify-record` though the issue WAS classified | Expected after a partial slot run — `runstate last` shows the latest milestone (the slot trail), not classify; precondition 6 accepts any latest milestone carrying `mode=slot` |
 | `blocked reason=unrefinable-plan` | Refinement is exhausted — the scheduler requeues the member as full-cycle, where plan-issue authors a fresh plan |
 | `cap run test.focused` exits 3 (`capability-unavailable`) | Expected when the repo has no `.dossier/automation/` manifest — use the reasoning fallback; it is the designed path, not an error |
