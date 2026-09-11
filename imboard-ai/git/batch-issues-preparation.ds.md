@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues-preparation",
   "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-10",
+  "last_updated": "2026-09-11",
   "objective": "Turn a raw issue list/range into classified, dependency-ordered, batched queue entries for the scheduler (RFC-0001 C.3): resolve the set, build the dependency DAG, classify every issue, ensure a plan:v1 artifact on each, compose batches per E.4, create batch-epic anchor issues, write the audit file, claim every enqueued member at manifest time, and enqueue via sched enqueue --from-manifest",
   "category": [
     "development"
@@ -44,6 +44,11 @@
         "description": "Produce everything (classify records, plan artifacts, anchor issues, audit file, manifest) but do NOT invoke sched enqueue — the shadow-mode deliverable (RFC-0001 G Step 2): backlogs get classified and planned while execution stays untouched.",
         "type": "boolean",
         "default": false
+      },
+      {
+        "name": "dispatch_profile",
+        "description": "The validated scheduler dispatch profile selected by batch-cycle-skill; carried to every slot member and passed explicitly to sched enqueue.",
+        "type": "string"
       }
     ]
   },
@@ -64,13 +69,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "dd644b184a70d8c44c920255421e88e4552604b46fab2bb2bf68af0cdb470940"
+    "hash": "bbfa792066bd6738e7ef0ebe3825d3db53640bc92ec8e155745e96186adf41a9"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "axwpDowCM7CNabN/Ev5rhJ3NkR9mvT8Xh4wTNyaG2DTcArFptkOhq+rfbBjNrLmjxGTYmnyRz12veKksVkT1Cg==",
+    "signature": "U2K48PvGZqlrnaTCAbOvCVO8Jq7PzIUKTZ5Ax9X3LacY3J2TBV/oWvETRqh6dv8vNoUmWxcKSLf8aUs0pAhTDg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-10T14:48:12.264Z",
+    "signed_at": "2026-09-11T13:11:26.475Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -92,6 +97,11 @@ The judgment-heavy front door of Batch Cycles (RFC-0001 C.3): turn a raw issue l
 - GitHub CLI (`gh`) installed and authenticated
 - `imboard-ai/git/issue-cycle-classifier` (#465) available in the registry
 - Run from the repository that owns the issues — dependency resolution, path grounding, and `sched enqueue`'s project detection run against it
+
+If `dispatch_profile` is supplied, first read `ai-dossier sched status --json` and
+verify that it is an exact key in `dispatch.profiles`. Do not infer or silently
+fall back to another profile. The value is a batch-level fact, not a per-issue
+classification choice.
 
 ## Actions to Perform
 
@@ -264,7 +274,8 @@ For batches Step 5 matched to an existing anchor, skip creation entirely — rec
 1. Final skip-check against `ai-dossier sched status --json` — drop issues that became active queue entries since Step 1 (report).
 2. Write the manifest (schema below) to `~/.dossier/logs/batch-prep/<project>/manifest-<ts>.json` (plain JSON — machine-consumed):
    - full-mode entries: `{issue, mode: "full", deps, tier, base_branch}` — deps list only OPEN set-internal deps (edges to merged issues were dropped in Step 2)
-   - slot members: `{issue, mode: "slot", batch: <batch_id>, anchor: <anchor_issue_number>, deps, tier, base_branch}` — deps list only OPEN deps **outside this member's own batch** (same-batch deps are encoded in member order); `anchor` is the batch's anchor issue number from Step 6, emitted on **every** member of the batch (not just the first) — the final skip-check in item 1 below can drop any individual member, and only emitting `anchor` on one entry risks losing the binding if that entry is the one dropped
+   - slot members: `{issue, mode: "slot", batch: <batch_id>, anchor: <anchor_issue_number>, deps, tier, base_branch, dispatch?}` — deps list only OPEN deps **outside this member's own batch** (same-batch deps are encoded in member order); `anchor` is the batch's anchor issue number from Step 6, emitted on **every** member of the batch (not just the first) — the final skip-check in item 1 below can drop any individual member, and only emitting `anchor` on one entry risks losing the binding if that entry is the one dropped
+   - when `dispatch_profile` is supplied, add `dispatch: <dispatch_profile>` to **every slot member** and pass `--dispatch <dispatch_profile>` to the enqueue command. Full-mode entries omit it because dispatch profiles are batch-scoped.
    - tier: docs/test/chore-only areas + `risk=low` → `mechanical`; `risk=high` → `strong`; otherwise `mid`.
   Note this mapping is only as good as the `risk` verdict feeding it — which is why Step 3 must not
   be run on the cheapest model.
@@ -285,10 +296,11 @@ For batches Step 5 matched to an existing anchor, skip creation entirely — rec
    - **If item 4's enqueue fails**, it is atomic (nothing was saved) — RELEASE the claims this item just added before stopping: `gh issue edit <n> --remove-label "in-progress"` plus a one-line release comment naming the batch id and `enqueue-failed`. An EnqueueError must never leave claimed issues with no queue entry behind them.
    - **Never claim by hand outside this step.** Adding `in-progress` to candidates while a prep run is still executing trips the readiness rule (Step 1) against that run's own selections and drops them. The manifest step is the single claim point.
 
-4. Enqueue, from the target repo:
-   ```bash
-   ai-dossier sched enqueue --from-manifest <manifest-path>
-   ```
+4. Enqueue, from the target repo. When the manifest contains slot members and
+   `dispatch_profile` was supplied, pass the same profile explicitly:
+    ```bash
+    ai-dossier sched enqueue --from-manifest <manifest-path> [--dispatch <dispatch_profile>]
+    ```
 
    On `EnqueueError` STOP and surface the error plus the manifest path — enqueue is atomic (nothing was saved; release the item-3 claims first); fix the cause (e.g. duplicate active issue) and re-run. Never silently retry with a trimmed manifest.
 5. Verify: `ai-dossier sched status` shows the new entries and batches; note the result in the output.
@@ -350,6 +362,7 @@ Consumed by `ai-dossier sched enqueue --from-manifest` (#460 — `parseManifest`
 | `deps` | positive integer[] | open issue numbers this entry waits on; merged deps dropped; same-batch member deps omitted (member order encodes them); no self-deps; no cycles — enqueue rejects the whole manifest |
 | `tier` | `mechanical` \| `mid` \| `strong` | default `mid` |
 | `base_branch` | non-empty string | branch the unit works from; must match across a batch's members |
+| `dispatch` | configured profile name | optional; batch-scoped, emit on every slot member when `dispatch_profile` was selected |
 
 Example:
 
@@ -358,8 +371,8 @@ Example:
   "project": "imboard-ai-ai-dossier",
   "entries": [
     { "issue": 101, "mode": "full", "deps": [], "tier": "mid", "base_branch": "main" },
-    { "issue": 102, "mode": "slot", "batch": "b-20260829-01", "anchor": 100, "deps": [101], "tier": "mechanical", "base_branch": "main" },
-    { "issue": 103, "mode": "slot", "batch": "b-20260829-01", "anchor": 100, "deps": [], "tier": "mechanical", "base_branch": "main" }
+    { "issue": 102, "mode": "slot", "batch": "b-20260829-01", "anchor": 100, "deps": [101], "tier": "mechanical", "base_branch": "main", "dispatch": "zai" },
+    { "issue": 103, "mode": "slot", "batch": "b-20260829-01", "anchor": 100, "deps": [], "tier": "mechanical", "base_branch": "main", "dispatch": "zai" }
   ]
 }
 ```
