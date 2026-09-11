@@ -4,10 +4,20 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "Draft",
+  "last_updated": "2026-09-11",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
   "description": "Batch several issues into ONE PR with ONE expensive verification run. Each issue gets its own agent and worktree off a shared integration branch; a parent orchestrator merges them, runs the repo's full gate once, repairs what breaks, and ships a single PR. Use when the user says 'batch cycle', 'batch these issues into one PR', 'run these issues as a batch', 'one PR for these issues', or asks to avoid paying CI/verification per issue. NOT for when each issue needs its own PR — that is fleet-cycle.",
+  "inputs": {
+    "optional": [
+      {
+        "name": "dispatch_profile",
+        "description": "Configured scheduler dispatch profile selected from the operator's stated provider family; omit only when no profiles are configured and the default dispatch is intended.",
+        "type": "string"
+      }
+    ]
+  },
   "authors": [
     {
       "name": "Yuval Dimnik"
@@ -30,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "7a26ba75abb6abd170ea0471d484d5f78b8c934f907516796eb7cc819f3c5649"
+    "hash": "e8f4705022cf82bf8ca26ff003fce11f9d12c998820d7218d4b80d9834c35801"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "lXb0c0ZPCYaUjyiVTUEdvABfsj0a8sD7kFdbwd4HRLUBel07I+baf2//5rfGHic79TnZcjJneqLwuOTV/Ac7AQ==",
+    "signature": "bsxga/qJ/ZLva2MxgTtBKBT3IW2vLE/OjvM5QaRtYul1dJCbWazc46FIs/sND+X8+WYWsbG9lym57WDBVyT5Cg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-08T22:44:57.031Z",
+    "signed_at": "2026-09-11T13:11:26.331Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -70,6 +80,22 @@ Measured on a repo whose local gate takes ~50–90 minutes: 3 issues batched too
 | `imboard-ai/git/batch-integrate` | the parent: merge, verify once, repair, ship one PR |
 
 **Do not use `imboard-ai/git/batch-issues`** — it predates this model and orchestrates a different thing entirely. It sorts first in a registry search for "batch"; it is the wrong one.
+
+## Dispatch profile
+
+Resolve the agent family before handing the issue set to preparation. Run
+`ai-dossier sched status --json` in the target repository and read
+`dispatch.profiles` for the configured profile names and tier commands.
+
+- If the request states a family, map it to exactly one configured profile. An exact profile name wins; otherwise use an unambiguous provider/model alias (for example, `glm` maps to the configured `zai` family when that is the only match). Never invent a profile name.
+- If the request does not state a family, use runtime evidence only when it identifies exactly one configured profile. Claude Code evidence is `CLAUDECODE`; an opencode session is matched against profiles whose tiers spawn `opencode`.
+- If no family is stated and runtime evidence is absent or matches more than one profile, ask exactly once: `Which dispatch profile should this batch use? Available: <sorted names>`. Do not start preparation until the answer is supplied.
+- Pass the selected key as `dispatch_profile=<name>` to `imboard-ai/git/batch-issues-preparation`. It must carry that value to every slot member and to `ai-dossier sched enqueue --dispatch <name>`.
+- If preparation still returns the scheduler's inconclusive-detection refusal, do not relay the raw refusal. Ask the one profile question above, retry once with the answer, and stop with the profile names if the second attempt fails.
+- If `dispatch.profiles` is empty, omit `dispatch_profile` and preserve the legacy default dispatch behavior.
+
+Report the selected profile and whether it came from the request, runtime evidence,
+or the one clarification question.
 
 ## Steps
 
