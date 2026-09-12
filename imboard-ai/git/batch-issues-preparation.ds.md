@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues-preparation",
   "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-11",
+  "last_updated": "2026-09-12",
   "objective": "Turn a raw issue list/range into classified, dependency-ordered, batched queue entries for the scheduler (RFC-0001 C.3): resolve the set, build the dependency DAG, classify every issue, ensure a plan:v1 artifact on each, compose batches per E.4, create batch-epic anchor issues, write the audit file, claim every enqueued member at manifest time, and enqueue via sched enqueue --from-manifest",
   "category": [
     "development"
@@ -69,13 +69,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "bbfa792066bd6738e7ef0ebe3825d3db53640bc92ec8e155745e96186adf41a9"
+    "hash": "096ffa268f8fc3995d8708c4d0c5e442a87d35e92564a54d0c1990b8d9e9e7a2"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "U2K48PvGZqlrnaTCAbOvCVO8Jq7PzIUKTZ5Ax9X3LacY3J2TBV/oWvETRqh6dv8vNoUmWxcKSLf8aUs0pAhTDg==",
+    "signature": "o0DQfrx8JUtD75g3WvUkFGxRAt/rssBwPJaSRvZ7GNhJ59/89Xl+E/jGusaEOfa5w5zX4zFyT8cM0BIMEDtfBw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-11T13:11:26.475Z",
+    "signed_at": "2026-09-12T02:15:04.035Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -297,9 +297,10 @@ For batches Step 5 matched to an existing anchor, skip creation entirely — rec
    - **Never claim by hand outside this step.** Adding `in-progress` to candidates while a prep run is still executing trips the readiness rule (Step 1) against that run's own selections and drops them. The manifest step is the single claim point.
 
 4. Enqueue, from the target repo. When the manifest contains slot members and
-   `dispatch_profile` was supplied, pass the same profile explicitly:
+   `dispatch_profile` was supplied, pass the same profile explicitly. The flag is
+   required, not optional:
     ```bash
-    ai-dossier sched enqueue --from-manifest <manifest-path> [--dispatch <dispatch_profile>]
+    ai-dossier sched enqueue --from-manifest <manifest-path> --dispatch <dispatch_profile>
     ```
 
    On `EnqueueError` STOP and surface the error plus the manifest path — enqueue is atomic (nothing was saved; release the item-3 claims first); fix the cause (e.g. duplicate active issue) and re-run. Never silently retry with a trimmed manifest.
