@@ -4,7 +4,7 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "status": "Draft",
   "last_updated": "2026-09-12",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
@@ -40,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "307bfef905ca6d83a8326c442c6f4f52832218edb313557fce0cf522c340eb25"
+    "hash": "9afcfd2154b057f2341b6d141659ca9a4f187945c28c222db219a8cf932295e4"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "fMelvTNCtm32i6O7lq0N0k7JW9+KbojI9qR4dN3zDfL3rDSc+2Qga+WLhY1pg3RlKPV+e0LLIVRSbpImSaVfDA==",
+    "signature": "5SeX+V8/4kLd83kmQVlzNVmmxAXqrlR5T9k+yzPNc/UPtU9OElQXZvinJeQOROnP8xW8rHvw6AKxlIS2aYQOAw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-12T07:49:20.537Z",
+    "signed_at": "2026-09-12T08:01:11.293Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -83,6 +83,39 @@ There are exactly **three** places this skill may stop, each defined elsewhere i
 
 Any other stop is unauthorised. A screening call the model feels unsure about is resolved by
 **dropping the issue and saying so in the summary**, not by asking.
+
+### Offering a menu is still asking
+
+A multiple-choice question is the same defect wearing a different hat. Presenting the operator
+with options — "keep one PR / proceed with two PRs / force it in" — and waiting for a pick is
+a stop, regardless of how well-reasoned the options are or whether one is marked recommended.
+If the skill can rank the options well enough to recommend one, it can take that one and say
+so afterwards.
+
+### Composition conflicts resolve downward, silently
+
+An issue can be **ready** by Step 2 and still be a poor batch member — it needs a review path
+the batch cannot give it (browser verification, a manual QA pass), it mutates data, or it is a
+slice of a designed sequence already represented. This is a composition conflict, and it has a
+fixed resolution: **leave the issue out of the batch and out of this run entirely.**
+
+Do not demote it to a standalone `mode: full` entry as a consolation. That silently converts
+a one-PR workflow into N PRs, pays the expensive gate an extra time, and — until
+`ai-dossier#713` lands — drops the run's dispatch profile so the issue executes on the wrong
+provider. One PR is the contract the operator invoked; a second PR is not a smaller version of
+it.
+
+Record the excluded issue and its conflict in the closing summary, next to the screening
+drops. The operator can batch it in the next run or take it through `full-cycle-issue-skill`
+deliberately. Never ask which of these they would prefer.
+
+### Once enqueued, do not recompose
+
+After `sched enqueue` returns, the batch is sealed and members may already be dispatched.
+Do not propose removing a member, adding one, or re-splitting the set. If the composition was
+wrong, say so in the summary and let the run finish — a member abandoned after dispatch leaves
+a live agent running outside the scheduler, an `in-progress` claim with no owner, and a
+worktree nobody will clean up (`ai-dossier#675`).
 
 ## When to use this, and when not to
 
