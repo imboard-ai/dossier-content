@@ -4,9 +4,9 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "status": "Draft",
-  "last_updated": "2026-09-11",
+  "last_updated": "2026-09-12",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
   "description": "Batch several issues into ONE PR with ONE expensive verification run. Each issue gets its own agent and worktree off a shared integration branch; a parent orchestrator merges them, runs the repo's full gate once, repairs what breaks, and ships a single PR. Use when the user says 'batch cycle', 'batch these issues into one PR', 'run these issues as a batch', 'one PR for these issues', or asks to avoid paying CI/verification per issue. NOT for when each issue needs its own PR — that is fleet-cycle.",
   "inputs": {
@@ -40,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "e8f4705022cf82bf8ca26ff003fce11f9d12c998820d7218d4b80d9834c35801"
+    "hash": "3d1cfc0386d385842b1db052cfa5f6ae6a189fd795c6c07b968a627541bc6d33"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "bsxga/qJ/ZLva2MxgTtBKBT3IW2vLE/OjvM5QaRtYul1dJCbWazc46FIs/sND+X8+WYWsbG9lym57WDBVyT5Cg==",
+    "signature": "u9uUd6y7EdlGIewen0apITJqvI3b5PuZsBDddMzKnnSbC5cKuEMnlHMXtihgWjPmjEdQFw8KNxQC8hvZG6SBBQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-11T13:11:26.331Z",
+    "signed_at": "2026-09-12T02:15:04.044Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -96,6 +96,19 @@ Resolve the agent family before handing the issue set to preparation. Run
 
 Report the selected profile and whether it came from the request, runtime evidence,
 or the one clarification question.
+
+### Required handoff
+
+1. Resolve the issue set from the request and resolve `dispatch_profile` before starting preparation.
+2. Run `ai-dossier run imboard-ai/git/batch-issues-preparation --pull` and pass it the `issues` input plus the selected `dispatch_profile` input. Do not start member agents directly from this skill.
+3. When a profile is selected, preparation must add `dispatch: <profile>` to every slot manifest entry and execute this exact scheduler command:
+
+   ```bash
+   ai-dossier sched enqueue --from-manifest <manifest-path> --dispatch <profile>
+   ```
+
+   Passing `dispatch_profile=<profile>` to preparation is the workflow input; it is not a substitute for the scheduler's explicit `--dispatch <profile>` flag.
+4. When no profiles are configured, omit both the `dispatch_profile` input and the `--dispatch` flag so the scheduler keeps its legacy default dispatch.
 
 ## Steps
 
