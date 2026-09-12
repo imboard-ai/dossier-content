@@ -4,7 +4,7 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "status": "Draft",
   "last_updated": "2026-09-12",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
@@ -40,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "3d1cfc0386d385842b1db052cfa5f6ae6a189fd795c6c07b968a627541bc6d33"
+    "hash": "307bfef905ca6d83a8326c442c6f4f52832218edb313557fce0cf522c340eb25"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "u9uUd6y7EdlGIewen0apITJqvI3b5PuZsBDddMzKnnSbC5cKuEMnlHMXtihgWjPmjEdQFw8KNxQC8hvZG6SBBQ==",
+    "signature": "fMelvTNCtm32i6O7lq0N0k7JW9+KbojI9qR4dN3zDfL3rDSc+2Qga+WLhY1pg3RlKPV+e0LLIVRSbpImSaVfDA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-12T02:15:04.044Z",
+    "signed_at": "2026-09-12T07:49:20.537Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -57,6 +57,32 @@
 # Batch Cycle
 
 Take a **set** of issues to **one** pull request. Each issue is implemented independently, in parallel; the repo's expensive verification runs **once** over the combined result.
+
+## Autonomy contract — run to completion
+
+This skill is **autonomous**. Once the issue set and the dispatch profile are resolved, run
+every step through to a shipped PR without returning to the operator.
+
+**Never ask the operator to approve the composed batch.** Screening and composition are this
+skill's work, not a proposal for review. Emitting a batch plan and asking "approve this batch
+for preparation and dispatch?" is a defect, not caution. It turns a one-command workflow into a
+multi-turn negotiation, and it strands the run indefinitely whenever the operator is not
+watching the terminal. Report what was dropped and why in the closing summary, **after** the
+batch is enqueued — never as a gate before it.
+
+The same holds at every later boundary. Do not stop to confirm before dispatching members,
+before running the expensive gate, before repairing what the gate breaks, or before opening the
+PR.
+
+There are exactly **three** places this skill may stop, each defined elsewhere in this document:
+
+1. The single dispatch-profile clarification question — only when no family is stated *and*
+   runtime evidence matches more than one configured profile.
+2. A true dependency cycle, which `batch-issues-preparation` surfaces and stops on by design.
+3. Zero issues survive readiness screening, leaving nothing to dispatch.
+
+Any other stop is unauthorised. A screening call the model feels unsure about is resolved by
+**dropping the issue and saying so in the summary**, not by asking.
 
 ## When to use this, and when not to
 
@@ -123,7 +149,7 @@ or the one clarification question.
 Cheap checks that prevent expensive failures. For each issue, read the **body**, not the labels:
 
 - **Does every artifact it names exist on the base branch?** An issue saying "migrate onto the hook extracted by #N" depends on #N — whether or not it says "Depends on". Verify the symbol exists; do not trust the prose.
-- **Does the body enumerate a countable work list?** Count it. A "documentation" issue can be thousands of lines.
+- **Does the body enumerate a countable work list?** Count it — to confirm the scope is *bounded*, not to reject it for being large. A "documentation" issue can be thousands of lines with no stated end; an issue naming 25 call sites to migrate is bounded work and belongs in the batch. Size is not a screening criterion here, and Step 3 says why.
 - **Is it assigned or in progress?** Someone may already be on it.
 - **Is it a tracker or a decision?** A body listing many independent findings, or headed "Decision needed", has no stopping point for an agent.
 - **Does it mutate or delete data?** Those need independent revert granularity — keep them out of a shared PR.
