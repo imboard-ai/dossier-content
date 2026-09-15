@@ -1043,7 +1043,7 @@
     {
       "name": "imboard-ai/meta/publish-dossier",
       "title": "Publish an imboard-ai Dossier or Skill",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "path": "imboard-ai/meta/publish-dossier.ds.md",
       "category": [
         "development",
