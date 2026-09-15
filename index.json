@@ -1505,24 +1505,6 @@
       "title": "Validate Project Configuration",
       "version": "1.0.0",
       "path": "tal-liberio/setup/validate-project-config.ds.md"
-    },
-    {
-      "name": "yuvaldim/evidence-smoke-736",
-      "title": "Evidence Smoke Test",
-      "version": "1.1.0",
-      "path": "yuvaldim/evidence-smoke-736.ds.md",
-      "category": [
-        "development"
-      ],
-      "tags": [
-        "smoke-test",
-        "throwaway"
-      ],
-      "authors": [
-        {
-          "name": "Yuval Dimnik"
-        }
-      ]
     }
   ],
   "updated_at": "2026-07-28T00:00:00Z"
