@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/meta/publish-dossier",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "9f4311f21a1684d7a641e20ab37367878bd9f7086dac507b0ba3ec37443e62c5"
+    "hash": "59affbdd3eeabec7fd5957e6bfa7cf8303a3f7fa1d41353b871b753f08b7deba"
   },
   "entries": [
     {
@@ -27,6 +27,18 @@
         {
           "provider": "claude-code",
           "session": "73ca020f-8e89-40e4-bc85-d6e511f5fc45",
+          "host": "hcc2"
+        }
+      ]
+    },
+    {
+      "anchor": "Step 2b: Record evidence for every rule you changed",
+      "rationale": "ai-dossier evidence add/init (cli 0.48.0, ai-dossier#743) now compute a missing checksum from the body themselves, so the checksum --update workaround between publish-dossier's Step 2 (deletes checksum) and Step 3 (sign restores it) is no longer needed.",
+      "created_at": "2026-09-15T22:05:06.131Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "4e15a017-3cce-45b9-a19a-558ade4e693a",
           "host": "hcc2"
         }
       ]
