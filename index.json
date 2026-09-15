@@ -1505,15 +1505,6 @@
       "title": "Validate Project Configuration",
       "version": "1.0.0",
       "path": "tal-liberio/setup/validate-project-config.ds.md"
-    },
-    {
-      "name": "yuvaldim/evidence-smoke-735",
-      "title": "Evidence Smoke Test 735",
-      "version": "1.0.0",
-      "path": "yuvaldim/evidence-smoke-735.ds.md",
-      "category": [
-        "testing"
-      ]
     }
   ],
   "updated_at": "2026-07-28T00:00:00Z"
