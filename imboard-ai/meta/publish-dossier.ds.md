@@ -4,7 +4,7 @@
   "protocol_version": "1.0",
   "name": "publish-dossier",
   "title": "Publish an imboard-ai Dossier or Skill",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "status": "Stable",
   "last_updated": "2026-09-15",
   "objective": "Edit, sign with the team key, lint, verify and publish a dossier or skill to the imboard-ai registry namespace, then refresh every machine — the exact recipe, so no agent rediscovers the signing and login walls",
@@ -79,13 +79,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "9f4311f21a1684d7a641e20ab37367878bd9f7086dac507b0ba3ec37443e62c5"
+    "hash": "59affbdd3eeabec7fd5957e6bfa7cf8303a3f7fa1d41353b871b753f08b7deba"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "4/ysCNz6NlV6wiU3dT/so8buK6aebaC2ZJVx9ZoCy6b4EOSXXIrEOUZ3t7//21Of9C26xnAupvcS/kJa1v5eBA==",
+    "signature": "BqcdIgjGJ7IyCiAquxXbLXuCi9y5hyFeJqCbEgOFPYQR5tC1AJEDH8QBye3Nyf/dF74p2y7VJcPSQQdjlDAwAQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-15T11:45:54.590Z",
+    "signed_at": "2026-09-15T22:05:30.792Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -131,13 +131,7 @@ For a **new** dossier start from `ai-dossier create` or the `imboard-ai/meta/cre
 
 ### Step 2b: Record evidence for every rule you changed
 
-`evidence add` requires an existing checksum, and Step 2 just deleted it — restore it first (harmless; `sign` overwrites it in Step 3 regardless):
-
-```bash
-ai-dossier checksum <name>.ds.md --update
-```
-
-For each rule/section you added or changed, record why:
+`evidence add` computes a checksum from the current body when Step 2 has already deleted the frontmatter's one (`sign` overwrites it properly in Step 3 regardless), so there's no need to restore it first. For each rule/section you added or changed, record why:
 
 ```bash
 ai-dossier evidence add <name>.ds.md \
