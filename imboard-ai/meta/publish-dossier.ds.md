@@ -4,9 +4,9 @@
   "protocol_version": "1.0",
   "name": "publish-dossier",
   "title": "Publish an imboard-ai Dossier or Skill",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "Stable",
-  "last_updated": "2026-08-23",
+  "last_updated": "2026-09-15",
   "objective": "Edit, sign with the team key, lint, verify and publish a dossier or skill to the imboard-ai registry namespace, then refresh every machine — the exact recipe, so no agent rediscovers the signing and login walls",
   "category": [
     "development",
@@ -79,13 +79,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "bd395e482f40bb0ab8eda7e2f608c590f83d85353bdbd015ab02b4dc93a38009"
+    "hash": "9f4311f21a1684d7a641e20ab37367878bd9f7086dac507b0ba3ec37443e62c5"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "hYVTBAI9iRo/KY69rCXGJmWIMtYFYTIY5K42+EWBtw6MzBsRXzRTuVNWRlXAySZWHRR1Rfr6Dh2y0jqNA+eDBg==",
+    "signature": "4/ysCNz6NlV6wiU3dT/so8buK6aebaC2ZJVx9ZoCy6b4EOSXXIrEOUZ3t7//21Of9C26xnAupvcS/kJa1v5eBA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T14:39:05.230Z",
+    "signed_at": "2026-09-15T11:45:54.590Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -129,10 +129,30 @@ For a **new** dossier start from `ai-dossier create` or the `imboard-ai/meta/cre
   - Skills (`imboard-ai/skills/*`) are stored as JSON-frontmatter dossiers; the YAML `SKILL.md` under `~/.claude/skills` is a rendered install. Lint the `.ds.md`, not the rendered file.
 - Shell snippets that must expand (`$(date …)`) need an **unquoted** heredoc; quoted `<<'EOF'` pastes them literally.
 
+### Step 2b: Record evidence for every rule you changed
+
+`evidence add` requires an existing checksum, and Step 2 just deleted it — restore it first (harmless; `sign` overwrites it in Step 3 regardless):
+
+```bash
+ai-dossier checksum <name>.ds.md --update
+```
+
+For each rule/section you added or changed, record why:
+
+```bash
+ai-dossier evidence add <name>.ds.md \
+  --anchor "<heading or rule as written in the body>" \
+  --rationale "<one or two sentences: what failed / what this prevents>" \
+  --session "$(ls -t ~/.claude/projects/*/*.jsonl | head -1 | xargs -n1 basename | sed 's/\.jsonl$//')"
+```
+
+Skip only when the change is cosmetic. The sidecar `<name>.evidence.json` is published next to the dossier by `ai-dossier publish`; it is never loaded on `run`. See `docs/guides/authoring-evidence.md` for the full record format and workflow.
+
 ### Step 3: Sign, lint, verify — in this order, signing last
 
 ```bash
 ai-dossier sign <name>.ds.md --method ed25519 --key ~/.dossier/imboard-ai.pem --key-id imboard-ai --signed-by "Yuval Dimnik <yuval.dimnik@gmail.com>"
+ai-dossier evidence sync <name>.ds.md
 ai-dossier lint <name>.ds.md      # must print: no issues found
 ai-dossier verify <name>.ds.md    # must print: Verification passed
 ```
