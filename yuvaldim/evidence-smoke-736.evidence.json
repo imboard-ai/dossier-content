@@ -1,0 +1,23 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "yuvaldim/evidence-smoke-736",
+  "version": "1.1.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "665969792931caba0ed29d0640dd3017300f4da45f5a5a0298b3c94f18c6dcc5"
+  },
+  "entries": [
+    {
+      "anchor": "Step 1: Print a greeting, exactly once",
+      "rationale": "A prior draft had no 'exactly once' qualifier and an agent re-ran it on every retry, printing the greeting N times for N attempts.",
+      "created_at": "2026-09-15T11:42:09.175Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "73ca020f-8e89-40e4-bc85-d6e511f5fc45",
+          "host": "hcc2"
+        }
+      ]
+    }
+  ]
+}
