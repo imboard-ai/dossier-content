@@ -1,0 +1,35 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/meta/publish-dossier",
+  "version": "1.1.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "9f4311f21a1684d7a641e20ab37367878bd9f7086dac507b0ba3ec37443e62c5"
+  },
+  "entries": [
+    {
+      "anchor": "Step 2b: Record evidence for every rule you changed",
+      "rationale": "Issue #736: the authoring flow had no step producing evidence, so per-rule rationale + session pointers were never attached to a published dossier. Inserted between Edit and Sign so evidence is recorded before the checksum it must match is finalized.",
+      "created_at": "2026-09-15T11:45:43.480Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "73ca020f-8e89-40e4-bc85-d6e511f5fc45",
+          "host": "hcc2"
+        }
+      ]
+    },
+    {
+      "anchor": "Step 3: Sign, lint, verify — in this order, signing last",
+      "rationale": "sign regenerates the dossier checksum; evidence sync must run after sign so the sidecar's recorded checksum matches the just-signed dossier, otherwise publish rejects it with EVIDENCE_MISMATCH.",
+      "created_at": "2026-09-15T11:45:44.195Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "73ca020f-8e89-40e4-bc85-d6e511f5fc45",
+          "host": "hcc2"
+        }
+      ]
+    }
+  ]
+}
