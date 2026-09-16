@@ -4,9 +4,9 @@
   "protocol_version": "1.0",
   "name": "publish-dossier",
   "title": "Publish an imboard-ai Dossier or Skill",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "status": "Stable",
-  "last_updated": "2026-09-15",
+  "last_updated": "2026-09-16",
   "objective": "Edit, sign with the team key, lint, verify and publish a dossier or skill to the imboard-ai registry namespace, then refresh every machine — the exact recipe, so no agent rediscovers the signing and login walls",
   "category": [
     "development",
@@ -36,7 +36,7 @@
     },
     {
       "name": "ssh",
-      "description": "To refresh sibling machines (wls, hcc, occ)",
+      "description": "To refresh sibling machines (wls, hcc, hcc2)",
       "check_command": "ssh -V"
     }
   ],
@@ -79,13 +79,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "59affbdd3eeabec7fd5957e6bfa7cf8303a3f7fa1d41353b871b753f08b7deba"
+    "hash": "313e42ec95c2c0dc2d7a825694c5b4d0395008b1a47832070735b3fe0b877c39"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "BqcdIgjGJ7IyCiAquxXbLXuCi9y5hyFeJqCbEgOFPYQR5tC1AJEDH8QBye3Nyf/dF74p2y7VJcPSQQdjlDAwAQ==",
+    "signature": "Pc9tjEfG1M1wB+rbp4dV7T/583qWgV+sHSfZHIhHuscF16CC4jYfdjrNXtx8yKe1qyXs4HBo73RZ36nA1BH4BA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-15T22:05:30.792Z",
+    "signed_at": "2026-09-16T22:43:58.841Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -170,13 +170,12 @@ Confirm: `ai-dossier info <target> --json` shows the new version (CDN may lag up
 Dossiers run with `--pull` resolve the latest version automatically, but caches and installed skills do not:
 
 ```bash
-# on each of wls, hcc, occ:
-ai-dossier pull <target> --force
-ai-dossier install-skill imboard-ai/skills/<skill> --force --fresh   # only for skills
-ai-dossier sync-skills                                                # regenerate opencode wrappers
+# from wls (the only host with ssh reach to the others):
+bash scripts/refresh-fleet.sh                 # all of wls, hcc, hcc2
+bash scripts/refresh-fleet.sh --hosts hcc2    # a subset
 ```
 
-Sibling machines are reachable as `ssh hcc` and `ssh occ`; the CLI there lives under nvm, so run commands as `ssh <host> 'source ~/.nvm/nvm.sh; ai-dossier …'`.
+The script pulls the dossier caches, reinstalls skills and regenerates opencode wrappers on each host, and sources nvm on the remote shells so `ai-dossier` resolves. For a single host, the manual fallback is `ssh <host> 'source ~/.nvm/nvm.sh; ai-dossier pull <target> --force'`.
 
 ### Step 6: Coordinated bumps
 
@@ -190,7 +189,7 @@ When a change spans a protocol shared by several dossiers (e.g. the runstate mil
 - [ ] `lint` clean and `verify` passed on the exact file published
 - [ ] Published to an explicit `imboard-ai/<family>` namespace
 - [ ] `info` shows the new version
-- [ ] Caches, skills and opencode wrappers refreshed on wls, hcc, occ
+- [ ] Caches, skills and opencode wrappers refreshed on wls, hcc, hcc2 (scripts/refresh-fleet.sh)
 
 ## Troubleshooting
 
