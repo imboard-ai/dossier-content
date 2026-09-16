@@ -1,0 +1,23 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/ship-issue",
+  "version": "1.15.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "54fed638dfcb197c82ab402d36b7e0b29e594d455f7651c1c5349f9aefee2218"
+  },
+  "entries": [
+    {
+      "anchor": "### Step 6: Merge",
+      "rationale": "ai-dossier#747: gh pr merge (GraphQL) hit a stuck-lock-after-502 (PR #745), a skip-ci-in-squash-body trap (PR #602), and a base-branch-modified race (#655). Moved per-issue merge to the REST endpoint with sha=, a fixed marker-free commit_message, and a bounded poll-then-retry loop on 5xx that polls mergedAt before retrying.",
+      "created_at": "2026-09-16T20:52:32.556Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "4e15a017-3cce-45b9-a19a-558ade4e693a",
+          "host": "hcc2"
+        }
+      ]
+    }
+  ]
+}
