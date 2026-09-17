@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "warm-worktree-pnpm-ssm",
   "title": "Imboard Warm Worktree (pnpm + SSM)",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Prepare a fresh imboard-monorepo worktree for development using pnpm content-addressable store and AWS SSM secrets — no .env copying needed",
@@ -38,13 +38,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "23ef71c54e774c5d74628773a203fb84caba8a0280b5a06e09ad12dcc901aa86"
+    "hash": "6b2494518455960f45690fd168f2aa4c59c3f27a771954f3844ff83b0c8b6e14"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "15qhlerkV9nXy+UMxNDBqjlcF45Oc6f+5q4Ven+/LAIykq+6X4k2hkdpszzEoNHUtVA7vL1t2A6XIguIMq43CA==",
+    "signature": "kIT5ZYJoVZIQTGQYBUCGDzJ88vuQ0Q5pD8zpeDG+bh+/NPUSw8zLrsjBt98VRlbx+vpwOLbF/EM9Zsu97A73CA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T08:19:39.320Z",
+    "signed_at": "2026-09-17T14:22:44.861Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -101,7 +101,7 @@ If this step fails (e.g. `ssm_get` can't reach the pool secret), warmup is still
 ## What This Does NOT Do (and why)
 
 - **No general secret copying** — App secrets (SSM-backed) come via `chamber exec`. Run `pnpm run dev:ssm` to start servers with injected secrets. (`.env.test` is the one exception — Step 4 provisions it directly, since the pooled test path needs it present before any test command runs.)
-- **No server startup verification** — `dev:ssm` handles secret injection at runtime; verifying here adds no value.
+- **No server startup verification** — `dev:ssm` handles secret injection at runtime; verifying here adds no value. This dossier starts no process, so there is no listener to leak: `warm-worktree`'s rule ("a run stops what it starts" — any server it starts to verify the environment runs in its own process group and is stopped in a guaranteed cleanup step) applies there, not here, precisely because this dossier never starts one. If this dossier is ever extended to verify a server, the same rule and pattern apply.
 - **No full test suite** — Testing happens after implementation, not during warmup.
 - **No worktree pool for the warmed worktree itself** — With pnpm, cold starts are ~15 seconds. Worktree-pool infrastructure adds complexity for marginal gain here. (Unrelated to the *test-DB* pool that Step 4 wires up — same word, different pool.)
 
