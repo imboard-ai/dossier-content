@@ -112,13 +112,13 @@
   "last_updated": "2026-09-17",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "ae7c727e78c064968c346738981e4c22bd03bf3e552b203995448a6e0132a0c6"
+    "hash": "22dc2eda17e743086de3287659f6f8d7272d9615e569ccd6656510e10e54a4b9"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "ncZrNu4E/pXqLu9lfEZPKRMXjMl1tg78oBNB7nUYrSUmRS6E25DCTwxDk9DFs+ryl8FrDe/EglZFttAoR4tRBw==",
+    "signature": "NTw+T1jFas59MNrc1XTrpo0BpdznqQ1SFPD0Zwt5gl9GVTJsvakFee6BOsVfjb1Uwz/sPkifmWy/CgwZZkXFDA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-17T14:22:43.898Z",
+    "signed_at": "2026-09-17T14:29:08.743Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -315,7 +315,7 @@ Same order and verification discipline as per-issue Step 7, scoped to the batch:
 1. `scripts/ensure-test-env.sh --teardown` if the repo has it (batch test resources leak the same way).
 2. `cd` back to `original_dir` (if provided).
 3. Pool return if `pool_claimed` (setup's batch mode claims with the anchor issue) — `npx -y @ai-dossier/worktree-pool@^0.7.0 return --path <worktree_path>`; verify with pool `status` AND `git worktree list` before claiming `cleanup=pool_returned`.
-4. **Kill processes rooted in the batch worktree (cold path only — skip when step 3's pool return succeeded)** — identical procedure to per-issue Step 7 item 3, scoped to the batch `<worktree_path>`: SIGTERM, wait 5s, SIGKILL survivors, assert none remain, carry the count to Batch Step 8's `procs_killed=`.
+4. **Kill processes rooted in the batch worktree (cold path only — skip when step 3's pool return succeeded)** — identical procedure to per-issue Step 7 item 3, scoped to the batch `<worktree_path>`: self/ancestor exclusion and the empty/`/`/repo-root/no-`/worktrees/`-segment guard both apply unchanged, then SIGTERM, wait 5s, SIGKILL survivors, assert none remain, carry the count to Batch Step 8's `procs_killed=`.
 5. Else remove the worktree and delete the batch branch (local + remote). Deleting the branch after a rebase merge is safe — every commit was replayed onto the base branch; the replayed range is the durable artifact.
 6. Remove the `in-progress`-style labels only per the anchor's flow (the scheduler/report owns anchor closure).
 
@@ -762,11 +762,41 @@ Never emit an idle notification, end your turn, or proceed to Teardown (Step 7) 
    ```bash
    npx -y @ai-dossier/worktree-pool@^0.7.0 return --path <worktree_path> 2>/dev/null
    ```
-3. **Kill worktree-rooted processes (cold path only — skip when step 2's pool return succeeded; `worktree-pool return` owns this itself once it ships it).** A run's dev servers, jest workers, and Atlas-pool test connections must not outlive the checkout they ran in: list every process whose cwd or command line is under `<worktree_path>`, SIGTERM it, wait 5s, SIGKILL survivors, print what was killed, and assert none remain before touching the checkout. Written for bash AND zsh — never `for p in $LIST` over an unquoted variable (zsh does not word-split it the way bash does); pids only ever pass through a file and `xargs`:
+3. **Kill worktree-rooted processes (cold path only — skip when step 2's pool return succeeded; `worktree-pool return` owns this itself once it ships it).** A run's dev servers, jest workers, and Atlas-pool test connections must not outlive the checkout they ran in: list every process whose cwd or command line is under `<worktree_path>`, SIGTERM it, wait 5s, SIGKILL survivors, print what was killed, and assert none remain before touching the checkout — but first exclude this script's own shell and every one of its ancestors, since the shell's own argv contains `$WT` verbatim and a fleet run launched from inside the worktree puts the agent process itself under it too (an unguarded match would SIGTERM the very process running this step), and refuse to run at all when `<worktree_path>` is empty, `/`, the repo root, or has no `/worktrees/` segment, since any of those would match every process on the host instead of the one checkout being torn down. Written for bash AND zsh — never `for p in $LIST` over an unquoted variable (zsh does not word-split it the way bash does); pids only ever pass through a file and `xargs`:
 
    ```bash
    WT="<worktree_path>"
-   PIDS=$(mktemp); SURV=$(mktemp)
+   REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+   case "$WT" in
+     ""|/) echo "refusing: worktree_path is empty or /"; exit 1 ;;
+   esac
+   case "$WT" in
+     */worktrees/*) : ;;
+     *) echo "refusing: worktree_path '$WT' has no /worktrees/ segment"; exit 1 ;;
+   esac
+   if [ -n "$REPO_ROOT" ] && [ "$WT" = "$REPO_ROOT" ]; then
+     echo "refusing: worktree_path equals the repo root"; exit 1
+   fi
+
+   PIDS=$(mktemp); EXCL=$(mktemp); SURV=$(mktemp)
+
+   # self/ancestor exclusion set — $$ and every ancestor up to (and including) pid 1
+   ppid_of() {
+     if [ -d "/proc/$1" ]; then
+       sed 's/^[0-9]*[[:space:]]*(.*)[[:space:]]*//' "/proc/$1/stat" 2>/dev/null | awk '{print $2}'
+     else
+       ps -o ppid= -p "$1" 2>/dev/null | tr -d ' '
+     fi
+   }
+   pid=$$
+   : >"$EXCL"
+   while [ -n "$pid" ] && [ "$pid" -gt 1 ] 2>/dev/null; do
+     echo "$pid" >>"$EXCL"
+     pid=$(ppid_of "$pid")
+   done
+   echo 1 >>"$EXCL"
+   sort -un "$EXCL" -o "$EXCL"
+
    if [ -d /proc ]; then
      for p in /proc/[0-9]*; do            # globbing a path, not a variable — same in bash and zsh
        pid=${p#/proc/}
@@ -776,6 +806,12 @@ Never emit an idle notification, end your turn, or proceed to Teardown (Step 7) 
      { lsof +D "$WT" -t 2>/dev/null; ps -eo pid,args | awk -v wt="$WT" 'index($0,wt){print $1}'; } | sort -un >"$PIDS"
    fi
    sort -un "$PIDS" -o "$PIDS"
+
+   EXCLUDED=$(grep -xFf "$EXCL" "$PIDS" | tr '\n' ' ')
+   [ -n "$EXCLUDED" ] && echo "excluded (self/ancestor, never a kill candidate): $EXCLUDED"
+   grep -vxFf "$EXCL" "$PIDS" >"$PIDS.filtered" 2>/dev/null
+   mv "$PIDS.filtered" "$PIDS"
+
    if [ -s "$PIDS" ]; then
      echo "worktree-rooted processes found:"; cat "$PIDS"
      xargs -r kill -TERM <"$PIDS"
@@ -793,7 +829,7 @@ Never emit an idle notification, end your turn, or proceed to Teardown (Step 7) 
    echo "procs_killed=$PROCS_KILLED"
    ```
 
-   On a host without `/proc` (Linux hosts — WSL2, Fly, hcc/hcc2 — all have it; this is the non-Linux fallback), use `lsof`/`ps` as shown. Carry `PROCS_KILLED` to Step 8's `procs_killed=`; `0` is a valid, expected value on a clean run.
+   On a host without `/proc` (Linux hosts — WSL2, Fly, hcc/hcc2 — all have it; this is the non-Linux fallback), use `lsof`/`ps` as shown, and `ppid_of` falls back to `ps -o ppid=` the same way. Carry `PROCS_KILLED` to Step 8's `procs_killed=`; `0` is a valid, expected value on a clean run.
 4. Remove the worktree and clean up the branches (deleting the remote branch also drops the run's WIP history — intended; the squash-merge commit on the base branch is the durable artifact):
    ```bash
    git worktree remove <worktree_path>
