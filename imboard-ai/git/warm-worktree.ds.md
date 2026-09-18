@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "warm-worktree",
   "title": "Warm Worktree",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Prepare a fresh git worktree for development by copying environment files, installing dependencies, running builds, verifying tests, and checking that servers can start.",
@@ -26,13 +26,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "9d420b78bcef66f0149823b77c9346948fbd241ca50cf9f268b4070179bd09bf"
+    "hash": "d0d33631ea4e5a4d2e150fed759f34100007f54a4f3582c6d24374b75f4c1c15"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "zUidnXu5vYND5HzqZU7W6VWVsnzCiamfyym/fSGsSWroCfX5ZrEljXeTyTKnHHobuK+niwyqOSCTHn9phESRAQ==",
+    "signature": "quhlKp+8pm4kcFf1wpSglt4ru92+tN5CmfkWIntI3UUG5hZaM9odjQhiVOU+lnK5bDFRWYp7JOPU5DKBMHxSBg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T08:19:34.176Z",
+    "signed_at": "2026-09-17T14:22:44.379Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -348,25 +348,38 @@ Start each detected server, verify it responds, then stop it.
 
 ### Action
 
-For each detected server:
+**A run stops what it starts.** Any server this step starts to verify the environment is started in its own process group and stopped in a guaranteed cleanup step before the dossier ends — never left running past this step, whether the readiness check passes, times out, or errors. This dossier must never leave a listener behind.
 
-1. **Start in background:**
-   ```bash
-   cd <target_worktree>
-   <start_command> &
-   SERVER_PID=$!
-   ```
+For each detected server, run start + wait + stop as ONE script so the stop cannot be skipped by an error in between:
 
-2. **Wait for ready signal** (up to 30 seconds):
-   - Check if expected port becomes available
-   - Common ports: 3000, 3001, 5000, 8000, 8080
-   - Or check health endpoint: `/health`, `/api/health`, `/healthz`
+```bash
+cd <target_worktree>
+setsid <start_command> </dev/null >/tmp/warm-worktree-server.log 2>&1 &
+SERVER_PID=$!
 
-3. **Stop server:**
-   ```bash
-   kill $SERVER_PID
-   ```
+cleanup() {
+  # kill the whole process group started under setsid, not just the wrapper pid —
+  # a dev server's real listener is often a child (vite/tsx/node) in the same group
+  kill -TERM -- "-$SERVER_PID" 2>/dev/null || kill -TERM "$SERVER_PID" 2>/dev/null
+  sleep 2
+  kill -KILL -- "-$SERVER_PID" 2>/dev/null || kill -KILL "$SERVER_PID" 2>/dev/null
+}
+trap cleanup EXIT
 
+READY=0
+for i in $(seq 1 30); do
+  # check the expected port / health endpoint here; set READY=1 and break on success
+  sleep 1
+done
+echo "server ready=$READY"
+# `cleanup` fires on the trap when this script exits — do not call kill separately,
+# and do not remove the trap before the script exits: that is what makes the stop
+# guaranteed rather than a step that a failed readiness check could skip
+```
+
+1. **Start** (first block above) — `setsid` puts the server in its own process group so a plain `kill $SERVER_PID` can't leave a child listener running.
+2. **Wait for ready signal** (up to 30 seconds) — check if the expected port becomes available (common ports: 3000, 3001, 5000, 8000, 8080) or a health endpoint (`/health`, `/api/health`, `/healthz`).
+3. **Stop** — the `trap cleanup EXIT` guarantees this runs no matter how the script exits; never rely on a separate, skippable `kill` call after the check.
 4. **Report result**
 
 ### On Success
