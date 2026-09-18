@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/ship-issue",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "54fed638dfcb197c82ab402d36b7e0b29e594d455f7651c1c5349f9aefee2218"
+    "hash": "22dc2eda17e743086de3287659f6f8d7272d9615e569ccd6656510e10e54a4b9"
   },
   "entries": [
     {
