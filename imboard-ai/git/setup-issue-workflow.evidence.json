@@ -1,0 +1,35 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/setup-issue-workflow",
+  "version": "1.14.2",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "19c3c39782762d3f5a32a0aaa94b19566429f896190613923b1dc3a3d3ce7ba2"
+  },
+  "entries": [
+    {
+      "anchor": "Pool CLI invocation",
+      "rationale": "Pinned ^0.5.1 resolves to 0.5.3; its claim handed out a warm pool entry whose directory was deleted outside the pool, running git with a missing cwd -> 'spawnSync git ENOENT' (hit during imboard #4164 setup, reproduced on 0.5.3 and 0.7.1). Fixed in worktree-pool 0.7.2 (ai-dossier#767); a 0.x caret range never leaves its minor, so the pin must move explicitly.",
+      "created_at": "2026-09-23T21:24:36.272Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "c7bed163-2a0a-4a39-91d9-72256ca56f5c",
+          "host": "hcc"
+        }
+      ]
+    },
+    {
+      "anchor": "Pool claim fails with `spawnSync git ENOENT`",
+      "rationale": "Troubleshooting row for the claim ENOENT failure mode so a future run recognises it instead of debugging PATH; see ai-dossier#767.",
+      "created_at": "2026-09-23T21:24:37.300Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "c7bed163-2a0a-4a39-91d9-72256ca56f5c",
+          "host": "hcc"
+        }
+      ]
+    }
+  ]
+}
