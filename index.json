@@ -264,7 +264,7 @@
     {
       "name": "imboard-ai/git/batch-issues-preparation",
       "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-      "version": "3.1.0",
+      "version": "3.2.0",
       "path": "imboard-ai/git/batch-issues-preparation.ds.md",
       "category": [
         "development"
