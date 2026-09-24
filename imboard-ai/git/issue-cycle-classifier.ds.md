@@ -3,11 +3,11 @@
   "dossier_schema_version": "1.0.0",
   "name": "issue-cycle-classifier",
   "title": "Issue Cycle Classifier — Structured Full/Slot Verdict + Review Level",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-24",
-  "objective": "Score one issue for execution mode AND review depth: prescreen:v2 excludes only on hard-block labels, open deps, plan:v1 path floor or >8 files, and makes a risk-keyword hit a candidate with review=full; candidates get a bounded mechanical-tier E.2/E.3 pass (rule 1 raises review, never forces full), one mid-tier escalation when uncertain, and a phase=classify verdict carrying review",
+  "objective": "Score one issue for execution mode AND review depth: prescreen:v3 excludes only on hard-block labels, open deps or >8 plan:v1 files, and makes a risk-keyword or plan:v1 risk-floor path hit a candidate with review=full; candidates get a bounded mechanical-tier E.2/E.3 pass (rule 1 raises review, never forces full), one mid-tier escalation when uncertain, and a phase=classify verdict carrying review",
   "category": [
     "development"
   ],
@@ -56,13 +56,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "de417ef92950aacd4cf2275db5b3d09bcd261e0103ea9f21e359fd11ccb18ae7"
+    "hash": "9d9772095b6a9c6cbc61ed2d5e592511051758d4632fe3204062303681890853"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "f3Yo8M73AMfC9SgT+l8NgooIs0xrnH/B4sAagz7XP7+NYZ5SYnL7/V2Pr5DZBuSIViiZ/i2HtBCpkBT1UAmuBA==",
+    "signature": "5W8+jnZaVWBLyaQpEOZ8FYNc2eMC7PCBz4THw+8pjU9NokhkRSXJAPsR5e4jG0UWxuF9m6CZojxXEYmXME6mCg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-24T09:21:27.460Z",
+    "signed_at": "2026-09-24T10:00:46.186Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -74,14 +74,14 @@
 
 ## Objective
 
-Score ONE issue for execution mode (`full` vs `slot`) **and review depth** (`review: light | full`). The two are orthogonal (#770 P1, operator decision Option A): `mode` says whether the issue can share a batch; `review` says how deeply its change must be reviewed. A risk-floor issue — auth, billing, security, migrations — is a batchable `mode=slot` issue with `review=full`, not a `mode=full` exclusion. A deterministic pre-screen (#538, schema `prescreen:v2` #772) excludes the cases that genuinely cannot share a batch before any model call; the rest run a bounded, no-repo-exploration inspection of issue metadata, escalating to one repo-probing pass only when genuinely uncertain. Apply the RFC-0001 Batch Cycles full-cycle floor (E.2) and slot eligibility (E.3), and emit a structured `phase=classify` runstate verdict plus a `cycle:*` label and a short rationale comment. One classification, many consumers: batch-issues-preparation now, triage later.
+Score ONE issue for execution mode (`full` vs `slot`) **and review depth** (`review: light | full`). The two are orthogonal (#770 P1, operator decision Option A): `mode` says whether the issue can share a batch; `review` says how deeply its change must be reviewed. A risk-floor issue — auth, billing, security, migrations — is a batchable `mode=slot` issue with `review=full`, not a `mode=full` exclusion. A deterministic pre-screen (#538, schema `prescreen:v3` #772/#805) excludes the cases that genuinely cannot share a batch before any model call; the rest run a bounded, no-repo-exploration inspection of issue metadata, escalating to one repo-probing pass only when genuinely uncertain. Apply the RFC-0001 Batch Cycles full-cycle floor (E.2) and slot eligibility (E.3), and emit a structured `phase=classify` runstate verdict plus a `cycle:*` label and a short rationale comment. One classification, many consumers: batch-issues-preparation now, triage later.
 
 **Non-responsibilities:** batching (batch-issues-preparation's job — this scores exactly one issue, never composes batches) and execution (dispatching a cycle is the consumer's job).
 
 ## Prerequisites
 
 - GitHub CLI (gh) installed and authenticated
-- `ai-dossier` CLI >= 0.52.0 (`ai-dossier classify prescreen` emitting `schema: "prescreen:v2"` with `review`, #772; the `--phase classify` runstate vocabulary, ai-dossier#461). An older CLI returns no `schema`/`review` keys — see Troubleshooting.
+- `ai-dossier` CLI >= 0.58.0 (`ai-dossier classify prescreen` emitting `schema: "prescreen:v3"` with `review`, #772/#805; the `--phase classify` runstate vocabulary, ai-dossier#461). An older CLI returns no `schema`/`review` keys — see Troubleshooting.
 - Run from the repository that owns the issue — only Step 4b's escalated pass touches it (`git grep`, path probes); Step 3's pre-screen and Step 4's bounded inspect never do
 - `ai-dossier whoami` works (not needed for `dry_run`)
 - **Dispatch tier**: run the WHOLE dossier — Steps 1–3, 4, and 5–8 — at **mechanical tier**. Step 4b's escalated pass is the sole exception and the only part that should ever run at mid tier. Running the whole dossier at mid tier by default is the exact cost this version exists to cut (#538 / `docs/reports/batch-pilot-2-execution.md` §4.1: ~64k tokens/dispatch measured at mid tier before this change, over the same §2.2 15-issue set).
@@ -111,19 +111,20 @@ same as the classifier's own floor evaluation always intended:
 ai-dossier classify prescreen --issue <issue_number> [--submitted-set <selection>]
 ```
 
-It returns `{schema: "prescreen:v2", issue, state, verdict, review, reasons, plan_artifact, degraded, warnings, checked_at}`.
+It returns `{schema: "prescreen:v3", issue, state, verdict, review, reasons, plan_artifact, degraded, warnings, checked_at}`.
 Two outputs, on two axes:
 
 - `verdict` — `full` ONLY for the **excluding** checks: a hard-block label, an open dependency
-  outside the submitted set (rule 9), a plan:v1 path in a risk-floor area, or > 8 predicted files
-  (plan:v1). Otherwise `candidate`.
-- `review` — `full` when ANY check found anything, a `text-floor` keyword hit included; `light`
+  outside the submitted set (rule 9), or > 8 predicted files (plan:v1). Otherwise `candidate`.
+  A plan:v1 path in a risk-floor area is NOT excluding (v3, #805) — it is the same fact as the
+  risk keyword, only more precise, and raises `review` like it.
+- `review` — `full` when ANY check found anything, a `text-floor` keyword or `path-floor` hit included; `light`
   when nothing was found. The text floor scans the change surface only (title, scope/AC text,
   labels) — provenance lines ("Found by the security review"), quoted text and Related sections
   are stripped first.
 
-So a text-floor hit alone comes back `verdict: candidate` + `review: full` — batchable, reviewed
-at full depth. v1 returned `verdict: full` for the same issue. Coverage is
+So a text-floor or path-floor hit alone comes back `verdict: candidate` + `review: full` —
+batchable, reviewed at full depth. v1 returned `verdict: full` for either hit; v2 still did for a path hit. Coverage is
 deliberately partial: it catches the OBVIOUS floor hits, not all ten E.2 rules — rule 8
 (visual/browser), most of rule 2 (schema/migration beyond the `migration` keyword), rule 7
 (hard rollback), rules 5/6 without a plan artifact, and rule 10 always need Step 4 or 4b.
@@ -134,11 +135,13 @@ deliberately partial: it catches the OBVIOUS floor hits, not all ten E.2 rules �
   keys even though Steps 4–6 never ran — use this deterministic fast-path mapping: `est_files=0
   est_diff=0 areas=unknown test_scope=unknown confidence=1 review=full`; `deps=none` unless
   `reasons` contains `open-dependency` entries, in which case list those issue numbers;
-  `risk=high` when any reason is `hard-block-label`, `path-floor` or `text-floor`, else `risk=med`.
+  `risk=high` when any reason is `hard-block-label`, `path-floor` or `text-floor`, else `risk=med`
+  (a `path-floor` reason reaches this path only beside an excluding check).
 - **`verdict: "candidate"` + `review: "full"`** → continue to Step 4, **carrying the `reasons`
   forward** — they are the `text-floor` hits (rule 1 risk-floor area, or the new-package /
-  deploy-pipeline keyword approximations) that set `review=full`. Record them in the rationale.
-  **Do not re-exclude on them:** Step 5 must not turn the same keyword into a `mode=full` hit.
+  deploy-pipeline keyword approximations) and `path-floor` hits (a plan:v1 path in a risk-floor
+  area) that set `review=full`. Record them in the rationale.
+  **Do not re-exclude on them:** Step 5 must not turn the same keyword or path into a `mode=full` hit.
   Rule 1 is a *review* floor (it sets `review=full`, already done), and a keyword is never, on
   its own, evidence for rules 3/4 — those hit only when the predicted change itself creates a
   package or changes the deploy pipeline. Re-applying the keyword would undo #770 Option A and
@@ -309,9 +312,9 @@ text-floor`).
 
 ## Validation
 
-- [ ] Step 3's pre-screen (`schema: prescreen:v2`) ran before any model-driven inspection — no Step 4/4b reasoning, and no repo exploration, happened ahead of it
+- [ ] Step 3's pre-screen (`schema: prescreen:v3`) ran before any model-driven inspection — no Step 4/4b reasoning, and no repo exploration, happened ahead of it
 - [ ] `verdict: "full"` (an excluding check) from Step 3 skipped straight to Step 7 — no repo exploration, no Step 4/5/6 evaluation, rationale is the pre-screen's `reasons`
-- [ ] `verdict: "candidate"` + `review: "full"` carried its text-floor `reasons` forward and was NOT re-excluded on the same keyword — it can finish `mode=slot review=full`
+- [ ] `verdict: "candidate"` + `review: "full"` carried its text-floor / path-floor `reasons` forward and was NOT re-excluded on the same keyword or path — it can finish `mode=slot review=full`
 - [ ] Rule 1 (risk-floor area) set `review=full` and did not by itself force `mode=full`
 - [ ] `verdict: "candidate"` ran Step 4 with NO repo access (`git grep`/`ls`) — only Step 4b's one escalated pass, if triggered, may touch the repo
 - [ ] Issue body AND comments read; plan:v1 artifact consumed when present (candidate path only)
@@ -327,7 +330,7 @@ text-floor`).
 | Symptom | Fix |
 |---|---|
 | `classify prescreen` — unknown command | CLI older than 0.26.0 — upgrade (`npm i -g @ai-dossier/cli`); use the global binary by absolute path if a repo-local `node_modules/.bin` shadow exists. Do NOT skip Step 3 and go straight to Step 4 — that silently reverts to the pre-#538 unbounded-exploration cost on every issue. |
-| Pre-screen output has no `schema` / `review` key | CLI older than 0.52.0 (prescreen v1: any keyword hit was `verdict: full`) — upgrade. Until then, treat a v1 `full` whose ONLY reasons are `text-floor` as `candidate` + `review: full`. |
+| Pre-screen output has no `schema` / `review` key, or `schema: prescreen:v2` | CLI older than 0.58.0 (v1: any keyword hit was `verdict: full`; v2: a plan:v1 `path-floor` hit was `verdict: full`) — upgrade. Until then, treat a `full` whose ONLY reasons are `text-floor` / `path-floor` as `candidate` + `review: full`. |
 | `runstate post` rejects `--phase classify` | CLI older than 0.14.0 — upgrade (`npm i -g @ai-dossier/cli`) |
 | `est_diff`/`est_files` rejected | Must be non-negative integers — no ranges, no "about", no `+`/`k` suffixes |
 | `confidence` rejected | Decimal between 0 and 1 (`0.85`), not a percentage |
