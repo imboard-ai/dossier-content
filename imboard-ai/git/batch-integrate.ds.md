@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-integrate",
   "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-24",
@@ -69,9 +69,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "2EPLYTeCJcTmOxPBQDrkANoL3qCdmkrteK4MMbaMy1p51UGvMw4kW3XyKeupj+QTQ89yzRYllnwIaQO1AasrDw==",
+    "signature": "KJztWHbOWSe0S3lpBWsTTsyYo1rz6aAIgvAy/Ntg9733juCF9AvDY80mMPL9rqX564matNYkwv2RSjJA340wBA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-24T14:17:15.433Z",
+    "signed_at": "2026-09-24T15:17:52.946Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
