@@ -4,7 +4,7 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "status": "Draft",
   "last_updated": "2026-09-24",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
@@ -40,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "79e1044064336898456ec0129be8e286eaa6962bcac42dc7c37196a7de18ec6f"
+    "hash": "0c531164c7f02491ed4e797e9de41181194f50c729f6b26a7f95d3df5f0f27f7"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "D5fPgGvIcrzuHaCl4ObzsYmCfmvupjmNrsSmbsOtYy8qi5OkcaavpjX+ih2Klo5csGe+5MgR4EkXUUuWfYZrBg==",
+    "signature": "S/js0k5E4JEbkcPC6Do/qe/olcPkkZTboXydQLTrHaQeesBjaiA9cawsdznc9PYRKobR0e70OZ+rjGpKwv1ECw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-24T09:21:30.701Z",
+    "signed_at": "2026-09-24T15:29:34.133Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -249,6 +249,15 @@ The scheduler creates the integration branch and dispatches one `member-cycle` a
 ### 6. Ship
 
 One PR, **rebase-merged, never squashed** — per-issue commits carry the attribution the model depends on.
+
+### Manual recovery
+
+If the batch leaves this skill's path — the scheduler blocks it, an agent or operator takes the
+integration branch over by hand, or the PR is opened by hand — follow
+`imboard-ai/git/batch-integrate` Step 6b: the PR body carries `Closes #<member>` for every
+shipped member and `Refs #<anchor>` only, **never** `Closes #<anchor>`; always run Step 6a after
+the merge. Close the anchor only on positive evidence — every member closed as completed by
+shipped code, none evicted, handed back, or requeued — otherwise leave it open for the operator.
 
 ## What to tell the operator
 
