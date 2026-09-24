@@ -1,40 +1,16 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-issues-preparation",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "477b23381f32ceafbfe059151094850e309f177ac3e860e5b3bb404c4716e302"
+    "hash": "f24b4d157dc1430c3a16bb36f3d893573e2438f31e5c2a4a5f6ce0f2bb7dd740"
   },
   "entries": [
     {
-      "anchor": "Step 3a: Admission preview over the WHOLE set — free, deterministic, no model",
-      "rationale": "ai-dossier#770 P5: prep dispatched 5 decision-grade classifiers (~425k tokens) on imboard picks 4114,4178,4327,4333,4343 and 4 of 5 were unbatchable by facts the free prescreen already had; ai-dossier#774.",
-      "created_at": "2026-09-24T09:21:03.141Z",
-      "evidence": [
-        {
-          "provider": "claude-code",
-          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
-          "host": "hcc"
-        }
-      ]
-    },
-    {
-      "anchor": "Step 3b: Body-readiness screen on every admitted member — free, and mandatory for backfill (#802)",
-      "rationale": "ai-dossier#802: batch compose --backlog proposed 5 features/trackers of 6 as light members; admissibility is not readiness. Validating #774 on imboard, compose backfilled #1219, which requires production SSM/DNS/SendGrid ops.",
-      "created_at": "2026-09-24T09:21:03.701Z",
-      "evidence": [
-        {
-          "provider": "claude-code",
-          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
-          "host": "hcc"
-        }
-      ]
-    },
-    {
-      "anchor": "Minimum viable batch + backfill (#770 P4)",
-      "rationale": "ai-dossier#770: 13 batch anchors averaged 2.2 members with three single-member batches; b-20260924-01 shipped one member. Operator decision Option A: risk-floor issues join as review=full, at most 2 per batch.",
-      "created_at": "2026-09-24T09:21:04.277Z",
+      "anchor": "Troubleshooting",
+      "rationale": "ai-dossier#805: compose re-runs after batch-prep posted plan:v1 artifacts used to exclude risk-floor members as prescreen-full; under prescreen:v3 they stay review=full members (possibly held review-full-cap).",
+      "created_at": "2026-09-24T10:00:33.115Z",
       "evidence": [
         {
           "provider": "claude-code",
