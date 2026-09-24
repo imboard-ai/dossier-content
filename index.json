@@ -496,7 +496,7 @@
     {
       "name": "imboard-ai/git/issue-cycle-classifier",
       "title": "Issue Cycle Classifier — Structured Full/Slot Verdict + Review Level",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "path": "imboard-ai/git/issue-cycle-classifier.ds.md",
       "category": [
         "development"
