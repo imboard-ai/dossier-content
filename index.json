@@ -214,7 +214,7 @@
     {
       "name": "imboard-ai/git/batch-integrate",
       "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-      "version": "1.3.3",
+      "version": "1.4.0",
       "path": "imboard-ai/git/batch-integrate.ds.md",
       "category": [
         "development",
@@ -226,7 +226,8 @@
         "parent",
         "verification",
         "handover",
-        "conformance"
+        "conformance",
+        "review"
       ],
       "authors": [
         {
