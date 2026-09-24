@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-integrate",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "checksum": {
     "algorithm": "sha256",
     "hash": "bda69e91984618bfd6c6889fe6faab41ed63dca68eb90a75768073240d5ce295"
@@ -52,6 +52,86 @@
           "provider": "claude-code",
           "session": "3d051207-f7f8-4ef0-8edd-7ab512d814f7",
           "host": "YuvalD-Asus14"
+        }
+      ]
+    },
+    {
+      "anchor": "Step 2: Cheap gates first",
+      "rationale": "Measured across the first three batches (M1-M3), every real member defect was caught by a hygiene or typecheck gate and none was first caught by the integration suites. Running the cheap gates to completion before the expensive run turned 75-minute discoveries into seconds.",
+      "created_at": "2026-09-15T21:20:58.824Z",
+      "evidence": [
+        {
+          "provider": "other",
+          "session": "a4952428-e777-4937-90bd-39143e386062",
+          "host": "hcc2",
+          "extra": {
+            "memory_id": "a4952428-e777-4937-90bd-39143e386062",
+            "batches": "imboard#4113,imboard#4125,imboard#4140"
+          }
+        }
+      ]
+    },
+    {
+      "anchor": "Step 4b: Which model decides — a different axis from tier",
+      "rationale": "Escalation is split by authority, not difficulty: the parent repairs mechanical failures, a member-tier model decides semantic ones. In M3 a USD 1.77, 8-minute member-tier escalation outperformed the parent's own judgement, and the parent's 'trivial' pluralization fix took three attempts.",
+      "created_at": "2026-09-15T21:21:00.108Z",
+      "evidence": [
+        {
+          "provider": "other",
+          "session": "a4952428-e777-4937-90bd-39143e386062",
+          "host": "hcc2",
+          "extra": {
+            "memory_id": "a4952428-e777-4937-90bd-39143e386062",
+            "related": "RFC-0001#F.2"
+          }
+        }
+      ]
+    },
+    {
+      "anchor": "If rebase-merge is refused, ship with a MERGE COMMIT — never a squash.",
+      "rationale": "M3 needed four base merges over five hours; GitHub then refused rebase-merge because the branch carried merge commits, and a local rebase re-conflicted since the resolutions lived in those merges. The real requirement is that per-issue commits survive for eviction, revert and bisect. A merge commit satisfies it; a squash never does.",
+      "created_at": "2026-09-15T21:21:00.831Z",
+      "evidence": [
+        {
+          "provider": "other",
+          "session": "a4952428-e777-4937-90bd-39143e386062",
+          "host": "hcc2",
+          "extra": {
+            "memory_id": "a4952428-e777-4937-90bd-39143e386062",
+            "batch": "imboard#4140"
+          }
+        }
+      ]
+    },
+    {
+      "anchor": "Step 6: Ship one PR",
+      "rationale": "Squash was ruled out twice over: it destroys the per-issue commits attribution depends on, and GitHub's default squash body re-imports every wip commit subject carrying a skip-ci marker, which silently suppressed the push event on main and the npm publish for PR #602.",
+      "created_at": "2026-09-15T21:21:01.486Z",
+      "evidence": [
+        {
+          "provider": "other",
+          "session": "5a7a2001-dd88-4a65-9c15-c8b431ead9d9",
+          "host": "wls",
+          "extra": {
+            "memory_id": "5a7a2001-dd88-4a65-9c15-c8b431ead9d9",
+            "related": "ai-dossier#598,ai-dossier-pr#606"
+          }
+        }
+      ]
+    },
+    {
+      "anchor": "Claim-release protocol",
+      "rationale": "The first scheduler-driven batch showed the batch path read the in-progress claim marker but never wrote or released it, so two prep runs would select the same issues. Prep now claims at manifest time; integrate must release on every disposal, supersession included, or claims leak forever.",
+      "created_at": "2026-09-15T21:21:02.243Z",
+      "evidence": [
+        {
+          "provider": "other",
+          "session": "245031cd-9975-45f2-b211-ef31a696029a",
+          "host": "hcc2",
+          "extra": {
+            "memory_id": "245031cd-9975-45f2-b211-ef31a696029a",
+            "related": "ai-dossier#675"
+          }
         }
       ]
     }
