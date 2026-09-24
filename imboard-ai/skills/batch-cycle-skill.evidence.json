@@ -1,0 +1,23 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/skills/batch-cycle-skill",
+  "version": "1.4.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "79e1044064336898456ec0129be8e286eaa6962bcac42dc7c37196a7de18ec6f"
+  },
+  "entries": [
+    {
+      "anchor": "Composition conflicts resolve downward, silently — and downward includes backfill",
+      "rationale": "ai-dossier#770 P3/P4: picks collapsed to a 1-member batch (b-20260924-01) after costly classification; the contract had no floor and no backfill. ai-dossier#774.",
+      "created_at": "2026-09-24T09:21:07.707Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
+        }
+      ]
+    }
+  ]
+}
