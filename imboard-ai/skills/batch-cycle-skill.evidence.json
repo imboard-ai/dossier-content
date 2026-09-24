@@ -1,33 +1,21 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/skills/batch-cycle-skill",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "0c531164c7f02491ed4e797e9de41181194f50c729f6b26a7f95d3df5f0f27f7"
+    "hash": "6c9c0d4d0d67f80cc126d7725b5e20e392c2b032a9ded892abd9a485cbce0661"
   },
   "entries": [
     {
-      "anchor": "Composition conflicts resolve downward, silently — and downward includes backfill",
-      "rationale": "ai-dossier#770 P3/P4: picks collapsed to a 1-member batch (b-20260924-01) after costly classification; the contract had no floor and no backfill. ai-dossier#774.",
-      "created_at": "2026-09-24T09:21:07.707Z",
+      "anchor": "A risk-floor issue is not a composition conflict",
+      "rationale": "ai-dossier#818: the autonomy contract names E.2 rules 1, 4, 5 as review=full triggers and rule 8 as a full-cycle hand-off, matching classifier 1.4.0 / batch-prep 3.2.0.",
+      "created_at": "2026-09-24T16:01:39.532Z",
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "session": "df2fa282-bc18-4ea8-b8a1-c7a0e047b8ab",
           "host": "hcc"
-        }
-      ]
-    },
-    {
-      "anchor": "Manual recovery",
-      "rationale": "ai-dossier#768: a recovery agent hand-opened and rebase-merged imboard#4255, skipped batch-integrate's post-merge step, and left anchor imboard#4253 open. ai-dossier#788 adds the pointer to batch-integrate Step 6b.",
-      "created_at": "2026-09-24T15:29:34.133Z",
-      "evidence": [
-        {
-          "provider": "claude-code",
-          "session": "3d051207-f7f8-4ef0-8edd-7ab512d814f7",
-          "host": "wls"
         }
       ]
     }
