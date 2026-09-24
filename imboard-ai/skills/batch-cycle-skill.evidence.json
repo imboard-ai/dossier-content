@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/skills/batch-cycle-skill",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "79e1044064336898456ec0129be8e286eaa6962bcac42dc7c37196a7de18ec6f"
+    "hash": "0c531164c7f02491ed4e797e9de41181194f50c729f6b26a7f95d3df5f0f27f7"
   },
   "entries": [
     {
@@ -16,6 +16,18 @@
           "provider": "claude-code",
           "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
           "host": "hcc"
+        }
+      ]
+    },
+    {
+      "anchor": "Manual recovery",
+      "rationale": "ai-dossier#768: a recovery agent hand-opened and rebase-merged imboard#4255, skipped batch-integrate's post-merge step, and left anchor imboard#4253 open. ai-dossier#788 adds the pointer to batch-integrate Step 6b.",
+      "created_at": "2026-09-24T15:29:34.133Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "3d051207-f7f8-4ef0-8edd-7ab512d814f7",
+          "host": "wls"
         }
       ]
     }
