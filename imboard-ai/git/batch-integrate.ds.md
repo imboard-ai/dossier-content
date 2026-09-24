@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-integrate",
   "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-24",
@@ -65,13 +65,13 @@
   "content_scope": "self-contained",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c09bb4cc391924d17a1f642f2009ce9557eb153eac4e3ed2d791092410ce1bf7"
+    "hash": "bda69e91984618bfd6c6889fe6faab41ed63dca68eb90a75768073240d5ce295"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "jDrUvcwyRtBj4DLikk6s2VLbAUPaTPbVnSUm9nzfyZzAC09Ct5zQsxcd6t69nSU9/ZUFV1YsEZzIFYmhpIQfBA==",
+    "signature": "2EPLYTeCJcTmOxPBQDrkANoL3qCdmkrteK4MMbaMy1p51UGvMw4kW3XyKeupj+QTQ89yzRYllnwIaQO1AasrDw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-24T09:21:24.245Z",
+    "signed_at": "2026-09-24T14:17:15.433Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -250,11 +250,25 @@ fi
 
 Run the claim-release protocol for every shipped member after this state check. Its idempotency repairs an already-closed issue with a stale claim on rerun.
 
-Query the batch anchor after every member. If it is still open, comment with the batch PR, merge timestamp, and the complete member-to-shipping-commit list, then close it explicitly. On rerun, a closed anchor receives neither a duplicate comment nor another close request.
+Query the batch anchor after every member. If it is still open **and every member shipped** — closed as completed by this PR or a commit in the base, none evicted, handed back, or requeued — comment with the batch PR, merge timestamp, and the complete member-to-shipping-commit list, then close it explicitly. Otherwise leave the anchor open and post one comment naming which member did not ship and why: an anchor with a failure trail stays open for an operator (ai-dossier#768). On rerun, a closed anchor receives neither a duplicate comment nor another close request.
 
 Report `closed_by_github`, `closed_by_workflow`, `already_closed`, and `claims_released` in the batch summary. A non-zero `closed_by_workflow` count is an operational signal that GitHub's closing-reference behavior is not being relied on silently.
 
 The PR body should carry a section per member and name every batch-level repair with its cause.
+
+**If rebase-merge is refused, ship with a MERGE COMMIT — never a squash.** A host will refuse to rebase a branch containing merge commits; on an otherwise-green PR, a message to the effect of *"this branch can't be rebased"* means merge commits, not a conflict. The requirement here is that **per-issue commits survive**, because eviction, revert and bisect all depend on them. A merge commit preserves every one of them and satisfies that requirement. A squash destroys them and never does.
+
+**The PR's own CI is not redundant with your run.** It typically runs a different selection, in a clean environment, against its own infrastructure. It will catch things your run did not, and it is the trustworthy signal when your own run was degraded by contention. Your job is not finished when your local gate is green.
+
+
+### Step 6b: Manual recovery — a hand-shipped batch still ends at Step 6a
+
+When the batch left this dossier's path — the scheduler blocked it, an agent or a human took the integration branch over, or the PR was opened by hand — the recovery is not finished when its PR merges. Two rules, both mandatory:
+
+1. **The PR body carries `Closes #<member>` for every shipped member and `Refs #<anchor>` — never `Closes #<anchor>`.** A GitHub closing keyword on the anchor skips every failure-trail check (a handed-back, evicted, not-planned, or dropped member). The anchor is closed only on positive evidence: by Step 6a, or by the scheduler's own evidence-gated close (ai-dossier#768).
+2. **Run Step 6a after the merge, exactly as the happy path does** — member closure verification with the `batch-close:v1` marker, claim release, then the anchor query. Opening, merging, or rebase-merging the PR yourself does not exempt the recovery from it: Step 6a is the step that verifies and closes the anchor, and skipping it is how an anchor stays open after all its work has shipped.
+
+Close the anchor only when every member is closed as completed by the shipped PR or a commit in the base, and none was evicted, handed back, or requeued. If any member is still open, closed as not planned, or carries a failure, leave the anchor open and say which member and why in one comment on it — an anchor with a failure trail stays open for an operator.
 
 **If rebase-merge is refused, ship with a MERGE COMMIT — never a squash.** A host will refuse to rebase a branch containing merge commits; on an otherwise-green PR, a message to the effect of *"this branch can't be rebased"* means merge commits, not a conflict. The requirement here is that **per-issue commits survive**, because eviction, revert and bisect all depend on them. A merge commit preserves every one of them and satisfies that requirement. A squash destroys them and never does.
 
@@ -284,6 +298,7 @@ Everything you decide is read from an artifact. These rules exist because an act
 - Every repair verified against the affected member's own tests before commit
 - One PR, rebase-merged, closing every surviving member issue
 - Evicted members requeued with their failure evidence; the batch ships what survived
-- Every merged member and the anchor have their final issue state verified; open issues are closed explicitly with their traceability evidence
+- Every merged member and the anchor have their final issue state verified; open members are closed explicitly with their traceability evidence, and the anchor is closed only when every member shipped (otherwise it stays open with one comment naming the member and why)
 - The batch summary separates GitHub closures from workflow closures and records claim release
 - Every disposed member's batch claim released in the step that recorded the disposal — evicted, superseded, gate-declined, and shipped members carry no `in-progress` label or assignee (the claim prep's manifest step wrote)
+- A hand-recovered batch's PR referenced the anchor with `Refs #<anchor>` (never a closing keyword), and Step 6a ran after its merge (Step 6b)
