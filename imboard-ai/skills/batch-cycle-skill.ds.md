@@ -4,9 +4,9 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "status": "Draft",
-  "last_updated": "2026-09-12",
+  "last_updated": "2026-09-24",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
   "description": "Batch several issues into ONE PR with ONE expensive verification run. Each issue gets its own agent and worktree off a shared integration branch; a parent orchestrator merges them, runs the repo's full gate once, repairs what breaks, and ships a single PR. Use when the user says 'batch cycle', 'batch these issues into one PR', 'run these issues as a batch', 'one PR for these issues', or asks to avoid paying CI/verification per issue. NOT for when each issue needs its own PR — that is fleet-cycle.",
   "inputs": {
@@ -40,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "9afcfd2154b057f2341b6d141659ca9a4f187945c28c222db219a8cf932295e4"
+    "hash": "79e1044064336898456ec0129be8e286eaa6962bcac42dc7c37196a7de18ec6f"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "5SeX+V8/4kLd83kmQVlzNVmmxAXqrlR5T9k+yzPNc/UPtU9OElQXZvinJeQOROnP8xW8rHvw6AKxlIS2aYQOAw==",
+    "signature": "D5fPgGvIcrzuHaCl4ObzsYmCfmvupjmNrsSmbsOtYy8qi5OkcaavpjX+ih2Klo5csGe+5MgR4EkXUUuWfYZrBg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-12T08:01:11.293Z",
+    "signed_at": "2026-09-24T09:21:30.701Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -57,6 +57,8 @@
 # Batch Cycle
 
 Take a **set** of issues to **one** pull request. Each issue is implemented independently, in parallel; the repo's expensive verification runs **once** over the combined result.
+
+**First step on the issue set, always: `ai-dossier batch compose`** (Step 2, right after the repo preflight) — a free, deterministic preview of what can actually be batched, before any model is paid for.
 
 ## Autonomy contract — run to completion
 
@@ -79,7 +81,14 @@ There are exactly **three** places this skill may stop, each defined elsewhere i
 1. The single dispatch-profile clarification question — only when no family is stated *and*
    runtime evidence matches more than one configured profile.
 2. A true dependency cycle, which `batch-issues-preparation` surfaces and stops on by design.
-3. Zero issues survive readiness screening, leaving nothing to dispatch.
+3. Zero issues survive admission and readiness screening — even after backfill — leaving nothing
+   to dispatch.
+
+**A sub-minimum batch is not formed.** Fewer than 2 members after backfill is not a batch: a
+one-member batch pays the prep overhead and amortizes nothing (history before this rule: mean 2.2
+members, three single-member batches). Do not form it and do not ask — hand the lone survivor to
+`full-cycle-issue-skill` (still exactly one PR, the contract the operator invoked) and say so in
+the summary. That is a hand-off, not a stop.
 
 Any other stop is unauthorised. A screening call the model feels unsure about is resolved by
 **dropping the issue and saying so in the summary**, not by asking.
@@ -92,9 +101,9 @@ a stop, regardless of how well-reasoned the options are or whether one is marked
 If the skill can rank the options well enough to recommend one, it can take that one and say
 so afterwards.
 
-### Composition conflicts resolve downward, silently
+### Composition conflicts resolve downward, silently — and downward includes backfill
 
-An issue can be **ready** by Step 2 and still be a poor batch member — it needs a review path
+An issue can be **ready** by Step 3 and still be a poor batch member — it needs a review path
 the batch cannot give it (browser verification, a manual QA pass), it mutates data, or it is a
 slice of a designed sequence already represented. This is a composition conflict, and it has a
 fixed resolution: **leave the issue out of the batch and out of this run entirely.**
@@ -108,6 +117,20 @@ it.
 Record the excluded issue and its conflict in the closing summary, next to the screening
 drops. The operator can batch it in the next run or take it through `full-cycle-issue-skill`
 deliberately. Never ask which of these they would prefer.
+
+**A risk-floor issue is not a composition conflict** (#770, operator decision Option A). Auth,
+billing, security, migration or deploy keywords make an issue a `review=full` member — strong
+tier, full-cycle-grade review in member-cycle, a risk-floor review of its commits in
+batch-integrate — not an exclusion. At most **2** `review=full` members per batch (blast
+radius); a third waits for the next batch. The hard exclusions are only: production data
+mutation or ops, a slice of a designed sequence, decisions/epics/trackers, a different base.
+
+**When drops leave the batch below `min_members` (default 3), backfill — silently.** Take the
+next candidates from `batch compose`'s ranked `backfill[]`, screen each one's body exactly like
+a pick (Step 3 — compose admits unready features/trackers today, ai-dossier#802), respect the
+`review=full` cap, and continue. Do not ask the operator whether to backfill, or which candidate
+to take; name the backfilled issues in the summary. Only if backfill runs dry below 2 members
+is no batch formed (above).
 
 ### Once enqueued, do not recompose
 
@@ -133,10 +156,11 @@ Measured on a repo whose local gate takes ~50–90 minutes: 3 issues batched too
 
 | Layer | What it is |
 |---|---|
-| `imboard-ai/git/batch-issues-preparation` | classify the set, compose the batch, enqueue |
+| `ai-dossier batch compose` | **free, first**: prescreen:v2 + readiness over the picks (or the backlog), returns the admissible composition, each member's `review`, and ranked backfill — zero model calls |
+| `imboard-ai/git/batch-issues-preparation` | re-runs compose, screens bodies, backfills, classifies ONLY admitted members, composes, enqueues with per-member `review` |
 | `ai-dossier sched` | creates the integration branch, dispatches members in parallel worktrees |
-| `imboard-ai/git/member-cycle` | one agent per issue: implement, test by relevance, hand over |
-| `imboard-ai/git/batch-integrate` | the parent: merge, verify once, repair, ship one PR |
+| `imboard-ai/git/member-cycle` | one agent per issue: implement, test by relevance, review at its `review` level (never zero agents), hand over |
+| `imboard-ai/git/batch-integrate` | the parent: merge, verify once via `gate.batch`, repair, risk-floor review of `review=full` members, ship one PR |
 
 **Do not use `imboard-ai/git/batch-issues`** — it predates this model and orchestrates a different thing entirely. It sorts first in a registry search for "batch"; it is the wrong one.
 
@@ -158,7 +182,7 @@ or the one clarification question.
 
 ### Required handoff
 
-1. Resolve the issue set from the request and resolve `dispatch_profile` before starting preparation.
+1. Resolve the issue set from the request and resolve `dispatch_profile` before starting preparation. Run Step 2's `ai-dossier batch compose` on it first.
 2. Run `ai-dossier run imboard-ai/git/batch-issues-preparation --pull` and pass it the `issues` input plus the selected `dispatch_profile` input. Do not start member agents directly from this skill.
 3. When a profile is selected, preparation must add `dispatch: <profile>` to every slot manifest entry and execute this exact scheduler command:
 
@@ -177,19 +201,38 @@ or the one clarification question.
 
 **Check what the expensive gate actually costs here.** If the repo's full verification is a few minutes, batching buys little; say so and suggest fleet-cycle.
 
-### 2. Screen the set for readiness
+**Check for a `gate.batch` capability.** The batch gate should be the repo's CI-parity gate, paid once for the union of the members' diffs — not an unsharded full suite. `sched enqueue` refuses to form a batch in a repo whose only full gate declares itself timeout-prone and has no `gate.batch` (ai-dossier#777); if `cap list` shows that shape, say so before dispatching anything.
 
-Cheap checks that prevent expensive failures. For each issue, read the **body**, not the labels:
+### 2. Compose first — `ai-dossier batch compose` (free, before any model spend)
+
+From the target repo, before any classifier or member runs:
+
+```bash
+ai-dossier batch compose --issues <operator picks> --json      # operator named issues
+ai-dossier batch compose --backlog --json                      # "batch something from the backlog"
+```
+
+**Operator picks go through compose like everything else** — hand-picked is not admitted. On the #770 evidence, five hand-picked issues collapsed to a one-member batch only after ~425k decision-grade classifier tokens; compose would have shown the outcome for free. Read its `status`:
+
+- `ok` → proceed to preparation with the picks; compose's backfill is the fallback for later drops.
+- `under-min` / `no-batch` → the picks alone cannot make a batch. Preparation will backfill from compose's ranked `backfill[]` (silently — see the autonomy contract); if backfill runs dry below 2, no batch is formed and the survivor goes to `full-cycle-issue-skill`.
+
+Report compose's `excluded[]` (with codes) in the closing summary. Never dispatch a model for an excluded issue.
+
+### 3. Screen the admitted members for readiness
+
+Compose's admissibility is not readiness — it admits AC-less features and trackers as backfill today (ai-dossier#802). Cheap checks that prevent expensive failures. For each admitted member — **picks and every backfill candidate** — read the **body**, not the labels:
 
 - **Does every artifact it names exist on the base branch?** An issue saying "migrate onto the hook extracted by #N" depends on #N — whether or not it says "Depends on". Verify the symbol exists; do not trust the prose.
-- **Does the body enumerate a countable work list?** Count it — to confirm the scope is *bounded*, not to reject it for being large. A "documentation" issue can be thousands of lines with no stated end; an issue naming 25 call sites to migrate is bounded work and belongs in the batch. Size is not a screening criterion here, and Step 3 says why.
+- **Does the body enumerate a countable work list?** Count it — to confirm the scope is *bounded*, not to reject it for being large. A "documentation" issue can be thousands of lines with no stated end; an issue naming 25 call sites to migrate is bounded work and belongs in the batch. Size is not a screening criterion here, and Step 4 says why.
 - **Is it assigned or in progress?** Someone may already be on it.
 - **Is it a tracker or a decision?** A body listing many independent findings, or headed "Decision needed", has no stopping point for an agent.
-- **Does it mutate or delete data?** Those need independent revert granularity — keep them out of a shared PR.
+- **Does it have acceptance criteria?** A feature or initiative with no AC has no stopping point.
+- **Does it mutate or delete production data, or do production ops** (secret/SSM writes, DNS, third-party console config)? Those need independent revert granularity — keep them out of a shared PR.
 
-Drop what fails, and say why. A dropped issue costs nothing; a member forcing work against a missing dependency costs an agent run.
+Drop what fails, backfill the gap from compose's ranked list (screening each candidate the same way), and say why. A dropped issue costs nothing; a member forcing work against a missing dependency costs an agent run.
 
-### 3. Compose the batch
+### 4. Compose the batch
 
 **Prefer a mixed cohort.** Batch value is a function of the **union of members' affected scopes**, not the member count: once one member triggers the repo's expensive stage, every member added after it rides along at almost no extra gate cost. A batch of issues that all avoid the expensive stage amortizes almost nothing.
 
@@ -197,17 +240,22 @@ Drop what fails, and say why. A dropped issue costs nothing; a member forcing wo
 
 **Do not size the batch by predicted diff.** Diff size predicts neither cost nor conflict: measured members have run 92 turns for a net −29 lines, and 59 turns for +193.
 
-### 4. Dispatch and integrate
+**Risk-floor members ride as `review=full`, at most 2 per batch** — see the autonomy contract. The manifest carries `review` on every member.
 
-The scheduler creates the integration branch and dispatches one `member-cycle` agent per issue, in parallel, each in its own worktree. When all members have landed or handed back, run `batch-integrate`.
+### 5. Dispatch and integrate
 
-### 5. Ship
+The scheduler creates the integration branch and dispatches one `member-cycle` agent per issue, in parallel, each in its own worktree — `review=full` members at strong tier minimum with full-cycle-grade review. When all members have landed or handed back, run `batch-integrate`; it refuses to ship a member whose review milestone shows no agents ran.
+
+### 6. Ship
 
 One PR, **rebase-merged, never squashed** — per-issue commits carry the attribution the model depends on.
 
 ## What to tell the operator
 
+- `batch compose`'s verdict: admitted, excluded (with codes), and which members were backfilled
 - Which issues were dropped in screening, and why
+- Which members ran as `review=full`, and why (the risk-floor reasons)
+- If no batch was formed (fewer than 2 survivors): which issue was handed to full-cycle
 - Any member that handed back rather than implementing — this is a valued outcome, not a failure
 - Every batch-level repair the parent made, and its cause
 - If the gate failed on infrastructure rather than code: what was retried, and what remains unverified
