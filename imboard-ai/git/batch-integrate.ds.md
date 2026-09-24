@@ -3,11 +3,11 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-integrate",
   "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-15",
-  "objective": "Merge a batch's members onto its integration branch, run the repo's expensive verification ONCE for all of them, repair mechanical failures, escalate semantic ones, never evict on a signal the verification cannot stand behind, release each disposed member's batch claim, and ship one PR",
+  "last_updated": "2026-09-24",
+  "objective": "Merge a batch's members onto its integration branch, run the repo's batch gate (gate.batch when declared) ONCE for all of them, repair mechanical failures, escalate semantic ones, never evict on a signal the verification cannot stand behind, run the risk-floor review over review=full members' commits, refuse to ship any member with no real review, release claims, and ship one PR",
   "category": [
     "development",
     "orchestration"
@@ -18,7 +18,8 @@
     "parent",
     "verification",
     "handover",
-    "conformance"
+    "conformance",
+    "review"
   ],
   "risk_level": "high",
   "risk_factors": [
@@ -28,7 +29,8 @@
   ],
   "requires_approval": false,
   "destructive_operations": [
-    "Reverts a member's commits when evicting it. Force-pushes the integration branch only after an eviction, with --force-with-lease."
+    "Reverts a member's commits when evicting it. Force-pushes the integration branch only after an eviction, with --force-with-lease.",
+    "Posts a parent-run phase=review milestone on a member issue whose own review never ran (review_by=parent), or evicts that member"
   ],
   "inputs": {
     "required": [
@@ -63,13 +65,13 @@
   "content_scope": "self-contained",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "39388e3e8420f121a14a2a2031ad4bae6711c82a6480d3b13a6e063c5fe170a3"
+    "hash": "c09bb4cc391924d17a1f642f2009ce9557eb153eac4e3ed2d791092410ce1bf7"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "oZ7qG6y4yJ+GzNEyJcAR5vozF+WvyJzgxfex26ZAgCeDI0MJvUvx0qajAkE/Vqa6TyFXjfg+kzxz3jFq64c3CA==",
+    "signature": "jDrUvcwyRtBj4DLikk6s2VLbAUPaTPbVnSUm9nzfyZzAC09Ct5zQsxcd6t69nSU9/ZUFV1YsEZzIFYmhpIQfBA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-15T21:21:50.995Z",
+    "signed_at": "2026-09-24T09:21:24.245Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -89,6 +91,23 @@ N members implemented N issues in isolation. You make them one shippable change:
 
 - Every member has pushed its branch and posted a `## handover:v1` comment. **Read them all before you start.** They are your only access to each author's intent, and they name what each member deliberately left unverified — which is exactly the surface you now own.
 - The repo declares its verification capabilities. You invoke what the repo declares; you never hardcode a script name.
+- Each member's **review level** — `ai-dossier sched status --json` (the member entry's `review`, `light` when absent) — and its **review evidence**: the latest `phase=review` milestone on the member issue (`ai-dossier runstate last --issue <n> --json`).
+
+### Step 0: Review-evidence gate — no member ships unreviewed
+
+For every member, read its `phase=review` milestone. It is **missing review** when any of:
+
+- there is no `phase=review` milestone for this batch's run, or it is `blocked` / `partial` with a required agent pending;
+- `agents_done` is `0`, `none`, or empty — imboard#4178's member (run `r-4178-928b`) posted exactly this, `status=done agents_done=0`, and nothing had looked at the diff;
+- the member is `review=full` and `agents_done` lacks `security` or `conformance`, or the milestone's `tier` is not `full` — a light-grade review on a risk-floor member is not the review it was admitted on;
+- the member is `review=light` and `agents_done` lacks `conformance` (the correctness reviewer floor).
+
+**Refuse to ship a member with missing review.** Two remedies, in this order:
+
+1. **Run the missing review yourself**, on a decision-grade model (Step 4b), over that member's commits only (Step 5's per-member diff), at the member's level per member-cycle Step 4b; apply fixes as batch-level repairs and verify them (Step 4). Post it on the member issue: `ai-dossier runstate post --issue <n> --phase review --status done ... --kv agents_done=<the agents that ran> --kv review=<level> --kv review_by=parent`.
+2. If that cannot complete, **evict** the member (Step 4's eviction path, claim-release included) with reason `review-missing`. The rest of the batch still ships.
+
+Record every member caught by this gate in the batch summary — it is a member-cycle defect signal, not noise.
 
 ## Actions to Perform
 
@@ -138,7 +157,9 @@ Yet two of those three batches burned a **full expensive cycle** discovering one
 
 ### Step 3: Run the expensive verification ONCE, and read its result in four states
 
-Invoke the repo's declared full verification for the combined branch. Then classify the outcome — **four ways, never two:**
+Invoke the repo's declared **batch gate** for the combined branch: `ai-dossier cap run gate.batch` when the capability manifest declares an active `gate.batch` — the repo's CI-parity gate, affected-scoped over the union of the members' diffs, the same gate one ordinary PR pays, paid once (#770 P8 / ai-dossier#777). Fall back to `test.full` only when no `gate.batch` is declared. The scheduler's `batch-validate` (sched with #777) already runs this ladder; when you invoke the gate yourself, keep to the same order. A repo whose only full gate declares itself timeout-prone and has no `gate.batch` is refused at enqueue — a batch that exists there was formed before the rule; say so, and expect `automation-broken` rather than a verdict.
+
+On imboard, `test.full` is documented as slower than any reasonable `cap run` timeout (two runs killed at 30 and 60 minutes); batches #4244 and #4253 blocked at `batch-validate` with `suite-unreadable`. That is why the batch gate is `gate.batch`, not the full suite. Then classify the outcome — **four ways, never two:**
 
 | Verdict | Meaning | Action |
 |---|---|---|
@@ -187,13 +208,27 @@ floor — auth, payments, migrations, security — was being decided by the CHEA
 answer then selected the model that did the work. A judgment feeding a capability choice should
 never be the least capable step in the chain.
 
-### Step 5: Aggregate review
+### Step 5: Aggregate review, plus the risk-floor review over `review=full` members
 
-Review the combined diff for **cross-member interaction** — seams, duplicated helpers, conflicting assumptions between members. Per-issue acceptance criteria were already verified by each member's own conformance verdict; re-reviewing them here dilutes the pass over a large diff and finds less.
+**Aggregate review — every member.** Review the combined diff for **cross-member interaction** — seams, duplicated helpers, conflicting assumptions between members. Per-issue acceptance criteria were already verified by each member's own conformance verdict; re-reviewing them here dilutes the pass over a large diff and finds less.
+
+**Risk-floor review — `review=full` members only (#770 P1, Option A; at most 2 per batch).** A risk-floor issue (auth, billing/payments, security, migrations, deploy) rides the batch on the promise that it gets the review full-cycle would have given it. Its member ran a full-tier review of its own change; you review **its commits as they landed on the integration branch** — after your merges, conflict resolutions and repairs, which the member never saw:
+
+```bash
+# the member's own commits carry the (#<n>) subject trailer (member-cycle Step 4)
+SHAS=$(git log --reverse --format=%H --grep="(#<n>)" origin/<base_branch>..HEAD)
+git show --format='%H %s' $SHAS            # the member's changes as integrated, commit by commit
+FILES=$(git show --name-only --format= $SHAS | sort -u)
+git diff origin/<base_branch>...HEAD -- $FILES   # the same files in the final combined state (catches repairs/resolutions)
+```
+
+Run `imboard-ai/git/review-issue`'s Stage 1 risk-floor tier (`full`: every dimension agent, **Security** first among them) over that diff, on a decision-grade model (Step 4b). Also check every batch-level repair or conflict resolution that touched one of that member's files. Findings route like any other: mechanical → repair and verify (Step 4); semantic → escalate; an unresolvable security finding → evict that member, never ship around it. Name the risk-floor review per `review=full` member in the PR body.
+
+`review=light` members get the aggregate review only.
 
 ### Step 6: Ship one PR
 
-Open a single PR closing every member issue that survived. **Merge with rebase, never squash** — per-issue commits carry the attribution eviction, revert, and bisect all depend on, and squashing destroys it.
+Re-check Step 0 immediately before opening the PR: **no member with missing review ships.** Open a single PR closing every member issue that survived. **Merge with rebase, never squash** — per-issue commits carry the attribution eviction, revert, and bisect all depend on, and squashing destroys it.
 
 ### Step 6a: Verify closure and release claims
 
@@ -242,7 +277,9 @@ Everything you decide is read from an artifact. These rules exist because an act
 ## Success Criteria
 
 - Every surviving member merged, with per-issue commits intact
-- The repo's expensive verification run **once** for the batch, not once per member
+- The repo's batch gate (`gate.batch` when declared) run **once** for the batch, not once per member
+- No member shipped without real review evidence — every shipped member's `phase=review` milestone names the agents that ran (never `agents_done=0`); a missing one was remedied by the parent (`review_by=parent`) or the member was evicted
+- Every `review=full` member (≤ 2) received the risk-floor review over its integrated commits, named in the PR body
 - No member evicted on an `automation-broken` signal
 - Every repair verified against the affected member's own tests before commit
 - One PR, rebase-merged, closing every surviving member issue
