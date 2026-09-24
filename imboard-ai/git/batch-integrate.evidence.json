@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-integrate",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "c09bb4cc391924d17a1f642f2009ce9557eb153eac4e3ed2d791092410ce1bf7"
+    "hash": "bda69e91984618bfd6c6889fe6faab41ed63dca68eb90a75768073240d5ce295"
   },
   "entries": [
     {
@@ -40,6 +40,18 @@
           "provider": "claude-code",
           "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
           "host": "hcc"
+        }
+      ]
+    },
+    {
+      "anchor": "Step 6b: Manual recovery — a hand-shipped batch still ends at Step 6a",
+      "rationale": "imboard#4253: a recovery agent opened and rebase-merged the batch PR by hand, named only the member, and skipped Step 6a, so the anchor stayed open 11 days after its work shipped (ai-dossier#768).",
+      "created_at": "2026-09-24T07:44:29.447Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "3d051207-f7f8-4ef0-8edd-7ab512d814f7",
+          "host": "YuvalD-Asus14"
         }
       ]
     }
