@@ -1,105 +1,45 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-integrate",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "39388e3e8420f121a14a2a2031ad4bae6711c82a6480d3b13a6e063c5fe170a3"
+    "hash": "c09bb4cc391924d17a1f642f2009ce9557eb153eac4e3ed2d791092410ce1bf7"
   },
   "entries": [
     {
-      "anchor": "Step 2: Cheap gates first",
-      "rationale": "Measured across the first three batches (M1-M3), every real member defect was caught by a hygiene or typecheck gate and none was first caught by the integration suites. Running the cheap gates to completion before the expensive run turned 75-minute discoveries into seconds.",
-      "created_at": "2026-09-15T21:20:58.824Z",
+      "anchor": "Step 0: Review-evidence gate — no member ships unreviewed",
+      "rationale": "imboard#4178 (run r-4178-928b) reached the batch tail with agents_done=0. With Option A admitting risk-floor issues into batches (ai-dossier#770), an unreviewed member is a ship blocker. ai-dossier#774.",
+      "created_at": "2026-09-24T09:21:05.451Z",
       "evidence": [
         {
-          "provider": "other",
-          "session": "a4952428-e777-4937-90bd-39143e386062",
-          "host": "hcc2",
-          "extra": {
-            "memory_id": "a4952428-e777-4937-90bd-39143e386062",
-            "batches": "imboard#4113,imboard#4125,imboard#4140"
-          }
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
+        }
+      ]
+    },
+    {
+      "anchor": "Step 5: Aggregate review, plus the risk-floor review over `review=full` members",
+      "rationale": "ai-dossier#770 P1 / Option A: a risk-floor issue batched as review=full must get the review full-cycle would have given it, over its commits as integrated (after merges/repairs the member never saw).",
+      "created_at": "2026-09-24T09:21:06.039Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
         }
       ]
     },
     {
       "anchor": "Step 3: Run the expensive verification ONCE, and read its result in four states",
-      "rationale": "A two-way verdict (repair or evict) would twice have reverted correct member work: the failures came from a shared cross-machine Atlas test pool, not the code. automation-broken must block and capability-unavailable must skip; neither may evict.",
-      "created_at": "2026-09-15T21:20:59.435Z",
+      "rationale": "ai-dossier#770 root cause 6 / #777: imboard test.full exceeds any cap run timeout (killed at 30 and 60 min); batches #4244/#4253 blocked with suite-unreadable. gate.batch = ci-parity is the declared batch gate.",
+      "created_at": "2026-09-24T09:21:06.598Z",
       "evidence": [
         {
-          "provider": "other",
-          "session": "a4952428-e777-4937-90bd-39143e386062",
-          "host": "hcc2",
-          "extra": {
-            "memory_id": "a4952428-e777-4937-90bd-39143e386062",
-            "related": "imboard#4141,RFC-0001#J.6,RFC-0001#F.11"
-          }
-        }
-      ]
-    },
-    {
-      "anchor": "Step 4b: Which model decides — a different axis from tier",
-      "rationale": "Escalation is split by authority, not difficulty: the parent repairs mechanical failures, a member-tier model decides semantic ones. In M3 a USD 1.77, 8-minute member-tier escalation outperformed the parent's own judgement, and the parent's 'trivial' pluralization fix took three attempts.",
-      "created_at": "2026-09-15T21:21:00.108Z",
-      "evidence": [
-        {
-          "provider": "other",
-          "session": "a4952428-e777-4937-90bd-39143e386062",
-          "host": "hcc2",
-          "extra": {
-            "memory_id": "a4952428-e777-4937-90bd-39143e386062",
-            "related": "RFC-0001#F.2"
-          }
-        }
-      ]
-    },
-    {
-      "anchor": "If rebase-merge is refused, ship with a MERGE COMMIT — never a squash.",
-      "rationale": "M3 needed four base merges over five hours; GitHub then refused rebase-merge because the branch carried merge commits, and a local rebase re-conflicted since the resolutions lived in those merges. The real requirement is that per-issue commits survive for eviction, revert and bisect. A merge commit satisfies it; a squash never does.",
-      "created_at": "2026-09-15T21:21:00.831Z",
-      "evidence": [
-        {
-          "provider": "other",
-          "session": "a4952428-e777-4937-90bd-39143e386062",
-          "host": "hcc2",
-          "extra": {
-            "memory_id": "a4952428-e777-4937-90bd-39143e386062",
-            "batch": "imboard#4140"
-          }
-        }
-      ]
-    },
-    {
-      "anchor": "Step 6: Ship one PR",
-      "rationale": "Squash was ruled out twice over: it destroys the per-issue commits attribution depends on, and GitHub's default squash body re-imports every wip commit subject carrying a skip-ci marker, which silently suppressed the push event on main and the npm publish for PR #602.",
-      "created_at": "2026-09-15T21:21:01.486Z",
-      "evidence": [
-        {
-          "provider": "other",
-          "session": "5a7a2001-dd88-4a65-9c15-c8b431ead9d9",
-          "host": "wls",
-          "extra": {
-            "memory_id": "5a7a2001-dd88-4a65-9c15-c8b431ead9d9",
-            "related": "ai-dossier#598,ai-dossier-pr#606"
-          }
-        }
-      ]
-    },
-    {
-      "anchor": "Claim-release protocol",
-      "rationale": "The first scheduler-driven batch showed the batch path read the in-progress claim marker but never wrote or released it, so two prep runs would select the same issues. Prep now claims at manifest time; integrate must release on every disposal, supersession included, or claims leak forever.",
-      "created_at": "2026-09-15T21:21:02.243Z",
-      "evidence": [
-        {
-          "provider": "other",
-          "session": "245031cd-9975-45f2-b211-ef31a696029a",
-          "host": "hcc2",
-          "extra": {
-            "memory_id": "245031cd-9975-45f2-b211-ef31a696029a",
-            "related": "ai-dossier#675"
-          }
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
         }
       ]
     }
