@@ -1,0 +1,23 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/issue-cycle-classifier",
+  "version": "1.2.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "de417ef92950aacd4cf2275db5b3d09bcd261e0103ea9f21e359fd11ccb18ae7"
+  },
+  "entries": [
+    {
+      "anchor": "Step 5: Full-Cycle Floor (RFC-0001 E.2 — ANY hit ⇒ `cycle:full`)",
+      "rationale": "ai-dossier#783: prescreen:v2 returns candidate+review=full for a text-floor hit; re-applying rule 1 to the same keyword in the model pass would post mode=full and undo #770 Option A, and pay a model call the prescreen saved.",
+      "created_at": "2026-09-24T09:21:07.159Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
+        }
+      ]
+    }
+  ]
+}
