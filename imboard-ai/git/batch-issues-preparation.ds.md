@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues-preparation",
   "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-24",
@@ -76,13 +76,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "477b23381f32ceafbfe059151094850e309f177ac3e860e5b3bb404c4716e302"
+    "hash": "f24b4d157dc1430c3a16bb36f3d893573e2438f31e5c2a4a5f6ce0f2bb7dd740"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "IgQrive/adnzNlbFwmZdRNz/ljcQEY+Tuh36ie61A6YZ398JeKP1xrfyFEwvsb/1b88c6eBGFM+6rlzCZokkBg==",
+    "signature": "AvPFu6mYzZr1efDtIT8WyRvAZe4pvKrA6LNCvGFlnwkVdqSp/yk/zzuKFMbE9cKOX56NlZGQnKjYqF05TwaOAg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-24T09:21:17.510Z",
+    "signed_at": "2026-09-24T10:00:48.577Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -100,9 +100,9 @@ The judgment-heavy front door of Batch Cycles (RFC-0001 C.3): turn a raw issue l
 
 ## Prerequisites
 
-- `ai-dossier` CLI >= 0.57.0 (`batch compose` #773, `classify prescreen` schema `prescreen:v2` #772, `sched enqueue` manifest `review` field + the per-batch `review=full` cap #771, `plan post|get`, `runstate mint|post|last`). Beware shadow copies: a repo-local `node_modules/.bin/ai-dossier` can shadow the global install — when a documented command reports `unknown command`, call the newer binary by absolute path.
+- `ai-dossier` CLI >= 0.58.0 (`batch compose` #773, `classify prescreen` schema `prescreen:v3` #772/#805, `sched enqueue` manifest `review` field + the per-batch `review=full` cap #771, `plan post|get`, `runstate mint|post|last`). Beware shadow copies: a repo-local `node_modules/.bin/ai-dossier` can shadow the global install — when a documented command reports `unknown command`, call the newer binary by absolute path.
 - GitHub CLI (`gh`) installed and authenticated
-- `imboard-ai/git/issue-cycle-classifier` >= 1.2.0 available in the registry (it reads prescreen:v2 and records `review`, #783)
+- `imboard-ai/git/issue-cycle-classifier` >= 1.3.0 available in the registry (it reads prescreen:v3 and records `review`, #783/#805)
 - Run from the repository that owns the issues — dependency resolution, path grounding, and `sched enqueue`'s project detection run against it
 
 If `dispatch_profile` is supplied, first read `ai-dossier sched status --json` and
@@ -165,7 +165,7 @@ ai-dossier batch compose --issues <resolved set> --base <base_branch> --min-memb
 (`<base_branch>` is the set's common base, default `main`; an issue declaring a different base cannot share this batch — report it `different-base` and leave it out.) The output (`schema: batch-compose:v1`) is the admission decision, and `model_calls` is always `0`:
 
 - `excluded[]` — cannot join a batch, each with `code` + `message`. These are Step 1's skip table. **Never dispatch a classifier for them**, never post anything on them.
-- `members[]` — the proposed composition, each with `review: light|full`, `source: pick|backfill`, `review_reasons`. A text-floor keyword hit (prescreen:v2 `verdict: candidate` + `review: full`) is a `review=full` member, not an exclusion — #770 Option A.
+- `members[]` — the proposed composition, each with `review: light|full`, `source: pick|backfill`, `review_reasons`. A text-floor keyword hit or a plan:v1 risk-floor path (prescreen:v3 `verdict: candidate` + `review: full`) is a `review=full` member, not an exclusion — #770 Option A, #805.
 - `backfill[]` — ranked admissible backlog candidates (`rank`, `review`, `shared_packages`, `selected`). Compose already pulled the top-ranked ones into `members[]` when picks fell below `min_members`.
 - `status` — `ok` (≥ `min_members`), `under-min` (2 ≤ n < `min_members`), `no-batch` (< 2); `recommendation` says the same in one line.
 
@@ -464,7 +464,7 @@ Example:
 | A third `review=full` candidate | Hold it for the next batch; backfill a `review=light` one instead. Never exceed 2 per batch. |
 | Fewer than 2 survivors after backfill | No batch: no anchor, no manifest entries, no claims. Report `hand #N to full-cycle`. |
 | Backfill candidate is a feature/tracker with no AC | Drop it at Step 3b (`not-ready:<signal>`, ai-dossier#802) and take the next ranked candidate. |
-| Re-running compose after plan:v1 artifacts were posted reports `prescreen-full` (path-floor / file-count) | prescreen:v2 treats a plan:v1 risk-floor PATH as excluding. Reuse the member's existing classify record; do not treat the re-run as new evidence against an issue already admitted in this run. |
+| Re-running compose after plan:v1 artifacts were posted shows a member as `review=full` (path-floor) or held `review-full-cap`, or reports `prescreen-full` | CLI >= 0.58.0 (prescreen:v3, #805): a plan:v1 risk-floor PATH makes the member `review=full` — not an exclusion — so a member admitted `review=light` may come back `review=full`, and may be held `review-full-cap` if that exceeds the per-batch cap; only a plan:v1 artifact with > 8 predicted files reports `prescreen-full`. Reuse the member's existing classify record rather than treating the re-run as new evidence against an issue already admitted in this run. On an older CLI (prescreen:v2) a path-floor hit still excluded — upgrade. |
 | No slot-eligible issues | Valid outcome — zero batches; report every issue with its reason, and skip `sched enqueue`. |
 | Everything skipped/deferred/full | Report honestly; an empty batch plan is not an error — and skip the enqueue call (it rejects a zero-entry manifest). |
 | Classifier floor rule hits after reuse of an old classify record | Trust the record — re-classification buries trails; the member-cycle tripwires catch stale verdicts at execution time. |
@@ -474,7 +474,7 @@ Example:
 - [ ] Issue set resolved from list/range; `ai-dossier batch compose --json` ran over the WHOLE set before any model dispatch; its `excluded[]` reported as skipped with codes
 - [ ] Step 3b body-readiness screen applied to every admitted member (mandatory for backfill); drops reported with their signal; backfill walked `backfill[]` in rank order within the ≤ 2 `review=full` cap
 - [ ] Decision-grade classifiers dispatched ONLY for admitted members — zero for excluded or readiness-dropped issues
-- [ ] Risk-floor (text-floor) issues admitted as `review=full` members, not excluded; hard exclusions limited to prod data mutation/ops, designed-sequence slices, decisions/epics/trackers, different base
+- [ ] Risk-floor issues (text-floor keyword or plan:v1 risk-floor path) admitted as `review=full` members, not excluded; hard exclusions limited to prod data mutation/ops, designed-sequence slices, decisions/epics/trackers, different base
 - [ ] No batch below 2 members formed; a batch below `min_members` formed only after backfill ran dry, and says so
 - [ ] DAG built per fleet-cycle Phase 2 rules (explicit authoritative, serialize-when-unsure); cycles surfaced and stopped the run
 - [ ] Every admitted member has a classify record (reused or freshly dispatched) and a plan:v1 artifact (existing or light)
