@@ -4,7 +4,7 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "status": "Draft",
   "last_updated": "2026-09-24",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
@@ -40,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "0c531164c7f02491ed4e797e9de41181194f50c729f6b26a7f95d3df5f0f27f7"
+    "hash": "6c9c0d4d0d67f80cc126d7725b5e20e392c2b032a9ded892abd9a485cbce0661"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "S/js0k5E4JEbkcPC6Do/qe/olcPkkZTboXydQLTrHaQeesBjaiA9cawsdznc9PYRKobR0e70OZ+rjGpKwv1ECw==",
+    "signature": "GW/FqJY2bzEuc9x3r1OBSrOfrGDDSzAo9L+QvO7bNachbC46iqU+EzFrXufgEfg7EkgvZJvwReBG/KftdI5hAg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-24T15:29:34.133Z",
+    "signed_at": "2026-09-24T16:01:52.728Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -118,12 +118,15 @@ Record the excluded issue and its conflict in the closing summary, next to the s
 drops. The operator can batch it in the next run or take it through `full-cycle-issue-skill`
 deliberately. Never ask which of these they would prefer.
 
-**A risk-floor issue is not a composition conflict** (#770, operator decision Option A). Auth,
-billing, security, migration or deploy keywords make an issue a `review=full` member — strong
-tier, full-cycle-grade review in member-cycle, a risk-floor review of its commits in
-batch-integrate — not an exclusion. At most **2** `review=full` members per batch (blast
-radius); a third waits for the next batch. The hard exclusions are only: production data
-mutation or ops, a slice of a designed sequence, decisions/epics/trackers, a different base.
+**A risk-floor issue is not a composition conflict** (#770, operator decision Option A; #818).
+RFC-0001 E.2 rules 1, 4 and 5 — a risk-floor area (auth, billing, security, migration), a
+deploy-pipeline change, and a change predicting > 8 files — make an issue a `review=full`
+member — strong tier, full-cycle-grade review in member-cycle, a risk-floor review of its
+commits in batch-integrate — not an exclusion. At most **2** `review=full` members per batch
+(blast radius); a third waits for the next batch. The hard exclusions are only: production data
+mutation or ops, a slice of a designed sequence, decisions/epics/trackers, a different base. A
+classifier `mode=full` (any other E.2 floor — visual/browser review included, since the batch
+gate has no browser) hands the issue to full-cycle.
 
 **When drops leave the batch below `min_members` (default 3), backfill — silently.** Take the
 next candidates from `batch compose`'s ranked `backfill[]`, screen each one's body exactly like
@@ -156,7 +159,7 @@ Measured on a repo whose local gate takes ~50–90 minutes: 3 issues batched too
 
 | Layer | What it is |
 |---|---|
-| `ai-dossier batch compose` | **free, first**: prescreen:v2 + readiness over the picks (or the backlog), returns the admissible composition, each member's `review`, and ranked backfill — zero model calls |
+| `ai-dossier batch compose` | **free, first**: prescreen:v4 + readiness over the picks (or the backlog), returns the admissible composition, each member's `review`, and ranked backfill — zero model calls |
 | `imboard-ai/git/batch-issues-preparation` | re-runs compose, screens bodies, backfills, classifies ONLY admitted members, composes, enqueues with per-member `review` |
 | `ai-dossier sched` | creates the integration branch, dispatches members in parallel worktrees |
 | `imboard-ai/git/member-cycle` | one agent per issue: implement, test by relevance, review at its `review` level (never zero agents), hand over |
@@ -240,7 +243,7 @@ Drop what fails, backfill the gap from compose's ranked list (screening each can
 
 **Do not size the batch by predicted diff.** Diff size predicts neither cost nor conflict: measured members have run 92 turns for a net −29 lines, and 59 turns for +193.
 
-**Risk-floor members ride as `review=full`, at most 2 per batch** — see the autonomy contract. The manifest carries `review` on every member.
+**Risk-floor, deploy-pipeline and > 8-file members (E.2 rules 1, 4, 5) ride as `review=full`, at most 2 per batch** — see the autonomy contract. The manifest carries `review` on every member.
 
 ### 5. Dispatch and integrate
 
