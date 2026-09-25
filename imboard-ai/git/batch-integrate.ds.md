@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-integrate",
   "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-24",
+  "last_updated": "2026-09-25",
   "objective": "Merge a batch's members onto its integration branch, run the repo's batch gate (gate.batch when declared) ONCE for all of them, repair mechanical failures, escalate semantic ones, never evict on a signal the verification cannot stand behind, run the risk-floor review over review=full members' commits, refuse to ship any member with no real review, release claims, and ship one PR",
   "category": [
     "development",
@@ -65,13 +65,13 @@
   "content_scope": "self-contained",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "bda69e91984618bfd6c6889fe6faab41ed63dca68eb90a75768073240d5ce295"
+    "hash": "9d7ee5df5115c1afafb8e3a137ef02763b4e54bc385fe38501ff8edbd374dcf8"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "KJztWHbOWSe0S3lpBWsTTsyYo1rz6aAIgvAy/Ntg9733juCF9AvDY80mMPL9rqX564matNYkwv2RSjJA340wBA==",
+    "signature": "2gsqDHnLOoNFcZBkq40eTgJL3gXExLY3PlCxZGCvpct9BtywnqHbC3pP5exYnf6+8CjY93I0vbAWFTR3gPiBAg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-24T15:17:52.946Z",
+    "signed_at": "2026-09-25T08:49:00.765Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -267,6 +267,8 @@ When the batch left this dossier's path — the scheduler blocked it, an agent o
 
 1. **The PR body carries `Closes #<member>` for every shipped member and `Refs #<anchor>` — never `Closes #<anchor>`.** A GitHub closing keyword on the anchor skips every failure-trail check (a handed-back, evicted, not-planned, or dropped member). The anchor is closed only on positive evidence: by Step 6a, or by the scheduler's own evidence-gated close (ai-dossier#768).
 2. **Run Step 6a after the merge, exactly as the happy path does** — member closure verification with the `batch-close:v1` marker, claim release, then the anchor query. Opening, merging, or rebase-merging the PR yourself does not exempt the recovery from it: Step 6a is the step that verifies and closes the anchor, and skipping it is how an anchor stays open after all its work has shipped.
+
+**Record the hand-opened PR in the scheduler ledger.** A PR opened by hand is usually picked up automatically once it merges (the scheduler looks for exactly one merged PR from the batch branch, ai-dossier#789). If `sched status` still shows the batch blocked with no PR, for example because several merged PRs came from that branch, record it explicitly with `ai-dossier sched attach-pr --batch <id> <pr>` (ai-dossier#824). The command refuses a fork, an unmerged PR, the wrong base or head, or a PR created before the batch, and it never closes the anchor itself.
 
 Close the anchor only when every member is closed as completed by the shipped PR or a commit in the base, and none was evicted, handed back, or requeued. If any member is still open, closed as not planned, or carries a failure, leave the anchor open and say which member and why in one comment on it — an anchor with a failure trail stays open for an operator.
 
