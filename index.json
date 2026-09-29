@@ -517,7 +517,7 @@
     {
       "name": "imboard-ai/git/issue-workflows-guide",
       "title": "Issue Workflows Guide",
-      "version": "1.5.5",
+      "version": "1.6.0",
       "path": "imboard-ai/git/issue-workflows-guide.ds.md",
       "category": [
         "documentation"
