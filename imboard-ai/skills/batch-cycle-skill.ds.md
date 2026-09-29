@@ -4,7 +4,7 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "status": "Draft",
   "last_updated": "2026-09-29",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
@@ -40,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "32b10f7ec29f089a1ad5b20723ce7e724ebd2d9961f226bef25322b9e7ef8bb6"
+    "hash": "baba4eeafb306b67b4beafec25d85e000cc2e69a2a3611d4b8dfa901bfa78f59"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "fVgZz5AT/BnjI5iJYYfEOphbV19kJLZq0AvI9gW49JF7YsrKHNBVQaFKScFSKfCyedybQm1cBUuKSb6/KiN3CA==",
+    "signature": "W8HIJaY4P6Ph+PwRdZGDSwfmjvu1+9Xj3tS34Q8pe6aDlweqUGXqeklTNxLHW1//h/NR9VBO88Wf12th3nF4Cg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T15:17:38.197Z",
+    "signed_at": "2026-09-29T19:06:45.481Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -124,18 +124,31 @@ a deploy-pipeline change, a change predicting > 8 files, and a predicted diff > 
 broad test scope (`test_scope=broad`, or still `unknown`: the batch's one full gate already verifies every member) make
 an issue a `review=full` member — strong tier, full-cycle-grade review in member-cycle, a risk-floor review of its
 commits in batch-integrate — not an exclusion. At most **2** `review=full` members per batch
-(blast radius); a third waits for the next batch. The hard exclusions are only: production data
+(blast radius); a third waits for the next batch — see "Over-cap picks" below. The hard exclusions are only: production data
 mutation or ops, a slice of a designed sequence, decisions/epics/trackers, a different base. A
 classifier `mode=full` (any other E.2 floor — visual/browser review included, since the batch
 gate has no browser) hands the issue to full-cycle. Visual/browser review (rule 8) is the only
 test-shape reason to do so.
 
-**When drops leave the batch below `min_members` (default 3), backfill — silently.** Take the
+**When drops leave the batch below `min_members` (default 3) — or a pick is held over the `review=full` cap (below) — backfill, silently.** Take the
 next candidates from `batch compose`'s ranked `backfill[]`, screen each one's body exactly like
 a pick (Step 3 — compose admits unready features/trackers today, ai-dossier#802), respect the
 `review=full` cap, and continue. Do not ask the operator whether to backfill, or which candidate
 to take; name the backfilled issues in the summary. Only if backfill runs dry below 2 members
 is no batch formed (above).
+
+**Over-cap picks resolve downward by hold + backfill — never by an extra small batch, never by
+raising the cap** (#951, operator decision Option (b)). When the operator's own picks carry more
+than 2 `review=full` members — common since a broad test scope raises `review` (#939) — the
+lowest-ranked over-cap pick(s) are **held for the next batch-prep run** and each held pick's slot
+is filled with a screened `review=light` backfill. A pick that cannot share this batch with
+another pick structurally (both `risk=med`+ on the same area — E.4 constraint 6 — or a shared
+structural landmark that would make a second eviction group — constraint 5) is held first. `batch compose` already does the deterministic part (`held[]` with
+`reason: review-full-cap` and a next-run `note`; its recommendation names the held picks); the
+constraint-6 preference is applied in preparation Step 3c once the classifier's `areas`/`risk`
+exist. Do not open a second, smaller batch for the held pick, do not ask which pick to hold, and
+do not hand it to full-cycle — list it in the summary as `held: review-full-cap (<reason>) —
+submit again in the next batch-prep run`.
 
 ### Once enqueued, do not recompose
 
@@ -219,7 +232,7 @@ ai-dossier batch compose --backlog --json                      # "batch somethin
 
 **Operator picks go through compose like everything else** — hand-picked is not admitted. On the #770 evidence, five hand-picked issues collapsed to a one-member batch only after ~425k decision-grade classifier tokens; compose would have shown the outcome for free. Read its `status`:
 
-- `ok` → proceed to preparation with the picks; compose's backfill is the fallback for later drops.
+- `ok` → proceed to preparation with the picks; compose's backfill is the fallback for later drops. A pick in `held[]` as `review-full-cap` is held for the next batch-prep run and its slot is already backfilled (autonomy contract) — not a reason to stop or ask.
 - `under-min` / `no-batch` → the picks alone cannot make a batch. Preparation will backfill from compose's ranked `backfill[]` (silently — see the autonomy contract); if backfill runs dry below 2, no batch is formed and the survivor goes to `full-cycle-issue-skill`.
 
 Report compose's `excluded[]` (with codes) in the closing summary. Never dispatch a model for an excluded issue.
@@ -245,7 +258,7 @@ Drop what fails, backfill the gap from compose's ranked list (screening each can
 
 **Do not size the batch by predicted diff.** Diff size predicts neither cost nor conflict: measured members have run 92 turns for a net −29 lines, and 59 turns for +193. A member predicting > 400 lines (E.2 rule 6) is a `review=full` member, never a hand-off to full-cycle for its size (#927).
 
-**Risk-floor, deploy-pipeline, > 8-file, > 400-line and broad-test-scope members (E.2 rules 1, 4, 5, 6; `test_scope=broad` or `unknown`) ride as `review=full`, at most 2 per batch** — see the autonomy contract. The manifest carries `review` on every member.
+**Risk-floor, deploy-pipeline, > 8-file, > 400-line and broad-test-scope members (E.2 rules 1, 4, 5, 6; `test_scope=broad` or `unknown`) ride as `review=full`, at most 2 per batch** — over-cap picks are held for the next run and backfilled light, see the autonomy contract. The manifest carries `review` on every member.
 
 ### 5. Dispatch and integrate
 
@@ -267,6 +280,7 @@ shipped code, none evicted, handed back, or requeued — otherwise leave it open
 ## What to tell the operator
 
 - `batch compose`'s verdict: admitted, excluded (with codes), and which members were backfilled
+- Which picks were held for the next batch (`held: review-full-cap`, with the reason — the constraint-6 collision or the rank that put them last — and which backfill took the slot)
 - Which issues were dropped in screening, and why
 - Which members ran as `review=full`, and why (the review-floor reasons: risk-floor area, deploy pipeline, > 8 files, > 400 lines, broad/unknown test scope)
 - If no batch was formed (fewer than 2 survivors): which issue was handed to full-cycle
