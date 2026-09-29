@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-issues-preparation",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "a6d58ab2a9ef4931d18145a64d280ae1dbee951dfae43960e29cb999b9b65e0d"
+    "hash": "87d85d4a5011f6a96d76dff2a62f36d18482b20c783fc2d19f1233b326167a7f"
   },
   "entries": [
     {
@@ -23,6 +23,18 @@
       "anchor": "Combined predicted diff is a REVIEW bound, not a cost bound.",
       "rationale": "ai-dossier#927: aligns batch prep with classifier 1.5.0 - E.2 rule 6 (predicted diff > 400) raises review=full instead of handing to full-cycle; the E.4 combined-diff bound stays a review bound and never excludes a member.",
       "created_at": "2026-09-29T14:55:41.391Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
+        }
+      ]
+    },
+    {
+      "anchor": "Review depth is not batch eligibility",
+      "rationale": "ai-dossier#939: aligns batch prep with classifier 1.6.0 - test_scope=broad (or still unknown) no longer fails E.3 slot eligibility; it raises review=full under the <=2 cap. Rule 8 visual stays the only test-shape hand-off to full-cycle.",
+      "created_at": "2026-09-29T15:18:43.950Z",
       "evidence": [
         {
           "provider": "claude-code",
