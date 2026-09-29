@@ -4,7 +4,7 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "status": "Draft",
   "last_updated": "2026-09-29",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
@@ -40,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "0de49989e89b4693b196e72382a74f4477847f4cd85dd24862dad16f779de5b6"
+    "hash": "32b10f7ec29f089a1ad5b20723ce7e724ebd2d9961f226bef25322b9e7ef8bb6"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "+g2y1S2uiFsAA1DpS/J8ds8McdblWb70Yi6kKLaiMcYNEADpY6OHVewdDbqgiBzAgXriL2W9cvXjeTBURbn0DA==",
+    "signature": "fVgZz5AT/BnjI5iJYYfEOphbV19kJLZq0AvI9gW49JF7YsrKHNBVQaFKScFSKfCyedybQm1cBUuKSb6/KiN3CA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T14:59:32.890Z",
+    "signed_at": "2026-09-29T15:17:38.197Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -118,15 +118,17 @@ Record the excluded issue and its conflict in the closing summary, next to the s
 drops. The operator can batch it in the next run or take it through `full-cycle-issue-skill`
 deliberately. Never ask which of these they would prefer.
 
-**A risk-floor issue is not a composition conflict** (#770, operator decision Option A; #818;
-#927). RFC-0001 E.2 rules 1, 4, 5 and 6 — a risk-floor area (auth, billing, security, migration),
-a deploy-pipeline change, a change predicting > 8 files, and a predicted diff > 400 lines — make
+**A review-floor issue is not a composition conflict** (#770, operator decision Option A; #818;
+#927; #939). RFC-0001 E.2 rules 1, 4, 5 and 6 — a risk-floor area (auth, billing, security, migration),
+a deploy-pipeline change, a change predicting > 8 files, and a predicted diff > 400 lines — and a
+broad test scope (`test_scope=broad`, or still `unknown`: the batch's one full gate already verifies every member) make
 an issue a `review=full` member — strong tier, full-cycle-grade review in member-cycle, a risk-floor review of its
 commits in batch-integrate — not an exclusion. At most **2** `review=full` members per batch
 (blast radius); a third waits for the next batch. The hard exclusions are only: production data
 mutation or ops, a slice of a designed sequence, decisions/epics/trackers, a different base. A
 classifier `mode=full` (any other E.2 floor — visual/browser review included, since the batch
-gate has no browser) hands the issue to full-cycle.
+gate has no browser) hands the issue to full-cycle. Visual/browser review (rule 8) is the only
+test-shape reason to do so.
 
 **When drops leave the batch below `min_members` (default 3), backfill — silently.** Take the
 next candidates from `batch compose`'s ranked `backfill[]`, screen each one's body exactly like
@@ -243,7 +245,7 @@ Drop what fails, backfill the gap from compose's ranked list (screening each can
 
 **Do not size the batch by predicted diff.** Diff size predicts neither cost nor conflict: measured members have run 92 turns for a net −29 lines, and 59 turns for +193. A member predicting > 400 lines (E.2 rule 6) is a `review=full` member, never a hand-off to full-cycle for its size (#927).
 
-**Risk-floor, deploy-pipeline, > 8-file and > 400-line members (E.2 rules 1, 4, 5, 6) ride as `review=full`, at most 2 per batch** — see the autonomy contract. The manifest carries `review` on every member.
+**Risk-floor, deploy-pipeline, > 8-file, > 400-line and broad-test-scope members (E.2 rules 1, 4, 5, 6; `test_scope=broad` or `unknown`) ride as `review=full`, at most 2 per batch** — see the autonomy contract. The manifest carries `review` on every member.
 
 ### 5. Dispatch and integrate
 
@@ -266,7 +268,7 @@ shipped code, none evicted, handed back, or requeued — otherwise leave it open
 
 - `batch compose`'s verdict: admitted, excluded (with codes), and which members were backfilled
 - Which issues were dropped in screening, and why
-- Which members ran as `review=full`, and why (the risk-floor reasons)
+- Which members ran as `review=full`, and why (the review-floor reasons: risk-floor area, deploy pipeline, > 8 files, > 400 lines, broad/unknown test scope)
 - If no batch was formed (fewer than 2 survivors): which issue was handed to full-cycle
 - Any member that handed back rather than implementing — this is a valued outcome, not a failure
 - Every batch-level repair the parent made, and its cause
