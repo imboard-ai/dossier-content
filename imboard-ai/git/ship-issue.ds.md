@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.18.0",
+  "version": "1.18.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, then either drive it to a confirmed merge and deploy (attached) or park it on auto-merge and stop (detached); in batch mode (batch_id set): ship the batch PR from the batch branch — per-member PR sections, Closes #N per member, rebase-merged so one commit per member issue lands on the base branch",
@@ -112,13 +112,13 @@
   "last_updated": "2026-09-29",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "272ad64b35f75ac8a2f234f42e576cf2575e03a1a27018879094160e64296149"
+    "hash": "ebf168454b59d8247604dd7117b7d43a24dc1874dbc807ab9d234a5da215b9e4"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "21XCfZH0JX1G2adHIsbrGOZePwgQsxJ9mgQIhgRyWgFkrAh73iQb2jU2W3B2cPetUCarXvJUIj3dNaE81zxDCg==",
+    "signature": "6L5z9GO62pmS0X+KzC1ejx+9F6KtM2AlMAlMr77ySq7H/1svXAn3AdYXy/JXlaMB0+qoDbUd18M+/5WkkapnCQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T13:21:52.915Z",
+    "signed_at": "2026-09-29T15:23:09.461Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -444,17 +444,12 @@ The gate is defined once here and runs before **every** merge authorization — 
 - **HERE, on every path**, before Step 3b's milestone and before Step 3c. Step 3c applies `auto-merge` in `detached` mode AND on the attached-with-watcher path — full-cycle-issue Phase 5 item 5 hands the merge to the watcher as soon as the PR opens, so that label IS the authorization and Steps 4–6 never run. Running here also means Step 3b's milestone, which is the detached run's LAST one and cannot be amended (comments are append-only), always carries a real result.
 - **Again at Step 6**, on the attached self-merge path, and **only if the head moved** since this run — i.e. Step 5 pushed a CI fix. Unchanged head → carry this run's result forward; no second Agent 7.
 
-1. **Read the verdict head and the PR head.** The verdict head uses review-issue Step 2b's full-comment-history milestone-marker idiom, narrowed two ways: to comments whose author has write access (`OWNER`/`MEMBER`/`COLLABORATOR`/`BOT` — the CLI's own trusted-milestone read applies exactly this set, because an issue comment is otherwise forgeable by anyone who can comment, and this read authorizes a merge), and to a `status=done` review (a `partial`/`blocked` review is precisely the case where Agent 7 did not finish):
+1. **Read the verdict head and the PR head.** The verdict head uses review-issue Step 2b's full-comment-history milestone-marker idiom, narrowed two ways: to milestones whose author is a repo `OWNER`/`MEMBER`/`COLLABORATOR` — `ai-dossier runstate list` (CLI >= 0.81.0) applies exactly this set and fails CLOSED on a missing author association (there is no BOT association and no default: an issue comment is otherwise forgeable by anyone who can comment, and this read authorizes a merge). NEVER replace it with a raw `gh issue view --json comments` read, and to a `status=done` review (a `partial`/`blocked` review is precisely the case where Agent 7 did not finish):
 
    ```bash
-   VERDICT_HEAD=$(gh issue view <issue_number> --json comments \
-     --jq '[.comments[]
-            | select((.authorAssociation // "OWNER") as $a
-                     | ["OWNER","MEMBER","COLLABORATOR","BOT"] | index($a))
-            | .body
-            | select(startswith("<!-- runstate:v1 -->"))
-            | select(test("(?m)^phase=review status=done\\b"))] | last // empty' \
-     | grep -oiE '^head=[0-9a-f]{7,40}$' | head -1 | cut -d= -f2 | tr 'A-F' 'a-f')
+   VERDICT_HEAD=$(ai-dossier runstate list --issue <issue_number> --json \
+     | jq -r '[.[] | select(.phase=="review" and .status=="done")] | last | .head // empty' \
+     | grep -oiE '^[0-9a-f]{7,40}$' | head -1 | tr 'A-F' 'a-f')
    PR_HEAD=$(gh pr view <pr-number> --json headRefOid -q .headRefOid)
    echo "VERDICT_HEAD=${VERDICT_HEAD:-<none>} PR_HEAD=${PR_HEAD:-<none>}"
    ```
