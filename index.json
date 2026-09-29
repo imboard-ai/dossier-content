@@ -212,6 +212,31 @@
       ]
     },
     {
+      "name": "imboard-ai/git/autopilot-loop",
+      "title": "Autopilot Loop — Unattended, Budget-Gated Backlog Orchestration",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/autopilot-loop.ds.md",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "github",
+        "autonomous",
+        "orchestration",
+        "loop",
+        "autopilot",
+        "budget",
+        "observability",
+        "review",
+        "full-cycle"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ]
+    },
+    {
       "name": "imboard-ai/git/batch-integrate",
       "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
       "version": "1.6.0",
