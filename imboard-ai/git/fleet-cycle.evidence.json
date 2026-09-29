@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/fleet-cycle",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "0002f711b6bbff15c8d1fc9285eba256d344d62ff6a4024c3a13aa3b2760dcbe"
+    "hash": "fe7a5458888819884eb8ce977856207f42665f2eaff9208e918590eb6ca1400c"
   },
   "entries": [
     {
@@ -16,6 +16,30 @@
           "provider": "claude-code",
           "session": "c7bed163-2a0a-4a39-91d9-72256ca56f5c",
           "host": "hcc"
+        }
+      ]
+    },
+    {
+      "anchor": "## Phase 3.25: Choose the Ship Mode — can this repo merge a parked PR?",
+      "rationale": "ai-dossier#860: the 2026-09-25 fleet dispatched every run detached into ai-dossier, which has no auto-merge watcher and no native auto-merge, so parked PRs would never merge. Plan time now detects the mechanism and defaults ship_mode=attached without one; every mode requires the full review round before merge (#795 / PR #837).",
+      "created_at": "2026-09-29T07:51:27.193Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "3d051207-f7f8-4ef0-8edd-7ab512d814f7",
+          "host": "YuvalD-Asus14"
+        }
+      ]
+    },
+    {
+      "anchor": "## Fleet Lessons (proven in the 2026-09 fleets)",
+      "rationale": "ai-dossier#860 follow-up: lessons proven in the 2026-09 fleets — reviewer hand-back transcripts under ~/.claude/projects/<proj>/<session>/subagents/agent-<id>.jsonl, refs/stash shared across worktrees, npm version re-check right before merge.",
+      "created_at": "2026-09-29T07:51:27.641Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "3d051207-f7f8-4ef0-8edd-7ab512d814f7",
+          "host": "YuvalD-Asus14"
         }
       ]
     }
