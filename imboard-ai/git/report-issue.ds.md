@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "report-issue",
   "title": "Report Issue — Rich Completion Summary",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment; in batch mode (batch_id set): one batch report on the anchor plus one short completion comment per member issue",
@@ -86,13 +86,13 @@
   "last_updated": "2026-09-29",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "eec2545f95601613c5aa6eef76d1512e1d9f8fa944b7005f44a6af5f37e1314b"
+    "hash": "6e5c9746394ddc54fc91f804073c0c697a83da65ef90991595e17d0f2f34b12d"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "IZgDGuoklwe4o3kwstULpzxteChdKja3GZpmFlZ5YxvhcibQ+DQusZ6dRLodGom5OhwxAsBrNdw18iqvW5phAg==",
+    "signature": "qAPlENkzJKJu9qxfXLkyXmw2poNxhBx7Tqz/+kMoCRBy0BatN0OPdtATnWcoGcBN1S/C8miD1zpnuS32FUYYBQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-29T18:21:28.170Z",
+    "signed_at": "2026-09-29T15:23:11.979Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -275,8 +275,7 @@ EOF
 Check the trigger condition — fetch the last `phase=ship` and `phase=implement` milestones:
 
 ```bash
-gh issue view <issue_number> --json comments \
-  --jq '[.comments[].body | select(startswith("<!-- runstate:v1 -->"))]'
+ai-dossier runstate list --issue <issue_number> --json
 ```
 
 Read `ci_fix_attempts` from the last `phase=ship status=done` milestone, and `ci_parity` from the `phase=implement` milestone.
