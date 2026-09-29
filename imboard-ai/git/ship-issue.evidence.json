@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/ship-issue",
-  "version": "1.16.0",
+  "version": "1.17.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "22dc2eda17e743086de3287659f6f8d7272d9615e569ccd6656510e10e54a4b9"
+    "hash": "95cd41c8bf60cf990c8fdad68ac28406f36e660102564b77ed1740ac0ca03de7"
   },
   "entries": [
     {
@@ -16,6 +16,30 @@
           "provider": "claude-code",
           "session": "4e15a017-3cce-45b9-a19a-558ade4e693a",
           "host": "hcc2"
+        }
+      ]
+    },
+    {
+      "anchor": "### Step 3a.5: Verdict-Freshness Gate — never authorize a merge for a diff no review saw",
+      "rationale": "ai-dossier#851: git < 2.39 rejects patch-id --verbatim (exit 129) and yields EMPTY ids that could compare equal. The gate now tries tree equality when both heads share a merge-base (exact, any git), --verbatim patch-id only when the bases differ and support is probed, never compares an empty id, never falls back to whitespace-blind --stable, and records verdict_check=tree|patch-id|inconclusive|sha-fallback.",
+      "created_at": "2026-09-29T07:51:26.302Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "3d051207-f7f8-4ef0-8edd-7ab512d814f7",
+          "host": "YuvalD-Asus14"
+        }
+      ]
+    },
+    {
+      "anchor": "### Step 3c: Ship Mode — attached or detached",
+      "rationale": "ai-dossier#860: detached ship parked PRs on a label nothing watched (no watcher workflow, autoMergeRequest=null). Step 3c now finds the merge mechanism before parking (watcher, or native auto-merge requested after review), runs attached when there is none, asserts after parking and blocks reason=no-merge-mechanism; every mode merges only after the full review round (#795 / PR #837).",
+      "created_at": "2026-09-29T07:51:26.739Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "3d051207-f7f8-4ef0-8edd-7ab512d814f7",
+          "host": "YuvalD-Asus14"
         }
       ]
     }
