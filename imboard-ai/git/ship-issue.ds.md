@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "ship-issue",
   "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-  "version": "1.17.0",
+  "version": "1.18.0",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Commit changes, push, create a PR, then either drive it to a confirmed merge and deploy (attached) or park it on auto-merge and stop (detached); in batch mode (batch_id set): ship the batch PR from the batch branch — per-member PR sections, Closes #N per member, rebase-merged so one commit per member issue lands on the base branch",
@@ -112,13 +112,13 @@
   "last_updated": "2026-09-29",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "95cd41c8bf60cf990c8fdad68ac28406f36e660102564b77ed1740ac0ca03de7"
+    "hash": "272ad64b35f75ac8a2f234f42e576cf2575e03a1a27018879094160e64296149"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "za3ULrGK1n05ZPic0mRaHtbVQLH073qCIr9x2tKB5J6M/B8pCNW7AFydJaY0GSLKJWsJUXxh7ErJ5rHXkg6DCA==",
+    "signature": "21XCfZH0JX1G2adHIsbrGOZePwgQsxJ9mgQIhgRyWgFkrAh73iQb2jU2W3B2cPetUCarXvJUIj3dNaE81zxDCg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T07:51:28.106Z",
+    "signed_at": "2026-09-29T13:21:52.915Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -261,10 +261,11 @@ ai-dossier runstate post --issue <anchor_number> --phase batch-ship --status awa
   --kv verdict_head=<short sha the last conformance verdict covered|none> \
   --kv verdict_refreshed=<true|false> \
   --kv verdict_check=<tree|patch-id|inconclusive|sha-fallback> \
+  --kv ship_mode=<the requested ship_mode: attached|detached> \
   --next batch-ship
 ```
 
-`--next batch-ship` is the mid-phase override (same purpose as per-issue's `--next ship`): the milestone is mid-phase, so the next phase is still batch-ship. The CLI stamps `at=` itself. `verdict_head=`/`verdict_refreshed=`/`verdict_check=` carry Batch Step 3a.5's result — which is why that gate runs before this milestone on both batch paths; Batch Step 8 posts whatever Batch Step 6's re-check produced.
+**Attached batch ship (ai-dossier#887):** every `batch-ship` milestone posted BEFORE the merge is confirmed carries `ship_mode=attached` (a scheduler reads a bare `awaiting-merge` + `pr=` as a parked PR and frees the tail's slot while the run is still in CI). After the merge is confirmed (Batch Step 6b), post one more `awaiting-merge` milestone with `pr=` and `ship_evidence=self-merged` and NO `ship_mode=attached`, then stop — the scheduler dispatches the batch report. `--next batch-ship` is the mid-phase override (same purpose as per-issue's `--next ship`): the milestone is mid-phase, so the next phase is still batch-ship. The CLI stamps `at=` itself. `verdict_head=`/`verdict_refreshed=`/`verdict_check=` carry Batch Step 3a.5's result — which is why that gate runs before this milestone on both batch paths; Batch Step 8 posts whatever Batch Step 6's re-check produced.
 
 ### Batch Step 3c: ship_mode — attached or detached
 
@@ -544,10 +545,11 @@ ai-dossier runstate post --issue <issue_number> --phase ship --status awaiting-m
   --kv verdict_head=<short sha the last conformance verdict covered|none> \
   --kv verdict_refreshed=<true|false> \
   --kv verdict_check=<tree|patch-id|inconclusive|sha-fallback> \
+  --kv ship_mode=<the requested ship_mode: attached|detached> \
   --next ship
 ```
 
-The CLI stamps `at=` itself; never hand-write the comment. `--next ship` is the one place a dossier overrides the computed `next=` — this milestone is mid-phase, so the next phase is still ship.
+The CLI stamps `at=` itself; never hand-write the comment. `ship_mode=` is the mode this run was asked for; `attached` here keeps a scheduler from reading this pre-CI milestone as a parked PR if the run dies mid-wait (Step 3c item 3b (ship-mode record) restates the mode actually chosen). `--next ship` is the one place a dossier overrides the computed `next=` — this milestone is mid-phase, so the next phase is still ship.
 
 `verdict_head=`/`verdict_refreshed=`/`verdict_check=` carry Step 3a.5's result, which is why that gate runs before this milestone on every path: this is the detached run's LAST milestone and comments are append-only, so a result produced after it could never be recorded. On the attached self-merge path Step 8 posts whatever Step 6's re-check produced, which is these same values unless Step 5 moved the head.
 
@@ -566,18 +568,35 @@ In `ship_mode=detached` this is the run's LAST milestone (Step 3c) — it is wha
    ```bash
    WATCHER=$(git grep -l -e 'auto-merge' "origin/<base_branch>" -- '.github/workflows/*.yml' '.github/workflows/*.yaml' 2>/dev/null | head -1)
    NATIVE=$(gh api repos/{owner}/{repo} --jq '.allow_auto_merge')
-   echo "watcher=${WATCHER:-none} native_auto_merge=${NATIVE:-unknown}"
+   METHODS=$(gh api repos/{owner}/{repo} --jq '[(.allow_squash_merge|select(.)|"squash"),(.allow_rebase_merge|select(.)|"rebase"),(.allow_merge_commit|select(.)|"merge")]|join(" ")')
+   MERGE_METHOD=$(echo "${METHODS:-squash}" | awk '{print $1}')   # first allowed of squash, rebase, merge; squash if the read failed
+   echo "watcher=${WATCHER:-none} native_auto_merge=${NATIVE:-unknown} allowed_methods=${METHODS:-unknown} merge_method=${MERGE_METHOD}"
    ```
 
    `WATCHER` is a text match, so open the file and confirm it really merges PRs carrying the `auto-merge` label (a workflow merely named or commented that way is not a watcher). Then:
    - **Watcher present** → steps 1–2 (label) are the mechanism.
-   - **No watcher, `NATIVE=true`** → the label alone merges nothing; ALSO request GitHub native auto-merge after step 2, only now that review and Step 3a.5 are done: `gh pr merge <pr-number> --auto --squash --match-head-commit <PR_HEAD>`.
-   - **Neither** → there is no way for a parked PR to merge. Do NOT park: switch this run to `attached` (continue at Step 4 exactly as `ship_mode=attached` would, self-merging at Step 6), and say so in the run's output — `ship_mode=attached (no merge mechanism for detached: no watcher, native auto-merge disabled)`. The orchestrator should have caught this at plan time (fleet-cycle Phase 3); this is the backstop.
+   - **No watcher, `NATIVE=true`** → the label alone merges nothing; ALSO request GitHub native auto-merge after step 2, only now that review and Step 3a.5 are done: `gh pr merge <pr-number> --auto --<MERGE_METHOD> --match-head-commit <PR_HEAD>` (the method the repo allows — `--squash`, `--rebase` or `--merge`; a method the repo disallows makes the request fail). Requesting is not confirming: step 3 verifies it.
+   - **Neither** → there is no way for a parked PR to merge (ai-dossier#887/#874: sched only WAITS for a merge, so a park on an inert label is a park-forever). Do NOT park: switch this run to `attached` (continue at Step 4 exactly as `ship_mode=attached` would, self-merging at Step 6), and say so in the run's output — `ship_mode=attached (no merge mechanism for detached: no watcher, native auto-merge disabled)`. The orchestrator should have caught this at plan time (fleet-cycle Phase 3); this is the backstop.
 
 1. Hand the merge to the watcher / merge queue via REST — on repos with Projects-classic, `gh pr edit --add-label` fails on a GraphQL deprecation: `gh api -X POST repos/{owner}/{repo}/issues/<pr-number>/labels -f "labels[]=auto-merge"` (create the label first if missing: `gh label create auto-merge --color 0E8A16 --force`). Then CONFIRM the label is present in the response. On a repo with a merge queue, enqueue instead. Same deprecation hits `gh pr view`/`gh issue view` without field selection — always pass `--json <fields>`.
 2. **Confirm the label is applied** — re-read the PR labels. If the apply failed, retry once; if it still fails, that is a hard blocker to escalate (do NOT fall back to waiting on CI yourself).
-3. **Assert the parked PR can actually merge — fail loudly otherwise.** Re-read after parking: `gh pr view <pr-number> --json labels,autoMergeRequest`. Pass = the `auto-merge` label is present AND (a watcher was confirmed in step 0, OR `autoMergeRequest` is non-null). Neither → this is NOT a parked PR, it is an orphan: post `ai-dossier runstate post --issue <issue_number> --phase ship --status blocked --run <run_id> --kv pr=<pr-number> --kv head=<PR_HEAD as a short sha> --kv reason=no-merge-mechanism`, print `SHIP DETACHED FAILED: PR #<pr-number> has no merge mechanism (no auto-merge watcher, autoMergeRequest=null)`, and stop — never exit reporting "parked". The fix is to re-enter ship attached (the blocked milestone's `pr=` lets the next run resume on the same PR).
-4. The Step 3b `awaiting-merge` milestone is already posted — that is the durable state.
+3. **Assert the parked PR can actually merge — the label is NOT proof (ai-dossier#874).** Re-read after parking: `gh pr view <pr-number> --json state,mergedAt,labels,autoMergeRequest`. If `mergedAt` is non-null the request merged an already-clean PR at once (GitHub then reports `autoMergeRequest=null`) — that is a success, not a failure: skip the fallback and continue at Step 6b (merge confirmation) / the tail. Pass = a watcher was confirmed in step 0 (the label is then the mechanism), OR `autoMergeRequest` is **non-null** (GitHub really holds the auto-merge request). If native was the mechanism and `autoMergeRequest` is null, retry the `gh pr merge --auto` request once and re-read. Still null and no watcher → **the PR is NOT parked; do not idle in a merge watch.** Remove the inert label (`gh api -X DELETE repos/{owner}/{repo}/issues/<pr-number>/labels/auto-merge`), switch this run to `attached` (continue at Step 4: wait for the required checks to be green, then self-merge at Step 6 with `MERGE_METHOD`), and say so in the run's output — `ship_mode=attached (auto-merge not activated: autoMergeRequest=null after request)`. Only when step 0 found no allowed merge method at all (or the repo settings could not be read AND the self-merge is refused) is this a hard stop: post `ai-dossier runstate post --issue <issue_number> --phase ship --status blocked --run <run_id> --kv pr=<pr-number> --kv head=<PR_HEAD as a short sha> --kv reason=no-merge-mechanism`, print `SHIP FAILED: PR #<pr-number> has no merge mechanism`, and stop — never exit reporting "parked".
+3b. **Ship-mode record — write the chosen ship mode and its evidence to the ship runstate** (ai-dossier#874 — fleet supervision must know whether GitHub will merge the PR or this run does). Post a second `awaiting-merge` milestone (comments are append-only; the latest wins. On the detached path this is the run's LAST milestone; on the attached fallback it is followed by Steps 4–8, and `ship_mode=attached` on it is what tells sched the run is still merging — sched does NOT treat it as a park):
+
+   ```bash
+   ai-dossier runstate post --issue <issue_number> --phase ship --status awaiting-merge --run <run_id> \
+     --kv pr=<pr-number> \
+     --kv head=<short sha of the pushed commit> \
+     --kv ci_fix_attempts=0 \
+     --kv ship_mode=<detached|attached> \
+     --kv merge_mechanism=<watcher|native|none> \
+     --kv ship_evidence=<watcher-workflow|auto-merge-request-set|auto-merge-request-null-fallback|no-mechanism> \
+     --kv merge_method=<squash|rebase|merge> \
+     --next ship
+   ```
+
+   `ship_mode=detached` is recorded ONLY with `ship_evidence=watcher-workflow` or `auto-merge-request-set` (a non-null `autoMergeRequest` was read back). On the attached fallback, `ship_mode=attached` with `auto-merge-request-null-fallback` / `no-mechanism` tells the supervisor that THIS run merges. Include the same three keys (`ship_mode=`, `merge_mechanism=`, `ship_evidence=`) on Step 8's final `done` milestone.
+4. The Step 3b / 3b-record `awaiting-merge` milestone is already posted — that is the durable state.
 5. Print the handoff line and STOP:
 
    ```
@@ -674,10 +693,12 @@ see `docs/agent-traps.md`'s stuck-lock-after-502 row, PR #745):
 
 ```bash
 PR_TITLE=$(gh pr view <pr-number> --json title --jq .title)
+# Shell variables do not survive between Bash calls, and an attached run may never have run Step 3c: recompute.
+MERGE_METHOD=$(gh api repos/{owner}/{repo} --jq '[(.allow_squash_merge|select(.)|"squash"),(.allow_rebase_merge|select(.)|"rebase"),(.allow_merge_commit|select(.)|"merge")]|first // "squash"')
 
 merge_attempt() {
   gh api -X PUT "repos/{owner}/{repo}/pulls/<pr-number>/merge" \
-    -f merge_method=squash \
+    -f merge_method="${MERGE_METHOD:-squash}" \
     -f sha="$PR_HEAD" \
     -f commit_title="${PR_TITLE} (#<pr-number>)" \
     -f commit_message="Closes #<issue_number>"
@@ -707,6 +728,7 @@ Handle each response shape before continuing:
   head. Wait ~15–30s for `gh pr view <pr-number> --json mergeStateStatus` to leave
   `UNKNOWN` and settle back to `CLEAN`/`UNSTABLE`, then re-run `merge_attempt` unchanged
   — never drop `sha=` to work around it, and never spend a Step 5 CI-fix attempt on it.
+- **`405` with `Merge method ... is not allowed`** → `MERGE_METHOD` is wrong for this repo (ai-dossier#874). Re-read the allowed methods (Step 3c item 0's `METHODS` query), pick the next allowed one, re-run `merge_attempt` unchanged otherwise (`sha=` stays). None allowed → `reason=no-merge-mechanism`.
 - **`405` for any other reason (head moved)** → a genuine mismatch: return to Step 4,
   never retry with `sha=` dropped.
 - **5xx** (`502`/`503`/etc.) → the REST analogue of the GraphQL stuck-lock shape
@@ -879,10 +901,13 @@ ai-dossier runstate post --issue <issue_number> --phase ship --status done --run
   --kv procs_killed=<n> \
   --kv verdict_head=<short sha the last conformance verdict covered|none> \
   --kv verdict_refreshed=<true|false> \
-  --kv verdict_check=<tree|patch-id|inconclusive|sha-fallback>
+  --kv verdict_check=<tree|patch-id|inconclusive|sha-fallback> \
+  --kv ship_mode=<attached|detached> \
+  --kv merge_mechanism=<watcher|native|none> \
+  --kv ship_evidence=<watcher-workflow|auto-merge-request-set|auto-merge-request-null-fallback|no-mechanism|self-merge>
 ```
 
-`procs_killed=` is Step 7 item 3's `PROCS_KILLED` (`0` on a clean run; on `cleanup=pool_returned` the pool owns the kill and this is whatever it reports, or `0` if it reports nothing). `verdict_head=`/`verdict_refreshed=`/`verdict_check=` are the verdict-freshness result (Step 3a.5) for the head this merge actually landed. A tail run resuming at `ship-teardown` did not authorize the merge — the detached run's gate did — so it carries that run's `awaiting-merge` values forward rather than inventing new ones, **after confirming the head did not drift while the PR sat parked**: compare the merged head (`gh pr view <pr-number> --json mergeCommit,headRefOid`) against that milestone's `head=` — **not** `verdict_head=`: under `verdict_check=tree` or `patch-id`, `verdict_head` is deliberately the reviewed head, which an empty CI-enable commit or a same-content rewrap leaves different from the head that was actually authorized and merged, so comparing against it would report drift on every healthy patch-id-fresh run. `head=` is the pushed sha the gate cleared (Step 3b), and is the correct drift baseline on both the `patch-id` and `sha-fallback` paths. On a mismatch post `--status blocked --kv reason=verdict-head-drifted` with the Guiding Principle hand-off instead of reporting a clean run. Parking a PR hands the merge timing to the watcher; nothing stops a push landing in between, and this is the only place that can catch it.
+`ship_mode=`/`merge_mechanism=`/`ship_evidence=` restate what Step 3c item 3b (ship-mode record) recorded (`self-merge` when ship ran attached from the start with no parking attempt) so the FINAL milestone alone tells a supervisor who merged and why (ai-dossier#874). `procs_killed=` is Step 7 item 3's `PROCS_KILLED` (`0` on a clean run; on `cleanup=pool_returned` the pool owns the kill and this is whatever it reports, or `0` if it reports nothing). `verdict_head=`/`verdict_refreshed=`/`verdict_check=` are the verdict-freshness result (Step 3a.5) for the head this merge actually landed. A tail run resuming at `ship-teardown` did not authorize the merge — the detached run's gate did — so it carries that run's `awaiting-merge` values forward rather than inventing new ones, **after confirming the head did not drift while the PR sat parked**: compare the merged head (`gh pr view <pr-number> --json mergeCommit,headRefOid`) against that milestone's `head=` — **not** `verdict_head=`: under `verdict_check=tree` or `patch-id`, `verdict_head` is deliberately the reviewed head, which an empty CI-enable commit or a same-content rewrap leaves different from the head that was actually authorized and merged, so comparing against it would report drift on every healthy patch-id-fresh run. `head=` is the pushed sha the gate cleared (Step 3b), and is the correct drift baseline on both the `patch-id` and `sha-fallback` paths. On a mismatch post `--status blocked --kv reason=verdict-head-drifted` with the Guiding Principle hand-off instead of reporting a clean run. Parking a PR hands the merge timing to the watcher; nothing stops a push landing in between, and this is the only place that can catch it.
 
 Let the CLI stamp `at=` and compute `next=report` — do not pass either; never hand-write the comment. `ci_fix_attempts` is how many Step 5 fix-and-push cycles ran (0 if CI was green first time).
 
@@ -913,7 +938,7 @@ Let the CLI stamp `at=` and compute `next=report` — do not pass either; never 
 - [ ] Verdict-freshness gate (Step 3a.5) ran before every merge authorization — the `auto-merge` label on the detached park and on the attached-with-watcher hand-off, and the Step 6 self-merge after the CI-fix loop settled: `verdict_head` recorded on the run's final milestone — a prefix of the head that actually merged under `verdict_check=sha-fallback`, or (under `verdict_check=tree`/`patch-id`) the reviewed head whose tree or diff patch-id matched the merged head's, which need not itself be a prefix of it; freshness decided by tree equality when the heads' merge-bases matched, `--verbatim` patch-id when they differed and git ≥ 2.39 supported it, sha equality when `VERDICT_HEAD` was unfetchable — an empty patch-id never compared, and any comparison that could not run recorded as `verdict_check=inconclusive` and treated as stale — `verdict_check` recorded alongside `verdict_head`/`verdict_refreshed` on every milestone that carries them (omitted only on the `verdict-head-unreadable` blocked shape, where item 2 never ran); on a mismatch Agent 7 re-ran before any merge authorization, and a `not-met` blocked with `reason=verdict-stale-not-met` instead of merging; the Step 8 parked-PR drift check compares the merged head against that milestone's `head=`, never `verdict_head=`
 - [ ] `ship_mode` was honored: `detached` stopped after the label + `awaiting-merge` milestone with the handoff line printed (no CI wait, no merge, no teardown, no report); `attached` ran through to the final milestone
 - [ ] Detached only: the `auto-merge` label was applied and confirmed present, and the worktree was left in place
-- [ ] Detached only: a merge mechanism was found BEFORE parking (confirmed watcher workflow, or native auto-merge allowed and requested after review + Step 3a.5) — with neither, the run switched to attached and said so; after parking, `autoMergeRequest` non-null or a confirmed watcher was asserted, else `reason=no-merge-mechanism` blocked (never a silent "parked")
+- [ ] Detached only: a merge mechanism was found BEFORE parking (confirmed watcher workflow, or native auto-merge allowed and requested after review + Step 3a.5) — with neither, the run switched to attached and said so; after parking, `autoMergeRequest` non-null or a confirmed watcher was asserted (a label is never proof), else the run fell back to attached (wait for required checks, self-merge with an allowed method) rather than idling in a merge watch — `reason=no-merge-mechanism` only when no allowed merge method exists. The chosen `ship_mode`, `merge_mechanism` and `ship_evidence` are on the ship runstate (Step 3c item 3b (ship-mode record), Step 8)
 - [ ] No merge — in any ship mode, including native auto-merge requests — was authorized before the full review round completed
 - [ ] CI passed (or failures fixed within 2 attempts), confirmed green on two consecutive stable polls — not a single transient success
 - [ ] CI wait done in-turn (foreground batch re-runs) — never backgrounded or deferred
@@ -939,7 +964,7 @@ Let the CLI stamp `at=` and compute `next=report` — do not pass either; never 
 | `git patch-id --verbatim` prints usage / `verdict_check=inconclusive` on every ship | git < 2.39 does not know `--verbatim` (exit 129, EMPTY id — ai-dossier#851). Step 3a.5 probes support and never compares empty ids, so this is safe, just slower: an unrebased head still gets an exact answer from `verdict_check=tree`; a rebased head on old git lands `inconclusive` and re-runs Agent 7. Upgrade git to ≥ 2.39 to get `patch-id` back on rebased heads; never substitute `--stable` (whitespace-blind) or compare ids by hand. |
 | Merge conflicts | Needs human judgment. Stop and hand off on the issue (`decision-pending` label + comment describing the conflicting files and why an automatic resolution isn't safe) — do not guess at a resolution, do not open a new issue. |
 | Detached run looks unfinished | It is — by design. A `ship awaiting-merge` milestone with no `ship done` after it is a parked PR, not a failure. The tail run (`full cycle issue <n>`) resumes at `ship-teardown` once the PR merges. |
-| `reason=no-merge-mechanism` / parked PRs that never merge | The repo has no auto-merge watcher and the PR carries no native auto-merge request (`autoMergeRequest=null`) — the label alone merges nothing (ai-dossier#860: every PR of a 2026-09-25 fleet parked on a label nothing watched). Step 3c item 0 now detects this before parking and runs attached instead; if you still find such a PR, resume ship attached on the milestone's `pr=`. Do NOT `gh pr merge --auto` a PR whose review round has not completed — that is an unreviewed merge and is permission-blocked (#795 / PR #837). |
+| `reason=no-merge-mechanism` / parked PRs that never merge | The repo has no auto-merge watcher and the PR carries no native auto-merge request (`autoMergeRequest=null`) — the label alone merges nothing (ai-dossier#860: every PR of a 2026-09-25 fleet parked on a label nothing watched). Step 3c item 0 now detects this before parking and runs attached instead, and item 3 falls back to attached (no unbounded merge watch) when a requested auto-merge reads back `autoMergeRequest=null` (ai-dossier#874/#887 — sched's PR watch only waits, it never merges); if you still find such a PR, resume ship attached on the milestone's `pr=`. Do NOT `gh pr merge --auto` a PR whose review round has not completed — that is an unreviewed merge and is permission-blocked (#795 / PR #837). |
 | `--delete-branch` fails in worktree | Expected — don't use it. Clean up in Step 7. |
 | Pool return fails | Not an error — fall back to manual worktree remove. |
 | Batch: `reason=rebase-not-allowed` / `watcher-no-rebase` / `no-watcher` | Hard aborts by design — the external prerequisites (imboard-ai/imboard-monorepo#3902) are absent. Fix the repo settings / watcher on the TARGET repo, then re-dispatch; never fall back to squash. |
