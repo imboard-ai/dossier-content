@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "autopilot-loop",
   "title": "Autopilot Loop — Unattended, Budget-Gated Backlog Orchestration",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-29",
@@ -122,13 +122,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "f3630592ad284f1b9876d8ba5c467c804eedc3cf73462cfcf6580ddaea8bc34a"
+    "hash": "81c5004c707f380263198b793740ad45c91a777adb3f61084e386b8627a0d1dd"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "JAXfvpvfbtQRqO+HrO04UYqLrZ2EMEVBjLYLz0SgfCfqJ6OluIlAvYwdWSQIN+UmlQIKM4Vg8aCWFKumYPGvDw==",
+    "signature": "W309bc/JY1dRGgIbf5JcvksMR/Ku52TH9yQqnENoL64rlV1M7cRrykvCuAOj++w4np53lvdcWFVszX+u1F5oCA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T18:53:58.901Z",
+    "signed_at": "2026-09-29T19:47:39.999Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -175,7 +175,11 @@ This dossier encodes a procedure that was run for 11+ cycles on a real repo (25+
    - **Reading failed** (e.g. HTTP 503) → do not dispatch new work. Merging already-green PRs is fine, since it costs nearly nothing. Retry next tick.
 2. **Steering.** Read log-issue comments since the last cycle (exclude the loop's own). Obey `stop` / `skip` / `prioritize`; treat free text as guidance. Also read any direction the owner gave in-session, and **record it on the log issue** so it survives the session.
 3. **Health of main.** List non-green workflow runs on the default branch since the last cycle, and compare published package versions against the versions on main. Anything red or missing becomes this cycle's first item, or a filed issue. This catches failures that a later green run masks.
-4. **In-flight work.** If previous workers are still running, do not start new ones beyond `max_parallel_workers`; handle their reports as they arrive.
+4. **In-flight work + stall check (every wakeup).** Don't start workers beyond `max_parallel_workers`. Don't rely only on workers notifying you: a worker can stop at an internal "wait for CI" step, or go idle mid-task, and never report. So on every wakeup, list worktrees and open PRs:
+   - Any worker whose PR or worktree hasn't changed in ≥30 minutes gets pinged with explicit next steps.
+   - A **dirty worktree with no recent commit** is stalled mid-work. Tell the worker to commit, push, and open the PR.
+   - Schedule the fallback wakeup at ≤30 minutes while workers are in flight.
+5. **Budget changes.** When the owner raises or lowers the cap, record it on the log issue and apply it from the next gate check.
 
 ## Phase 2: Triage the whole backlog, then pick
 
@@ -248,7 +252,14 @@ For every PR a worker reports ready:
    - **Scoring, parsing and security features get ≥5 adversarial inputs** before merge (bypasses, not just happy paths).
    - Behaviour changes that could hit other actors (new refusals, schema bumps, changed defaults) are noted in the cycle log.
    - Claims about "it works on this repo" are verified on this repo (e.g. a merge-mechanism fix that doesn't fire on a repo with native auto-merge enabled).
-4. **Merge** (per `authority`), clean up the worktree and branch, and confirm the issue closed.
+4. **Merge** (per `authority`) and **confirm GitHub reports `MERGED`** before touching the worktree. Merges get refused when main moves under a PR (the PR goes `DIRTY`). Removing the worktree then strands the worker. Use a helper that:
+   - aborts on a dirty or unpushed worktree, or a `DIRTY` mergeability;
+   - merges;
+   - re-reads the PR state;
+   - removes the worktree and branch **only if `MERGED`**.
+
+   Confirm the issue closed. Merge the moment CI is green; with several workers landing, main moves every few minutes.
+4a. **Stop the worker** as soon as its PR is merged or closed and nothing else is assigned to it: TaskStop, or the environment's equivalent, by the worker's name. Finished-but-idle workers pile up (29 at once in the reference run). They're a management hassle, and they risk late edits.
 5. **Verify releases**: the publish run succeeded, and the version is **listed** on the registry. Fresh publishes can take minutes to appear, so poll; don't conclude "not published" from a single 404. Verify downstream artifacts too (binaries, extension packages).
 6. **Self-fix vs dispatch**: CI/workflow fixes of ~30 lines or less the orchestrator makes itself (branch → PR → CI → merge). State-machine, security or multi-package work goes to a worker.
 
@@ -258,7 +269,8 @@ For every PR a worker reports ready:
 2. File follow-ups for everything deliberately left out, anything found in review but out of scope, and anything observed but unexplained (e.g. an intermittent 403). **Don't claim a root cause you haven't proven.**
 3. Post `Cycle N — done` on the log issue with: usage before/after · picked + why · PRs + releases (with links) · outcome · review verdict (what the orchestrator caught) · non-green runs on main · restart-needed items · follow-ups filed (with their P labels) · **the next top-5 queue with one-line reasons**, so the owner can reorder with `prioritize` / `skip` from a phone.
 4. Summarize the same in-session, with direct links.
-5. Schedule the next wakeup: if workers are running, a long fallback (≈30 min), because their completion notifications are the real wake signal. Otherwise start the next cycle now.
+5. **Sweep workers**: stop any worker whose units are all merged or closed. Only workers with live assignments may remain.
+6. Schedule the next wakeup: if workers are running, a long fallback (≈30 min), because their completion notifications are the real wake signal. Otherwise start the next cycle now.
 
 ## Phase 7: Lessons learned (every `lessons_interval_hours`)
 
@@ -289,6 +301,8 @@ Anything only the owner can do becomes an issue labelled `owner_action_label` wi
 13. Keep ≤2 parallel workers unless the work is trivially reviewable; review attention is the bottleneck.
 14. Record every owner direction on the log issue the moment it's given.
 15. Triage the whole backlog every cycle (issues from anyone, not just the loop's). Label every follow-up at birth, and rank by the rule, not by what's fresh in context.
+16. Stall-check workers every wakeup. Silence is not progress.
+17. Remove a worktree only after the PR is confirmed `MERGED`. Stop each worker once its work is merged or closed.
 
 ## Verification checklist
 
@@ -298,4 +312,5 @@ Anything only the owner can do becomes an issue labelled `owner_action_label` wi
 - [ ] Every deliberate omission and review finding is merged, filed, or explicitly withdrawn with a reason.
 - [ ] A lessons-learned review ran at each interval, and its defects were filed or fixed.
 - [ ] Every open issue carries a priority label; every cycle comment shows the ranked top-5 queue.
+- [ ] No finished worker is left running; no worktree was removed for an unmerged PR.
 - [ ] The loop stopped (or will stop) at the budget cap with a final summary.
