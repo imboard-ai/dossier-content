@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-integrate",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "9d7ee5df5115c1afafb8e3a137ef02763b4e54bc385fe38501ff8edbd374dcf8"
+    "hash": "a107d79949dca5e232401cf9e11f7e247ea465ba83510d8850d190295bff2c0b"
   },
   "entries": [
     {
@@ -20,7 +20,7 @@
       ]
     },
     {
-      "anchor": "Step 5: Aggregate review, plus the risk-floor review over `review=full` members",
+      "anchor": "Step 5: Integration review — `interaction` when every member was full-tier reviewed, `full` otherwise",
       "rationale": "ai-dossier#770 P1 / Option A: a risk-floor issue batched as review=full must get the review full-cycle would have given it, over its commits as integrated (after merges/repairs the member never saw).",
       "created_at": "2026-09-24T09:21:06.039Z",
       "evidence": [
@@ -132,6 +132,30 @@
             "memory_id": "245031cd-9975-45f2-b211-ef31a696029a",
             "related": "ai-dossier#675"
           }
+        }
+      ]
+    },
+    {
+      "anchor": "Step 5: Integration review — `interaction` when every member was full-tier reviewed, `full` otherwise",
+      "rationale": "ai-dossier#928 / #770 operator decision 2026-09-29: imboard b-20260929-01 re-ran the full reviewer set over a combined diff whose members were all full-tier reviewed (#4451, #4136 full/7 agents; #4484 light/conformance) — ~2.5 h and ~350k Opus output. Dry walk of review-issue Aggregate Step 2a on that evidence selects interaction, 1 agent (delta = 2 docs files from the rebase resolution); a review=full member missing security selects full.",
+      "created_at": "2026-09-29T15:07:08.306Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
+        }
+      ]
+    },
+    {
+      "anchor": "Step 3: Run the expensive verification ONCE, and read its result in four states",
+      "rationale": "ai-dossier#920 (dossier-side asks, folded into #928): b-20260929-01's tail ran gate.batch beside the review, then again over 16 uncommitted fixed files via nohup+poll, and ended its session mid-gate — three gate.batch ok rows in caps.jsonl (10:34Z, 11:35Z, 13:11Z). Hence: commit+push before the gate, foreground in-turn, one gate per distinct tree.",
+      "created_at": "2026-09-29T15:07:09.016Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
         }
       ]
     }
