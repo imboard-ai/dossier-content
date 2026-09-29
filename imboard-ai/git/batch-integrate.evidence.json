@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-integrate",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "a107d79949dca5e232401cf9e11f7e247ea465ba83510d8850d190295bff2c0b"
+    "hash": "fda5311c6c63c208b1ee806c62777e97219a936e9ffd886485720576bb809f5a"
   },
   "entries": [
     {
