@@ -4,9 +4,9 @@
   "protocol_version": "1.0",
   "name": "batch-cycle-skill",
   "title": "Batch Cycle",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "status": "Draft",
-  "last_updated": "2026-09-24",
+  "last_updated": "2026-09-29",
   "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
   "description": "Batch several issues into ONE PR with ONE expensive verification run. Each issue gets its own agent and worktree off a shared integration branch; a parent orchestrator merges them, runs the repo's full gate once, repairs what breaks, and ships a single PR. Use when the user says 'batch cycle', 'batch these issues into one PR', 'run these issues as a batch', 'one PR for these issues', or asks to avoid paying CI/verification per issue. NOT for when each issue needs its own PR — that is fleet-cycle.",
   "inputs": {
@@ -40,13 +40,13 @@
   "requires_approval": false,
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6c9c0d4d0d67f80cc126d7725b5e20e392c2b032a9ded892abd9a485cbce0661"
+    "hash": "0de49989e89b4693b196e72382a74f4477847f4cd85dd24862dad16f779de5b6"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "GW/FqJY2bzEuc9x3r1OBSrOfrGDDSzAo9L+QvO7bNachbC46iqU+EzFrXufgEfg7EkgvZJvwReBG/KftdI5hAg==",
+    "signature": "+g2y1S2uiFsAA1DpS/J8ds8McdblWb70Yi6kKLaiMcYNEADpY6OHVewdDbqgiBzAgXriL2W9cvXjeTBURbn0DA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-24T16:01:52.728Z",
+    "signed_at": "2026-09-29T14:59:32.890Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -118,10 +118,10 @@ Record the excluded issue and its conflict in the closing summary, next to the s
 drops. The operator can batch it in the next run or take it through `full-cycle-issue-skill`
 deliberately. Never ask which of these they would prefer.
 
-**A risk-floor issue is not a composition conflict** (#770, operator decision Option A; #818).
-RFC-0001 E.2 rules 1, 4 and 5 — a risk-floor area (auth, billing, security, migration), a
-deploy-pipeline change, and a change predicting > 8 files — make an issue a `review=full`
-member — strong tier, full-cycle-grade review in member-cycle, a risk-floor review of its
+**A risk-floor issue is not a composition conflict** (#770, operator decision Option A; #818;
+#927). RFC-0001 E.2 rules 1, 4, 5 and 6 — a risk-floor area (auth, billing, security, migration),
+a deploy-pipeline change, a change predicting > 8 files, and a predicted diff > 400 lines — make
+an issue a `review=full` member — strong tier, full-cycle-grade review in member-cycle, a risk-floor review of its
 commits in batch-integrate — not an exclusion. At most **2** `review=full` members per batch
 (blast radius); a third waits for the next batch. The hard exclusions are only: production data
 mutation or ops, a slice of a designed sequence, decisions/epics/trackers, a different base. A
@@ -241,9 +241,9 @@ Drop what fails, backfill the gap from compose's ranked list (screening each can
 
 **Keep slices of one designed sequence out of the same batch** — PR1/PR2/PR3 of a feature are not independent and will conflict by construction. Either batch one of them, or expect to resolve the collision.
 
-**Do not size the batch by predicted diff.** Diff size predicts neither cost nor conflict: measured members have run 92 turns for a net −29 lines, and 59 turns for +193.
+**Do not size the batch by predicted diff.** Diff size predicts neither cost nor conflict: measured members have run 92 turns for a net −29 lines, and 59 turns for +193. A member predicting > 400 lines (E.2 rule 6) is a `review=full` member, never a hand-off to full-cycle for its size (#927).
 
-**Risk-floor, deploy-pipeline and > 8-file members (E.2 rules 1, 4, 5) ride as `review=full`, at most 2 per batch** — see the autonomy contract. The manifest carries `review` on every member.
+**Risk-floor, deploy-pipeline, > 8-file and > 400-line members (E.2 rules 1, 4, 5, 6) ride as `review=full`, at most 2 per batch** — see the autonomy contract. The manifest carries `review` on every member.
 
 ### 5. Dispatch and integrate
 
