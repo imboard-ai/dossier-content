@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/skills/batch-cycle-skill",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6c9c0d4d0d67f80cc126d7725b5e20e392c2b032a9ded892abd9a485cbce0661"
+    "hash": "0de49989e89b4693b196e72382a74f4477847f4cd85dd24862dad16f779de5b6"
   },
   "entries": [
     {
@@ -15,6 +15,18 @@
         {
           "provider": "claude-code",
           "session": "df2fa282-bc18-4ea8-b8a1-c7a0e047b8ab",
+          "host": "hcc"
+        }
+      ]
+    },
+    {
+      "anchor": "A risk-floor issue is not a composition conflict",
+      "rationale": "ai-dossier#927: the autonomy contract names E.2 rules 1, 4, 5, 6 as review=full triggers (rule 6 = predicted diff > 400, added per the #770 operator decision 2026-09-29) and rule 8 as a full-cycle hand-off, matching classifier 1.5.0 / batch-prep 3.3.0.",
+      "created_at": "2026-09-29T14:55:42.106Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
           "host": "hcc"
         }
       ]
