@@ -1,0 +1,35 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/review-issue",
+  "version": "1.17.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "0439a6c7923b84e5705016424a5b2934e6f5fa454e520d70d72f31f2d0a6b2af"
+  },
+  "entries": [
+    {
+      "anchor": "Aggregate Step 2a: Integration Review Selection — `interaction` or `full`",
+      "rationale": "ai-dossier#928 / #770 operator decision 2026-09-29. The sched batch tail runs review-issue in aggregate mode (batch-b-20260929-01-tail.log), so the rule lives here; batch-integrate Step 5 delegates to it. Evidence: b-20260929-01 ran 6 dimension agents over members that were all already full-tier reviewed.",
+      "created_at": "2026-09-29T15:07:24.151Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
+        }
+      ]
+    },
+    {
+      "anchor": "Aggregate Step 4: Validity Gate, Dedupe, Apply Serially, Commit and Push, ONE Gate",
+      "rationale": "ai-dossier#920: the tail left 16 gated review-fix files uncommitted and ended its session while polling gate 2; three gate.batch runs for one batch. Commit+push before the gate, foreground in-turn wait, one gate per distinct tree (START_TREE / gate_tree reuse).",
+      "created_at": "2026-09-29T15:07:24.764Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
+          "host": "hcc"
+        }
+      ]
+    }
+  ]
+}
