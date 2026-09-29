@@ -214,7 +214,7 @@
     {
       "name": "imboard-ai/git/autopilot-loop",
       "title": "Autopilot Loop — Unattended, Budget-Gated Backlog Orchestration",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "path": "imboard-ai/git/autopilot-loop.ds.md",
       "category": [
         "development"
