@@ -1,0 +1,23 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/full-cycle-issue",
+  "version": "3.17.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "0ba9f60d6a674dac14e7419f0a8de9d3029b49e1140c156c613d0720241a78d9"
+  },
+  "entries": [
+    {
+      "anchor": "### Phase 5: Ship",
+      "rationale": "ai-dossier#887/#874: detached ship parked PRs on an inert label in repos with no watcher (sched only waits). Detached is now a request honored only when ship-issue confirms a merge mechanism; otherwise attached, with the chosen mode and evidence on the ship runstate.",
+      "created_at": "2026-09-29T13:21:50.911Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "70692bc2-c309-4234-8c44-0557e7f633eb",
+          "host": "hcc"
+        }
+      ]
+    }
+  ]
+}
