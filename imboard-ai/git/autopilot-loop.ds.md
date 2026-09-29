@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "autopilot-loop",
   "title": "Autopilot Loop — Unattended, Budget-Gated Backlog Orchestration",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-09-29",
@@ -97,6 +97,18 @@
         "description": "Label for issues blocked on something only the owner can do (accounts, secrets, purchases, external settings).",
         "type": "string",
         "default": "user-interaction-needed"
+      },
+      {
+        "name": "triage_model",
+        "description": "Model for the per-cycle backlog triage subagent (labels every open issue P0–P3, flags overlaps and already-resolved items, emits a ranked queue). Cheap tier is fine; the orchestrator reviews its labels.",
+        "type": "string",
+        "default": "sonnet"
+      },
+      {
+        "name": "priority_labels",
+        "description": "Priority label names, highest first. Created at kickoff if missing.",
+        "type": "string",
+        "default": "P0-critical,P1-high,P2-medium,P3-low"
       }
     ]
   },
@@ -110,13 +122,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "dbe02086d1f5cdbd140daa4414c29a4f5c795ad853d764d8066cc30f87b533d0"
+    "hash": "f3630592ad284f1b9876d8ba5c467c804eedc3cf73462cfcf6580ddaea8bc34a"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "YUF9vOm3Kp6mGcf1X2DqE8IJgAdwPh8kFmoaIYrdNoo/UcSz6+lenPDOIJ7ZuYFMftk4gSF81/IeUEDNwErFBg==",
+    "signature": "JAXfvpvfbtQRqO+HrO04UYqLrZ2EMEVBjLYLz0SgfCfqJ6OluIlAvYwdWSQIN+UmlQIKM4Vg8aCWFKumYPGvDw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T15:12:45.231Z",
+    "signed_at": "2026-09-29T18:53:58.901Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -152,7 +164,7 @@ This dossier encodes a procedure that was run for 11+ cycles on a real repo (25+
 1. **Read the repo's agent instructions** (AGENTS.md / CLAUDE.md / CONTRIBUTING): worktree rules, build/test commands, version-bump and release conventions. Check whether harness worktree isolation works on this repo layout; nested layouts (e.g. `main/.git` with `core.worktree`) often break it. In that case workers create worktrees themselves with **absolute paths**.
 2. **Check for other actors** on the same repo: other sessions, a scheduler daemon, bots. List their open PRs and `in-progress` issues; the loop never touches them.
 3. **Create and pin the log issue** (unless `log_issue` given): charter (goals, budget cap, authority, worker model, do-not-touch list), steering commands (`stop`, `skip #N`, `prioritize #N`, free text), and the cycle comment format. Label it for easy filtering.
-4. **Create the owner-action label** (`owner_action_label`) with a description.
+4. **Create the labels**: the owner-action label (`owner_action_label`), the four `priority_labels` (if missing), and `loop-followup` (marks issues the loop files as follow-ups).
 5. **Save a memory note** (if the environment has persistent memory) pointing at the log issue and the charter, so a resumed session can find it.
 
 ## Phase 1: Cycle start — gates and steering
@@ -165,13 +177,32 @@ This dossier encodes a procedure that was run for 11+ cycles on a real repo (25+
 3. **Health of main.** List non-green workflow runs on the default branch since the last cycle, and compare published package versions against the versions on main. Anything red or missing becomes this cycle's first item, or a filed issue. This catches failures that a later green run masks.
 4. **In-flight work.** If previous workers are still running, do not start new ones beyond `max_parallel_workers`; handle their reports as they arrive.
 
-## Phase 2: Pick the unit of work
+## Phase 2: Triage the whole backlog, then pick
 
-1. List open issues. Exclude `in-progress`, `blocked`, the owner-action label, issues with open PRs, and anything claimed by another actor.
-2. Rank by: (a) security/trust defects, (b) bugs in the loop's own machinery (release, CI, test isolation, the scheduler), (c) reliability/automation bugs other actors hit today, (d) observability, (e) adopter-facing product work, (f) the rest. Old roadmap epics are rarely a cycle's unit. Triage them instead: close what's shipped with evidence, rescope the rest into concrete gaps, escalate direction questions.
-3. **Batch related small issues into one unit** (same files/area, one PR). Keep parallel units on **disjoint files**.
-4. **Close issues that are already resolved** with evidence (commands, versions, links) instead of re-doing them. Close deliberate non-goals with the decision and what was left out on purpose.
-5. **Claim** each picked issue with the `in-progress` label, and post a `Cycle N — started` comment (usage before, picked + why, skipped + why).
+The loop files follow-ups every cycle, and other actors file issues too. Without an explicit triage step, picks drift toward whatever is fresh in the orchestrator's context. Follow-ups then compete unlabelled with years-old roadmap items, and two actors build the same thing twice. So every cycle re-ranks the **entire** open backlog before picking.
+
+1. **Triage pass.** Dispatch a triage subagent (`triage_model`), or do it inline when the backlog is small. It must:
+   - Read **all** open issues, with extra care for those created since the last cycle **by anyone**: the loop, the owner, other sessions, bots.
+   - Apply exactly one priority label to each, with a one-line reason. Rubric:
+     - **P0**: security/trust holes, lost work or data loss, releases broken for everyone.
+     - **P1**: the orchestration machinery itself (scheduler, pipelines, CI/release, test infra) misbehaving in real runs; defects in code merged in the last day (fresh context, cheap to fix); anything the owner directed.
+     - **P2**: correctness and quality with no active harm; observability; adopter-facing features.
+     - **P3**: nice-to-have, docs polish, long-horizon.
+   - **Flag overlaps**: post one short comment on the newer or narrower issue ("Overlaps #X …"). Never close.
+   - **List likely-already-resolved issues** (a merged PR matches) for the orchestrator to verify and close with evidence.
+   - Output a **ranked queue**.
+2. **Orchestrator reviews the triage** (spot-check labels, especially P0/P1 and anything it downgraded) before acting on it.
+3. **Ranking rule** for the queue:
+   - Tier order: P0 → P1 → P2 → P3.
+   - Within a tier: (a) follow-ups of recently merged code; (b) machinery bugs other actors hit; (c) owner-directed work; (d) the rest, oldest first.
+   - **Aging**: an issue skipped for 3 consecutive cycles moves up one position group, so nothing starves.
+   - The owner's `prioritize #N` / `skip #N` override everything.
+4. **Exclude from picking**: `in-progress`, `blocked`, the owner-action label, issues with open PRs, and anything claimed by another actor.
+5. **Old roadmap epics** are rarely a cycle's unit. Triage them instead: close what's shipped with evidence, rescope the rest into concrete gaps, escalate direction questions to the owner.
+6. **Batch related small issues into one unit** (same files/area, one PR). Keep parallel units on **disjoint files**.
+7. **Close issues that are already resolved** with evidence (commands, versions, links) instead of re-doing them. Close deliberate non-goals with the decision and what was left out on purpose.
+8. **Claim** each picked issue with `in-progress`, and post `Cycle N — started` (usage before, picked + why, skipped + why).
+9. **Every follow-up the loop files** gets a priority label and `loop-followup` **at creation**. Never file an unranked issue.
 
 ## Phase 3: Dispatch workers
 
@@ -225,7 +256,7 @@ For every PR a worker reports ready:
 
 1. Usage after.
 2. File follow-ups for everything deliberately left out, anything found in review but out of scope, and anything observed but unexplained (e.g. an intermittent 403). **Don't claim a root cause you haven't proven.**
-3. Post `Cycle N — done` on the log issue with: usage before/after · picked + why · PRs + releases (with links) · outcome · review verdict (what the orchestrator caught) · non-green runs on main · restart-needed items · follow-ups filed · next.
+3. Post `Cycle N — done` on the log issue with: usage before/after · picked + why · PRs + releases (with links) · outcome · review verdict (what the orchestrator caught) · non-green runs on main · restart-needed items · follow-ups filed (with their P labels) · **the next top-5 queue with one-line reasons**, so the owner can reorder with `prioritize` / `skip` from a phone.
 4. Summarize the same in-session, with direct links.
 5. Schedule the next wakeup: if workers are running, a long fallback (≈30 min), because their completion notifications are the real wake signal. Otherwise start the next cycle now.
 
@@ -257,6 +288,7 @@ Anything only the owner can do becomes an issue labelled `owner_action_label` wi
 12. Usage unreadable means no new dispatch.
 13. Keep ≤2 parallel workers unless the work is trivially reviewable; review attention is the bottleneck.
 14. Record every owner direction on the log issue the moment it's given.
+15. Triage the whole backlog every cycle (issues from anyone, not just the loop's). Label every follow-up at birth, and rank by the rule, not by what's fresh in context.
 
 ## Verification checklist
 
@@ -265,4 +297,5 @@ Anything only the owner can do becomes an issue labelled `owner_action_label` wi
 - [ ] Every release claimed in the log is visible on its registry.
 - [ ] Every deliberate omission and review finding is merged, filed, or explicitly withdrawn with a reason.
 - [ ] A lessons-learned review ran at each interval, and its defects were filed or fixed.
+- [ ] Every open issue carries a priority label; every cycle comment shows the ranked top-5 queue.
 - [ ] The loop stopped (or will stop) at the budget cap with a final summary.
