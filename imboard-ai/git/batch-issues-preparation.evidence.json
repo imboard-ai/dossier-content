@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-issues-preparation",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "checksum": {
     "algorithm": "sha256",
     "hash": "a3d01505cf3f1a5efa39b4347ef499c0cfe98f903dc87727b7eaeefa03c7e107"
@@ -14,8 +14,7 @@
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "df2fa282-bc18-4ea8-b8a1-c7a0e047b8ab",
-          "host": "hcc"
+          "session": "df2fa282-bc18-4ea8-b8a1-c7a0e047b8ab"
         }
       ]
     },
@@ -26,8 +25,7 @@
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
-          "host": "hcc"
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6"
         }
       ]
     },
@@ -38,8 +36,7 @@
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
-          "host": "hcc"
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6"
         }
       ]
     }
