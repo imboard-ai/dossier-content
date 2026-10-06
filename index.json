@@ -1071,7 +1071,7 @@
     {
       "name": "imboard-ai/meta/publish-dossier",
       "title": "Publish an imboard-ai Dossier or Skill",
-      "version": "1.1.4",
+      "version": "1.1.5",
       "path": "imboard-ai/meta/publish-dossier.ds.md",
       "category": [
         "development",
@@ -1100,10 +1100,12 @@
         },
         {
           "name": "ssh",
-          "description": "To refresh sibling machines (wls, hcc, hcc2)",
+          "description": "To refresh sibling machines over ssh",
           "check_command": "ssh -V"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-06T06:16:52.212Z"
     },
     {
       "name": "imboard-ai/pm/feature-to-issues",
