@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.17.1",
+  "version": "3.17.2",
   "protocol_version": "1.0",
   "status": "Draft",
   "last_updated": "2026-10-06",
@@ -77,13 +77,13 @@
   "content_scope": "references-external",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "0ba9f60d6a674dac14e7419f0a8de9d3029b49e1140c156c613d0720241a78d9"
+    "hash": "d9f1055378a47e3f173cff740b54811a77fb9be4dff3ae906469cc2a028d15b1"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "PVChq0eB3Bl87MgZwmBT47+NCpGmGOhDMB6eafH3ALnoNWJcjpVXw9orQAZkLsWEcAVoXa76TrD+KqqqdasnBA==",
+    "signature": "HV838ZhbBF6793RzGFPyScKk3ARjaCEQyYzT/3pC9jRf+6cDZXAPInw1LAvBXo7arUS0odazg0pITVCRr2LtCw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-10-06T06:26:06.294Z",
+    "signed_at": "2026-10-06T22:46:19.316Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -148,7 +148,7 @@ Rules:
 - `run_id` is minted ONCE by gate-issue (`ai-dossier runstate mint --issue <issue_number>`) and passed to every later sub-dossier exactly like `base_branch`.
 - The CLI stamps `at=` and computes `next=`. Pass `--next` only where a sub-dossier overrides it — ship's first milestone uses `--next ship`.
 - Append-only. Readers take the LAST milestone (`ai-dossier runstate last --issue <n> --json`). Never edit or delete a prior milestone.
-- Values contain no spaces (use `-` or `,`); paths are absolute. The one exception is plan's `ac<n>=` criteria, quoted and verbatim.
+- Values contain no spaces (use `-` or `,`); paths are local: pass the worktree or repo path as you have it — `ai-dossier` ≥ 0.90.0 rewrites it to `<repo>/…` (or `<local>/<name>` outside the repo) before posting, so no home-directory path is ever published; read it back with `ai-dossier runstate verify --json` → `resolved_paths`, never by using the posted string as a local path. The one exception is plan's `ac<n>=` criteria, quoted and verbatim.
 - Posting the milestone is the last step of the phase. If a phase aborts, post `--status blocked --kv reason=<short-slug>` before stopping.
 
 Per-phase `--kv` keys:
@@ -156,8 +156,8 @@ Per-phase `--kv` keys:
 | phase | status | keys |
 |---|---|---|
 | gate | done / blocked | `base_branch=` `warnings=<n>` `model=<model id of the executing agent>` (blocked: `reason=closed\|decomposed\|needs-clarification\|epic\|open-dependency-<N>`) |
-| setup | done / blocked | `branch=` `worktree=<abs path>` `pool_claimed=true\|false` `base_branch=` `remote=pushed` |
-| plan | done / blocked | `planning=<abs path>` `head=<short sha of base at plan time>` `open_questions=<n>` `visual_review=true\|false` |
+| setup | done / blocked | `branch=` `worktree=<worktree path>` `pool_claimed=true\|false` `base_branch=` `remote=pushed` |
+| plan | done / blocked | `planning=<planning file path>` `head=<short sha of base at plan time>` `open_questions=<n>` `visual_review=true\|false` |
 | implement | done / blocked | `head=<short sha>` `files=<n>` `tests_added=<n>` `tests_run=<n>` `ci_parity=pass\|fail-then-fixed\|blocked-external\|skipped` |
 | review | done / partial / blocked | `head=` `fixed=<n>` `escalated=<n>` `tier=micro\|docs\|small\|full` `agents_done=<comma list>` `agents_pending=<comma list or none>` (lists cover only the tier's agents) `live=pass\|fail\|unverifiable\|n/a` `live_flows=<n>` (always present; `n/a`/`0` when Agent 8 did not run) `live_note=<slug>` (only when one applied) |
 | ship (1st, BEFORE the CI/merge wait) | awaiting-merge | `pr=<n>` `head=<pushed sha>` `ci_fix_attempts=0` |
@@ -180,7 +180,7 @@ Every phase that changes the working tree syncs to origin BEFORE posting its mil
 
 Phase order: gate → setup → plan → implement → review → ship → report. Skip every phase preceding `resume_from`.
 
-**Skipping setup**: take `branch`, `pool_claimed`, `base_branch` from `resume_context`, then `git fetch origin <branch>`. If the recorded `worktree=` path exists on THIS machine and its HEAD matches origin, `cd` in. Otherwise create one from the synced branch — `git worktree add <repo>/worktrees/<branch-slug> <branch>` (after `git branch --track <branch> origin/<branch>` if needed) — run the repo's warmup (pool claim does not apply to an existing branch; use the warmup_dossier or `pnpm install`+build equivalent), and `cd` in (hard gate `pwd | grep -q worktree` still applies). Uncommitted work does not exist by protocol; if an inherited worktree has local changes, commit and push them as `wip(recovered): [skip ci]` first. **Skipping plan**: take `planning` from `resume_context` (the planning-file check happens here, after the worktree is materialized — gate-issue Step 1.5). **Review with `agents_pending`** → run only those agents. **`ship-wait`** → ship Step 5 (CI wait) with `pr` from context; **`ship-teardown`** → ship Step 7 post-merge cleanup.
+**Skipping setup**: take `branch`, `pool_claimed`, `base_branch` from `resume_context`, then `git fetch origin <branch>`. If `resolved_paths.worktree` from `ai-dossier runstate verify --json` exists on THIS machine and its HEAD matches origin, `cd` in. Otherwise create one from the synced branch — `git worktree add <repo>/worktrees/<branch-slug> <branch>` (after `git branch --track <branch> origin/<branch>` if needed) — run the repo's warmup (pool claim does not apply to an existing branch; use the warmup_dossier or `pnpm install`+build equivalent), and `cd` in (hard gate `pwd | grep -q worktree` still applies). Uncommitted work does not exist by protocol; if an inherited worktree has local changes, commit and push them as `wip(recovered): [skip ci]` first. **Skipping plan**: take the planning file from `resolved_paths.planning` (not the posted `planning=` string) (the planning-file check happens here, after the worktree is materialized — gate-issue Step 1.5). **Review with `agents_pending`** → run only those agents. **`ship-wait`** → ship Step 5 (CI wait) with `pr` from context; **`ship-teardown`** → ship Step 7 post-merge cleanup.
 
 ## Prerequisites
 
