@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/fleet-cycle",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "checksum": {
     "algorithm": "sha256",
     "hash": "76863d05303c69d4cd2e9a62a1212529121b5a6403ca5556abd6b414298d76aa"
@@ -14,8 +14,7 @@
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "70692bc2-c309-4234-8c44-0557e7f633eb",
-          "host": "hcc"
+          "session": "70692bc2-c309-4234-8c44-0557e7f633eb"
         }
       ]
     }
