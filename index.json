@@ -239,7 +239,7 @@
     {
       "name": "imboard-ai/git/batch-integrate",
       "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-      "version": "1.6.1",
+      "version": "1.6.2",
       "path": "imboard-ai/git/batch-integrate.ds.md",
       "category": [
         "development",
@@ -258,7 +258,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-06T06:26:39.390Z"
     },
     {
       "name": "imboard-ai/git/batch-issues",
