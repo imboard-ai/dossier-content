@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "fleet-cycle",
   "title": "Fleet Cycle — Orchestrate Multiple Issues",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-29",
+  "last_updated": "2026-10-06",
   "objective": "Take a SET of GitHub issues to merged PRs by building a dependency-aware wave plan, dispatching full-cycle-issue runs across background agents (detached where the repo can merge a parked PR, attached otherwise), and supervising every PR through merge — serial, parallel, or mixed",
   "category": [
     "development"
@@ -97,9 +97,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "T7EQde3wPZ5acHFeo9Owul1A0fTnCBtD261aQeSeTZj08OE3pIWKBiBro5fuoADeQqnlpdIbn+cpYyZQFhosDg==",
+    "signature": "e8/49N80OA0sVh6PR6n0mBByXE9r8T+/5dpW2XeftCv5PtHBK4SNsBZhBlLb7ZSRJe01HTTer+46g1Ur1UP/Aw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T13:21:57.508Z",
+    "signed_at": "2026-10-06T06:26:01.930Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
