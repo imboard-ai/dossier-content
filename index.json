@@ -435,7 +435,7 @@
     {
       "name": "imboard-ai/git/gate-issue",
       "title": "Gate Issue — Pre-Flight Safety Check",
-      "version": "1.6.1",
+      "version": "1.6.2",
       "path": "imboard-ai/git/gate-issue.ds.md",
       "category": [
         "development"
@@ -451,7 +451,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-06T22:46:37.382Z"
     },
     {
       "name": "imboard-ai/git/git-sync",
