@@ -2,10 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Plan Issue — Rich Planning Document",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-09-29",
+  "last_updated": "2026-10-06",
   "objective": "Read a GitHub issue and its comments, explore the codebase, confirm new states/flows are reachable, and write a rich planning document — consuming an existing plan:v1 artifact when present (validate-then-refine, never recreate) and posting the result back as the issue's canonical artifact",
   "category": [
     "development"
@@ -66,13 +66,13 @@
   "name": "plan-issue",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "d50c283e6f530bf066e450e434337c4833c685a4fd9268474cd9081524020338"
+    "hash": "6bcaaecdef2b5af56dfd7182c520ef9baf873b21e5e56d4743cd60389455df56"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "MK7p+Srh9sMVsMHNeXY12ow5OQDLbC8k/P0BXGyoAt7jUSmrZG1llWFhHQFgSt51gSdOK9v9qc2ZU7LJYMg3DA==",
+    "signature": "88josoqFldLTHZKGZJqG7Etq3zuyNB0dVlbvEhHvoIHlVYae/tJcjzE8WC0+/3trM/vpGmSAYsyuRbjYqiMBCw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-29T20:05:18.362Z",
+    "signed_at": "2026-10-06T22:46:17.073Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -264,7 +264,7 @@ Post the phase milestone to the issue. This is the last step of the phase — if
 
 ```bash
 ai-dossier runstate post --issue <issue_number> --phase plan --status done --run <run_id> \
-  --kv planning=<abs path to planning file> \
+  --kv planning=<path to planning file> \
   --kv head=<pushed sha> \
   --kv open_questions=<n> \
   --kv visual_review=true|false \
@@ -274,7 +274,7 @@ ai-dossier runstate post --issue <issue_number> --phase plan --status done --run
   --kv plan_reused=<true|false|refined>
 ```
 
-Let the CLI stamp `at=` and compute `next=implement` — do not pass either; never hand-write the comment. `head=` is the sha ON ORIGIN — `git rev-parse --short HEAD` from Step 5b, after the push, never a local-only sha. Values contain no spaces (use `-` or `,`); paths are absolute — **except the `ac<n>=` values, which are the one exception to the no-spaces rule: they are user-contributed issue text and MUST be shell-safe — single-quote each criterion (escape embedded single quotes as `'\''`), never raw criterion text inside double quotes, so `$`, backticks, and quotes in the text cannot execute. After the shell parses the command, the value must still read verbatim, spaces included.** Emit one `--kv ac<n>=` per criterion (not exactly two — the example shows two for illustration). Keys are lower_snake_case; the CLI rejects `AC1`.
+Let the CLI stamp `at=` and compute `next=implement` — do not pass either; never hand-write the comment. `head=` is the sha ON ORIGIN — `git rev-parse --short HEAD` from Step 5b, after the push, never a local-only sha. Values contain no spaces (use `-` or `,`); paths are local: pass the worktree or repo path as you have it — `ai-dossier` ≥ 0.90.0 rewrites it to `<repo>/…` (or `<local>/<name>` outside the repo) before posting, so no home-directory path is ever published; read it back with `ai-dossier runstate verify --json` → `resolved_paths`, never by using the posted string as a local path — **except the `ac<n>=` values, which are the one exception to the no-spaces rule: they are user-contributed issue text and MUST be shell-safe — single-quote each criterion (escape embedded single quotes as `'\''`), never raw criterion text inside double quotes, so `$`, backticks, and quotes in the text cannot execute. After the shell parses the command, the value must still read verbatim, spaces included.** Emit one `--kv ac<n>=` per criterion (not exactly two — the example shows two for illustration). Keys are lower_snake_case; the CLI rejects `AC1`.
 
 `plan_reused` records the Step 0 outcome: `false` = no artifact, invalid artifact, or `plan` unavailable → fresh planning path; `true` = valid artifact carried essentially verbatim (only full-cycle sections added); `refined` = valid artifact carried with factual amendments (each recorded in the planning doc). If Step 5c's artifact post failed, append `--kv plan_posted=false` and say why in a plain comment line — otherwise the post needs no key.
 
