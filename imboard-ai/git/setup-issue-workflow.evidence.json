@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/setup-issue-workflow",
-  "version": "1.14.3",
+  "version": "1.14.4",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "19c3c39782762d3f5a32a0aaa94b19566429f896190613923b1dc3a3d3ce7ba2"
+    "hash": "1c7b87d0877bd1fdb646bb2153b33d2a933e9bee0d915621f79017f377738f84"
   },
   "entries": [
     {
