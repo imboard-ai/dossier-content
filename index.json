@@ -751,7 +751,7 @@
     {
       "name": "imboard-ai/git/ship-issue",
       "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-      "version": "1.18.1",
+      "version": "1.18.2",
       "path": "imboard-ai/git/ship-issue.ds.md",
       "category": [
         "development"
@@ -769,7 +769,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-06T06:16:57.766Z"
     },
     {
       "name": "imboard-ai/git/slot-cycle",
