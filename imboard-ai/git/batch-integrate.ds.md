@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-integrate",
   "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-29",
+  "last_updated": "2026-10-06",
   "objective": "Merge a batch's members onto its integration branch, run the batch gate (gate.batch when declared) once, repair mechanical failures, escalate semantic ones, never evict on an unreliable signal, run an interaction-only review when every member passed a full-tier review (else the full set plus the risk-floor review), push fixes before ONE foreground gate, refuse to ship unreviewed members, release claims, ship one PR",
   "category": [
     "development",
@@ -69,9 +69,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "h6OJ+WzF3aXJ8+9zWH69zYwa+JUC1IAnEnQs/W3r6Y6x5C0ndNq4zCzEIggoDmobOxWz3rv3qd7xhUlxeK4hBQ==",
+    "signature": "eQ4M4kbTJqUa5CtbReEH09uyFKED0e643+kY5OcCKwlNS1aGuxgrk+eqnfAgyCnH5aiNlg19UHg5ABOwOVFCAQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T19:06:47.699Z",
+    "signed_at": "2026-10-06T06:25:54.149Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
