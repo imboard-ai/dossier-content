@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "batch-issues-preparation",
   "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-29",
+  "last_updated": "2026-10-06",
   "objective": "Turn an issue list/range into admitted, classified, batched scheduler queue entries: free batch compose over the whole set first, body-readiness screen + backfill to min_members, decision-grade classify only admitted members, review-floor issues as review=full members (at most 2 per batch; over-cap picks held for the next run, slot backfilled light), no batch under 2 members, then anchor, audit, claim and enqueue with a per-member review level",
   "category": [
     "development"
@@ -80,9 +80,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "Y+pJNk6D7pl3TaIqBBap/WPPAaadxYO9Ux9/A3QR2hKJRC2zDlJ7lEmFf+bFHic5iW59HfdjUddmR8IjpxqVBg==",
+    "signature": "EMKyMVTQnSRDcRND2hdy2B5lO16j/458B05rsayftmfOB8/zqS3igPhYTNvHS5xj0KKtz2IqbJrnlmOd+Y3JDA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T19:06:49.876Z",
+    "signed_at": "2026-10-06T06:25:57.923Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
