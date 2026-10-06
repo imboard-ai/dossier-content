@@ -550,7 +550,7 @@
     {
       "name": "imboard-ai/git/issue-workflows-guide",
       "title": "Issue Workflows Guide",
-      "version": "1.6.0",
+      "version": "1.6.1",
       "path": "imboard-ai/git/issue-workflows-guide.ds.md",
       "category": [
         "documentation"
@@ -567,7 +567,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-06T06:27:00.805Z"
     },
     {
       "name": "imboard-ai/git/member-cycle",
