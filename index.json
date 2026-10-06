@@ -616,7 +616,7 @@
     {
       "name": "imboard-ai/git/plan-issue",
       "title": "Plan Issue — Rich Planning Document",
-      "version": "1.8.0",
+      "version": "1.8.1",
       "path": "imboard-ai/git/plan-issue.ds.md",
       "category": [
         "development"
@@ -633,7 +633,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-06T22:46:31.996Z"
     },
     {
       "name": "imboard-ai/git/pr-review",
