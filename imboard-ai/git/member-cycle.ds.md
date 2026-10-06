@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "member-cycle",
   "title": "Member Cycle — One Issue Inside a Batch, Verified Only Where It Is Cheap",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-29",
+  "last_updated": "2026-10-06",
   "objective": "Implement ONE issue in its own worktree off a shared integration branch, test it by relevance, review it at the level the scheduler assigned (review=full: full-cycle-grade, security included; review=light: at least the correctness reviewer — never zero agents), and hand over to a parent orchestrator that owns all expensive verification",
   "category": [
     "development"
@@ -75,9 +75,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "3hpQuqKfJogYSOYQtMQ4sVfzU6nImtN5EpwEhrnU9TamkAriCahcPB+hYqnWIWInNn4FqATWG3nQloWeqromAA==",
+    "signature": "lURmBynzAh+ONQ89gOAtCje8kkDDOea/gSk+pGXSt92uJCH7NsBQw50+cAlwTw6hEFdom4DhYsUEZlaKgRKQBA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T19:06:52.152Z",
+    "signed_at": "2026-10-06T06:26:14.169Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
