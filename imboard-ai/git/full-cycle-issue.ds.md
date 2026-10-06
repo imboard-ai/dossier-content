@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "full-cycle-issue",
   "title": "Full Cycle Issue Workflow",
-  "version": "3.17.0",
+  "version": "3.17.1",
   "protocol_version": "1.0",
   "status": "Draft",
-  "last_updated": "2026-09-29",
+  "last_updated": "2026-10-06",
   "objective": "Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report",
   "category": [
     "development"
@@ -81,9 +81,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "y85IQd26ToK47UIRFxyELLWB4XVYKtkU794T3wPiCt3yca4JkUkwigUlfJslx3igKH71cZdCHxGSY80iwNiaDQ==",
+    "signature": "PVChq0eB3Bl87MgZwmBT47+NCpGmGOhDMB6eafH3ALnoNWJcjpVXw9orQAZkLsWEcAVoXa76TrD+KqqqdasnBA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T13:21:55.214Z",
+    "signed_at": "2026-10-06T06:26:06.294Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
