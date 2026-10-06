@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.14.3",
+  "version": "1.14.4",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues: fetch issue details, create appropriately named branches, set up git worktrees with environment warmup (or claim from a pre-warmed pool), and generate planning files; in batch mode (batch_id) it creates the shared batch branch for the batch anchor instead",
@@ -80,13 +80,13 @@
   "last_updated": "2026-10-06",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "19c3c39782762d3f5a32a0aaa94b19566429f896190613923b1dc3a3d3ce7ba2"
+    "hash": "1c7b87d0877bd1fdb646bb2153b33d2a933e9bee0d915621f79017f377738f84"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "8x4R6fznIQXXYkcvnRqqMdkxm+VcdWm7rEfdcCgHIjUegSAJtxMjiUBdRRAh/atJdal79IQrOHs+wGSqmyM6Dw==",
+    "signature": "NPj9a2pnAY7FEApzcLljcqZBTYVV4y01tTWBE8ZC38ipDoH2/1qQTql1H9ffoT+esdbTee9qaqOklnz1ZtwSBg==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-10-06T06:26:22.235Z",
+    "signed_at": "2026-10-06T22:46:14.720Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -385,7 +385,7 @@ Post the phase milestone to the issue. This is the last step of the phase — if
 ai-dossier runstate post --issue <ANCHOR_NUMBER> --phase batch-setup --status done --run <run_id> \
   --kv batch=<batch_id> \
   --kv branch=<branch-name> \
-  --kv worktree=<absolute worktree path> \
+  --kv worktree=<worktree path> \
   --kv pool_claimed=true|false \
   --kv base_branch=<BASE_BRANCH> \
   --kv remote=pushed
@@ -398,13 +398,13 @@ ai-dossier runstate post --issue <ANCHOR_NUMBER> --phase batch-setup --status do
 ```bash
 ai-dossier runstate post --issue <NUMBER> --phase setup --status done --run <run_id> \
   --kv branch=<branch-name> \
-  --kv worktree=<absolute worktree path> \
+  --kv worktree=<worktree path> \
   --kv pool_claimed=true|false \
   --kv base_branch=<BASE_BRANCH> \
   --kv remote=pushed
 ```
 
-Let the CLI stamp `at=` and compute `next=plan` — do not pass either; never hand-write the comment. `pool_claimed=true` only when Step 5.1 claimed from the pool. In current-directory mode use the absolute repo root for `worktree`. Values contain no spaces (use `-` or `,`); paths are absolute. `remote=pushed` confirms the branch was pushed to origin (Step 5.1 pool-claim, Step 7 cold, Step 5b current-directory/custom-path) — do NOT commit anything in this phase, only publish the branch ref.
+Let the CLI stamp `at=` and compute `next=plan` — do not pass either; never hand-write the comment. `pool_claimed=true` only when Step 5.1 claimed from the pool. In current-directory mode use the repo root for `worktree`. Values contain no spaces (use `-` or `,`); paths are local: pass the worktree or repo path as you have it — `ai-dossier` ≥ 0.90.0 rewrites it to `<repo>/…` (or `<local>/<name>` outside the repo) before posting, so no home-directory path is ever published; read it back with `ai-dossier runstate verify --json` → `resolved_paths`, never by using the posted string as a local path. `remote=pushed` confirms the branch was pushed to origin (Step 5.1 pool-claim, Step 7 cold, Step 5b current-directory/custom-path) — do NOT commit anything in this phase, only publish the branch ref.
 
 ## Validation
 
