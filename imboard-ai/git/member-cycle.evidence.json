@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/member-cycle",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "checksum": {
     "algorithm": "sha256",
     "hash": "b71bb8454b5dddad85bffa7964b289a40c8ee12c198dfb5e62a317b8f52925ee"
@@ -14,8 +14,7 @@
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
-          "host": "hcc"
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6"
         }
       ]
     }
