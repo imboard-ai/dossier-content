@@ -3,10 +3,10 @@
   "dossier_schema_version": "1.0.0",
   "name": "gate-issue",
   "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-08-29",
+  "last_updated": "2026-10-06",
   "objective": "Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow; recognizes classify, slot-mode, and batch-anchor runstate trails so a full-cycle run never resumes into a nonexistent batch",
   "category": [
     "development"
@@ -50,13 +50,13 @@
   ],
   "checksum": {
     "algorithm": "sha256",
-    "hash": "fba1e5ce8e28e4c2811b4b93f29e362b21c04a385e5c8ae01059941b89f06a14"
+    "hash": "2e4685022c2021cebd789bc276c14b4f5dba3abe13ce2bcbaf31a7d910161b38"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "Ooww3tkm1aHD/HROEGK8Xx2YcO9BM1fISLL+kMfnVvBvnkb+NGkrBNyyyDOx1wJ6xXcDzbLqmootLM4PWh4oBA==",
+    "signature": "BWFDKuH3UsAMorvS7DIU5fj20j2ElV25UeJy3t3AwT0XmeI4l7CNG8v2zSe88zUxtr+DEfwyFdShacSDQac7Ag==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-29T18:21:27.060Z",
+    "signed_at": "2026-10-06T22:46:21.712Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
@@ -143,7 +143,7 @@ The three fresh-entry rows outrank the blocked row — a `status=blocked` slot-m
 
 The planning-file check (`test -f <planning>`) is not in this table — it happens AFTER the worktree is materialized, in full-cycle-issue's "## Resuming", since the worktree may not exist on this machine yet.
 
-When the last milestone carried a `worktree=` path, also check `test -d <worktree>` on this machine and report `local_worktree=present|absent`. Informational only — it never changes the `resume_from` decision, since the remote check is authoritative.
+When the last milestone carried a `worktree=` value, also check `test -d` on the locally resolved path (`resolved_paths.worktree` from `runstate verify --json`; posted values are `<repo>/…` forms, not local paths) and report `local_worktree=present|absent`. Informational only — it never changes the `resume_from` decision, since the remote check is authoritative.
 
 **Loop cap**: if the last THREE runstate milestones are all `status=blocked` on the same phase, hard block with `reason=resume-loop` — add label `decision-pending`, post the abort comment (Step 2), and stop.
 
@@ -249,7 +249,7 @@ Let the CLI stamp `at=` and compute `next=` (here `setup`) — do not pass eithe
 - `resume_from`: phase to resume from, or `none` for a fresh run
 - `resume_context`: parsed key=value lines of the last runstate milestone, for later phases to consume
 - `slot_trail`: true when the prior trail was slot-mode (fresh entry — never a resume; pass the pointer keys to plan so it reads the prior trail's plan artifact + failure evidence)
-- `local_worktree`: `present` | `absent` | `n/a` — whether the `worktree=` path from resume_context exists on this machine (informational; remote is authoritative)
+- `local_worktree`: `present` | `absent` | `n/a` — whether the locally resolved `worktree` path (`resolved_paths.worktree`) exists on this machine (informational; remote is authoritative)
 - Posts runstate milestone to the issue (`phase=gate`)
 
 ## Validation
