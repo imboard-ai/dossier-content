@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/issue-workflows-guide",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "checksum": {
     "algorithm": "sha256",
     "hash": "4cc19d5b0b729240bf53eab378600a93bfbcee8d64e30c662fd9f83d1c99269c"
@@ -14,8 +14,7 @@
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "c7bed163-2a0a-4a39-91d9-72256ca56f5c",
-          "host": "hcc"
+          "session": "c7bed163-2a0a-4a39-91d9-72256ca56f5c"
         }
       ]
     }
