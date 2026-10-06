@@ -4,7 +4,7 @@
   "protocol_version": "1.0",
   "name": "publish-dossier",
   "title": "Publish an imboard-ai Dossier or Skill",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "status": "Stable",
   "last_updated": "2026-10-06",
   "objective": "Edit, sign with the team key, lint, verify and publish a dossier or skill to the imboard-ai registry namespace, then refresh every machine — the exact recipe, so no agent rediscovers the signing and login walls",
@@ -83,9 +83,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "o0yLwmy/ovwsy61rmn7H/uzHxvH5wg7HzVU/nJ2H04TMd7tQY5H4kY7noONFWCWGGoq9XCp30mY+B9yk6ythCw==",
+    "signature": "zMMDzGj6n2tLXsapWPaUPUkxd4CCJsjaMbU4E5s3TiwFjEs+rnqLAguWqGAwHxTkwVGyQmITClnspe2OnIPlCQ==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-10-06T06:16:38.417Z",
+    "signed_at": "2026-10-06T06:26:26.237Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
