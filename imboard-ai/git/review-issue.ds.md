@@ -2,10 +2,10 @@
 {
   "dossier_schema_version": "1.0.0",
   "title": "Review Issue — Parallel Code Review",
-  "version": "1.17.1",
+  "version": "1.17.2",
   "protocol_version": "1.0",
   "status": "Stable",
-  "last_updated": "2026-09-29",
+  "last_updated": "2026-10-06",
   "objective": "Run a tiered set of report-only review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract, Conformance, Visual Conformance) on the branch diff, run a validity gate, then apply surviving fixes serially; in aggregate mode (batch_id set), review the combined batch diff once — interaction-only (one agent) when every member already passed a full-tier review, the full dimension set otherwise — and push fixes before ONE foreground gate",
   "category": [
     "development"
@@ -86,9 +86,9 @@
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "IuqwWt7JFT08AE04dL0iIdpg0uusPtHgSSxFzP1Z6OP0x7k0Zv488rwUvCfPFO/La2IeWV6A9Wah4q05oAS3BQ==",
+    "signature": "j+fV72wzObzYRdCB5AbjDV2Vkn9dW+cBkz1z79baWM+eD8EOtXlUjBg1f2hoRHuK13busIvUYgo8r2CGFoN+AA==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T15:23:06.684Z",
+    "signed_at": "2026-10-06T06:26:18.055Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
