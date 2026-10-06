@@ -3,7 +3,7 @@
   "dossier_schema_version": "1.0.0",
   "name": "setup-issue-workflow",
   "title": "Setup Issue Workflow",
-  "version": "1.14.2",
+  "version": "1.14.3",
   "protocol_version": "1.0",
   "status": "Stable",
   "objective": "Create a workflow for GitHub issues: fetch issue details, create appropriately named branches, set up git worktrees with environment warmup (or claim from a pre-warmed pool), and generate planning files; in batch mode (batch_id) it creates the shared batch branch for the batch anchor instead",
@@ -77,16 +77,16 @@
   "risk_factors": [
     "network_access"
   ],
-  "last_updated": "2026-09-24",
+  "last_updated": "2026-10-06",
   "checksum": {
     "algorithm": "sha256",
     "hash": "19c3c39782762d3f5a32a0aaa94b19566429f896190613923b1dc3a3d3ce7ba2"
   },
   "signature": {
     "algorithm": "ed25519",
-    "signature": "c/D/MpAiSOaMNcVmW4WHbx1rtrCJfSPv93o9ADfRQHLCm/F6QnJm/4BNhilIdVvpYmaJ31w/WCiIOhgUGkCaBA==",
+    "signature": "8x4R6fznIQXXYkcvnRqqMdkxm+VcdWm7rEfdcCgHIjUegSAJtxMjiUBdRRAh/atJdal79IQrOHs+wGSqmyM6Dw==",
     "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-23T21:24:38.331Z",
+    "signed_at": "2026-10-06T06:26:22.235Z",
     "covers": "frontmatter+body",
     "key_id": "imboard-ai",
     "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
