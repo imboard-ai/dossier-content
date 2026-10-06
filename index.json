@@ -757,7 +757,7 @@
     {
       "name": "imboard-ai/git/setup-issue-workflow",
       "title": "Setup Issue Workflow",
-      "version": "1.14.3",
+      "version": "1.14.4",
       "path": "imboard-ai/git/setup-issue-workflow.ds.md",
       "category": [
         "development"
@@ -768,7 +768,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-06T06:27:18.173Z"
+      "published_at": "2026-10-06T22:47:09.041Z"
     },
     {
       "name": "imboard-ai/git/ship-issue",
