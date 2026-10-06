@@ -408,7 +408,7 @@
     {
       "name": "imboard-ai/git/full-cycle-issue",
       "title": "Full Cycle Issue Workflow",
-      "version": "3.17.0",
+      "version": "3.17.1",
       "path": "imboard-ai/git/full-cycle-issue.ds.md",
       "category": [
         "development"
@@ -426,7 +426,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-06T06:26:55.241Z"
     },
     {
       "name": "imboard-ai/git/gate-issue",
