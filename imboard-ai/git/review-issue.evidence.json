@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/review-issue",
-  "version": "1.17.1",
+  "version": "1.17.2",
   "checksum": {
     "algorithm": "sha256",
     "hash": "fddb5c4e59968060bd473c1d2d5c559da383da372723ef5f5bf613dcbbd6424c"
@@ -14,8 +14,7 @@
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
-          "host": "hcc"
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6"
         }
       ]
     },
@@ -26,8 +25,7 @@
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6",
-          "host": "hcc"
+          "session": "e529de77-f8f1-4580-9264-12c09cd46cb6"
         }
       ]
     }
