@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/meta/publish-dossier",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "checksum": {
     "algorithm": "sha256",
     "hash": "4f0a7985b23a992fe9a244da35feadde9bb7b65314401bbb730636e4e0c05b23"
