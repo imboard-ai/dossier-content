@@ -1,37 +1,19 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "today-summary-skill",
-  "title": "Today's Work Summary",
-  "version": "1.0.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Generate a summary of today's development work",
-  "description": "Summarize today's work based on git commits and file changes. Use when user asks \"what did I do today\", \"daily summary\", \"today's progress\", or \"end of day report\".",
-  "category": [
-    "skills"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "61f6f93fd2271af2c845916549958626410da91bd63a5c6d67c2604230efcbe6"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "+aIzOKL0cuQzIgEqQdxX/CpaRToIafRr1nB92Z3pzPgD4CLOOHWzXUJt4TeR7u2ufHmq+enQI0pxA83HKoCpBQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:24.191Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'today-summary-skill'
+description: 'Summarize today''s work based on git commits and file changes. Use when user asks "what did I do today", "daily summary", "today''s progress", or "end of day report".'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Today''s Work Summary'
+  dossier.version: '1.0.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Generate a summary of today''s development work'
+  dossier.category: '["skills"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"abae09c36f7233084fad58be7c79bfa5dcebfcc40e0e5a7c50f15419375cbb91"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"OLqDLhhGi5tm3c6xQz5iDy3mdrqHUm2dkr7LV9rgiNop4RdVhwwtBePsOH4+Q+a8wmWYQ71jfNbbALHjH7MOAA==","signed_at":"2026-10-07T12:02:23.330Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Today's Work Summary
