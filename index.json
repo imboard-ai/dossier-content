@@ -1475,8 +1475,9 @@
     {
       "name": "imboard-ai/setup/setup-tracing",
       "title": "Setup Tracing",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/setup/setup-tracing.ds.md",
+      "description": "Turn on execution tracing for dossier runs by writing a tracing block to the user (or project) Dossier config. After this dossier runs, `mcp-server` will start emitting traces to the configured registry on every journey, with no further setup required.",
       "category": [
         "setup",
         "monitoring"
@@ -1487,7 +1488,9 @@
         "mcp",
         "observability"
       ],
-      "tools_required": []
+      "tools_required": [],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:05:20.924Z"
     },
     {
       "name": "imboard-ai/skills/autopilot-loop-skill",
