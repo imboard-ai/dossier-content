@@ -1,45 +1,23 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "protocol_version": "1.0",
-  "risk_level": "low",
-  "requires_approval": false,
-  "risk_factors": [
-    "modifies_files"
-  ],
-  "category": [
-    "documentation"
-  ],
-  "tags": [
-    "meta",
-    "authoring",
-    "dossier"
-  ],
-  "content_scope": "self-contained",
-  "last_updated": "2026-08-14",
-  "name": "create-dossier",
-  "title": "Create New Dossier",
-  "version": "1.2.0",
-  "status": "Stable",
-  "objective": "Guide an agent to create well-structured dossier markdown files that other agents will execute successfully",
-  "authors": [
-    {
-      "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "0c1c5cef81cf23d01e14daae38784f005f735f1800ae0b05e7ced953b2566003"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "oY1BK3GivPlfmwTUCKcB+aDnKCSBKNNHXArXfqRohoKRaZWcWFAfXrgN8aLDZ9LdEqPvjlq8ghMCvcQkUr48Dg==",
-    "public_key": "AL0Qv7hVlFUkPkb5g3YKy6C2SDgwjbreJAHOI/Ht37s=",
-    "signed_at": "2026-08-14T08:35:04.745Z",
-    "covers": "frontmatter+body",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'create-dossier'
+description: 'Guide an agent to create well-structured dossier markdown files that other agents will execute successfully'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Create New Dossier'
+  dossier.version: '1.2.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.last_updated: '2026-08-14'
+  dossier.objective: 'Guide an agent to create well-structured dossier markdown files that other agents will execute successfully'
+  dossier.category: '["documentation"]'
+  dossier.tags: '["meta","authoring","dossier"]'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["modifies_files"]'
+  dossier.requires_approval: 'false'
+  dossier.content_scope: 'self-contained'
+  dossier.authors: '[{"name":"Yuval Dimnik <yuval.dimnik@gmail.com>"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"0c1c5cef81cf23d01e14daae38784f005f735f1800ae0b05e7ced953b2566003"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"YhMd0PvAdycc2Zot+uJuiL/QxREqNiVnPlXml4/c3NB5vEEgVa7ZytiPYDywoUXylbpL1IrKGTqwobelodx5CA==","signed_at":"2026-10-07T12:03:36.041Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Create New Dossier
