@@ -59,7 +59,7 @@
     {
       "name": "imboard-ai/agent-discovery-skill",
       "title": "Agent Discovery Scaffold",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/agent-discovery-skill.ds.md",
       "description": "Generate AGENTS.md and module catalog so external AI agents can discover project capabilities without full exploration. Use when user says 'make project discoverable', 'agent discovery', 'generate AGENTS.md', 'document for agents', 'create project manifest'.",
       "category": [
@@ -75,7 +75,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:56:16.796Z"
     },
     {
       "name": "imboard-ai/devops/provision-arm-vps",
