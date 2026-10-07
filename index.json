@@ -964,8 +964,9 @@
     {
       "name": "imboard-ai/git/watch-task",
       "title": "Watch Task — Armed Watchdog on a Long-Running Task",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/git/watch-task.ds.md",
+      "description": "Keep an agent attached to a long-running task until a terminal state — every wait is an armed watch (blocking loop, harness monitor, or verified scheduled wakeup), with stall detection and bounded recovery, so no time is lost to waits that nothing ever wakes",
       "category": [
         "development"
       ],
@@ -982,7 +983,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:02:45.952Z"
     },
     {
       "name": "imboard-ai/git/worktree-pool",
