@@ -356,8 +356,9 @@
     {
       "name": "imboard-ai/git/docs-drift-check",
       "title": "Docs/README Drift Check",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/git/docs-drift-check.ds.md",
+      "description": "Detect documentation drift from code and propose fixes",
       "category": [
         "development"
       ],
@@ -365,7 +366,9 @@
         {
           "name": "yuvaldim"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:58:23.951Z"
     },
     {
       "name": "imboard-ai/git/finish-issue-skill",
