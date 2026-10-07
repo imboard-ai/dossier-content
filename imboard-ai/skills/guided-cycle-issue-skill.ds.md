@@ -1,44 +1,20 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "guided-cycle-issue-skill",
-  "title": "Guided Cycle Issue",
-  "version": "1.2.3",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Collaborative issue workflow: plan with user review, implement, optional visual review for FE changes, then autonomous ship and rich report",
-  "description": "Collaborative issue workflow with plan review and optional visual review. Use when user says 'guided cycle', 'plan issue', 'lets discuss issue', 'work on issue with review', 'guided issue'",
-  "category": [
-    "skills"
-  ],
-  "tags": [
-    "github",
-    "workflow",
-    "collaborative",
-    "skill",
-    "issue"
-  ],
-  "risk_level": "high",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "3744d9db25ee34a039e97fb29f5e71cabb8040edd1c6b5a9f0c8e79645387332"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "EyJTX6/FPZ8DP67kqaFyvm6cK3gtjb0+09HVjeuaLYQ5q/bfLzsrQYmF2A38IRUAmYGaF/3zpJqWoKIfp5OPCg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T08:19:52.765Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'guided-cycle-issue-skill'
+description: 'Collaborative issue workflow with plan review and optional visual review. Use when user says ''guided cycle'', ''plan issue'', ''lets discuss issue'', ''work on issue with review'', ''guided issue'''
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Guided Cycle Issue'
+  dossier.version: '1.2.4'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Collaborative issue workflow: plan with user review, implement, optional visual review for FE changes, then autonomous ship and rich report'
+  dossier.category: '["skills"]'
+  dossier.tags: '["github","workflow","collaborative","skill","issue"]'
+  dossier.risk_level: 'high'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"3744d9db25ee34a039e97fb29f5e71cabb8040edd1c6b5a9f0c8e79645387332"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"tEkyApfywBMWKahWMrIhi7TCWkY4ku022ofIC8wTbYLZ1/4S4J875d5I1h7E+7wnBcQ8ct+IAdsGe2+byXoxCQ==","signed_at":"2026-10-07T12:06:10.226Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Guided Cycle Issue
