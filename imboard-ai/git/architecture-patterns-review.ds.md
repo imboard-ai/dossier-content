@@ -1,36 +1,19 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "architecture-patterns-review",
-  "title": "Architecture & Pattern Consistency",
-  "version": "1.1.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Identify inconsistent patterns, duplicate approaches, and architectural drift in the codebase",
-  "category": [
-    "development"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "c59dd25df423be177ffe09312b433167587d232242ac9de02d3c70d870273e9c"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "QLn5Rdy3clb8ClvAVUVZk2iyrGoODY0aX8wT77e/uG8SXJSDXTRgu2Z2wq0LtDAvpXlO9p1mxQidWa7HWRMFAg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T06:56:02.438Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'architecture-patterns-review'
+description: 'Identify inconsistent patterns, duplicate approaches, and architectural drift in the codebase'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Architecture & Pattern Consistency'
+  dossier.version: '1.1.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Identify inconsistent patterns, duplicate approaches, and architectural drift in the codebase'
+  dossier.category: '["development"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik <yuval.dimnik@gmail.com>"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"9046a6e7f667accb75d858ccfa8e74b32a6f02ef6b839496a69d8dccd8586b53"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"Esiev3Icq3S1leUkK27Aul04Qm2GfnbIr4IUQWlvMm9YghdGQV6mavEVUYTjTplV53y1imbpSu3O6g6YAI7ABw==","signed_at":"2026-10-07T11:57:21.068Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Architecture & Pattern Consistency Analysis
