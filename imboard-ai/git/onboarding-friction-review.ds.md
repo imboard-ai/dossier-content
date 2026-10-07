@@ -1,36 +1,19 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "onboarding-friction-review",
-  "title": "Onboarding Friction Assessment",
-  "version": "1.1.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Identify pain points and confusion points for new contributors trying to understand and work with the project",
-  "category": [
-    "development"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "4463b197f53e8ef7562c10cd297dc930c28394825f78a9497dd95fe07a14e744"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "4uOT0g13s7ETD89b1TWdq8GoJT+YjTmSI041NXoQCKn8LxNbDJBKChXnIdvQ39LRmPj5ab/YYtZUyNETKWrFCQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T06:56:08.194Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'onboarding-friction-review'
+description: 'Identify pain points and confusion points for new contributors trying to understand and work with the project'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Onboarding Friction Assessment'
+  dossier.version: '1.1.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Identify pain points and confusion points for new contributors trying to understand and work with the project'
+  dossier.category: '["development"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik <yuval.dimnik@gmail.com>"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"26109b5cb5e9de1f7b8a12fbe40cf03ac405e08fb1fc9710011e6b9fe57693a4"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"gRxbax0YM12FQE8hSb+AYvuAPG9Pat8BB43MFqfnqbZfpNOdYvymDxmmJghUZTKXOESKOKtyJWnlTidt2WWrBw==","signed_at":"2026-10-07T12:00:22.089Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Onboarding Friction Assessment
