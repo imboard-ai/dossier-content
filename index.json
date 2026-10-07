@@ -906,8 +906,9 @@
     {
       "name": "imboard-ai/git/test-coverage-gap-analysis",
       "title": "Test Coverage Gap Analysis",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "path": "imboard-ai/git/test-coverage-gap-analysis.ds.md",
+      "description": "Analyze test files against project structure to identify untested code paths, controllers, routes, and functions. Supports Jest, Mocha, Vitest, and other test frameworks.",
       "category": [
         "development"
       ],
@@ -915,7 +916,9 @@
         {
           "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:02:18.562Z"
     },
     {
       "name": "imboard-ai/git/today-summary-skill",
