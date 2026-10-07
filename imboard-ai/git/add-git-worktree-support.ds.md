@@ -1,223 +1,33 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "add-git-worktree-support",
-  "title": "Add Git Worktree Support to Project",
-  "version": "1.3.0",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "last_updated": "2026-04-06",
-  "objective": "Restructure a git project to support git worktrees by moving repository contents into a main/ subdirectory with a sibling worktrees/ directory for feature branches",
-  "category": [
-    "development",
-    "git",
-    "workflow"
-  ],
-  "tags": [
-    "git",
-    "worktrees",
-    "workflow",
-    "organization",
-    "development-setup"
-  ],
-  "tools_required": [
-    {
-      "name": "git",
-      "version": ">=2.5.0",
-      "check_command": "git --version",
-      "install_url": "https://git-scm.com/downloads"
-    }
-  ],
-  "estimated_duration": {
-    "min_minutes": 5,
-    "max_minutes": 15
-  },
-  "risk_level": "high",
-  "risk_factors": [
-    "modifies_directory_structure",
-    "network_access"
-  ],
-  "requires_approval": true,
-  "destructive_operations": [
-    "Moves all repository files into a new subdirectory (main/)",
-    "Changes working directory structure",
-    "Creates worktrees/ directory for feature branches",
-    "May break tools/scripts with hardcoded paths"
-  ],
-  "prerequisites": [
-    {
-      "description": "Must be in a git repository",
-      "check": "git rev-parse --git-dir"
-    },
-    {
-      "description": "All work must be pushed to remote",
-      "check": "git status",
-      "severity": "critical"
-    },
-    {
-      "description": "Working directory should be clean (no uncommitted changes)",
-      "check": "git status --porcelain",
-      "severity": "critical"
-    },
-    {
-      "description": "Repository should be backed up (cloud or external)",
-      "severity": "critical"
-    }
-  ],
-  "inputs": {
-    "required": [],
-    "optional": [
-      {
-        "name": "main_directory_name",
-        "description": "Name for the main worktree directory",
-        "type": "string",
-        "default": "main",
-        "example": "main"
-      }
-    ]
-  },
-  "outputs": {
-    "files": [
-      {
-        "path": "main/",
-        "description": "All repository contents moved into this subdirectory"
-      },
-      {
-        "path": ".git",
-        "description": "Git pointer file at parent directory (gitdir: main/.git)"
-      },
-      {
-        "path": "worktrees/",
-        "description": "Directory for feature/bugfix worktrees (sibling to main/)"
-      }
-    ],
-    "configuration": [
-      {
-        "type": "directory_structure",
-        "description": "Parent directory structure ready for multiple worktrees",
-        "key": "directory_structure"
-      },
-      {
-        "type": "git_config",
-        "description": "core.worktree set to absolute path of main/ so git works from parent",
-        "key": "git_config"
-      }
-    ]
-  },
-  "relationships": {
-    "followed_by": [
-      {
-        "dossier": "create-feature-worktree",
-        "condition": "suggested",
-        "purpose": "Create your first feature worktree after setup"
-      }
-    ]
-  },
-  "validation": {
-    "success_criteria": [
-      "Main worktree subdirectory exists",
-      "Git repository exists in main subdirectory",
-      "Parent .git file exists and points to main/.git",
-      "Git works from parent directory (core.worktree set correctly)",
-      "worktrees/ directory exists",
-      "Git still functions correctly from main/",
-      "Can create and remove a test worktree"
-    ],
-    "verification_commands": [
-      {
-        "command": "test -d main",
-        "expected": "exits 0",
-        "description": "Main worktree subdirectory exists"
-      },
-      {
-        "command": "test -d main/.git",
-        "expected": "exits 0",
-        "description": "Git repository exists in main subdirectory"
-      },
-      {
-        "command": "test -f .git && grep -q 'gitdir: main/.git' .git",
-        "expected": "exits 0",
-        "description": "Parent .git file exists and points to main/.git"
-      },
-      {
-        "command": "git status --porcelain | wc -l | grep -q '^0$'",
-        "expected": "exits 0",
-        "description": "Git works from parent directory (core.worktree set correctly)"
-      },
-      {
-        "command": "test -d worktrees",
-        "expected": "exits 0",
-        "description": "worktrees/ directory exists"
-      },
-      {
-        "command": "cd main && git status",
-        "expected": "exits 0",
-        "description": "Git still functions correctly from main/"
-      },
-      {
-        "command": "cd main && git worktree add ../worktrees/test-worktree && git worktree remove ../worktrees/test-worktree",
-        "expected": "exits 0",
-        "description": "Can create and remove a test worktree"
-      }
-    ]
-  },
-  "rollback": {
-    "supported": true,
-    "instructions": "Move all contents from main/ back to parent directory and delete the empty main/ directory"
-  },
-  "mcp_integration": {
-    "required": false,
-    "server_name": "@dossier/mcp-server",
-    "min_version": "1.0.0",
-    "features_used": [
-      "verify_dossier",
-      "dossier://security"
-    ],
-    "fallback": "manual_execution",
-    "benefits": [
-      "Automatic security verification for high-risk file restructuring",
-      "Signature validation for trusted workflow changes",
-      "Clear risk assessment before modifying directory structure"
-    ]
-  },
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "87d37294f757375d823b0e4b496a4c2b2256bb62ccafef77e16a363cf3581725"
-  },
-  "external_references": [
-    {
-      "url": "https://git-scm.com/docs/git-worktree",
-      "description": "Official git-worktree documentation",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://www.gitkraken.com/learn/git/git-worktree",
-      "description": "Third-party explainer on git worktrees",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://spin.atomicobject.com/2016/06/26/parallelize-development-git-worktrees/",
-      "description": "Article on parallelising development with worktrees",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    }
-  ],
-  "content_scope": "references-external",
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "SYniAdL4FAPUHe7L/LXafSGLYXpprZ32q81C4/3x+LzNUL+63DJ3/I4y0UBvfjS5H8Z/LcaTZUd1sdsCXRTPDQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T08:19:00.640Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'add-git-worktree-support'
+description: 'Restructure a git project to support git worktrees by moving repository contents into a main/ subdirectory with a sibling worktrees/ directory for feature branches'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Add Git Worktree Support to Project'
+  dossier.version: '1.3.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.last_updated: '2026-04-06'
+  dossier.objective: 'Restructure a git project to support git worktrees by moving repository contents into a main/ subdirectory with a sibling worktrees/ directory for feature branches'
+  dossier.category: '["development","git","workflow"]'
+  dossier.tags: '["git","worktrees","workflow","organization","development-setup"]'
+  dossier.tools_required: '[{"check_command":"git --version","install_url":"https://git-scm.com/downloads","name":"git","version":">=2.5.0"}]'
+  dossier.estimated_duration: '{"max_minutes":15,"min_minutes":5}'
+  dossier.risk_level: 'high'
+  dossier.risk_factors: '["modifies_directory_structure","network_access"]'
+  dossier.requires_approval: 'true'
+  dossier.destructive_operations: '["Moves all repository files into a new subdirectory (main/)","Changes working directory structure","Creates worktrees/ directory for feature branches","May break tools/scripts with hardcoded paths"]'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Official git-worktree documentation","required":false,"trust_level":"trusted","type":"documentation","url":"https://git-scm.com/docs/git-worktree"},{"description":"Third-party explainer on git worktrees","required":false,"trust_level":"trusted","type":"documentation","url":"https://www.gitkraken.com/learn/git/git-worktree"},{"description":"Article on parallelising development with worktrees","required":false,"trust_level":"trusted","type":"documentation","url":"https://spin.atomicobject.com/2016/06/26/parallelize-development-git-worktrees/"}]'
+  dossier.prerequisites: '[{"check":"git rev-parse --git-dir","description":"Must be in a git repository"},{"check":"git status","description":"All work must be pushed to remote","severity":"critical"},{"check":"git status --porcelain","description":"Working directory should be clean (no uncommitted changes)","severity":"critical"},{"description":"Repository should be backed up (cloud or external)","severity":"critical"}]'
+  dossier.inputs: '{"optional":[{"default":"main","description":"Name for the main worktree directory","example":"main","name":"main_directory_name","type":"string"}],"required":[]}'
+  dossier.outputs: '{"configuration":[{"description":"Parent directory structure ready for multiple worktrees","key":"directory_structure","type":"directory_structure"},{"description":"core.worktree set to absolute path of main/ so git works from parent","key":"git_config","type":"git_config"}],"files":[{"description":"All repository contents moved into this subdirectory","path":"main/"},{"description":"Git pointer file at parent directory (gitdir: main/.git)","path":".git"},{"description":"Directory for feature/bugfix worktrees (sibling to main/)","path":"worktrees/"}]}'
+  dossier.relationships: '{"followed_by":[{"condition":"suggested","dossier":"create-feature-worktree","purpose":"Create your first feature worktree after setup"}]}'
+  dossier.validation: '{"success_criteria":["Main worktree subdirectory exists","Git repository exists in main subdirectory","Parent .git file exists and points to main/.git","Git works from parent directory (core.worktree set correctly)","worktrees/ directory exists","Git still functions correctly from main/","Can create and remove a test worktree"],"verification_commands":[{"command":"test -d main","description":"Main worktree subdirectory exists","expected":"exits 0"},{"command":"test -d main/.git","description":"Git repository exists in main subdirectory","expected":"exits 0"},{"command":"test -f .git && grep -q ''gitdir: main/.git'' .git","description":"Parent .git file exists and points to main/.git","expected":"exits 0"},{"command":"git status --porcelain | wc -l | grep -q ''^0$''","description":"Git works from parent directory (core.worktree set correctly)","expected":"exits 0"},{"command":"test -d worktrees","description":"worktrees/ directory exists","expected":"exits 0"},{"command":"cd main && git status","description":"Git still functions correctly from main/","expected":"exits 0"},{"command":"cd main && git worktree add ../worktrees/test-worktree && git worktree remove ../worktrees/test-worktree","description":"Can create and remove a test worktree","expected":"exits 0"}]}'
+  dossier.rollback: '{"instructions":"Move all contents from main/ back to parent directory and delete the empty main/ directory","supported":true}'
+  dossier.mcp_integration: '{"benefits":["Automatic security verification for high-risk file restructuring","Signature validation for trusted workflow changes","Clear risk assessment before modifying directory structure"],"fallback":"manual_execution","features_used":["verify_dossier","dossier://security"],"min_version":"1.0.0","required":false,"server_name":"@dossier/mcp-server"}'
+  dossier.checksum: '{"algorithm":"sha256","hash":"87d37294f757375d823b0e4b496a4c2b2256bb62ccafef77e16a363cf3581725"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"6Dgq0dMiK36wJIMy9WLk+plicCx5TYtBt+LLpPJy2hpq3igbF3KTuYak/us6TqCAp75Oo7BPcE+t5gNhmknvAQ==","signed_at":"2026-10-07T11:57:12.285Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 # Dossier: Add Git Worktree Support to Project
 
