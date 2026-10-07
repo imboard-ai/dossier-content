@@ -229,8 +229,9 @@
     {
       "name": "imboard-ai/git/autopilot-loop",
       "title": "Autopilot Loop — Unattended, Budget-Gated Backlog Orchestration",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "path": "imboard-ai/git/autopilot-loop.ds.md",
+      "description": "Progress a repository's GitHub backlog unattended for hours: each self-paced cycle checks a usage budget, picks the highest-value unit of work, dispatches cheaper worker agents that take it to a green-CI PR, reviews and merges it as the orchestrator, verifies releases, files follow-ups, and logs every cycle to a pinned tracking issue that doubles as the owner's steering channel",
       "category": [
         "development"
       ],
@@ -249,7 +250,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:57:33.471Z"
     },
     {
       "name": "imboard-ai/git/batch-integrate",
