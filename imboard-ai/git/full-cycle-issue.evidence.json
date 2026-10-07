@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/full-cycle-issue",
-  "version": "3.17.2",
+  "version": "3.17.3",
   "checksum": {
     "algorithm": "sha256",
     "hash": "d9f1055378a47e3f173cff740b54811a77fb9be4dff3ae906469cc2a028d15b1"
