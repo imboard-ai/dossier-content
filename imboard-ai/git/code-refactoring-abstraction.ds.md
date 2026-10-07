@@ -1,70 +1,22 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "code-refactoring-abstraction",
-  "title": "Code Refactoring & Abstraction Analysis",
-  "version": "1.1.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Analyze code for DRY violations and repetitive patterns, then suggest abstractions to reduce duplication. Supports TypeScript/JavaScript, Python, and Go with configurable output modes.",
-  "category": [
-    "development"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "0bf7924f3d6bd7f90089e919ac5c123b3b6740b80bff1ada0af516c6517a89ba"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "NICQU7ndabTP9rk9doT50LegrJXhfTEpDcDSNvTxWFbonsRoZlCmmEeGIVZqz/uQbAFm7JMBwAXbXK3z4inwCg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T06:58:31.160Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  },
-  "external_references": [
-    {
-      "url": "https://en.wikipedia.org/wiki/Don%27t_repeat_yourself",
-      "description": "Background on the DRY principle",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://refactoring.com/",
-      "description": "Fowler's refactoring catalogue",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://www.oreilly.com/library/view/clean-code-a/9780136083238/",
-      "description": "Clean Code (reference reading)",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://refactoring.guru/extract-method",
-      "description": "Extract Method refactoring reference",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    }
-  ],
-  "content_scope": "references-external",
-  "risk_factors": [
-    "network_access"
-  ]
-}
+---
+name: 'code-refactoring-abstraction'
+description: 'Analyze code for DRY violations and repetitive patterns, then suggest abstractions to reduce duplication. Supports TypeScript/JavaScript, Python, and Go with configurable output modes.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Code Refactoring & Abstraction Analysis'
+  dossier.version: '1.1.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Analyze code for DRY violations and repetitive patterns, then suggest abstractions to reduce duplication. Supports TypeScript/JavaScript, Python, and Go with configurable output modes.'
+  dossier.category: '["development"]'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["network_access"]'
+  dossier.requires_approval: 'false'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Background on the DRY principle","required":false,"trust_level":"trusted","type":"documentation","url":"https://en.wikipedia.org/wiki/Don%27t_repeat_yourself"},{"description":"Fowler''s refactoring catalogue","required":false,"trust_level":"trusted","type":"documentation","url":"https://refactoring.com/"},{"description":"Clean Code (reference reading)","required":false,"trust_level":"trusted","type":"documentation","url":"https://www.oreilly.com/library/view/clean-code-a/9780136083238/"},{"description":"Extract Method refactoring reference","required":false,"trust_level":"trusted","type":"documentation","url":"https://refactoring.guru/extract-method"}]'
+  dossier.authors: '[{"name":"Yuval Dimnik <yuval.dimnik@gmail.com>"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"0bf7924f3d6bd7f90089e919ac5c123b3b6740b80bff1ada0af516c6517a89ba"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"1LBqkbcz5GFTOuQL0vlrft+LOrYxVtosap1G/E3cssI4tWPOxEpzITw28kHsunpQC4aN8u3rubEnV54UTxzvAA==","signed_at":"2026-10-07T11:58:11.096Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Code Refactoring & Abstraction Analysis
