@@ -1,102 +1,28 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "provision-arm-vps",
-  "title": "Provision ARM VPS",
-  "version": "1.0.1",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "last_updated": "2026-03-27",
-  "objective": "Provision an ARM-based VPS on Hetzner Cloud (CAX series) via hcloud CLI, output SSH access details",
-  "description": "Creates a Hetzner Cloud ARM server with Ubuntu 24.04, firewall, and SSH key. Designed as a throwaway bridge until Oracle Always Free A1 instance is claimed. Provider-agnostic inputs where possible.",
-  "category": [
-    "devops",
-    "infrastructure"
-  ],
-  "tags": [
-    "hetzner",
-    "arm",
-    "vps",
-    "provisioning",
-    "cloud"
-  ],
-  "tools_required": [
-    {
-      "name": "hcloud",
-      "check_command": "hcloud version",
-      "install_url": "https://github.com/hetznercloud/cli"
-    },
-    {
-      "name": "ssh-keygen",
-      "check_command": "ssh-keygen -V"
-    }
-  ],
-  "inputs": {
-    "server_name": {
-      "type": "string",
-      "description": "Name for the server",
-      "default": "imboard-dev"
-    },
-    "server_type": {
-      "type": "string",
-      "description": "Hetzner server type (cax11/cax21/cax31/cax41)",
-      "default": "cax31"
-    },
-    "location": {
-      "type": "string",
-      "description": "Datacenter location (fsn1/nbg1/hel1)",
-      "default": "fsn1"
-    },
-    "ssh_key_path": {
-      "type": "string",
-      "description": "Path to SSH public key",
-      "default": "~/.ssh/id_rsa.pub"
-    },
-    "image": {
-      "type": "string",
-      "description": "OS image",
-      "default": "ubuntu-24.04"
-    }
-  },
-  "outputs": {
-    "server_ip": {
-      "type": "string",
-      "description": "Public IPv4 address of the provisioned server"
-    },
-    "ssh_command": {
-      "type": "string",
-      "description": "Full SSH command to connect"
-    }
-  },
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "554db5d895fdb548620b4206cc2b9fdad1da43bad2b554775e3ca9777d03b292"
-  },
-  "risk_level": "high",
-  "risk_factors": [
-    "modifies_cloud_resources",
-    "requires_credentials",
-    "incurs_cost"
-  ],
-  "requires_approval": true,
-  "destructive_operations": [
-    "Creates a billable Hetzner Cloud server (~€12.49/mo for CAX31)",
-    "Uploads SSH key to Hetzner Cloud account"
-  ],
-  "estimated_duration": {
-    "min_minutes": 3,
-    "max_minutes": 10
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "d+aHW6T7zeJBICiitN3701y5/wYUXpKHw+oaLLBb/wzKHvelon57rxWrpXTWhj1ynLaE9y0AR90Ob3ktagqaBg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:46:36.710Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'provision-arm-vps'
+description: 'Creates a Hetzner Cloud ARM server with Ubuntu 24.04, firewall, and SSH key. Designed as a throwaway bridge until Oracle Always Free A1 instance is claimed. Provider-agnostic inputs where possible.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Provision ARM VPS'
+  dossier.version: '1.0.2'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.last_updated: '2026-03-27'
+  dossier.objective: 'Provision an ARM-based VPS on Hetzner Cloud (CAX series) via hcloud CLI, output SSH access details'
+  dossier.category: '["devops","infrastructure"]'
+  dossier.tags: '["hetzner","arm","vps","provisioning","cloud"]'
+  dossier.tools_required: '[{"check_command":"hcloud version","install_url":"https://github.com/hetznercloud/cli","name":"hcloud"},{"check_command":"ssh-keygen -V","name":"ssh-keygen"}]'
+  dossier.estimated_duration: '{"max_minutes":10,"min_minutes":3}'
+  dossier.risk_level: 'high'
+  dossier.risk_factors: '["modifies_cloud_resources","requires_credentials","incurs_cost"]'
+  dossier.requires_approval: 'true'
+  dossier.destructive_operations: '["Creates a billable Hetzner Cloud server (~€12.49/mo for CAX31)","Uploads SSH key to Hetzner Cloud account"]'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Documentation link mentioned in the body: console.hetzner.cloud","required":false,"trust_level":"trusted","type":"documentation","url":"https://console.hetzner.cloud"}]'
+  dossier.inputs: '{"image":{"default":"ubuntu-24.04","description":"OS image","type":"string"},"location":{"default":"fsn1","description":"Datacenter location (fsn1/nbg1/hel1)","type":"string"},"server_name":{"default":"imboard-dev","description":"Name for the server","type":"string"},"server_type":{"default":"cax31","description":"Hetzner server type (cax11/cax21/cax31/cax41)","type":"string"},"ssh_key_path":{"default":"~/.ssh/id_rsa.pub","description":"Path to SSH public key","type":"string"}}'
+  dossier.outputs: '{"server_ip":{"description":"Public IPv4 address of the provisioned server","type":"string"},"ssh_command":{"description":"Full SSH command to connect","type":"string"}}'
+  dossier.checksum: '{"algorithm":"sha256","hash":"554db5d895fdb548620b4206cc2b9fdad1da43bad2b554775e3ca9777d03b292"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"Cd7G+ZyPgusyrOy0GGY5SpCpX0Wg7glu9/tF/Z4vsdd/iAFPpVxsYdvK+OprL7rdO9dEY/zCX2Y87dYdWT2lDA==","signed_at":"2026-10-07T12:10:57.698Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Provision ARM VPS
