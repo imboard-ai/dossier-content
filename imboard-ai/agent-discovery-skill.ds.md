@@ -1,43 +1,20 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "agent-discovery-skill",
-  "title": "Agent Discovery Scaffold",
-  "version": "1.0.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Generate structured agent-discoverable documentation for the current project",
-  "description": "Generate AGENTS.md and module catalog so external AI agents can discover project capabilities without full exploration. Use when user says 'make project discoverable', 'agent discovery', 'generate AGENTS.md', 'document for agents', 'create project manifest'.",
-  "category": [
-    "skills"
-  ],
-  "tags": [
-    "agent-discovery",
-    "documentation",
-    "agents-md",
-    "skill"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "407a003641081a4314507dc0c4d4334f636b654d533c3cc74a90b2cfc963b189"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "aW0qmgdQMxTe8/Yiw0JQp9qGKNiF6p5zXNHwx2klPx/v0TMYxLwl7TKiFUuYN/g2noVnxG4iGgb8E3EzqOWGBg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:46:33.553Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'agent-discovery-skill'
+description: 'Generate AGENTS.md and module catalog so external AI agents can discover project capabilities without full exploration. Use when user says ''make project discoverable'', ''agent discovery'', ''generate AGENTS.md'', ''document for agents'', ''create project manifest''.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Agent Discovery Scaffold'
+  dossier.version: '1.0.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Generate structured agent-discoverable documentation for the current project'
+  dossier.category: '["skills"]'
+  dossier.tags: '["agent-discovery","documentation","agents-md","skill"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"407a003641081a4314507dc0c4d4334f636b654d533c3cc74a90b2cfc963b189"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"DW/uAqfCsCMWeUM+S8OBBfvbC/0rwn0FGydyUFHG3Gg7wNDWm6ykZE2dc4sUtLZFlkzB24gN7Ng7bk0FT7dLAg==","signed_at":"2026-10-07T11:56:11.342Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Agent Discovery Scaffold
