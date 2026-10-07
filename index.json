@@ -1453,8 +1453,9 @@
     {
       "name": "imboard-ai/setup/setup-react-library",
       "title": "Setup React Component Library",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/setup/setup-react-library.ds.md",
+      "description": "Create a production-ready React component library with TypeScript, Storybook, testing, and NPM publishing configuration",
       "category": [
         "development",
         "setup"
@@ -1467,7 +1468,9 @@
         "vite",
         "npm",
         "testing"
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:05:12.035Z"
     },
     {
       "name": "imboard-ai/setup/setup-tracing",
