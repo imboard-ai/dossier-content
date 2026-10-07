@@ -1,70 +1,22 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "test-coverage-gap-analysis",
-  "title": "Test Coverage Gap Analysis",
-  "version": "1.1.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Analyze test files against project structure to identify untested code paths, controllers, routes, and functions. Supports Jest, Mocha, Vitest, and other test frameworks.",
-  "category": [
-    "development"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "cfeb2e8aca2a4929444e313256dfa4000b33f36a78fb18c6d24a5134046193ca"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "HkGFYbIfiWygzdtsV/TJyth9T6u3b6KJFzt6/9ejVRdecURuFu5+IS6lI2MRp+iKNIMPgnsRiaCnSeEFECrfCQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T06:58:39.815Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  },
-  "external_references": [
-    {
-      "url": "https://jestjs.io/",
-      "description": "Jest testing framework documentation",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://mochajs.org/",
-      "description": "Mocha testing framework documentation",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://vitest.dev/",
-      "description": "Vitest testing framework documentation",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://github.com/goldbergyoni/javascript-testing-best-practices",
-      "description": "JavaScript testing best-practices repository",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    }
-  ],
-  "content_scope": "references-external",
-  "risk_factors": [
-    "network_access"
-  ]
-}
+---
+name: 'test-coverage-gap-analysis'
+description: 'Analyze test files against project structure to identify untested code paths, controllers, routes, and functions. Supports Jest, Mocha, Vitest, and other test frameworks.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Test Coverage Gap Analysis'
+  dossier.version: '1.1.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Analyze test files against project structure to identify untested code paths, controllers, routes, and functions. Supports Jest, Mocha, Vitest, and other test frameworks.'
+  dossier.category: '["development"]'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["network_access"]'
+  dossier.requires_approval: 'false'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Jest testing framework documentation","required":false,"trust_level":"trusted","type":"documentation","url":"https://jestjs.io/"},{"description":"Mocha testing framework documentation","required":false,"trust_level":"trusted","type":"documentation","url":"https://mochajs.org/"},{"description":"Vitest testing framework documentation","required":false,"trust_level":"trusted","type":"documentation","url":"https://vitest.dev/"},{"description":"JavaScript testing best-practices repository","required":false,"trust_level":"trusted","type":"documentation","url":"https://github.com/goldbergyoni/javascript-testing-best-practices"}]'
+  dossier.authors: '[{"name":"Yuval Dimnik <yuval.dimnik@gmail.com>"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"cfeb2e8aca2a4929444e313256dfa4000b33f36a78fb18c6d24a5134046193ca"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"4hsSXNYNfFQ5rgglVLkEgZAwNUmmtXEwbNT5H45YNX+6UlFEto8eS6Mo6LtNA0rPhGnbtrB2Pii4/rgJVlB/Ag==","signed_at":"2026-10-07T12:02:14.275Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Test Coverage Gap Analysis
