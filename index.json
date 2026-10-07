@@ -82,7 +82,7 @@
     {
       "name": "imboard-ai/devops/provision-arm-vps",
       "title": "Provision ARM VPS",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/devops/provision-arm-vps.ds.md",
       "description": "Creates a Hetzner Cloud ARM server with Ubuntu 24.04, firewall, and SSH key. Designed as a throwaway bridge until Oracle Always Free A1 instance is claimed. Provider-agnostic inputs where possible.",
       "category": [
@@ -98,15 +98,17 @@
       ],
       "tools_required": [
         {
-          "name": "hcloud",
           "check_command": "hcloud version",
-          "install_url": "https://github.com/hetznercloud/cli"
+          "install_url": "https://github.com/hetznercloud/cli",
+          "name": "hcloud"
         },
         {
-          "name": "ssh-keygen",
-          "check_command": "ssh-keygen -V"
+          "check_command": "ssh-keygen -V",
+          "name": "ssh-keygen"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:11:01.949Z"
     },
     {
       "name": "imboard-ai/devops/setup-arm-dev-machine",
