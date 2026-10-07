@@ -1659,6 +1659,33 @@
       "published_at": "2026-10-07T12:06:14.164Z"
     },
     {
+      "name": "imboard-ai/skills/idea-to-prd-skill",
+      "title": "Idea to PRD",
+      "version": "0.1.0",
+      "path": "imboard-ai/skills/idea-to-prd-skill.ds.md",
+      "description": "Run the PM discovery loop with a go/kill gate. Frames an idea, sizes it, then either KILLS it with a documented rationale (weak problem / poor ROI / fights the brief) or generates the rationale and drives it to an engineering-ready PRD with text wireframes, then ships it to a GitHub issue. Use when the user says 'idea to prd', 'run the idea-to-prd loop', 'spec this idea', 'should we build X', 'is this worth building', 'kill or prd', 'take this idea to a PRD', 'strategy to prd', or hands over a high-level product/feature/strategy idea to evaluate and (maybe) specify.",
+      "category": [
+        "skills"
+      ],
+      "tags": [
+        "product-management",
+        "pm",
+        "discovery",
+        "prd",
+        "go-kill-gate",
+        "wireframes",
+        "workflow",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T14:09:26.848Z"
+    },
+    {
       "name": "imboard-ai/skills/start-issue-skill",
       "title": "Start Issue Workflow",
       "version": "1.3.3",
