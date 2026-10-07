@@ -1,112 +1,26 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "scan-markdown-security",
-  "title": "Markdown Security Scanner",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "version": "2.0.1",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-03-07",
-  "objective": "Scan markdown, dossier, and skill files for security threats including prompt injection, hidden instructions, data exfiltration, XSS, malicious URLs, agent hijacking, and supply chain attack patterns.",
-  "category": [
-    "security"
-  ],
-  "tags": [
-    "security",
-    "scanning",
-    "prompt-injection",
-    "xss",
-    "markdown",
-    "skill-audit"
-  ],
-  "risk_level": "low",
-  "risk_factors": [
-    "network_access"
-  ],
-  "requires_approval": false,
-  "destructive_operations": [],
-  "estimated_duration": {
-    "min_minutes": 2,
-    "max_minutes": 10
-  },
-  "content_scope": "references-external",
-  "external_references": [
-    {
-      "url": "https://genai.owasp.org/",
-      "description": "OWASP Top 10 for LLM Applications 2025",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://www.glassworm.ai/",
-      "description": "GlassWorm invisible Unicode injection attack research",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://www.promptfoo.dev/blog/invisible-unicode/",
-      "description": "Promptfoo invisible Unicode / ASCII smuggling research",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://nvd.nist.gov/",
-      "description": "National Vulnerability Database for CVE references",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://www.trendmicro.com/",
-      "description": "TrendMicro research on malicious MCP packages",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://blog.1password.com/",
-      "description": "1Password MCP security analysis",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://book.hacktricks.xyz/",
-      "description": "HackTricks markdown XSS injection patterns",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://www.jamf.com/",
-      "description": "Jamf punycode / IDN homograph attack research",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "3cf5b95e0431d767b339bda0dd668ccf2ba429e9dc53f4efc7e420e18a8522c6"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "mXmpnHKQjyktEAytr7V8F4m3yQebHeMAov+BuVUodgdx2Ic/ypVhk8ENrU+tb9H8aGGeClfxF1tqmTYODhT/AQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:49:09.422Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'scan-markdown-security'
+description: 'Scan markdown, dossier, and skill files for security threats including prompt injection, hidden instructions, data exfiltration, XSS, malicious URLs, agent hijacking, and supply chain attack patterns.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Markdown Security Scanner'
+  dossier.version: '2.0.2'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-03-07'
+  dossier.objective: 'Scan markdown, dossier, and skill files for security threats including prompt injection, hidden instructions, data exfiltration, XSS, malicious URLs, agent hijacking, and supply chain attack patterns.'
+  dossier.category: '["security"]'
+  dossier.tags: '["security","scanning","prompt-injection","xss","markdown","skill-audit"]'
+  dossier.estimated_duration: '{"max_minutes":10,"min_minutes":2}'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["network_access"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '[]'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"OWASP Top 10 for LLM Applications 2025","required":false,"trust_level":"trusted","type":"documentation","url":"https://genai.owasp.org/"},{"description":"GlassWorm invisible Unicode injection attack research","required":false,"trust_level":"trusted","type":"documentation","url":"https://www.glassworm.ai/"},{"description":"Promptfoo invisible Unicode / ASCII smuggling research","required":false,"trust_level":"trusted","type":"documentation","url":"https://www.promptfoo.dev/blog/invisible-unicode/"},{"description":"National Vulnerability Database for CVE references","required":false,"trust_level":"trusted","type":"documentation","url":"https://nvd.nist.gov/"},{"description":"TrendMicro research on malicious MCP packages","required":false,"trust_level":"trusted","type":"documentation","url":"https://www.trendmicro.com/"},{"description":"1Password MCP security analysis","required":false,"trust_level":"trusted","type":"documentation","url":"https://blog.1password.com/"},{"description":"HackTricks markdown XSS injection patterns","required":false,"trust_level":"trusted","type":"documentation","url":"https://book.hacktricks.xyz/"},{"description":"Jamf punycode / IDN homograph attack research","required":false,"trust_level":"trusted","type":"documentation","url":"https://www.jamf.com/"}]'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"3cf5b95e0431d767b339bda0dd668ccf2ba429e9dc53f4efc7e420e18a8522c6"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"YAeAX8i3LvUYIoZBguHbeDOwQA2UrClSv8X/9xeKETEezLXEZtsi8VtO8qnxcTsBI6Zkms+G6WE6/lQzwXQDAg==","signed_at":"2026-10-07T12:04:50.415Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 # Markdown Security Scanner
 
