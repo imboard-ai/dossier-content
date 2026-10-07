@@ -1,97 +1,24 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "setup-issue-workflow",
-  "title": "Setup Issue Workflow",
-  "version": "1.14.4",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "objective": "Create a workflow for GitHub issues: fetch issue details, create appropriately named branches, set up git worktrees with environment warmup (or claim from a pre-warmed pool), and generate planning files; in batch mode (batch_id) it creates the shared batch branch for the batch anchor instead",
-  "category": [
-    "development"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "inputs": {
-    "optional": [
-      {
-        "name": "warmup_dossier",
-        "description": "Which warm-worktree dossier to run for worktree warmup. Override this to use a project-specific warmup (e.g., imboard-ai/imboard/warm-worktree-pnpm-ssm for pnpm+SSM projects).",
-        "type": "string",
-        "default": "imboard-ai/git/warm-worktree"
-      },
-      {
-        "name": "base_branch",
-        "description": "Target branch to branch from and merge into. Overrides issue body parsing ('merges into `<branch>`'). Use for epic sub-issues or when the target is not main.",
-        "type": "string",
-        "default": "auto"
-      },
-      {
-        "name": "run_id",
-        "description": "Runstate run id minted by gate-issue; pass through unchanged. In batch mode this is the batch's run id (minted against the anchor issue).",
-        "type": "string"
-      },
-      {
-        "name": "batch_id",
-        "description": "Batch id slug (e.g. b-2026-08-29-01). When set, run in BATCH MODE: one run per batch against the batch ANCHOR issue — creates the shared branch batch/<batch_id>-<date> from base, skips per-issue branch naming and the planning scaffold, and posts phase=batch-setup on the anchor. Unset = ordinary per-issue mode.",
-        "type": "string"
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "external_references": [
-    {
-      "url": "https://cli.github.com/",
-      "description": "GitHub CLI documentation",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://git-scm.com/docs/git-worktree",
-      "description": "Official git documentation",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://cli.github.com/manual/",
-      "description": "GitHub CLI documentation",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://www.conventionalcommits.org/",
-      "description": "External reference: conventionalcommits.org",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    }
-  ],
-  "content_scope": "references-external",
-  "risk_factors": [
-    "network_access"
-  ],
-  "last_updated": "2026-10-06",
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "1c7b87d0877bd1fdb646bb2153b33d2a933e9bee0d915621f79017f377738f84"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "NPj9a2pnAY7FEApzcLljcqZBTYVV4y01tTWBE8ZC38ipDoH2/1qQTql1H9ffoT+esdbTee9qaqOklnz1ZtwSBg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-10-06T22:46:14.720Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'setup-issue-workflow'
+description: 'Create a workflow for GitHub issues: fetch issue details, create appropriately named branches, set up git worktrees with environment warmup (or claim from a pre-warmed pool), and generate planning files; in batch mode (batch_id) it creates the shared batch branch for the batch anchor instead'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Setup Issue Workflow'
+  dossier.version: '1.14.5'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.last_updated: '2026-10-06'
+  dossier.objective: 'Create a workflow for GitHub issues: fetch issue details, create appropriately named branches, set up git worktrees with environment warmup (or claim from a pre-warmed pool), and generate planning files; in batch mode (batch_id) it creates the shared batch branch for the batch anchor instead'
+  dossier.category: '["development"]'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["network_access"]'
+  dossier.requires_approval: 'false'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"GitHub CLI documentation","required":false,"trust_level":"trusted","type":"documentation","url":"https://cli.github.com/"},{"description":"Official git documentation","required":false,"trust_level":"trusted","type":"documentation","url":"https://git-scm.com/docs/git-worktree"},{"description":"GitHub CLI documentation","required":false,"trust_level":"trusted","type":"documentation","url":"https://cli.github.com/manual/"},{"description":"External reference: conventionalcommits.org","required":false,"trust_level":"trusted","type":"documentation","url":"https://www.conventionalcommits.org/"}]'
+  dossier.inputs: '{"optional":[{"default":"imboard-ai/git/warm-worktree","description":"Which warm-worktree dossier to run for worktree warmup. Override this to use a project-specific warmup (e.g., imboard-ai/imboard/warm-worktree-pnpm-ssm for pnpm+SSM projects).","name":"warmup_dossier","type":"string"},{"default":"auto","description":"Target branch to branch from and merge into. Overrides issue body parsing (''merges into `<branch>`''). Use for epic sub-issues or when the target is not main.","name":"base_branch","type":"string"},{"description":"Runstate run id minted by gate-issue; pass through unchanged. In batch mode this is the batch''s run id (minted against the anchor issue).","name":"run_id","type":"string"},{"description":"Batch id slug (e.g. b-2026-08-29-01). When set, run in BATCH MODE: one run per batch against the batch ANCHOR issue — creates the shared branch batch/<batch_id>-<date> from base, skips per-issue branch naming and the planning scaffold, and posts phase=batch-setup on the anchor. Unset = ordinary per-issue mode.","name":"batch_id","type":"string"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"1c7b87d0877bd1fdb646bb2153b33d2a933e9bee0d915621f79017f377738f84"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"XHY3gTVaRNPoTBVJ9zNin8varfqLoeXnSAK2beB5af8PHFMc5vUyBlPjnJ5IrZWxVnBEOmXL1jfpUSQZ7dpLCQ==","signed_at":"2026-10-07T12:01:35.899Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Setup Issue Workflow
