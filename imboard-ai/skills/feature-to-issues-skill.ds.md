@@ -1,45 +1,20 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "feature-to-issues-skill",
-  "title": "Feature to Issues",
-  "version": "1.0.3",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Multi-agent feature development pipeline: problem signal → discovery → PRD → specs → GH issues → implementation → review loop",
-  "description": "Orchestrate PM, UX/FE, and DB/BE agents to take a problem signal through discovery, PRD creation, spec generation, and GH issue decomposition. Use when user says 'feature to issues', 'plan feature', 'feature pipeline', 'new feature', 'feature development'",
-  "category": [
-    "skills"
-  ],
-  "tags": [
-    "feature",
-    "prd",
-    "issues",
-    "workflow",
-    "multi-agent",
-    "planning",
-    "skill"
-  ],
-  "risk_level": "medium",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "12f622641827ef7698cc9cc7728a405f5df8f93ae03e0c67ca0918526bf5d57a"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "NKzsHahnl1uNKgnwPTGdVjTK3OZoE6kxcrJFwG6PdYdkg1ZMZr09GlYsv+36LAUuLVwUuuPV8UjrQ+MPEs4QDw==",
-    "public_key": "AL0Qv7hVlFUkPkb5g3YKy6C2SDgwjbreJAHOI/Ht37s=",
-    "signed_at": "2026-08-14T08:25:50.421Z",
-    "covers": "frontmatter+body",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'feature-to-issues-skill'
+description: 'Orchestrate PM, UX/FE, and DB/BE agents to take a problem signal through discovery, PRD creation, spec generation, and GH issue decomposition. Use when user says ''feature to issues'', ''plan feature'', ''feature pipeline'', ''new feature'', ''feature development'''
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Feature to Issues'
+  dossier.version: '1.0.4'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Multi-agent feature development pipeline: problem signal → discovery → PRD → specs → GH issues → implementation → review loop'
+  dossier.category: '["skills"]'
+  dossier.tags: '["feature","prd","issues","workflow","multi-agent","planning","skill"]'
+  dossier.risk_level: 'medium'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"12f622641827ef7698cc9cc7728a405f5df8f93ae03e0c67ca0918526bf5d57a"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"+Yt9YA2UcDMw4L84Vq6CW4Tsad1wBTo6JjTUQupu815eBYIHhD/ipiryT5To9VfSpy2FK4JMNdEIWZ6yT81GBw==","signed_at":"2026-10-07T12:05:42.763Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Feature to Issues
