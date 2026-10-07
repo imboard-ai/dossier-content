@@ -1131,8 +1131,9 @@
     {
       "name": "imboard-ai/meta/create-dossier",
       "title": "Create New Dossier",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "path": "imboard-ai/meta/create-dossier.ds.md",
+      "description": "Guide an agent to create well-structured dossier markdown files that other agents will execute successfully",
       "category": [
         "documentation"
       ],
@@ -1145,7 +1146,9 @@
         {
           "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:03:40.216Z"
     },
     {
       "name": "imboard-ai/meta/create-dossier-and-skill",
