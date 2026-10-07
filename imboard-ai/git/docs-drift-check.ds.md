@@ -1,36 +1,19 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "docs-drift-check",
-  "title": "Docs/README Drift Check",
-  "version": "1.0.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Detect documentation drift from code and propose fixes",
-  "category": [
-    "development"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "yuvaldim"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "5fadb48995651eef76e60fced7d0df0b347f058859ec3ad995f579bcc42c26b0"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "A9M4XRyIPexQ62IgdCfDAMcgUud22ynueH2wV+jVGGXqFMzqGplSqN8A0Xe5wUZKSMJZPGXqNpe0NoJi4W1SAQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:04.497Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'docs-drift-check'
+description: 'Detect documentation drift from code and propose fixes'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Docs/README Drift Check'
+  dossier.version: '1.0.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Detect documentation drift from code and propose fixes'
+  dossier.category: '["development"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"yuvaldim"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"b95d924c053226edca586e3e313bd0533d0bf3d62c98ab56618c88e7166d0622"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"eHlP2J8p14laEzWBXSPEzCX/xD2pbC4mqK7bS3cbLV4+vLlR1h69gtLsaCnpllT+iSJrxykn3c+UlWIdZJnFAg==","signed_at":"2026-10-07T11:58:19.740Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Docs/README Drift Check Dossier
