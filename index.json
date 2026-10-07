@@ -778,8 +778,9 @@
     {
       "name": "imboard-ai/git/review-issue",
       "title": "Review Issue — Parallel Code Review",
-      "version": "1.17.2",
+      "version": "1.17.3",
       "path": "imboard-ai/git/review-issue.ds.md",
+      "description": "Run a tiered set of report-only review agents (DRY, Security, Supportability, Maintainability, Documentation, Convention/Contract, Conformance, Visual Conformance) on the branch diff, run a validity gate, then apply surviving fixes serially; in aggregate mode (batch_id set), review the combined batch diff once — interaction-only (one agent) when every member already passed a full-tier review, the full dimension set otherwise — and push fixes before ONE foreground gate",
       "category": [
         "development"
       ],
@@ -798,7 +799,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-06T06:27:12.300Z"
+      "published_at": "2026-10-07T12:01:20.498Z"
     },
     {
       "name": "imboard-ai/git/runbook-generator",
