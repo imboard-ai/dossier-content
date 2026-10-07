@@ -1,115 +1,26 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "create-dossier-and-skill",
-  "title": "Create Dossier and Skill",
-  "version": "2.0.1",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-03-20",
-  "objective": "Guide an LLM agent to create a well-formed .ds.md dossier file and its companion Claude Code skill (SKILL.md) from user-provided parameters",
-  "category": [
-    "development",
-    "documentation"
-  ],
-  "tags": [
-    "dossier-creation",
-    "authoring",
-    "meta-dossier",
-    "skill-creation",
-    "scaffolding"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "risk_factors": [
-    "modifies_files"
-  ],
-  "destructive_operations": [
-    "Creates a new .ds.md dossier file at the user-specified path",
-    "Creates a SKILL.md file in ~/.claude/skills/<skill-name>/"
-  ],
-  "estimated_duration": {
-    "min_minutes": 3,
-    "max_minutes": 10
-  },
-  "inputs": {
-    "required": [
-      {
-        "name": "title",
-        "description": "Human-readable title for the dossier",
-        "type": "string",
-        "example": "Deploy to AWS Production"
-      },
-      {
-        "name": "objective",
-        "description": "Clear statement of what the dossier accomplishes",
-        "type": "string",
-        "example": "Deploy the application to AWS ECS with zero-downtime rollout"
-      },
-      {
-        "name": "risk_level",
-        "description": "Risk assessment level",
-        "type": "string",
-        "validation": "low | medium | high | critical",
-        "example": "medium"
-      }
-    ],
-    "optional": [
-      {
-        "name": "file",
-        "description": "Output file path for the dossier (must end in .ds.md)",
-        "type": "string",
-        "default": "<kebab-case-title>.ds.md",
-        "example": "deploy-aws-production.ds.md"
-      },
-      {
-        "name": "category",
-        "description": "Dossier category (array)",
-        "type": "string",
-        "example": "devops"
-      },
-      {
-        "name": "tags",
-        "description": "Comma-separated tags for searchability",
-        "type": "string",
-        "example": "aws, deployment, production"
-      }
-    ]
-  },
-  "outputs": {
-    "files": [
-      {
-        "path": "${output_file}",
-        "description": "The generated dossier file with valid JSON frontmatter and declarative body",
-        "format": "markdown"
-      },
-      {
-        "path": "~/.claude/skills/${skill-name}/SKILL.md",
-        "description": "Companion Claude Code skill that enables the dossier via slash command",
-        "format": "markdown",
-        "required": true
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Dossier Team"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "fba556e1ad79a72107f83fa005068edec99e3814d123bd57099e007293456890"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "0cWyZXdmeDQA+3ML5wz8Giu89YKlVRZ4fVPc3BqOz46PESoWp/CyCZiRKgEGaTzUHDhBK8dTSBn07uPEu96lCg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:49.823Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'create-dossier-and-skill'
+description: 'Guide an LLM agent to create a well-formed .ds.md dossier file and its companion Claude Code skill (SKILL.md) from user-provided parameters'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Create Dossier and Skill'
+  dossier.version: '2.0.2'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-03-20'
+  dossier.objective: 'Guide an LLM agent to create a well-formed .ds.md dossier file and its companion Claude Code skill (SKILL.md) from user-provided parameters'
+  dossier.category: '["development","documentation"]'
+  dossier.tags: '["dossier-creation","authoring","meta-dossier","skill-creation","scaffolding"]'
+  dossier.estimated_duration: '{"max_minutes":10,"min_minutes":3}'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["modifies_files"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Creates a new .ds.md dossier file at the user-specified path","Creates a SKILL.md file in ~/.claude/skills/<skill-name>/"]'
+  dossier.inputs: '{"optional":[{"default":"<kebab-case-title>.ds.md","description":"Output file path for the dossier (must end in .ds.md)","example":"deploy-aws-production.ds.md","name":"file","type":"string"},{"description":"Dossier category (array)","example":"devops","name":"category","type":"string"},{"description":"Comma-separated tags for searchability","example":"aws, deployment, production","name":"tags","type":"string"}],"required":[{"description":"Human-readable title for the dossier","example":"Deploy to AWS Production","name":"title","type":"string"},{"description":"Clear statement of what the dossier accomplishes","example":"Deploy the application to AWS ECS with zero-downtime rollout","name":"objective","type":"string"},{"description":"Risk assessment level","example":"medium","name":"risk_level","type":"string","validation":"low | medium | high | critical"}]}'
+  dossier.outputs: '{"files":[{"description":"The generated dossier file with valid JSON frontmatter and declarative body","format":"markdown","path":"${output_file}"},{"description":"Companion Claude Code skill that enables the dossier via slash command","format":"markdown","path":"~/.claude/skills/${skill-name}/SKILL.md","required":true}]}'
+  dossier.authors: '[{"name":"Dossier Team"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"fba556e1ad79a72107f83fa005068edec99e3814d123bd57099e007293456890"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"7Z4knhHYea9lpIV0OEZniq7tXhPIIv61snwr4Ih9InpCLwUXair08PVs86xkE2i8U1nqsq+8XQ4MRp+sK0q8Ag==","signed_at":"2026-10-07T12:03:44.498Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 # Create Dossier and Skill
 
