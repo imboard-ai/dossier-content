@@ -1,37 +1,19 @@
----dossier
-{
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "description": "Setup only: gate, branch, worktree, and rich planning doc. Use when user says 'start issue', 'setup issue', 'prepare issue', 'work on issue'",
-  "name": "start-issue-skill",
-  "objective": "Set up a GitHub issue for development with safety gate, proper branch, worktree, and rich planning documentation",
-  "dossier_schema_version": "1.0.0",
-  "status": "Draft",
-  "title": "Start Issue Workflow",
-  "version": "1.3.2",
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "47ff1751e2251eb3e26e1a2f587bf7b88441b70a236bfd579119aff972501484"
-  },
-  "category": [
-    "skills"
-  ],
-  "protocol_version": "1.0",
-  "risk_level": "medium",
-  "requires_approval": false,
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "H92c3g/c7gLJs9AIZXFjOc+uFGMUxG2GOOdZaJCvUAh6C4LmLTiPmijSAAFvi6T0EH3sx5aZY/7F0CJHjs/QBQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T08:22:20.447Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'start-issue-skill'
+description: 'Setup only: gate, branch, worktree, and rich planning doc. Use when user says ''start issue'', ''setup issue'', ''prepare issue'', ''work on issue'''
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Start Issue Workflow'
+  dossier.version: '1.3.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Set up a GitHub issue for development with safety gate, proper branch, worktree, and rich planning documentation'
+  dossier.category: '["skills"]'
+  dossier.risk_level: 'medium'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"47ff1751e2251eb3e26e1a2f587bf7b88441b70a236bfd579119aff972501484"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"537uCZ45+oymshC9NhdR492LYz4S2sVpVJ0wrf/TnoBeNMb/qxNB7Gl6fcsbAkJiFNEHrSKOpTNuz2G/jnnxBA==","signed_at":"2026-10-07T12:06:18.342Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Start Issue Workflow
