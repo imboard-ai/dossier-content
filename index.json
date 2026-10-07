@@ -736,8 +736,9 @@
     {
       "name": "imboard-ai/git/release-notes-generator",
       "title": "Release Notes Generator",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "path": "imboard-ai/git/release-notes-generator.ds.md",
+      "description": "Generate customer-facing release notes and internal support brief from git history",
       "category": [
         "development"
       ],
@@ -745,7 +746,9 @@
         {
           "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:01:00.265Z"
     },
     {
       "name": "imboard-ai/git/report-issue",
