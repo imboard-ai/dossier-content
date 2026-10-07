@@ -1,91 +1,27 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "chrome-devtools-connect",
-  "title": "Chrome DevTools MCP — Connect & Self-Heal the WSL→Windows Bridge",
-  "version": "1.0.1",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-07-08",
-  "objective": "Get the chrome-devtools MCP driving a real Windows Chrome from a WSL2 session — launch the browser if needed, diagnose and repair the debug-port bridge (Chrome 149+ binds ::1 only; a stale portproxy strands it), then verify end-to-end control with navigate + screenshot.",
-  "category": [
-    "devops"
-  ],
-  "tags": [
-    "chrome-devtools",
-    "mcp",
-    "wsl2",
-    "browser-automation",
-    "portproxy",
-    "live-verify",
-    "setup"
-  ],
-  "risk_level": "medium",
-  "requires_approval": false,
-  "content_scope": "references-external",
-  "external_references": [
-    {
-      "url": "http://172.18.208.1:9222",
-      "description": "Chrome DevTools Protocol debug endpoint on the WSL-facing Windows host IP — the fixed browserUrl the chrome-devtools MCP attaches to. The IP is the local WSL vEthernet gateway, not a public host.",
-      "type": "api",
-      "trust_level": "trusted",
-      "required": true
-    },
-    {
-      "url": "http://172.18.208.1:9222/json/version",
-      "description": "CDP version endpoint; returns Chrome-version JSON when the debug bridge is up. Used as the reachability probe.",
-      "type": "api",
-      "trust_level": "trusted",
-      "required": true
-    }
-  ],
-  "risk_factors": [
-    "network_access",
-    "system_configuration",
-    "executes_external_code"
-  ],
-  "destructive_operations": [
-    "Replaces the Windows netsh portproxy rule on port 9222 (v4tov4 → v4tov6) — requires one-time UAC elevation",
-    "Adds a Windows Defender Firewall inbound allow rule for TCP 9222",
-    "Launches a Windows Chrome process against an isolated debug profile"
-  ],
-  "estimated_duration": {
-    "min_minutes": 1,
-    "max_minutes": 4
-  },
-  "tools_required": [
-    {
-      "name": "curl",
-      "check_command": "curl --version"
-    },
-    {
-      "name": "powershell.exe",
-      "check_command": "powershell.exe -NoProfile -Command \"$PSVersionTable.PSVersion.ToString()\""
-    },
-    {
-      "name": "chrome-devtools MCP",
-      "check_command": "curl -s --max-time 5 http://172.18.208.1:9222/json/version"
-    }
-  ],
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "332be9aa7a58eca011cf6c00fe19155b103218081b20fe81d6ec9e541cb6ae75"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "EtgK149y39K/UWACLkjrEkgqyAnNkjlda7KljkmkKtKK6v/nI1K0YqpLZw88AkVAJDBue25sF+o7vy5cHMrDBQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:46:44.259Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'chrome-devtools-connect'
+description: 'Get the chrome-devtools MCP driving a real Windows Chrome from a WSL2 session — launch the browser if needed, diagnose and repair the debug-port bridge (Chrome 149+ binds ::1 only; a stale portproxy strands it), then verify end-to-end control with navigate + screenshot.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Chrome DevTools MCP — Connect & Self-Heal the WSL→Windows Bridge'
+  dossier.version: '1.0.2'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-07-08'
+  dossier.objective: 'Get the chrome-devtools MCP driving a real Windows Chrome from a WSL2 session — launch the browser if needed, diagnose and repair the debug-port bridge (Chrome 149+ binds ::1 only; a stale portproxy strands it), then verify end-to-end control with navigate + screenshot.'
+  dossier.category: '["devops"]'
+  dossier.tags: '["chrome-devtools","mcp","wsl2","browser-automation","portproxy","live-verify","setup"]'
+  dossier.tools_required: '[{"check_command":"curl --version","name":"curl"},{"check_command":"powershell.exe -NoProfile -Command \"$PSVersionTable.PSVersion.ToString()\"","name":"powershell.exe"},{"check_command":"curl -s --max-time 5 http://172.18.208.1:9222/json/version","name":"chrome-devtools MCP"}]'
+  dossier.estimated_duration: '{"max_minutes":4,"min_minutes":1}'
+  dossier.risk_level: 'medium'
+  dossier.risk_factors: '["network_access","system_configuration","executes_external_code"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Replaces the Windows netsh portproxy rule on port 9222 (v4tov4 → v4tov6) — requires one-time UAC elevation","Adds a Windows Defender Firewall inbound allow rule for TCP 9222","Launches a Windows Chrome process against an isolated debug profile"]'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Chrome DevTools Protocol debug endpoint on the WSL-facing Windows host IP — the fixed browserUrl the chrome-devtools MCP attaches to. The IP is the local WSL vEthernet gateway, not a public host.","required":true,"trust_level":"trusted","type":"api","url":"http://172.18.208.1:9222"},{"description":"CDP version endpoint; returns Chrome-version JSON when the debug bridge is up. Used as the reachability probe.","required":true,"trust_level":"trusted","type":"api","url":"http://172.18.208.1:9222/json/version"}]'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"332be9aa7a58eca011cf6c00fe19155b103218081b20fe81d6ec9e541cb6ae75"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"Vg9YfMr702jK+TiUc/evhzmpXcxJvroC1eImCmAnlkU9gXETu+CGWNKIFL2ZX47JbTTX2UwgPd7YDBvLVDduBw==","signed_at":"2026-10-07T11:57:03.979Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Chrome DevTools MCP — Connect & Self-Heal the WSL→Windows Bridge
