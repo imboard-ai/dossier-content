@@ -1296,7 +1296,7 @@
     {
       "name": "imboard-ai/qa/qa-sheet-triage-skill",
       "title": "QA Sheet Triage",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "path": "imboard-ai/qa/qa-sheet-triage-skill.ds.md",
       "description": "Triage a manual-QA findings sheet into GitHub issues and prevention work. Use when user says 'triage QA sheet', 'QA findings', 'manual QA results', 'QA round', or hands over a spreadsheet of bugs",
       "category": [
@@ -1313,7 +1313,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:04:26.466Z"
     },
     {
       "name": "imboard-ai/qa/sheet-triage",
