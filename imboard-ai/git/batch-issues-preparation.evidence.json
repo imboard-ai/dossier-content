@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-issues-preparation",
-  "version": "3.5.1",
+  "version": "3.5.2",
   "checksum": {
     "algorithm": "sha256",
     "hash": "a3d01505cf3f1a5efa39b4347ef499c0cfe98f903dc87727b7eaeefa03c7e107"
