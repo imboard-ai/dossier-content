@@ -1361,8 +1361,9 @@
     {
       "name": "imboard-ai/scaffold-project",
       "title": "Scaffold TypeScript Project",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/scaffold-project.ds.md",
+      "description": "Scaffold a complete TypeScript project with CI, testing, linting, documentation, and worktree support — eliminating repetitive boilerplate setup",
       "category": [
         "development",
         "setup"
@@ -1377,21 +1378,23 @@
       ],
       "tools_required": [
         {
+          "check_command": "node --version",
           "name": "node",
-          "version": ">=20.0.0",
-          "check_command": "node --version"
+          "version": ">=20.0.0"
         },
         {
+          "check_command": "gh --version",
           "name": "gh",
-          "version": ">=2.0.0",
-          "check_command": "gh --version"
+          "version": ">=2.0.0"
         },
         {
+          "check_command": "git --version",
           "name": "git",
-          "version": ">=2.30.0",
-          "check_command": "git --version"
+          "version": ">=2.30.0"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:11:29.085Z"
     },
     {
       "name": "imboard-ai/security/dependency-vulnerability-report",
