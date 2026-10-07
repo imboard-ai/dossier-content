@@ -1,94 +1,26 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "full-cycle-issue",
-  "title": "Full Cycle Issue Workflow",
-  "version": "3.17.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-10-06",
-  "objective": "Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report",
-  "category": [
-    "development"
-  ],
-  "tags": [
-    "github",
-    "issues",
-    "workflow",
-    "autonomous",
-    "full-cycle",
-    "pr",
-    "merge"
-  ],
-  "risk_level": "high",
-  "risk_factors": [
-    "modifies_files",
-    "network_access",
-    "creates_pull_request",
-    "merges_code",
-    "database_operations",
-    "executes_external_code"
-  ],
-  "requires_approval": false,
-  "destructive_operations": [
-    "Creates new git branch",
-    "Creates new git worktree",
-    "Pushes branch to remote",
-    "Creates pull request and applies the `auto-merge` label (a server-side watcher performs the merge — see Phase 5)",
-    "Deletes branch after merge (performed by the auto-merge watcher)",
-    "Phase 4 transitively launches the project's app and drives it in a headless browser (review-issue Agent 8), writing to the data store only when that phase's scratch-store assertion passed"
-  ],
-  "inputs": {
-    "optional": [
-      {
-        "name": "warmup_dossier",
-        "description": "Which warm-worktree dossier to use for worktree warmup. Passed through to setup-issue-workflow. Override for project-specific warmup (e.g., imboard-ai/imboard/warm-worktree-pnpm-ssm for pnpm+SSM).",
-        "type": "string",
-        "default": "imboard-ai/git/warm-worktree"
-      },
-      {
-        "name": "base_branch",
-        "description": "Target branch to branch from and merge into. Overrides issue body parsing. Use for epic sub-issues.",
-        "type": "string",
-        "default": "auto"
-      },
-      {
-        "name": "ship_mode",
-        "description": "attached (default) = Phase 5 drives the PR to a confirmed merge and deploy, then Phase 6 reports. detached = a REQUEST to park: Phase 5 parks the PR on auto-merge, posts the awaiting-merge milestone, and the run STOPS (a later run resumes at ship-teardown) ONLY when ship-issue Step 3c confirms a merge mechanism (watcher workflow, or a non-null autoMergeRequest read back after requesting native auto-merge) — otherwise the run falls back to attached and merges the PR itself. Fleet-cycle and sched pass the detected mechanism and dispatch detached only where it is confirmed.",
-        "type": "string",
-        "default": "attached"
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "external_references": [
-    {
-      "url": "https://cli.github.com/",
-      "description": "GitHub CLI documentation",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    }
-  ],
-  "content_scope": "references-external",
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "d9f1055378a47e3f173cff740b54811a77fb9be4dff3ae906469cc2a028d15b1"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "HV838ZhbBF6793RzGFPyScKk3ARjaCEQyYzT/3pC9jRf+6cDZXAPInw1LAvBXo7arUS0odazg0pITVCRr2LtCw==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-10-06T22:46:19.316Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'full-cycle-issue'
+description: 'Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Full Cycle Issue Workflow'
+  dossier.version: '3.17.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-10-06'
+  dossier.objective: 'Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report'
+  dossier.category: '["development"]'
+  dossier.tags: '["github","issues","workflow","autonomous","full-cycle","pr","merge"]'
+  dossier.risk_level: 'high'
+  dossier.risk_factors: '["modifies_files","network_access","creates_pull_request","merges_code","database_operations","executes_external_code"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Creates new git branch","Creates new git worktree","Pushes branch to remote","Creates pull request and applies the `auto-merge` label (a server-side watcher performs the merge — see Phase 5)","Deletes branch after merge (performed by the auto-merge watcher)","Phase 4 transitively launches the project''s app and drives it in a headless browser (review-issue Agent 8), writing to the data store only when that phase''s scratch-store assertion passed"]'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"GitHub CLI documentation","required":false,"trust_level":"trusted","type":"documentation","url":"https://cli.github.com/"}]'
+  dossier.inputs: '{"optional":[{"default":"imboard-ai/git/warm-worktree","description":"Which warm-worktree dossier to use for worktree warmup. Passed through to setup-issue-workflow. Override for project-specific warmup (e.g., imboard-ai/imboard/warm-worktree-pnpm-ssm for pnpm+SSM).","name":"warmup_dossier","type":"string"},{"default":"auto","description":"Target branch to branch from and merge into. Overrides issue body parsing. Use for epic sub-issues.","name":"base_branch","type":"string"},{"default":"attached","description":"attached (default) = Phase 5 drives the PR to a confirmed merge and deploy, then Phase 6 reports. detached = a REQUEST to park: Phase 5 parks the PR on auto-merge, posts the awaiting-merge milestone, and the run STOPS (a later run resumes at ship-teardown) ONLY when ship-issue Step 3c confirms a merge mechanism (watcher workflow, or a non-null autoMergeRequest read back after requesting native auto-merge) — otherwise the run falls back to attached and merges the PR itself. Fleet-cycle and sched pass the detected mechanism and dispatch detached only where it is confirmed.","name":"ship_mode","type":"string"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"d9f1055378a47e3f173cff740b54811a77fb9be4dff3ae906469cc2a028d15b1"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"ZTMTx0aMjwph0g5JH+k+uUYq1YgFn9g4YPu5LUcMKV+Z5kgJlVNrEwWHAbtV9iNacts8XuUCCyv2tYxA38jNDQ==","signed_at":"2026-10-07T11:59:00.573Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Full Cycle Issue Workflow
