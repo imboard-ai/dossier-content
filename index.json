@@ -990,8 +990,9 @@
     {
       "name": "imboard-ai/git/worktree-pool",
       "title": "Worktree Pool",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/git/worktree-pool.ds.md",
+      "description": "Manage a pool of pre-warmed git worktrees for instant issue setup — claim a ready worktree in ~2 seconds instead of ~3-5 minutes of cold start",
       "category": [
         "development"
       ],
@@ -1006,7 +1007,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:02:59.446Z"
     },
     {
       "name": "imboard-ai/imboard/warm-worktree-pnpm-ssm",
