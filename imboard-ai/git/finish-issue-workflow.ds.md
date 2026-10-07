@@ -1,52 +1,22 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "finish-issue-workflow",
-  "title": "Finish Issue Workflow",
-  "version": "1.0.2",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "objective": "Comprehensive pre-PR workflow that performs git preparation, security scans, code cleanup, quality checks, testing, and creates a properly formatted pull request with context-aware review recommendations.",
-  "category": [
-    "development",
-    "git"
-  ],
-  "tags": [
-    "finish-issue",
-    "pull-request",
-    "code-review",
-    "quality-checks"
-  ],
-  "estimated_duration": {
-    "min_minutes": 5,
-    "max_minutes": 30
-  },
-  "risk_level": "medium",
-  "risk_factors": [
-    "modifies_files",
-    "executes_external_code",
-    "network_access"
-  ],
-  "requires_approval": true,
-  "authors": [
-    {
-      "name": "Dossier Community"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "957583fa0f8ead89fb6f763443397b90bdcda5f8f3e6f95504fc870b2450aca8"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "9QGR3kD0JOzE2uKD5Tr4eHtp38YH9VBNhA7BEazgIm6ilw873vfbEWMpoDCP3XuCWObJIkkrM5sv7/2Bkj/0Dg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:10.959Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'finish-issue-workflow'
+description: 'Comprehensive pre-PR workflow that performs git preparation, security scans, code cleanup, quality checks, testing, and creates a properly formatted pull request with context-aware review recommendations.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Finish Issue Workflow'
+  dossier.version: '1.0.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.objective: 'Comprehensive pre-PR workflow that performs git preparation, security scans, code cleanup, quality checks, testing, and creates a properly formatted pull request with context-aware review recommendations.'
+  dossier.category: '["development","git"]'
+  dossier.tags: '["finish-issue","pull-request","code-review","quality-checks"]'
+  dossier.estimated_duration: '{"max_minutes":30,"min_minutes":5}'
+  dossier.risk_level: 'medium'
+  dossier.risk_factors: '["modifies_files","executes_external_code","network_access"]'
+  dossier.requires_approval: 'true'
+  dossier.authors: '[{"name":"Dossier Community"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"957583fa0f8ead89fb6f763443397b90bdcda5f8f3e6f95504fc870b2450aca8"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"N6QjLJ8iK0S4qmvtXSM6YBUOMJ25L/87GV2OyaUTMJhsbA7QymL3OS4wPiOwYG+IlBRpA9kurYDWRORItPbjCg==","signed_at":"2026-10-07T11:58:38.298Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Finish Issue Workflow
