@@ -551,8 +551,9 @@
     {
       "name": "imboard-ai/git/implement-issue",
       "title": "Implement Issue — Code and Test",
-      "version": "1.8.1",
+      "version": "1.8.2",
       "path": "imboard-ai/git/implement-issue.ds.md",
+      "description": "Implement the solution described in the planning document, run tests, and auto-fix lint issues",
       "category": [
         "development"
       ],
@@ -568,7 +569,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:59:32.426Z"
     },
     {
       "name": "imboard-ai/git/issue-cycle-classifier",
