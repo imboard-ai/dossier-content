@@ -1,37 +1,19 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "finish-issue-skill",
-  "title": "Finish Issue Workflow",
-  "version": "1.1.2",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "objective": "Prepare a GitHub issue branch for PR with quality checks, cleanup, and review recommendations",
-  "description": "Prepare a GitHub issue branch for PR with quality checks, cleanup, and review recommendations. Use when user says \"finish issue\", \"ready for PR\", \"prepare for review\", \"submit PR\", \"create PR\", \"finalize issue\", or \"wrap up\".",
-  "category": [
-    "skills"
-  ],
-  "risk_level": "medium",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Dossier Community"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "60701af646e0bca5d4d78fe9097f9bb8ac330c058f20c16c50c15ef9435c7875"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "/zhY3stc4nKNvjeT+Vb0eRETLkLOxJFgZyjtVdiXOzkHKQgqBqZswaHB5B79Gfn0/X0ry/YSn64GhAUsI9slCQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:07.663Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'finish-issue-skill'
+description: 'Prepare a GitHub issue branch for PR with quality checks, cleanup, and review recommendations. Use when user says "finish issue", "ready for PR", "prepare for review", "submit PR", "create PR", "finalize issue", or "wrap up".'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Finish Issue Workflow'
+  dossier.version: '1.1.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.objective: 'Prepare a GitHub issue branch for PR with quality checks, cleanup, and review recommendations'
+  dossier.category: '["skills"]'
+  dossier.risk_level: 'medium'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Dossier Community"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"60701af646e0bca5d4d78fe9097f9bb8ac330c058f20c16c50c15ef9435c7875"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"2N7OZ4kM2RAjoFiaexpdrs4RbutMsHo3mnufvPUwIPiK4uXXZDtx+RzLpsIL80ZOBFprXoW/WApuZ/baBI+7Aw==","signed_at":"2026-10-07T11:58:28.376Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Finish Issue Workflow
