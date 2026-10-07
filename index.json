@@ -923,7 +923,7 @@
     {
       "name": "imboard-ai/git/today-summary-skill",
       "title": "Today's Work Summary",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/git/today-summary-skill.ds.md",
       "description": "Summarize today's work based on git commits and file changes. Use when user asks \"what did I do today\", \"daily summary\", \"today's progress\", or \"end of day report\".",
       "category": [
@@ -933,7 +933,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:02:27.589Z"
     },
     {
       "name": "imboard-ai/git/warm-worktree",
