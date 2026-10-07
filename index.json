@@ -257,8 +257,9 @@
     {
       "name": "imboard-ai/git/batch-integrate",
       "title": "Batch Integrate — Verify N Members Once, Repair What Is Yours, Escalate What Is Not",
-      "version": "1.6.2",
+      "version": "1.6.3",
       "path": "imboard-ai/git/batch-integrate.ds.md",
+      "description": "Merge a batch's members onto its integration branch, run the batch gate (gate.batch when declared) once, repair mechanical failures, escalate semantic ones, never evict on an unreliable signal, run an interaction-only review when every member passed a full-tier review (else the full set plus the risk-floor review), push fixes before ONE foreground gate, refuse to ship unreviewed members, release claims, ship one PR",
       "category": [
         "development",
         "orchestration"
@@ -278,7 +279,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-06T06:26:39.390Z"
+      "published_at": "2026-10-07T11:57:43.563Z"
     },
     {
       "name": "imboard-ai/git/batch-issues",
