@@ -1042,8 +1042,9 @@
     {
       "name": "imboard-ai/issue-triage",
       "title": "Issue Triage Workflow",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/issue-triage.ds.md",
+      "description": "Assess a GitHub issue's readiness for autonomous implementation and route it to the right lane: autonomous, plan-first decomposition, or not-ready",
       "category": [
         "development"
       ],
@@ -1062,11 +1063,13 @@
       ],
       "tools_required": [
         {
+          "check_command": "gh --version",
           "name": "gh",
-          "version": ">=2.0.0",
-          "check_command": "gh --version"
+          "version": ">=2.0.0"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:11:19.919Z"
     },
     {
       "name": "imboard-ai/issue-triage-skill",
