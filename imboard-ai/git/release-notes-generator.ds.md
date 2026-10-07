@@ -1,36 +1,19 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "release-notes-generator",
-  "title": "Release Notes Generator",
-  "version": "1.1.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Generate customer-facing release notes and internal support brief from git history",
-  "category": [
-    "development"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "1c5ef9d4f61dd1568a3c3805cb646dcb6d03346d5904200e666d20821b249bb5"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "XCjcMQhUniYQ9Ka5vYOohJAlYLkALy1vP8AsANguvgj9SIlULDCCDXxUWgbtWbcpN/FXGXGw+MGfhIGQkBj3CA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T06:58:35.615Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'release-notes-generator'
+description: 'Generate customer-facing release notes and internal support brief from git history'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Release Notes Generator'
+  dossier.version: '1.1.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Generate customer-facing release notes and internal support brief from git history'
+  dossier.category: '["development"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik <yuval.dimnik@gmail.com>"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"1f412614ae8e9fd1764800622040e3ae11b51d3b11ae616eea60521ccb447ae0"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"iNCTtdzl/PY9LWvaYn93428NJUgAzkUjkj+GMavFgA+JW7yjhrtDf2o2tjyoTEAqYwdL1NrT1qMmowH7LbxGCw==","signed_at":"2026-10-07T12:00:55.959Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Release Notes Generator
