@@ -1,43 +1,20 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "warm-worktree",
-  "title": "Warm Worktree",
-  "version": "1.3.0",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "objective": "Prepare a fresh git worktree for development by copying environment files, installing dependencies, running builds, verifying tests, and checking that servers can start.",
-  "category": [
-    "development",
-    "git"
-  ],
-  "tags": [
-    "worktree",
-    "setup",
-    "environment",
-    "dependencies"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Dossier Community"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "d0d33631ea4e5a4d2e150fed759f34100007f54a4f3582c6d24374b75f4c1c15"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "quhlKp+8pm4kcFf1wpSglt4ru92+tN5CmfkWIntI3UUG5hZaM9odjQhiVOU+lnK5bDFRWYp7JOPU5DKBMHxSBg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-17T14:22:44.379Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'warm-worktree'
+description: 'Prepare a fresh git worktree for development by copying environment files, installing dependencies, running builds, verifying tests, and checking that servers can start.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Warm Worktree'
+  dossier.version: '1.3.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.objective: 'Prepare a fresh git worktree for development by copying environment files, installing dependencies, running builds, verifying tests, and checking that servers can start.'
+  dossier.category: '["development","git"]'
+  dossier.tags: '["worktree","setup","environment","dependencies"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Dossier Community"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"d0d33631ea4e5a4d2e150fed759f34100007f54a4f3582c6d24374b75f4c1c15"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"gcVRuNutuI8URJPCIKM4zvmz3jNGZXi65UOksMUvxC60b1pC4/msfaQMZ+Z6d6xPU8PLy0e3i0v9aXgPT8dHDg==","signed_at":"2026-10-07T12:02:32.279Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 # Warm Worktree
 
