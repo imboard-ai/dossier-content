@@ -1,67 +1,25 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "gate-issue",
-  "title": "Gate Issue — Pre-Flight Safety Check",
-  "version": "1.6.2",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "last_updated": "2026-10-06",
-  "objective": "Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow; recognizes classify, slot-mode, and batch-anchor runstate trails so a full-cycle run never resumes into a nonexistent batch",
-  "category": [
-    "development"
-  ],
-  "tags": [
-    "issue",
-    "workflow",
-    "git",
-    "github",
-    "gate"
-  ],
-  "risk_level": "low",
-  "risk_factors": [
-    "network_access"
-  ],
-  "requires_approval": false,
-  "inputs": {
-    "required": [
-      {
-        "name": "issue_number",
-        "description": "GitHub issue number to check",
-        "type": "number"
-      }
-    ],
-    "optional": []
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "content_scope": "references-external",
-  "external_references": [
-    {
-      "url": "https://cli.github.com/",
-      "description": "GitHub CLI documentation",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "2e4685022c2021cebd789bc276c14b4f5dba3abe13ce2bcbaf31a7d910161b38"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "BWFDKuH3UsAMorvS7DIU5fj20j2ElV25UeJy3t3AwT0XmeI4l7CNG8v2zSe88zUxtr+DEfwyFdShacSDQac7Ag==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-10-06T22:46:21.712Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'gate-issue'
+description: 'Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow; recognizes classify, slot-mode, and batch-anchor runstate trails so a full-cycle run never resumes into a nonexistent batch'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Gate Issue — Pre-Flight Safety Check'
+  dossier.version: '1.6.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.last_updated: '2026-10-06'
+  dossier.objective: 'Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow; recognizes classify, slot-mode, and batch-anchor runstate trails so a full-cycle run never resumes into a nonexistent batch'
+  dossier.category: '["development"]'
+  dossier.tags: '["issue","workflow","git","github","gate"]'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["network_access"]'
+  dossier.requires_approval: 'false'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"GitHub CLI documentation","required":false,"trust_level":"trusted","type":"documentation","url":"https://cli.github.com/"}]'
+  dossier.inputs: '{"optional":[],"required":[{"description":"GitHub issue number to check","name":"issue_number","type":"number"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"2e4685022c2021cebd789bc276c14b4f5dba3abe13ce2bcbaf31a7d910161b38"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"2IZ68ggvviyWaKWX1eX4dBiEM8R2HhBvL2f/ZbZX3DQcj71FbhrVsMsRhNETBVx8x9Tt2Pve2nNEZW9s3eyuDQ==","signed_at":"2026-10-07T11:59:11.710Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Gate Issue — Pre-Flight Safety Check
