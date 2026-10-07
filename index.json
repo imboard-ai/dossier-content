@@ -390,8 +390,9 @@
     {
       "name": "imboard-ai/git/finish-issue-workflow",
       "title": "Finish Issue Workflow",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/git/finish-issue-workflow.ds.md",
+      "description": "Comprehensive pre-PR workflow that performs git preparation, security scans, code cleanup, quality checks, testing, and creates a properly formatted pull request with context-aware review recommendations.",
       "category": [
         "development",
         "git"
@@ -406,7 +407,9 @@
         {
           "name": "Dossier Community"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:58:42.615Z"
     },
     {
       "name": "imboard-ai/git/fleet-cycle",
