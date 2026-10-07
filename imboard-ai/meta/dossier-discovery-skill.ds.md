@@ -1,37 +1,19 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "dossier-discovery-skill",
-  "title": "Dossier Discovery",
-  "version": "1.2.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Find and suggest relevant dossier workflows for complex tasks",
-  "description": "Run `ai-dossier list --json` at START of workflow tasks (setup, deploy, migrate, refactor, CI/CD). Once per conversation. Output 'Dossier check: [result]' after running. Skip if you see this marker in conversation history.",
-  "category": [
-    "skills"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "b321334135d3dec7d45bca6ae5962c6208261732ae9d930c938a4d8130edf729"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "yJ3P8Xyba+FX9Eb9qJWyFYED0mG+saIhktGe8d9W/j+nVPEDvF4NB9bpG1SyxpZw9zemvwlgX1DF/3OKf7sUAg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:53.010Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'dossier-discovery-skill'
+description: 'Run `ai-dossier list --json` at START of workflow tasks (setup, deploy, migrate, refactor, CI/CD). Once per conversation. Output ''Dossier check: [result]'' after running. Skip if you see this marker in conversation history.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Dossier Discovery'
+  dossier.version: '1.2.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Find and suggest relevant dossier workflows for complex tasks'
+  dossier.category: '["skills"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"b321334135d3dec7d45bca6ae5962c6208261732ae9d930c938a4d8130edf729"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"dWLe5P/UGLhfq0T7qOBblEcdjJw7xzKRHa2E650N9v/nXWyzJZG9t5jdkO39hGagliEkkJJqHsu2DzmWbmKBAw==","signed_at":"2026-10-07T12:03:52.815Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Dossier Discovery
