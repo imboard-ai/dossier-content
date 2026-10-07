@@ -1495,7 +1495,7 @@
     {
       "name": "imboard-ai/skills/autopilot-loop-skill",
       "title": "Autopilot Loop",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "imboard-ai/skills/autopilot-loop-skill.ds.md",
       "description": "Unattended backlog orchestration: each self-paced cycle checks a usage budget, picks the highest-value issues, dispatches cheaper worker agents to green-CI PRs, reviews and merges them as the orchestrator, verifies releases, and logs to a pinned GitHub issue the owner steers from. Use when the user says 'autopilot', 'run the backlog while I'm away', 'loop on the issues', 'progress the repo on your own', 'keep working until X% usage', or asks for an unattended/self-paced loop over a repo's issues.",
       "category": [
@@ -1513,7 +1513,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:05:29.689Z"
     },
     {
       "name": "imboard-ai/skills/batch-cycle-skill",
