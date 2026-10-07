@@ -1066,7 +1066,7 @@
     {
       "name": "imboard-ai/issue-triage-skill",
       "title": "Issue Triage",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/issue-triage-skill.ds.md",
       "description": "Assess and route issues: autonomous, plan-first, or not-ready. Use when user says 'triage issue', 'assess issue', 'check issue readiness'",
       "category": [
@@ -1082,7 +1082,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:03:22.229Z"
     },
     {
       "name": "imboard-ai/marketing/google-ads",
