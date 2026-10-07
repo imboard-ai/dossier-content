@@ -1,36 +1,19 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "runbook-generator",
-  "title": "Runbook & Ops Checklist Generator",
-  "version": "1.1.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Generate service runbooks and ops checklists for oncall readiness",
-  "category": [
-    "development"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "yuvaldim"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "cde938469edb3b3501615e055a622be1fcf431f3c5c825da83c7a9c9c149cbf4"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "Q8tAE8jdIpWLoOfKtfVgWr0LGOC7jADaJXyPlDItL2yVEvqkLeFa5PPTPZ0hMdSqUVC5MeR8gfTMpeiwvXoKDA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T06:56:13.705Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'runbook-generator'
+description: 'Generate service runbooks and ops checklists for oncall readiness'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Runbook & Ops Checklist Generator'
+  dossier.version: '1.1.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Generate service runbooks and ops checklists for oncall readiness'
+  dossier.category: '["development"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"yuvaldim"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"cde938469edb3b3501615e055a622be1fcf431f3c5c825da83c7a9c9c149cbf4"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"GzmRcBy0l7YFA5+0X6GzcYbragWApd0apc5Yf5CS7D8K2fAreVJaSaAyBb5+P10EX5mWELuoIMGpnFMHmTl6AQ==","signed_at":"2026-10-07T12:01:26.823Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Runbook & Ops Checklist Generator
