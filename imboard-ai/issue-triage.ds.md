@@ -1,65 +1,27 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "issue-triage",
-  "title": "Issue Triage Workflow",
-  "version": "1.0.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-03-10",
-  "objective": "Assess a GitHub issue's readiness for autonomous implementation and route it to the right lane: autonomous, plan-first decomposition, or not-ready",
-  "category": [
-    "development"
-  ],
-  "tags": [
-    "github",
-    "issues",
-    "triage",
-    "workflow",
-    "autonomous",
-    "planning"
-  ],
-  "tools_required": [
-    {
-      "name": "gh",
-      "version": ">=2.0.0",
-      "check_command": "gh --version"
-    }
-  ],
-  "risk_level": "high",
-  "risk_factors": [
-    "network_access"
-  ],
-  "requires_approval": false,
-  "destructive_operations": [
-    "Creates sub-issues on GitHub (plan-first lane)",
-    "Adds labels to issues",
-    "Posts comments on issues"
-  ],
-  "relationships": {
-    "followed_by": [
-      "imboard-ai/git/full-cycle-issue"
-    ]
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "5bbb9997ed83f0fadeed749372ef082e80678a95996d6b4a80008b63ca85fc7e"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "EMfziwEs3vaP+/8HndCXgGqbrev6ok2ykiejII2mrq1y8rztGDR3DDu5dOEzYa/eQB2lXnWsFWAmDXjwtVEdCQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:40.323Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'issue-triage'
+description: 'Assess a GitHub issue''s readiness for autonomous implementation and route it to the right lane: autonomous, plan-first decomposition, or not-ready'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Issue Triage Workflow'
+  dossier.version: '1.0.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-03-10'
+  dossier.objective: 'Assess a GitHub issue''s readiness for autonomous implementation and route it to the right lane: autonomous, plan-first decomposition, or not-ready'
+  dossier.category: '["development"]'
+  dossier.tags: '["github","issues","triage","workflow","autonomous","planning"]'
+  dossier.tools_required: '[{"check_command":"gh --version","name":"gh","version":">=2.0.0"}]'
+  dossier.risk_level: 'high'
+  dossier.risk_factors: '["network_access"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Creates sub-issues on GitHub (plan-first lane)","Adds labels to issues","Posts comments on issues"]'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Documentation link mentioned in the body: cli.github.com","required":false,"trust_level":"trusted","type":"documentation","url":"https://cli.github.com/"}]'
+  dossier.relationships: '{"followed_by":[{"condition":"suggested","dossier":"imboard-ai/git/full-cycle-issue"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"5bbb9997ed83f0fadeed749372ef082e80678a95996d6b4a80008b63ca85fc7e"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"wGUlHx0Wr7nI9WUZOvhBUjQJ+C9dqo3MOkX2Bnvp6GupgYiOg8bu7jv2YEEmpvWBWBn91KmOgsl/R/U1NUDwAA==","signed_at":"2026-10-07T12:11:15.696Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Issue Triage Workflow
