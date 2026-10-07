@@ -1,148 +1,27 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "feature-to-issues",
-  "title": "Feature to Issues — Multi-Agent Feature Development Pipeline",
-  "version": "1.0.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-04-06",
-  "objective": "Take a problem signal and orchestrate PM, UX/FE, and DB/BE agents through discovery, PRD creation, spec generation, and GH issue decomposition — producing a complete feature folder with dependency-linked issues ready for implementation",
-  "category": [
-    "development",
-    "workflow"
-  ],
-  "tags": [
-    "feature",
-    "prd",
-    "issues",
-    "workflow",
-    "multi-agent",
-    "planning",
-    "discovery",
-    "pm"
-  ],
-  "tools_required": [
-    {
-      "name": "gh",
-      "version": ">=2.0.0",
-      "check_command": "gh --version"
-    },
-    {
-      "name": "git",
-      "version": ">=2.30.0",
-      "check_command": "git --version"
-    }
-  ],
-  "risk_level": "medium",
-  "requires_approval": true,
-  "risk_factors": [
-    "modifies_files",
-    "network_access"
-  ],
-  "destructive_operations": [
-    "Creates files in ./features/<slug>/ directory",
-    "Creates GitHub issues on the repository"
-  ],
-  "estimated_duration": {
-    "min_minutes": 30,
-    "max_minutes": 120
-  },
-  "inputs": {
-    "required": [
-      {
-        "name": "problem_signal",
-        "description": "The problem to solve — a user complaint, feature request, or observed pain point",
-        "type": "string",
-        "example": "Users can't see their company profile after onboarding"
-      }
-    ],
-    "optional": [
-      {
-        "name": "warmup_dossier",
-        "description": "Project-specific worktree warmup dossier for implementation phase",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "skip_implementation",
-        "description": "Stop after GH issues are created (no implementation)",
-        "type": "boolean",
-        "default": false
-      },
-      {
-        "name": "implementation_mode",
-        "description": "Which issue workflow to use: guided or full-cycle",
-        "type": "string",
-        "default": "guided"
-      },
-      {
-        "name": "feature_dir",
-        "description": "Custom path for the feature folder (default: ./features/<slug>/)",
-        "type": "string",
-        "default": ""
-      }
-    ]
-  },
-  "outputs": {
-    "files": [
-      {
-        "path": "features/<slug>/STATUS.md",
-        "description": "State machine for resumability"
-      },
-      {
-        "path": "features/<slug>/prd.md",
-        "description": "Approved PRD"
-      },
-      {
-        "path": "features/<slug>/fe-spec.md",
-        "description": "FE component specification"
-      },
-      {
-        "path": "features/<slug>/issues.md",
-        "description": "Issue decomposition with dependency chain"
-      },
-      {
-        "path": "features/<slug>/process-log.md",
-        "description": "Decision log with timestamps"
-      }
-    ],
-    "state_changes": [
-      {
-        "description": "Creates GitHub issues on the repository",
-        "affects": "GitHub issue tracker",
-        "reversible": true
-      }
-    ]
-  },
-  "relationships": {
-    "followed_by": [
-      {
-        "dossier": "guided-cycle-issue",
-        "condition": "suggested",
-        "purpose": "Implement created issues with human review"
-      },
-      {
-        "dossier": "full-cycle-issue",
-        "condition": "suggested",
-        "purpose": "Implement created issues autonomously"
-      }
-    ]
-  },
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "a4caedf95b3aeb873704586c11e56b17f4166f09710ed54bc257ea17905632f8"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "O+GZpd3rwYM6zRp5LIF3OOELa44sYn0S78wunClVHJG9nx1G8vSvtNoGbXBNkyNaJ9ACO13z7ef4FCMVjorCCA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:56.378Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'feature-to-issues'
+description: 'Take a problem signal and orchestrate PM, UX/FE, and DB/BE agents through discovery, PRD creation, spec generation, and GH issue decomposition — producing a complete feature folder with dependency-linked issues ready for implementation'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Feature to Issues — Multi-Agent Feature Development Pipeline'
+  dossier.version: '1.0.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-04-06'
+  dossier.objective: 'Take a problem signal and orchestrate PM, UX/FE, and DB/BE agents through discovery, PRD creation, spec generation, and GH issue decomposition — producing a complete feature folder with dependency-linked issues ready for implementation'
+  dossier.category: '["development","workflow"]'
+  dossier.tags: '["feature","prd","issues","workflow","multi-agent","planning","discovery","pm"]'
+  dossier.tools_required: '[{"check_command":"gh --version","name":"gh","version":">=2.0.0"},{"check_command":"git --version","name":"git","version":">=2.30.0"}]'
+  dossier.estimated_duration: '{"max_minutes":120,"min_minutes":30}'
+  dossier.risk_level: 'medium'
+  dossier.risk_factors: '["modifies_files","network_access"]'
+  dossier.requires_approval: 'true'
+  dossier.destructive_operations: '["Creates files in ./features/<slug>/ directory","Creates GitHub issues on the repository"]'
+  dossier.inputs: '{"optional":[{"default":"","description":"Project-specific worktree warmup dossier for implementation phase","name":"warmup_dossier","type":"string"},{"default":false,"description":"Stop after GH issues are created (no implementation)","name":"skip_implementation","type":"boolean"},{"default":"guided","description":"Which issue workflow to use: guided or full-cycle","name":"implementation_mode","type":"string"},{"default":"","description":"Custom path for the feature folder (default: ./features/<slug>/)","name":"feature_dir","type":"string"}],"required":[{"description":"The problem to solve — a user complaint, feature request, or observed pain point","example":"Users can''t see their company profile after onboarding","name":"problem_signal","type":"string"}]}'
+  dossier.outputs: '{"files":[{"description":"State machine for resumability","path":"features/<slug>/STATUS.md"},{"description":"Approved PRD","path":"features/<slug>/prd.md"},{"description":"FE component specification","path":"features/<slug>/fe-spec.md"},{"description":"Issue decomposition with dependency chain","path":"features/<slug>/issues.md"},{"description":"Decision log with timestamps","path":"features/<slug>/process-log.md"}],"state_changes":[{"affects":"GitHub issue tracker","description":"Creates GitHub issues on the repository","reversible":true}]}'
+  dossier.relationships: '{"followed_by":[{"condition":"suggested","dossier":"guided-cycle-issue","purpose":"Implement created issues with human review"},{"condition":"suggested","dossier":"full-cycle-issue","purpose":"Implement created issues autonomously"}]}'
+  dossier.checksum: '{"algorithm":"sha256","hash":"703c3a198e0a9f900f185b3290982b6b5003ee2e152da555bbaa778c621b9170"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"+4YbD0cwsCjEzMg6zA/MSuZYhGCIox72f+hbdM23RS3+jn10z1sBkPrNs4laVjLFwe1eUEvxC5nzwhZr4ljIBQ==","signed_at":"2026-10-07T12:04:13.594Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Feature to Issues — Multi-Agent Feature Development Pipeline
@@ -426,7 +305,7 @@ By Stage 3 completion, the human must have made 2+ major decisions. If not after
    - **Tier 3**: Frontend components / pages (depends on Tier 2)
    - **Tier 4**: Integration / wiring (depends on Tier 3)
    - **Tier 5**: Polish / UX refinements (depends on Tier 4)
-   
+
    **Assignment rule:** If issue spans multiple tiers, assign to **highest tier number**. Within a tier, issues are independent.
    **Circular dependency check:** Verify no cycles before proceeding. If found, escalate to human.
 
@@ -476,7 +355,7 @@ By Stage 3 completion, the human must have made 2+ major decisions. If not after
    - **Decision 2**: Start implementation with `full-cycle-issue` (autonomous, dependency order)
    - **Decision 3**: Don't start implementation — manual
    - **Decision 4**: Start for selected issues only (human picks)
-   
+
    If `skip_implementation` input is `true`, default to Decision 3 without asking.
 
 4. **Update `STATUS.md`**.
