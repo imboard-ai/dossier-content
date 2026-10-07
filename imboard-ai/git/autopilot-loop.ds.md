@@ -1,139 +1,25 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "autopilot-loop",
-  "title": "Autopilot Loop — Unattended, Budget-Gated Backlog Orchestration",
-  "version": "1.2.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-09-29",
-  "objective": "Progress a repository's GitHub backlog unattended for hours: each self-paced cycle checks a usage budget, picks the highest-value unit of work, dispatches cheaper worker agents that take it to a green-CI PR, reviews and merges it as the orchestrator, verifies releases, files follow-ups, and logs every cycle to a pinned tracking issue that doubles as the owner's steering channel",
-  "category": [
-    "development"
-  ],
-  "tags": [
-    "github",
-    "autonomous",
-    "orchestration",
-    "loop",
-    "autopilot",
-    "budget",
-    "observability",
-    "review",
-    "full-cycle"
-  ],
-  "risk_level": "high",
-  "risk_factors": [
-    "modifies_files",
-    "network_access",
-    "executes_external_code"
-  ],
-  "requires_approval": false,
-  "destructive_operations": [
-    "Dispatches background agents that create branches, worktrees and pull requests",
-    "Merges pull requests into the default branch (when merge authority is granted)",
-    "Publishes releases and registry artifacts (when release authority is granted)",
-    "Closes, labels and comments on GitHub issues"
-  ],
-  "inputs": {
-    "required": [
-      {
-        "name": "repo",
-        "description": "GitHub repository to work on, as owner/name. The local checkout must be the current working directory (or its parent for nested layouts).",
-        "type": "string",
-        "example": "imboard-ai/ai-dossier"
-      }
-    ],
-    "optional": [
-      {
-        "name": "budget_cap_percent",
-        "description": "Stop the loop when the weekly (7-day) model usage reaches this percentage. The meter is usually account-wide, so other sessions count too.",
-        "type": "number",
-        "default": 40
-      },
-      {
-        "name": "short_window_pause_percent",
-        "description": "When the short (e.g. 5-hour) usage window reaches this percentage, wait for its reset instead of stopping.",
-        "type": "number",
-        "default": 85
-      },
-      {
-        "name": "usage_command",
-        "description": "Shell command that prints current usage percentages (weekly and short window). If absent or failing, the loop must NOT dispatch new work until a reading succeeds.",
-        "type": "string",
-        "example": "python3 ~/projects/general/ai-usage/ai-usage.py --no-cache"
-      },
-      {
-        "name": "authority",
-        "description": "What the loop may do without asking: 'pr' (open PRs only), 'merge' (merge after green CI + orchestrator review), 'release' (merge and let releases publish). The owner sets this at kickoff.",
-        "type": "string",
-        "default": "merge"
-      },
-      {
-        "name": "worker_model",
-        "description": "Model for worker subagents that implement issues. The orchestrator itself should be the strongest available model; workers can be a cheaper tier.",
-        "type": "string",
-        "default": "sonnet"
-      },
-      {
-        "name": "max_parallel_workers",
-        "description": "Concurrent worker units per cycle. Review time, not tokens, is the real bottleneck: 2 is the sustainable default; raise only for trivially reviewable work.",
-        "type": "number",
-        "default": 2
-      },
-      {
-        "name": "lessons_interval_hours",
-        "description": "Run an independent lessons-learned review every N hours of loop time.",
-        "type": "number",
-        "default": 6
-      },
-      {
-        "name": "log_issue",
-        "description": "Existing issue number to use as the loop's log/steering channel. If omitted, the loop creates and pins one.",
-        "type": "number"
-      },
-      {
-        "name": "owner_action_label",
-        "description": "Label for issues blocked on something only the owner can do (accounts, secrets, purchases, external settings).",
-        "type": "string",
-        "default": "user-interaction-needed"
-      },
-      {
-        "name": "triage_model",
-        "description": "Model for the per-cycle backlog triage subagent (labels every open issue P0–P3, flags overlaps and already-resolved items, emits a ranked queue). Cheap tier is fine; the orchestrator reviews its labels.",
-        "type": "string",
-        "default": "sonnet"
-      },
-      {
-        "name": "priority_labels",
-        "description": "Priority label names, highest first. Created at kickoff if missing.",
-        "type": "string",
-        "default": "P0-critical,P1-high,P2-medium,P3-low"
-      }
-    ]
-  },
-  "outputs": {
-    "files": []
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "81c5004c707f380263198b793740ad45c91a777adb3f61084e386b8627a0d1dd"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "W309bc/JY1dRGgIbf5JcvksMR/Ku52TH9yQqnENoL64rlV1M7cRrykvCuAOj++w4np53lvdcWFVszX+u1F5oCA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T19:47:39.999Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'autopilot-loop'
+description: 'Progress a repository''s GitHub backlog unattended for hours: each self-paced cycle checks a usage budget, picks the highest-value unit of work, dispatches cheaper worker agents that take it to a green-CI PR, reviews and merges it as the orchestrator, verifies releases, files follow-ups, and logs every cycle to a pinned tracking issue that doubles as the owner''s steering channel'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Autopilot Loop — Unattended, Budget-Gated Backlog Orchestration'
+  dossier.version: '1.2.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-09-29'
+  dossier.objective: 'Progress a repository''s GitHub backlog unattended for hours: each self-paced cycle checks a usage budget, picks the highest-value unit of work, dispatches cheaper worker agents that take it to a green-CI PR, reviews and merges it as the orchestrator, verifies releases, files follow-ups, and logs every cycle to a pinned tracking issue that doubles as the owner''s steering channel'
+  dossier.category: '["development"]'
+  dossier.tags: '["github","autonomous","orchestration","loop","autopilot","budget","observability","review","full-cycle"]'
+  dossier.risk_level: 'high'
+  dossier.risk_factors: '["modifies_files","network_access","executes_external_code"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Dispatches background agents that create branches, worktrees and pull requests","Merges pull requests into the default branch (when merge authority is granted)","Publishes releases and registry artifacts (when release authority is granted)","Closes, labels and comments on GitHub issues"]'
+  dossier.inputs: '{"optional":[{"default":40,"description":"Stop the loop when the weekly (7-day) model usage reaches this percentage. The meter is usually account-wide, so other sessions count too.","name":"budget_cap_percent","type":"number"},{"default":85,"description":"When the short (e.g. 5-hour) usage window reaches this percentage, wait for its reset instead of stopping.","name":"short_window_pause_percent","type":"number"},{"description":"Shell command that prints current usage percentages (weekly and short window). If absent or failing, the loop must NOT dispatch new work until a reading succeeds.","example":"python3 ~/projects/general/ai-usage/ai-usage.py --no-cache","name":"usage_command","type":"string"},{"default":"merge","description":"What the loop may do without asking: ''pr'' (open PRs only), ''merge'' (merge after green CI + orchestrator review), ''release'' (merge and let releases publish). The owner sets this at kickoff.","name":"authority","type":"string"},{"default":"sonnet","description":"Model for worker subagents that implement issues. The orchestrator itself should be the strongest available model; workers can be a cheaper tier.","name":"worker_model","type":"string"},{"default":2,"description":"Concurrent worker units per cycle. Review time, not tokens, is the real bottleneck: 2 is the sustainable default; raise only for trivially reviewable work.","name":"max_parallel_workers","type":"number"},{"default":6,"description":"Run an independent lessons-learned review every N hours of loop time.","name":"lessons_interval_hours","type":"number"},{"description":"Existing issue number to use as the loop''s log/steering channel. If omitted, the loop creates and pins one.","name":"log_issue","type":"number"},{"default":"user-interaction-needed","description":"Label for issues blocked on something only the owner can do (accounts, secrets, purchases, external settings).","name":"owner_action_label","type":"string"},{"default":"sonnet","description":"Model for the per-cycle backlog triage subagent (labels every open issue P0–P3, flags overlaps and already-resolved items, emits a ranked queue). Cheap tier is fine; the orchestrator reviews its labels.","name":"triage_model","type":"string"},{"default":"P0-critical,P1-high,P2-medium,P3-low","description":"Priority label names, highest first. Created at kickoff if missing.","name":"priority_labels","type":"string"}],"required":[{"description":"GitHub repository to work on, as owner/name. The local checkout must be the current working directory (or its parent for nested layouts).","example":"imboard-ai/ai-dossier","name":"repo","type":"string"}]}'
+  dossier.outputs: '{"files":[]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"81c5004c707f380263198b793740ad45c91a777adb3f61084e386b8627a0d1dd"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"d8pu96qg4+t9sP20CaidCFnn/vKJELHjb4J/QHfPKJDSv+qsN96OuRFptjTgS4Tn7y1F+UB9uPhgBr0uYJNnBg==","signed_at":"2026-10-07T11:57:29.733Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Autopilot Loop — Unattended, Budget-Gated Backlog Orchestration
