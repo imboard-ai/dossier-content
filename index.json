@@ -527,7 +527,7 @@
     {
       "name": "imboard-ai/git/git-sync-skill",
       "title": "Git Sync",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/git/git-sync-skill.ds.md",
       "description": "Triages uncommitted/unpushed state and syncs with GitHub. Use when arriving in a repo with dirty state, when the user says 'sync this repo', 'review uncommitted', 'commit pending', 'what's dirty here', 'push changes', or runs /git-sync.",
       "category": [
@@ -544,7 +544,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:59:24.255Z"
     },
     {
       "name": "imboard-ai/git/implement-issue",
