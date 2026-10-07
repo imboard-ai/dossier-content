@@ -284,8 +284,9 @@
     {
       "name": "imboard-ai/git/batch-issues",
       "title": "Batch Issue Orchestration — SUPERSEDED (pre-RFC-0001)",
-      "version": "2.1.1",
+      "version": "2.1.2",
       "path": "imboard-ai/git/batch-issues.ds.md",
+      "description": "SUPERSEDED. Pre-RFC-0001 batch orchestration via headless agents, predating the batch-cycles programme entirely. For batching issues into ONE PR with one verification run use imboard-ai/skills/batch-cycle-skill. For N issues to N PRs use imboard-ai/skills/fleet-cycle-skill. Kept for reference only.",
       "category": [
         "development",
         "orchestration"
@@ -305,7 +306,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:57:53.802Z"
     },
     {
       "name": "imboard-ai/git/batch-issues-preparation",
