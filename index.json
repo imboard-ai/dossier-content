@@ -576,8 +576,9 @@
     {
       "name": "imboard-ai/git/issue-cycle-classifier",
       "title": "Issue Cycle Classifier — Structured Full/Slot Verdict + Review Level",
-      "version": "1.6.1",
+      "version": "1.6.2",
       "path": "imboard-ai/git/issue-cycle-classifier.ds.md",
+      "description": "Score one issue for execution mode AND review depth: prescreen:v4 excludes only on hard-block labels or open deps, and makes a risk/deploy keyword, plan:v1 risk-floor path or >8 plan:v1 files a candidate with review=full; candidates get a bounded mechanical-tier E.2/E.3 pass (rules 1, 4, 5 and 6 and a broad test scope raise review, never force full), one mid-tier escalation when uncertain, and a phase=classify verdict carrying review",
       "category": [
         "development"
       ],
@@ -592,7 +593,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:59:42.654Z"
     },
     {
       "name": "imboard-ai/git/issue-workflows-guide",
