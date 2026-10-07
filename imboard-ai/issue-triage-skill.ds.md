@@ -1,43 +1,20 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "issue-triage-skill",
-  "title": "Issue Triage",
-  "version": "1.0.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Triage a GitHub issue to determine if it's ready for autonomous implementation",
-  "description": "Assess and route issues: autonomous, plan-first, or not-ready. Use when user says 'triage issue', 'assess issue', 'check issue readiness'",
-  "category": [
-    "skills"
-  ],
-  "tags": [
-    "github",
-    "triage",
-    "workflow",
-    "skill"
-  ],
-  "risk_level": "high",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "4d6fad4ca37a11eaeddb8366d658f8e4525ba3b9a1a836066784de319cbde24c"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "Z0eIZWWpTlAWKDdzly5YVo46E3HMapBe9u/m+WzbF3KDv1xYpP5HyyS3UVd9fehNSKm/8inNFj+95PGg7TmiDQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:43.605Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'issue-triage-skill'
+description: 'Assess and route issues: autonomous, plan-first, or not-ready. Use when user says ''triage issue'', ''assess issue'', ''check issue readiness'''
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Issue Triage'
+  dossier.version: '1.0.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Triage a GitHub issue to determine if it''s ready for autonomous implementation'
+  dossier.category: '["skills"]'
+  dossier.tags: '["github","triage","workflow","skill"]'
+  dossier.risk_level: 'high'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"4d6fad4ca37a11eaeddb8366d658f8e4525ba3b9a1a836066784de319cbde24c"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"B/szSkmAvNRKaOqySgQD84DGexRyADPT4JubSTooZirLChaQOhnen8GqGin4SsKXgiGTP0Xm65gHGPrunrYrDg==","signed_at":"2026-10-07T12:03:18.015Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Issue Triage
