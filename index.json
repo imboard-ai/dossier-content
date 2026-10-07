@@ -1235,8 +1235,9 @@
     {
       "name": "imboard-ai/pm/feature-to-issues",
       "title": "Feature to Issues — Multi-Agent Feature Development Pipeline",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/pm/feature-to-issues.ds.md",
+      "description": "Take a problem signal and orchestrate PM, UX/FE, and DB/BE agents through discovery, PRD creation, spec generation, and GH issue decomposition — producing a complete feature folder with dependency-linked issues ready for implementation",
       "category": [
         "development",
         "workflow"
@@ -1253,16 +1254,18 @@
       ],
       "tools_required": [
         {
+          "check_command": "gh --version",
           "name": "gh",
-          "version": ">=2.0.0",
-          "check_command": "gh --version"
+          "version": ">=2.0.0"
         },
         {
+          "check_command": "git --version",
           "name": "git",
-          "version": ">=2.30.0",
-          "check_command": "git --version"
+          "version": ">=2.30.0"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:04:17.789Z"
     },
     {
       "name": "imboard-ai/pm/idea-to-prd",
