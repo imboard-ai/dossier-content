@@ -1,125 +1,27 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "sheet-triage",
-  "title": "QA Sheet Triage",
-  "version": "1.3.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-08-04",
-  "objective": "Turn a manual-QA findings spreadsheet into verified, clustered GitHub issues plus the detection-gap fixes that would have caught each bug automatically, then grade each issue for autonomous readiness and emit a dependency-ordered execution plan for the ready ones",
-  "description": "Ingest a manual-QA findings sheet, validate that every referenced piece of evidence is actually readable, surface-review the findings for discrepancies, cluster them by the code surface a fix would touch, investigate each cluster with parallel root-cause / generalization / detection-gap agents, file one issue per cluster, independently review each filed issue for full-cycle readiness, emit a dependency-ordered execution plan for the ready set, and write the triage result back as a companion sheet. Use when the user says 'triage QA sheet', 'QA findings', 'manual QA results', or hands over a spreadsheet of bugs.",
-  "category": [
-    "testing",
-    "maintenance"
-  ],
-  "tags": [
-    "qa",
-    "triage",
-    "github",
-    "workflow",
-    "testing",
-    "root-cause"
-  ],
-  "risk_level": "medium",
-  "requires_approval": false,
-  "risk_factors": [
-    "network_access",
-    "requires_credentials"
-  ],
-  "destructive_operations": [
-    "Creates GitHub issues in the target repository (team-visible, noisy to undo)",
-    "Applies readiness labels to the issues it files, and creates those labels in the repository if absent",
-    "Edits the bodies of issues it filed in this run to record dependency edges",
-    "Creates a new companion spreadsheet in the QA evidence folder",
-    "Appends to the persistent triage cycle log outside the working tree"
-  ],
-  "estimated_duration": {
-    "min_minutes": 20,
-    "max_minutes": 120
-  },
-  "tools_required": [
-    {
-      "name": "gh",
-      "description": "GitHub CLI, authenticated against the target repository",
-      "check_command": "gh auth status"
-    }
-  ],
-  "inputs": {
-    "required": [
-      {
-        "name": "sheet",
-        "description": "The QA findings source: a spreadsheet URL or ID reachable through the agent's document connector, a local .csv/.tsv path, or pasted tabular text",
-        "type": "string",
-        "example": "https://docs.google.com/spreadsheets/d/1Gz8.../edit"
-      }
-    ],
-    "optional": [
-      {
-        "name": "repo",
-        "description": "Target GitHub repository in owner/name form. Defaults to the current repository's origin remote.",
-        "type": "string",
-        "default": "auto"
-      },
-      {
-        "name": "dry_run",
-        "description": "Run every investigation phase and print the full report, but create no issues and no companion sheet",
-        "type": "boolean",
-        "default": false
-      },
-      {
-        "name": "only",
-        "description": "Comma-separated finding IDs to process, ignoring the rest of the sheet",
-        "type": "string",
-        "default": ""
-      },
-      {
-        "name": "no_writeback",
-        "description": "Skip Phase 7 — file issues but create no companion sheet",
-        "type": "boolean",
-        "default": false
-      },
-      {
-        "name": "checkpoint",
-        "description": "Always stop for review after the Phase 1 surface review, even when nothing is ambiguous",
-        "type": "boolean",
-        "default": false
-      },
-      {
-        "name": "ready_label",
-        "description": "Label applied in Phase 5 to issues judged ready for autonomous full-cycle execution. Created in the repository if it does not exist. The not-ready label is deliberately not configurable: it is `needs-clarification`, which `imboard-ai/git/gate-issue` already treats as a hard block.",
-        "type": "string",
-        "default": "ready:full-cycle"
-      }
-    ]
-  },
-  "outputs": {
-    "files": [
-      {
-        "path": "~/.dossier/logs/qa-sheet-triage/{project}/TRIAGE-CYCLE-LOG.md",
-        "description": "Cumulative append-only cycle ledger, one section per round, kept per-project outside the working tree. Read back every round to audit prior rounds' promised artifacts. Never gzipped, never pruned.",
-        "format": "markdown"
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "245a1db0e1a76e07e204d859a6cb572bdb2590cd20ae20e0710416ad1b077ec4"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "3TVPTiu4lqFxls8zIqXzHsq/qSfbm/V0C8BVg0MQJjiDsIB74t1VeJ2wURTFEgdJky5g+eZJRGUtZ0zDKpkBBA==",
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAT5MH6NyHt3zBur6eq+EVSNOA2AZbuSRpov+/BRFzLnY=\n-----END PUBLIC KEY-----\n",
-    "signed_at": "2026-08-04T05:55:56.337Z",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'sheet-triage'
+description: 'Ingest a manual-QA findings sheet, validate that every referenced piece of evidence is actually readable, surface-review the findings for discrepancies, cluster them by the code surface a fix would touch, investigate each cluster with parallel root-cause / generalization / detection-gap agents, file one issue per cluster, independently review each filed issue for full-cycle readiness, emit a dependency-ordered execution plan for the ready set, and write the triage result back as a companion sheet. Use when the user says ''triage QA sheet'', ''QA findings'', ''manual QA results'', or hands over a spreadsheet of bugs.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'QA Sheet Triage'
+  dossier.version: '1.3.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-08-04'
+  dossier.objective: 'Turn a manual-QA findings spreadsheet into verified, clustered GitHub issues plus the detection-gap fixes that would have caught each bug automatically, then grade each issue for autonomous readiness and emit a dependency-ordered execution plan for the ready ones'
+  dossier.category: '["testing","maintenance"]'
+  dossier.tags: '["qa","triage","github","workflow","testing","root-cause"]'
+  dossier.tools_required: '[{"check_command":"gh auth status","description":"GitHub CLI, authenticated against the target repository","name":"gh"}]'
+  dossier.estimated_duration: '{"max_minutes":120,"min_minutes":20}'
+  dossier.risk_level: 'medium'
+  dossier.risk_factors: '["network_access","requires_credentials"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Creates GitHub issues in the target repository (team-visible, noisy to undo)","Applies readiness labels to the issues it files, and creates those labels in the repository if absent","Edits the bodies of issues it filed in this run to record dependency edges","Creates a new companion spreadsheet in the QA evidence folder","Appends to the persistent triage cycle log outside the working tree"]'
+  dossier.inputs: '{"optional":[{"default":"auto","description":"Target GitHub repository in owner/name form. Defaults to the current repository''s origin remote.","name":"repo","type":"string"},{"default":false,"description":"Run every investigation phase and print the full report, but create no issues and no companion sheet","name":"dry_run","type":"boolean"},{"default":"","description":"Comma-separated finding IDs to process, ignoring the rest of the sheet","name":"only","type":"string"},{"default":false,"description":"Skip Phase 7 — file issues but create no companion sheet","name":"no_writeback","type":"boolean"},{"default":false,"description":"Always stop for review after the Phase 1 surface review, even when nothing is ambiguous","name":"checkpoint","type":"boolean"},{"default":"ready:full-cycle","description":"Label applied in Phase 5 to issues judged ready for autonomous full-cycle execution. Created in the repository if it does not exist. The not-ready label is deliberately not configurable: it is `needs-clarification`, which `imboard-ai/git/gate-issue` already treats as a hard block.","name":"ready_label","type":"string"}],"required":[{"description":"The QA findings source: a spreadsheet URL or ID reachable through the agent''s document connector, a local .csv/.tsv path, or pasted tabular text","example":"https://docs.google.com/spreadsheets/d/1Gz8.../edit","name":"sheet","type":"string"}]}'
+  dossier.outputs: '{"files":[{"description":"Cumulative append-only cycle ledger, one section per round, kept per-project outside the working tree. Read back every round to audit prior rounds'' promised artifacts. Never gzipped, never pruned.","format":"markdown","path":"~/.dossier/logs/qa-sheet-triage/{project}/TRIAGE-CYCLE-LOG.md"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"245a1db0e1a76e07e204d859a6cb572bdb2590cd20ae20e0710416ad1b077ec4"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"0eZyIzwrq21ZapdT+dhaFcOm/wgWuvHljH52Es3QAilahN6hiAyt5S/X7zrToiDHjjRzrj17QkXy9HCn+wxfCg==","signed_at":"2026-10-07T12:04:30.778Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # QA Sheet Triage
