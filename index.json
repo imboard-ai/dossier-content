@@ -469,8 +469,9 @@
     {
       "name": "imboard-ai/git/gate-issue",
       "title": "Gate Issue — Pre-Flight Safety Check",
-      "version": "1.6.2",
+      "version": "1.6.3",
       "path": "imboard-ai/git/gate-issue.ds.md",
+      "description": "Lightweight safety gate that checks issue metadata for hard blocks and soft warnings before starting any workflow; recognizes classify, slot-mode, and batch-anchor runstate trails so a full-cycle run never resumes into a nonexistent batch",
       "category": [
         "development"
       ],
@@ -487,7 +488,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-06T22:46:37.382Z"
+      "published_at": "2026-10-07T11:59:15.921Z"
     },
     {
       "name": "imboard-ai/git/git-sync",
