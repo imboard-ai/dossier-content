@@ -1726,6 +1726,29 @@
       "published_at": "2026-10-07T12:06:22.586Z"
     },
     {
+      "name": "imboard-ai/skills/worktree-pool-skill",
+      "title": "Worktree Pool Skill",
+      "version": "1.0.0",
+      "path": "imboard-ai/skills/worktree-pool-skill.ds.md",
+      "description": "Manage a pool of pre-warmed git worktrees so an issue starts in about 2 seconds instead of a 3-5 minute cold setup. Use when user says 'worktree pool', 'warm worktrees', 'claim a worktree', 'pre-warm worktrees'.",
+      "category": [
+        "skills"
+      ],
+      "tags": [
+        "worktree",
+        "git",
+        "pre-warm",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T14:09:35.821Z"
+    },
+    {
       "name": "tal-liberio/development/api-compatibility-check",
       "title": "API Compatibility Check",
       "version": "1.0.0",
