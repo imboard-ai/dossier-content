@@ -1,55 +1,22 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "warm-worktree-pnpm-ssm",
-  "title": "Imboard Warm Worktree (pnpm + SSM)",
-  "version": "1.4.0",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "objective": "Prepare a fresh imboard-monorepo worktree for development using pnpm content-addressable store and AWS SSM secrets — no .env copying needed",
-  "category": [
-    "development"
-  ],
-  "tags": [
-    "worktree",
-    "pnpm",
-    "ssm",
-    "imboard"
-  ],
-  "estimated_duration": {
-    "min_minutes": 0,
-    "max_minutes": 2
-  },
-  "risk_level": "low",
-  "requires_approval": false,
-  "inputs": {
-    "required": [
-      {
-        "name": "target_worktree",
-        "description": "Path to the newly created worktree to warm up",
-        "type": "string"
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "6b2494518455960f45690fd168f2aa4c59c3f27a771954f3844ff83b0c8b6e14"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "kIT5ZYJoVZIQTGQYBUCGDzJ88vuQ0Q5pD8zpeDG+bh+/NPUSw8zLrsjBt98VRlbx+vpwOLbF/EM9Zsu97A73CA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-17T14:22:44.861Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'warm-worktree-pnpm-ssm'
+description: 'Prepare a fresh imboard-monorepo worktree for development using pnpm content-addressable store and AWS SSM secrets — no .env copying needed'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Imboard Warm Worktree (pnpm + SSM)'
+  dossier.version: '1.4.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.objective: 'Prepare a fresh imboard-monorepo worktree for development using pnpm content-addressable store and AWS SSM secrets — no .env copying needed'
+  dossier.category: '["development"]'
+  dossier.tags: '["worktree","pnpm","ssm","imboard"]'
+  dossier.estimated_duration: '{"max_minutes":2,"min_minutes":0}'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.inputs: '{"required":[{"description":"Path to the newly created worktree to warm up","name":"target_worktree","type":"string"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"6b2494518455960f45690fd168f2aa4c59c3f27a771954f3844ff83b0c8b6e14"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"C1g2MIj6P7jKQS0B91A8zo5zgn/YNQJ/Ntf521TykwAzW5Y03OFogXykcZtHaDueV4MZWOJfDDhdH8VP0njwBA==","signed_at":"2026-10-07T12:03:06.598Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Imboard Warm Worktree (pnpm + SSM)
