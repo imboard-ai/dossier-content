@@ -1,104 +1,25 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "title": "Idea to PRD — PM discovery loop with a go/kill gate",
-  "version": "0.2.0",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-07-07",
-  "objective": "Take any high-level product idea and EITHER kill it with a documented rationale when ROI/viability logic says it isn't worth chasing, OR generate the rationale for why it makes sense and drive it all the way to an engineering-ready PRD (user benefits + product feature design + text wireframes), tracked in GitHub — not gated in a chat session",
-  "category": [
-    "development"
-  ],
-  "tags": [
-    "product-management",
-    "pm",
-    "discovery",
-    "prd",
-    "go-kill-gate",
-    "wireframes",
-    "workflow",
-    "autonomous",
-    "loop",
-    "grounded"
-  ],
-  "risk_level": "medium",
-  "requires_approval": false,
-  "risk_factors": [
-    "modifies_files",
-    "network_access",
-    "executes_external_code"
-  ],
-  "destructive_operations": [
-    "Creates GitHub issues (epic + optional sub-issues, or a kill record) and may open a docs PR",
-    "Writes PRD and wireframe docs into the repo",
-    "Spawns background agents that run PM-framework skills autonomously"
-  ],
-  "inputs": {
-    "required": [
-      {
-        "name": "idea",
-        "description": "A high-level product idea, in one or a few sentences. Can be vague; the loop sharpens it.",
-        "type": "string",
-        "example": "Help CEOs decide when and how to raise their next round"
-      }
-    ],
-    "optional": [
-      {
-        "name": "slug",
-        "description": "kebab-case slug for the feature; used for the docs folder and branch. Derived from the idea if omitted.",
-        "type": "string"
-      },
-      {
-        "name": "grounding_docs",
-        "description": "Extra strategy-registry docs to load beyond brief.md (e.g. icp.md, gtm-plan.md).",
-        "type": "string"
-      },
-      {
-        "name": "autonomy",
-        "description": "'checkpoint' (default) = stop for a human sign-off before shipping to GitHub. 'auto' = run straight through to the GitHub issue.",
-        "type": "string",
-        "default": "checkpoint"
-      },
-      {
-        "name": "kill_threshold",
-        "description": "How aggressive the go/kill gate is: 'lenient' | 'balanced' (default) | 'strict'. Strict kills more.",
-        "type": "string",
-        "default": "balanced"
-      },
-      {
-        "name": "max_critic_iterations",
-        "description": "Cap on the PRD critic revise-loop before shipping as-is with the open gaps logged.",
-        "type": "number",
-        "default": 3
-      }
-    ]
-  },
-  "outputs": {
-    "files": [
-      {
-        "path": "docs/features/{slug}/prd.md",
-        "description": "The engineering-ready PRD (1-10 skeleton, User Benefits + Product Feature Design)",
-        "format": "markdown"
-      },
-      {
-        "path": "docs/features/{slug}/wireframes.md",
-        "description": "Text/ASCII wireframes for every screen, house-style",
-        "format": "markdown"
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "name": "idea-to-prd",
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "843b5ebe36490df75c12bad97ff4833f6adbefa8fcd729c2ea38096c216a4ac2"
-  }
-}
+---
+name: 'idea-to-prd'
+description: 'Take any high-level product idea and EITHER kill it with a documented rationale when ROI/viability logic says it isn''t worth chasing, OR generate the rationale for why it makes sense and drive it all the way to an engineering-ready PRD (user benefits + product feature design + text wireframes), tracked in GitHub — not gated in a chat session'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Idea to PRD — PM discovery loop with a go/kill gate'
+  dossier.version: '0.2.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-07-07'
+  dossier.objective: 'Take any high-level product idea and EITHER kill it with a documented rationale when ROI/viability logic says it isn''t worth chasing, OR generate the rationale for why it makes sense and drive it all the way to an engineering-ready PRD (user benefits + product feature design + text wireframes), tracked in GitHub — not gated in a chat session'
+  dossier.category: '["development"]'
+  dossier.tags: '["product-management","pm","discovery","prd","go-kill-gate","wireframes","workflow","autonomous","loop","grounded"]'
+  dossier.risk_level: 'medium'
+  dossier.risk_factors: '["modifies_files","network_access","executes_external_code"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Creates GitHub issues (epic + optional sub-issues, or a kill record) and may open a docs PR","Writes PRD and wireframe docs into the repo","Spawns background agents that run PM-framework skills autonomously"]'
+  dossier.inputs: '{"optional":[{"description":"kebab-case slug for the feature; used for the docs folder and branch. Derived from the idea if omitted.","name":"slug","type":"string"},{"description":"Extra strategy-registry docs to load beyond brief.md (e.g. icp.md, gtm-plan.md).","name":"grounding_docs","type":"string"},{"default":"checkpoint","description":"''checkpoint'' (default) = stop for a human sign-off before shipping to GitHub. ''auto'' = run straight through to the GitHub issue.","name":"autonomy","type":"string"},{"default":"balanced","description":"How aggressive the go/kill gate is: ''lenient'' | ''balanced'' (default) | ''strict''. Strict kills more.","name":"kill_threshold","type":"string"},{"default":3,"description":"Cap on the PRD critic revise-loop before shipping as-is with the open gaps logged.","name":"max_critic_iterations","type":"number"}],"required":[{"description":"A high-level product idea, in one or a few sentences. Can be vague; the loop sharpens it.","example":"Help CEOs decide when and how to raise their next round","name":"idea","type":"string"}]}'
+  dossier.outputs: '{"files":[{"description":"The engineering-ready PRD (1-10 skeleton, User Benefits + Product Feature Design)","format":"markdown","path":"docs/features/{slug}/prd.md"},{"description":"Text/ASCII wireframes for every screen, house-style","format":"markdown","path":"docs/features/{slug}/wireframes.md"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"843b5ebe36490df75c12bad97ff4833f6adbefa8fcd729c2ea38096c216a4ac2"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"QZ8uGOyEgNqw+sa+sZFsbzK3LjjHMxbSmUA05RsXLQq9bW7jkg8iZdHqqFSB9Tm7OCeHodZS14s6I6YvK70RAQ==","signed_at":"2026-10-07T12:11:41.470Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Idea to PRD — PM discovery loop with a go/kill gate
