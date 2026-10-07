@@ -1,90 +1,24 @@
----dossier
-{
-  "description": "Expert Google Ads account management — auditing, first-look account review, competitor analysis (Auction Insights), keyword research, campaign structure, bid strategy, Quality Score, search-term triage, RSA copywriting, Performance Max, landing page evaluation, PPC math, optimization loops, and a SaaS/AI-product deep dive (activation-first conversion architecture, competitor conquesting, PLG landing pages). Works with any data source: Google Ads MCP (GAQL), CSV exports, or screenshots. Read-only by default — every account change is a draft until explicitly approved.",
-  "category": [
-    "documentation"
-  ],
-  "tags": [
-    "google-ads",
-    "ppc",
-    "sem",
-    "audit",
-    "competitor-analysis",
-    "quality-score",
-    "bidding",
-    "search-terms",
-    "rsa",
-    "performance-max",
-    "saas",
-    "plg",
-    "conquesting",
-    "knowledge"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "risk_factors": [
-    "network_access"
-  ],
-  "protocol_version": "1.0",
-  "last_updated": "2026-07-22",
-  "dossier_schema_version": "1.0.0",
-  "content_scope": "references-external",
-  "external_references": [
-    {
-      "url": "https://github.com/AgriciDaniel/claude-ads",
-      "description": "MIT-licensed source library (attribution)",
-      "type": "documentation",
-      "trust_level": "user-verified",
-      "required": false
-    },
-    {
-      "url": "https://github.com/nowork-studio/NotFair",
-      "description": "MIT-licensed source library (attribution)",
-      "type": "documentation",
-      "trust_level": "user-verified",
-      "required": false
-    },
-    {
-      "url": "https://github.com/itallstartedwithaidea/agent-skills",
-      "description": "MIT-licensed source library (attribution)",
-      "type": "documentation",
-      "trust_level": "user-verified",
-      "required": false
-    }
-  ],
-  "name": "google-ads",
-  "title": "Google Ads Expert",
-  "version": "1.0.1",
-  "status": "Draft",
-  "objective": "Expert Google Ads management playbook: audit workflow, PPC math, campaign structure, bid strategy, Quality Score, search-term triage, RSA copy, PMax, competitor analysis, and SaaS/PLG acquisition — evidence-first, read-only by default, writes only with explicit approval",
-  "authors": [
-    {
-      "name": "Daniel Agrici (claude-ads, MIT)"
-    },
-    {
-      "name": "nowork.studio (NotFair, MIT)"
-    },
-    {
-      "name": "googleadsagent.ai (agent-skills, MIT)"
-    },
-    {
-      "name": "Ido Zalmanovich (curation)"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "e5538c7294902f2969401cda62f971725c843e18a16915f493b15b8acc1f4a3d"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "s6UseUrbdiFH7/4aQ20Cecq8Kduvo0VpkoBUSReWW88Dod90vkw4komOoAw+LTZk++7Oe/G/4wu8c4CGFZGhDA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:46.565Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'google-ads'
+description: 'Expert Google Ads account management — auditing, first-look account review, competitor analysis (Auction Insights), keyword research, campaign structure, bid strategy, Quality Score, search-term triage, RSA copywriting, Performance Max, landing page evaluation, PPC math, optimization loops, and a SaaS/AI-product deep dive (activation-first conversion architecture, competitor conquesting, PLG landing pages). Works with any data source: Google Ads MCP (GAQL), CSV exports, or screenshots. Read-only by default — every account change is a draft until explicitly approved.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Google Ads Expert'
+  dossier.version: '1.0.2'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-07-22'
+  dossier.objective: 'Expert Google Ads management playbook: audit workflow, PPC math, campaign structure, bid strategy, Quality Score, search-term triage, RSA copy, PMax, competitor analysis, and SaaS/PLG acquisition — evidence-first, read-only by default, writes only with explicit approval'
+  dossier.category: '["documentation"]'
+  dossier.tags: '["google-ads","ppc","sem","audit","competitor-analysis","quality-score","bidding","search-terms","rsa","performance-max","saas","plg","conquesting","knowledge"]'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["network_access"]'
+  dossier.requires_approval: 'false'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"MIT-licensed source library (attribution)","required":false,"trust_level":"user-verified","type":"documentation","url":"https://github.com/AgriciDaniel/claude-ads"},{"description":"MIT-licensed source library (attribution)","required":false,"trust_level":"user-verified","type":"documentation","url":"https://github.com/nowork-studio/NotFair"},{"description":"MIT-licensed source library (attribution)","required":false,"trust_level":"user-verified","type":"documentation","url":"https://github.com/itallstartedwithaidea/agent-skills"}]'
+  dossier.authors: '[{"name":"Daniel Agrici (claude-ads, MIT)"},{"name":"nowork.studio (NotFair, MIT)"},{"name":"googleadsagent.ai (agent-skills, MIT)"},{"name":"Ido Zalmanovich (curation)"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"e5538c7294902f2969401cda62f971725c843e18a16915f493b15b8acc1f4a3d"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"pqpOr5NKBZp2rxfP0DKpTBmyRY+DJKeuHxOKcpuwatA6QKDi0brNVIppdkX5GVa0EcD2GETA1wARvprMljYZAg==","signed_at":"2026-10-07T12:03:27.374Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Google Ads Expert
