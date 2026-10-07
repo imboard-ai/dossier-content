@@ -1,43 +1,20 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "full-cycle-issue-skill",
-  "title": "Full Cycle Issue",
-  "version": "1.6.3",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Take a GitHub issue from start to merged PR autonomously",
-  "description": "Full autopilot: gate, setup, plan, implement, test, review, commit, push, PR, merge, rich report. Use when user says 'full cycle issue', 'auto issue', 'autopilot issue', 'fire and forget'",
-  "category": [
-    "skills"
-  ],
-  "tags": [
-    "github",
-    "workflow",
-    "autonomous",
-    "skill"
-  ],
-  "risk_level": "high",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "5ce3dd57756d05ada556e85e169bc89c4004b9b61fd1f58daccc31848636d93f"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "4sQTgUS48PmnD3UqfyRBJEFPMSWlKrd32EwYE/KsrdngC2nf4l2iwodGVvTB6Jp5/dXsLb/44OrIKOZy7D19CA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-28T08:19:47.740Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'full-cycle-issue-skill'
+description: 'Full autopilot: gate, setup, plan, implement, test, review, commit, push, PR, merge, rich report. Use when user says ''full cycle issue'', ''auto issue'', ''autopilot issue'', ''fire and forget'''
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Full Cycle Issue'
+  dossier.version: '1.6.4'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Take a GitHub issue from start to merged PR autonomously'
+  dossier.category: '["skills"]'
+  dossier.tags: '["github","workflow","autonomous","skill"]'
+  dossier.risk_level: 'high'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"5ce3dd57756d05ada556e85e169bc89c4004b9b61fd1f58daccc31848636d93f"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"oA/51BPbCMWc0W5+dvKiHs3ZQgaswZrlc0SwtykNfT0VW+d2mS0a+5jrcx792cdgH1KRv+T2Sh6Z2yyLeNPEBA==","signed_at":"2026-10-07T12:06:00.530Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Full Cycle Issue
