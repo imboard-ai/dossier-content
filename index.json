@@ -724,8 +724,9 @@
     {
       "name": "imboard-ai/git/project-exploration",
       "title": "Project Exploration",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "imboard-ai/git/project-exploration.ds.md",
+      "description": "Map a project's structure (routes, controllers, models, types) to enable onboarding, refactoring, and gap analysis. Generates both human-readable Markdown and machine-readable JSON outputs.",
       "category": [
         "development"
       ],
@@ -733,7 +734,9 @@
         {
           "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:11:10.721Z"
     },
     {
       "name": "imboard-ai/git/release-notes-generator",
