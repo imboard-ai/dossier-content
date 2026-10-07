@@ -1,183 +1,28 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "scaffold-project",
-  "title": "Scaffold TypeScript Project",
-  "version": "1.0.1",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "last_updated": "2026-03-09",
-  "objective": "Scaffold a complete TypeScript project with CI, testing, linting, documentation, and worktree support — eliminating repetitive boilerplate setup",
-  "category": [
-    "development",
-    "setup"
-  ],
-  "tags": [
-    "scaffold",
-    "typescript",
-    "boilerplate",
-    "ci",
-    "project-creation",
-    "github-actions"
-  ],
-  "tools_required": [
-    {
-      "name": "node",
-      "version": ">=20.0.0",
-      "check_command": "node --version"
-    },
-    {
-      "name": "gh",
-      "version": ">=2.0.0",
-      "check_command": "gh --version"
-    },
-    {
-      "name": "git",
-      "version": ">=2.30.0",
-      "check_command": "git --version"
-    }
-  ],
-  "risk_level": "medium",
-  "requires_approval": false,
-  "risk_factors": [
-    "modifies_files"
-  ],
-  "destructive_operations": [
-    "Creates multiple files in the target directory",
-    "Runs npm install (modifies node_modules and package-lock.json)"
-  ],
-  "estimated_duration": {
-    "min_minutes": 5,
-    "max_minutes": 15
-  },
-  "inputs": {
-    "required": [
-      {
-        "name": "project_name",
-        "description": "Name of the project (kebab-case, used for package.json name and repo)",
-        "type": "string",
-        "example": "my-awesome-tool"
-      },
-      {
-        "name": "project_dir",
-        "description": "Absolute path to the project root directory",
-        "type": "string",
-        "example": "/home/user/projects/my-awesome-tool/main"
-      },
-      {
-        "name": "description",
-        "description": "One-line project description",
-        "type": "string",
-        "example": "CLI tool for managing AI agent workflows"
-      }
-    ],
-    "optional": [
-      {
-        "name": "github_org",
-        "description": "GitHub organization for the repo (skip if repo already exists)",
-        "type": "string",
-        "default": "",
-        "example": "imboard-ai"
-      },
-      {
-        "name": "license",
-        "description": "License type",
-        "type": "string",
-        "default": "MIT",
-        "example": "AGPL-3.0"
-      },
-      {
-        "name": "linter",
-        "description": "Linter to use: biome or eslint",
-        "type": "string",
-        "default": "biome",
-        "example": "eslint"
-      },
-      {
-        "name": "node_version",
-        "description": "Node.js version for CI matrix",
-        "type": "string",
-        "default": "22",
-        "example": "20"
-      },
-      {
-        "name": "skip_worktrees",
-        "description": "Skip worktree support setup",
-        "type": "boolean",
-        "default": false
-      },
-      {
-        "name": "skip_github_repo",
-        "description": "Skip GitHub repo creation (use if repo already exists)",
-        "type": "boolean",
-        "default": false
-      },
-      {
-        "name": "author_name",
-        "description": "Author name for package.json",
-        "type": "string",
-        "default": "",
-        "example": "Yuval Dimnik"
-      },
-      {
-        "name": "author_email",
-        "description": "Author email for package.json",
-        "type": "string",
-        "default": "",
-        "example": "yuval.dimnik@gmail.com"
-      }
-    ]
-  },
-  "outputs": {
-    "files": [
-      {
-        "path": "package.json",
-        "description": "Package manifest with ESM, scripts, devDependencies"
-      },
-      {
-        "path": "tsconfig.json",
-        "description": "TypeScript config (strict, ES2022, ESNext modules)"
-      },
-      {
-        "path": ".gitignore",
-        "description": "Comprehensive gitignore for Node/TypeScript"
-      },
-      {
-        "path": ".github/workflows/ci.yml",
-        "description": "GitHub Actions CI (typecheck + lint + test)"
-      },
-      {
-        "path": "AGENTS.md",
-        "description": "AI agent behavioral rules and project context"
-      },
-      {
-        "path": "vitest.config.ts",
-        "description": "Vitest test runner configuration"
-      },
-      {
-        "path": ".env.example",
-        "description": "Example environment variables"
-      },
-      {
-        "path": "lib/index.ts",
-        "description": "Entry point placeholder"
-      }
-    ]
-  },
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "7efc61ddb1b9b1310a07c2e879e96a02ba651fd1eb35bd2317fe8869875a40c3"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "3LH53mLUx9YM7fOY/3XSX0PgetgH+9h1ZGWzrZYCFBiqAKSSKQhQ43AUhDoezzh8f/1kUPlTWt7aS7cUj/c7Aw==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:49:03.004Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'scaffold-project'
+description: 'Scaffold a complete TypeScript project with CI, testing, linting, documentation, and worktree support — eliminating repetitive boilerplate setup'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Scaffold TypeScript Project'
+  dossier.version: '1.0.2'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-03-09'
+  dossier.objective: 'Scaffold a complete TypeScript project with CI, testing, linting, documentation, and worktree support — eliminating repetitive boilerplate setup'
+  dossier.category: '["development","setup"]'
+  dossier.tags: '["scaffold","typescript","boilerplate","ci","project-creation","github-actions"]'
+  dossier.tools_required: '[{"check_command":"node --version","name":"node","version":">=20.0.0"},{"check_command":"gh --version","name":"gh","version":">=2.0.0"},{"check_command":"git --version","name":"git","version":">=2.30.0"}]'
+  dossier.estimated_duration: '{"max_minutes":15,"min_minutes":5}'
+  dossier.risk_level: 'medium'
+  dossier.risk_factors: '["modifies_files"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Creates multiple files in the target directory","Runs npm install (modifies node_modules and package-lock.json)"]'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Documentation link mentioned in the body: biomejs.dev","required":false,"trust_level":"trusted","type":"documentation","url":"https://biomejs.dev/schemas/2.0.0/schema.json"}]'
+  dossier.inputs: '{"optional":[{"default":"","description":"GitHub organization for the repo (skip if repo already exists)","example":"imboard-ai","name":"github_org","type":"string"},{"default":"MIT","description":"License type","example":"AGPL-3.0","name":"license","type":"string"},{"default":"biome","description":"Linter to use: biome or eslint","example":"eslint","name":"linter","type":"string"},{"default":"22","description":"Node.js version for CI matrix","example":"20","name":"node_version","type":"string"},{"default":false,"description":"Skip worktree support setup","name":"skip_worktrees","type":"boolean"},{"default":false,"description":"Skip GitHub repo creation (use if repo already exists)","name":"skip_github_repo","type":"boolean"},{"default":"","description":"Author name for package.json","example":"Yuval Dimnik","name":"author_name","type":"string"},{"default":"","description":"Author email for package.json","example":"yuval.dimnik@gmail.com","name":"author_email","type":"string"}],"required":[{"description":"Name of the project (kebab-case, used for package.json name and repo)","example":"my-awesome-tool","name":"project_name","type":"string"},{"description":"Absolute path to the project root directory","example":"/home/user/projects/my-awesome-tool/main","name":"project_dir","type":"string"},{"description":"One-line project description","example":"CLI tool for managing AI agent workflows","name":"description","type":"string"}]}'
+  dossier.outputs: '{"files":[{"description":"Package manifest with ESM, scripts, devDependencies","path":"package.json"},{"description":"TypeScript config (strict, ES2022, ESNext modules)","path":"tsconfig.json"},{"description":"Comprehensive gitignore for Node/TypeScript","path":".gitignore"},{"description":"GitHub Actions CI (typecheck + lint + test)","path":".github/workflows/ci.yml"},{"description":"AI agent behavioral rules and project context","path":"AGENTS.md"},{"description":"Vitest test runner configuration","path":"vitest.config.ts"},{"description":"Example environment variables","path":".env.example"},{"description":"Entry point placeholder","path":"lib/index.ts"}]}'
+  dossier.checksum: '{"algorithm":"sha256","hash":"7efc61ddb1b9b1310a07c2e879e96a02ba651fd1eb35bd2317fe8869875a40c3"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"c8ARaEBq95DkevpIQw5TSZg2SF+3XxbTw+6WFktuyCOfhMuoziVBOrfELXj7dBOwEa1vfjRP5/79+ZuViqd4Ag==","signed_at":"2026-10-07T12:11:24.586Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 # Scaffold TypeScript Project
 
