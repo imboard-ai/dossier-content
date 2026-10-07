@@ -1278,8 +1278,9 @@
     {
       "name": "imboard-ai/pm/idea-to-prd",
       "title": "Idea to PRD — PM discovery loop with a go/kill gate",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "path": "imboard-ai/pm/idea-to-prd.ds.md",
+      "description": "Take any high-level product idea and EITHER kill it with a documented rationale when ROI/viability logic says it isn't worth chasing, OR generate the rationale for why it makes sense and drive it all the way to an engineering-ready PRD (user benefits + product feature design + text wireframes), tracked in GitHub — not gated in a chat session",
       "category": [
         "development"
       ],
@@ -1299,7 +1300,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:11:45.529Z"
     },
     {
       "name": "imboard-ai/qa/qa-sheet-triage-skill",
