@@ -1153,8 +1153,9 @@
     {
       "name": "imboard-ai/meta/create-dossier-and-skill",
       "title": "Create Dossier and Skill",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "path": "imboard-ai/meta/create-dossier-and-skill.ds.md",
+      "description": "Guide an LLM agent to create a well-formed .ds.md dossier file and its companion Claude Code skill (SKILL.md) from user-provided parameters",
       "category": [
         "development",
         "documentation"
@@ -1170,7 +1171,9 @@
         {
           "name": "Dossier Team"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:03:48.700Z"
     },
     {
       "name": "imboard-ai/meta/dossier-discovery-skill",
