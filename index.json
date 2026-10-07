@@ -443,8 +443,9 @@
     {
       "name": "imboard-ai/git/full-cycle-issue",
       "title": "Full Cycle Issue Workflow",
-      "version": "3.17.2",
+      "version": "3.17.3",
       "path": "imboard-ai/git/full-cycle-issue.ds.md",
+      "description": "Take a GitHub issue from start to merged PR autonomously — composed from shared sub-dossiers: gate, setup, plan, implement, review, ship, and report",
       "category": [
         "development"
       ],
@@ -463,7 +464,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-06T22:47:16.167Z"
+      "published_at": "2026-10-07T11:59:06.125Z"
     },
     {
       "name": "imboard-ai/git/gate-issue",
