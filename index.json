@@ -600,8 +600,9 @@
     {
       "name": "imboard-ai/git/issue-workflows-guide",
       "title": "Issue Workflows Guide",
-      "version": "1.6.1",
+      "version": "1.6.2",
       "path": "imboard-ai/git/issue-workflows-guide.ds.md",
+      "description": "Reference guide for the issue workflow family — explains when to use each workflow, how they compose from shared sub-dossiers, and available flags",
       "category": [
         "documentation"
       ],
@@ -619,7 +620,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-06T06:27:00.805Z"
+      "published_at": "2026-10-07T11:59:56.145Z"
     },
     {
       "name": "imboard-ai/git/member-cycle",
