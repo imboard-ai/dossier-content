@@ -1,57 +1,22 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "protocol_version": "1.0",
-  "name": "batch-cycle-skill",
-  "title": "Batch Cycle",
-  "version": "1.9.0",
-  "status": "Draft",
-  "last_updated": "2026-09-29",
-  "objective": "Take a SET of GitHub issues to ONE pull request, paying the repo's expensive verification once for all of them instead of once each",
-  "description": "Batch several issues into ONE PR with ONE expensive verification run. Each issue gets its own agent and worktree off a shared integration branch; a parent orchestrator merges them, runs the repo's full gate once, repairs what breaks, and ships a single PR. Use when the user says 'batch cycle', 'batch these issues into one PR', 'run these issues as a batch', 'one PR for these issues', or asks to avoid paying CI/verification per issue. NOT for when each issue needs its own PR — that is fleet-cycle.",
-  "inputs": {
-    "optional": [
-      {
-        "name": "dispatch_profile",
-        "description": "Configured scheduler dispatch profile selected from the operator's stated provider family; omit only when no profiles are configured and the default dispatch is intended.",
-        "type": "string"
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "category": [
-    "skills"
-  ],
-  "tags": [
-    "github",
-    "workflow",
-    "autonomous",
-    "orchestration",
-    "batch",
-    "integration-branch",
-    "verification",
-    "skill"
-  ],
-  "risk_level": "high",
-  "requires_approval": false,
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "baba4eeafb306b67b4beafec25d85e000cc2e69a2a3611d4b8dfa901bfa78f59"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "W8HIJaY4P6Ph+PwRdZGDSwfmjvu1+9Xj3tS34Q8pe6aDlweqUGXqeklTNxLHW1//h/NR9VBO88Wf12th3nF4Cg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-29T19:06:45.481Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'batch-cycle-skill'
+description: 'Batch several issues into ONE PR with ONE expensive verification run. Each issue gets its own agent and worktree off a shared integration branch; a parent orchestrator merges them, runs the repo''s full gate once, repairs what breaks, and ships a single PR. Use when the user says ''batch cycle'', ''batch these issues into one PR'', ''run these issues as a batch'', ''one PR for these issues'', or asks to avoid paying CI/verification per issue. NOT for when each issue needs its own PR — that is fleet-cycle.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Batch Cycle'
+  dossier.version: '1.9.1'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.last_updated: '2026-09-29'
+  dossier.objective: 'Take a SET of GitHub issues to ONE pull request, paying the repo''s expensive verification once for all of them instead of once each'
+  dossier.category: '["skills"]'
+  dossier.tags: '["github","workflow","autonomous","orchestration","batch","integration-branch","verification","skill"]'
+  dossier.risk_level: 'high'
+  dossier.requires_approval: 'false'
+  dossier.inputs: '{"optional":[{"description":"Configured scheduler dispatch profile selected from the operator''s stated provider family; omit only when no profiles are configured and the default dispatch is intended.","name":"dispatch_profile","type":"string"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"baba4eeafb306b67b4beafec25d85e000cc2e69a2a3611d4b8dfa901bfa78f59"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"F1KrWaFXEJn0OIjWUdfaJ1o7mXM5TuTPORB2nTO/nFzgyMXN7CKFEwFuBNP4rLsdBvmkngVLSLJafy8uPuE/Dw==","signed_at":"2026-10-07T12:05:33.987Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Batch Cycle
