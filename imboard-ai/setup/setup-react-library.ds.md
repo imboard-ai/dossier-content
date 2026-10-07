@@ -1,74 +1,25 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "title": "Setup React Component Library",
-  "name": "setup-react-library",
-  "version": "1.0.1",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "last_updated": "2025-11-05",
-  "objective": "Create a production-ready React component library with TypeScript, Storybook, testing, and NPM publishing configuration",
-  "category": [
-    "development",
-    "setup"
-  ],
-  "tags": [
-    "react",
-    "typescript",
-    "component-library",
-    "storybook",
-    "vite",
-    "npm",
-    "testing"
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "62897b1b4f8b066a009707d834732035cfd2ce994346239e50d7ada7d0f3fde3"
-  },
-  "risk_level": "medium",
-  "risk_factors": [
-    "modifies_files",
-    "executes_external_code",
-    "network_access"
-  ],
-  "requires_approval": false,
-  "destructive_operations": [
-    "Creates new files and directories in current directory",
-    "Installs NPM dependencies (~300MB in node_modules)",
-    "Initializes git repository (if not already initialized)",
-    "Downloads and executes package installation scripts"
-  ],
-  "estimated_duration": {
-    "min_minutes": 10,
-    "max_minutes": 30
-  },
-  "coupling": {
-    "level": "Loose",
-    "details": "Creates self-contained library project. No dependencies on external systems except NPM registry for package installation."
-  },
-  "mcp_integration": {
-    "required": false,
-    "server_name": "@dossier/mcp-server",
-    "min_version": "1.0.0",
-    "features_used": [
-      "verify_dossier"
-    ],
-    "fallback": "manual_execution",
-    "benefits": [
-      "Automatic checksum verification",
-      "Streamlined setup validation"
-    ]
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "/ZYiK70UPRA4Wt0R+XWp+xnlkpZgRIamjHeOyX4f2FhRb0uGBjuWRqfgL7/gzY1tXY3U3vfKuzVUpqtYrEQGDw==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:49:15.940Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'setup-react-library'
+description: 'Create a production-ready React component library with TypeScript, Storybook, testing, and NPM publishing configuration'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Setup React Component Library'
+  dossier.version: '1.0.2'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.last_updated: '2025-11-05'
+  dossier.objective: 'Create a production-ready React component library with TypeScript, Storybook, testing, and NPM publishing configuration'
+  dossier.category: '["development","setup"]'
+  dossier.tags: '["react","typescript","component-library","storybook","vite","npm","testing"]'
+  dossier.estimated_duration: '{"max_minutes":30,"min_minutes":10}'
+  dossier.risk_level: 'medium'
+  dossier.risk_factors: '["modifies_files","executes_external_code","network_access"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Creates new files and directories in current directory","Installs NPM dependencies (~300MB in node_modules)","Initializes git repository (if not already initialized)","Downloads and executes package installation scripts"]'
+  dossier.coupling: '{"details":"Creates self-contained library project. No dependencies on external systems except NPM registry for package installation.","level":"Loose"}'
+  dossier.mcp_integration: '{"benefits":["Automatic checksum verification","Streamlined setup validation"],"fallback":"manual_execution","features_used":["verify_dossier"],"min_version":"1.0.0","required":false,"server_name":"@dossier/mcp-server"}'
+  dossier.checksum: '{"algorithm":"sha256","hash":"62897b1b4f8b066a009707d834732035cfd2ce994346239e50d7ada7d0f3fde3"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"1AG62Ick1ipGUuoLzhTrO64l+KwD1BHSienv074zTrJ5oUMYcn/cTLYodMXpWT9+PZq+rpPhL66o4k7nWi1YAA==","signed_at":"2026-10-07T12:05:07.861Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 # Dossier: Setup React Component Library
 
