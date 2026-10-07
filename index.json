@@ -669,8 +669,9 @@
     {
       "name": "imboard-ai/git/plan-issue",
       "title": "Plan Issue — Rich Planning Document",
-      "version": "1.8.1",
+      "version": "1.8.2",
       "path": "imboard-ai/git/plan-issue.ds.md",
+      "description": "Read a GitHub issue and its comments, explore the codebase, confirm new states/flows are reachable, and write a rich planning document — consuming an existing plan:v1 artifact when present (validate-then-refine, never recreate) and posting the result back as the issue's canonical artifact",
       "category": [
         "development"
       ],
@@ -688,7 +689,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-06T22:46:31.996Z"
+      "published_at": "2026-10-07T12:00:36.807Z"
     },
     {
       "name": "imboard-ai/git/pr-review",
