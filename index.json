@@ -1195,8 +1195,9 @@
     {
       "name": "imboard-ai/meta/publish-dossier",
       "title": "Publish an imboard-ai Dossier or Skill",
-      "version": "1.1.6",
+      "version": "1.1.7",
       "path": "imboard-ai/meta/publish-dossier.ds.md",
+      "description": "Edit, sign with the team key, lint, verify and publish a dossier or skill to the imboard-ai registry namespace, then refresh every machine — the exact recipe, so no agent rediscovers the signing and login walls",
       "category": [
         "development",
         "documentation"
@@ -1218,18 +1219,18 @@
       ],
       "tools_required": [
         {
-          "name": "ai-dossier",
+          "check_command": "ai-dossier --version",
           "description": "Dossier CLI 0.9.1+",
-          "check_command": "ai-dossier --version"
+          "name": "ai-dossier"
         },
         {
-          "name": "ssh",
+          "check_command": "ssh -V",
           "description": "To refresh sibling machines over ssh",
-          "check_command": "ssh -V"
+          "name": "ssh"
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-06T06:27:23.769Z"
+      "published_at": "2026-10-07T12:04:08.306Z"
     },
     {
       "name": "imboard-ai/pm/feature-to-issues",
