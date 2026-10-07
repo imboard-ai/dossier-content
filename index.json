@@ -143,8 +143,9 @@
     {
       "name": "imboard-ai/devtools/chrome-devtools-connect",
       "title": "Chrome DevTools MCP — Connect & Self-Heal the WSL→Windows Bridge",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "imboard-ai/devtools/chrome-devtools-connect.ds.md",
+      "description": "Get the chrome-devtools MCP driving a real Windows Chrome from a WSL2 session — launch the browser if needed, diagnose and repair the debug-port bridge (Chrome 149+ binds ::1 only; a stale portproxy strands it), then verify end-to-end control with navigate + screenshot.",
       "category": [
         "devops"
       ],
@@ -164,18 +165,20 @@
       ],
       "tools_required": [
         {
-          "name": "curl",
-          "check_command": "curl --version"
+          "check_command": "curl --version",
+          "name": "curl"
         },
         {
-          "name": "powershell.exe",
-          "check_command": "powershell.exe -NoProfile -Command \"$PSVersionTable.PSVersion.ToString()\""
+          "check_command": "powershell.exe -NoProfile -Command \"$PSVersionTable.PSVersion.ToString()\"",
+          "name": "powershell.exe"
         },
         {
-          "name": "chrome-devtools MCP",
-          "check_command": "curl -s --max-time 5 http://172.18.208.1:9222/json/version"
+          "check_command": "curl -s --max-time 5 http://172.18.208.1:9222/json/version",
+          "name": "chrome-devtools MCP"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:57:08.107Z"
     },
     {
       "name": "imboard-ai/git/add-git-worktree-support",
