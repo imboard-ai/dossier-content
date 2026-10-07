@@ -1,193 +1,28 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "setup-arm-dev-machine",
-  "title": "Setup ARM Dev Machine",
-  "version": "1.5.2",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "last_updated": "2026-10-06",
-  "objective": "Bootstrap a fresh ARM Ubuntu server into a fully configured imboard development machine with Node, pnpm, AWS CLI, secrets, and keep-alive cron",
-  "description": "Connects to a freshly provisioned ARM Ubuntu server via SSH and installs the complete imboard development stack. Works on both Hetzner CAX and Oracle A1 instances. Includes Oracle-specific keep-alive cron to prevent reclamation.",
-  "category": [
-    "devops",
-    "development"
-  ],
-  "tags": [
-    "arm",
-    "ubuntu",
-    "dev-machine",
-    "bootstrap",
-    "node",
-    "pnpm"
-  ],
-  "tools_required": [
-    {
-      "name": "ssh",
-      "check_command": "ssh -V"
-    },
-    {
-      "name": "aws",
-      "check_command": "aws --version",
-      "install_url": "https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"
-    }
-  ],
-  "inputs": {
-    "server_ip": {
-      "type": "string",
-      "description": "Public IP address of the target server",
-      "required": true
-    },
-    "ssh_user": {
-      "type": "string",
-      "description": "SSH username (root for Hetzner, ubuntu for Oracle)",
-      "default": "root"
-    },
-    "provider": {
-      "type": "string",
-      "description": "Cloud provider: hetzner or oracle",
-      "default": "hetzner",
-      "enum": [
-        "hetzner",
-        "oracle"
-      ]
-    },
-    "dev_username": {
-      "type": "string",
-      "description": "Non-root user to create for development. Pass your local machine's username (the value of $USER where you run this dossier) so paths match between machines.",
-      "required": true
-    },
-    "telegram_bot_token": {
-      "type": "string",
-      "description": "Telegram bot token for notifications",
-      "sensitive": true
-    },
-    "telegram_chat_id": {
-      "type": "string",
-      "description": "Telegram chat ID for notifications"
-    }
-  },
-  "outputs": {
-    "ssh_command": {
-      "type": "string",
-      "description": "SSH command to connect as dev user"
-    },
-    "node_version": {
-      "type": "string",
-      "description": "Installed Node.js version"
-    }
-  },
-  "risk_level": "medium",
-  "risk_factors": [
-    "requires_credentials",
-    "network_access",
-    "executes_external_code"
-  ],
-  "requires_approval": true,
-  "destructive_operations": [
-    "Installs system packages on the remote server",
-    "Creates user accounts and modifies sudoers",
-    "Configures firewall rules",
-    "Writes AWS credentials to the server"
-  ],
-  "estimated_duration": {
-    "min_minutes": 10,
-    "max_minutes": 25
-  },
-  "external_references": [
-    {
-      "url": "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh",
-      "description": "Oh My Zsh installer",
-      "type": "script",
-      "trust_level": "trusted",
-      "required": true
-    },
-    {
-      "url": "https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh",
-      "description": "nvm installer (pinned v0.40.1)",
-      "type": "script",
-      "trust_level": "trusted",
-      "required": true
-    },
-    {
-      "url": "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip",
-      "description": "AWS CLI v2 for ARM64",
-      "type": "download",
-      "trust_level": "trusted",
-      "required": true
-    },
-    {
-      "url": "https://github.com/imboard-ai/imboard-monorepo.git",
-      "description": "Project repository cloned onto the dev machine",
-      "type": "other",
-      "trust_level": "trusted",
-      "required": true
-    },
-    {
-      "url": "https://cli.github.com/packages/githubcli-archive-keyring.gpg",
-      "description": "GitHub CLI apt signing key",
-      "type": "download",
-      "trust_level": "trusted",
-      "required": true
-    },
-    {
-      "url": "https://cli.github.com/packages",
-      "description": "GitHub CLI apt repository",
-      "type": "download",
-      "trust_level": "trusted",
-      "required": true
-    },
-    {
-      "url": "https://fly.io/install.sh",
-      "description": "flyctl installer",
-      "type": "script",
-      "trust_level": "trusted",
-      "required": true
-    },
-    {
-      "url": "https://github.com/imboard-ai/ai-dossier.git",
-      "description": "Dossier CLI source repository",
-      "type": "other",
-      "trust_level": "trusted",
-      "required": true
-    },
-    {
-      "url": "https://api.github.com/repos/sigoden/aichat/releases/latest",
-      "description": "Latest aichat release lookup",
-      "type": "api",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://memory-mcp-server.imboard-ai.workers.dev/mcp",
-      "description": "Memory MCP server endpoint configured for Claude Code",
-      "type": "api",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://ifconfig.me",
-      "description": "Public IP lookup used in the verification step",
-      "type": "api",
-      "trust_level": "user-verified",
-      "required": false
-    }
-  ],
-  "content_scope": "references-external",
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "95e609be7d6daed34f1faa85295d3471110d26a066b1be0461b03d13a0eff80f"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "rNN6iuXH0a+t93xlffwBWeqezP9lFR27Aa5Q+t1cAkh5HsjQcBm4J8DeR+hkJldnBH7c36VZBovDzrOKO0ghAQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-10-06T07:41:17.954Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'setup-arm-dev-machine'
+description: 'Connects to a freshly provisioned ARM Ubuntu server via SSH and installs the complete imboard development stack. Works on both Hetzner CAX and Oracle A1 instances. Includes Oracle-specific keep-alive cron to prevent reclamation.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Setup ARM Dev Machine'
+  dossier.version: '1.5.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.last_updated: '2026-10-06'
+  dossier.objective: 'Bootstrap a fresh ARM Ubuntu server into a fully configured imboard development machine with Node, pnpm, AWS CLI, secrets, and keep-alive cron'
+  dossier.category: '["devops","development"]'
+  dossier.tags: '["arm","ubuntu","dev-machine","bootstrap","node","pnpm"]'
+  dossier.tools_required: '[{"check_command":"ssh -V","name":"ssh"},{"check_command":"aws --version","install_url":"https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html","name":"aws"}]'
+  dossier.estimated_duration: '{"max_minutes":25,"min_minutes":10}'
+  dossier.risk_level: 'medium'
+  dossier.risk_factors: '["requires_credentials","network_access","executes_external_code"]'
+  dossier.requires_approval: 'true'
+  dossier.destructive_operations: '["Installs system packages on the remote server","Creates user accounts and modifies sudoers","Configures firewall rules","Writes AWS credentials to the server"]'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Oh My Zsh installer","required":true,"trust_level":"trusted","type":"script","url":"https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"},{"description":"nvm installer (pinned v0.40.1)","required":true,"trust_level":"trusted","type":"script","url":"https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh"},{"description":"AWS CLI v2 for ARM64","required":true,"trust_level":"trusted","type":"download","url":"https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip"},{"description":"Project repository cloned onto the dev machine","required":true,"trust_level":"trusted","type":"other","url":"https://github.com/imboard-ai/imboard-monorepo.git"},{"description":"GitHub CLI apt signing key","required":true,"trust_level":"trusted","type":"download","url":"https://cli.github.com/packages/githubcli-archive-keyring.gpg"},{"description":"GitHub CLI apt repository","required":true,"trust_level":"trusted","type":"download","url":"https://cli.github.com/packages"},{"description":"flyctl installer","required":true,"trust_level":"trusted","type":"script","url":"https://fly.io/install.sh"},{"description":"Dossier CLI source repository","required":true,"trust_level":"trusted","type":"other","url":"https://github.com/imboard-ai/ai-dossier.git"},{"description":"Latest aichat release lookup","required":false,"trust_level":"trusted","type":"api","url":"https://api.github.com/repos/sigoden/aichat/releases/latest"},{"description":"Memory MCP server endpoint configured for Claude Code","required":false,"trust_level":"trusted","type":"api","url":"https://memory-mcp-server.imboard-ai.workers.dev/mcp"},{"description":"Public IP lookup used in the verification step","required":false,"trust_level":"user-verified","type":"api","url":"https://ifconfig.me"}]'
+  dossier.inputs: '{"dev_username":{"description":"Non-root user to create for development. Pass your local machine''s username (the value of $USER where you run this dossier) so paths match between machines.","required":true,"type":"string"},"provider":{"default":"hetzner","description":"Cloud provider: hetzner or oracle","enum":["hetzner","oracle"],"type":"string"},"server_ip":{"description":"Public IP address of the target server","required":true,"type":"string"},"ssh_user":{"default":"root","description":"SSH username (root for Hetzner, ubuntu for Oracle)","type":"string"},"telegram_bot_token":{"description":"Telegram bot token for notifications","sensitive":true,"type":"string"},"telegram_chat_id":{"description":"Telegram chat ID for notifications","type":"string"}}'
+  dossier.outputs: '{"node_version":{"description":"Installed Node.js version","type":"string"},"ssh_command":{"description":"SSH command to connect as dev user","type":"string"}}'
+  dossier.checksum: '{"algorithm":"sha256","hash":"95e609be7d6daed34f1faa85295d3471110d26a066b1be0461b03d13a0eff80f"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"EVTgS4HjUB7s2lqQMEI5qZgO/Eo3ziY2AeX56BNmnL2OZQjIzjdpvQ5TKEH1eagvHfzLVQdKbYDg+tADA2AlDw==","signed_at":"2026-10-07T11:56:55.231Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Setup ARM Dev Machine
