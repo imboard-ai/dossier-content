@@ -1,73 +1,21 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "pr-review",
-  "title": "PR Review",
-  "version": "1.0.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Multi-dimensional review of a PR diff across security, architecture, code quality, performance, and accessibility — run one lens or all of them",
-  "description": "Review the current PR diff across one or more dimensions: security (OWASP), architecture (boundaries & design), code quality (DRY, type safety, conventions), performance (rendering, queries, bundle), and accessibility (WCAG 2.1 AA). Use when user says 'review PR', 'pr review', 'security review', 'architecture review', 'code quality review', 'performance review', 'accessibility review', or '/pr-review'.",
-  "category": [
-    "review"
-  ],
-  "tags": [
-    "pr-review",
-    "security",
-    "architecture",
-    "code-quality",
-    "performance",
-    "accessibility",
-    "owasp",
-    "wcag",
-    "skill"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "inputs": {
-    "optional": [
-      {
-        "name": "dimension",
-        "description": "Which review lens(es) to run: security | architecture | quality | performance | accessibility | all. Accepts a comma-separated list. Defaults to all.",
-        "type": "string",
-        "default": "all",
-        "example": "security,performance"
-      },
-      {
-        "name": "target",
-        "description": "PR number to review. If omitted, reviews the current branch diff against the default branch.",
-        "type": "string",
-        "default": "",
-        "example": "1640"
-      },
-      {
-        "name": "base_branch",
-        "description": "Base branch to diff against when no PR number is given.",
-        "type": "string",
-        "default": "main",
-        "example": "develop"
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "b4e4ca526bd697410a68dd6a12501ab4cc6202ee5d3df92004fc0709bc4c11e0"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "T3NXbcJOTFdmBkk2PA62qbDsLjT7476DRxPfNlFkNnC12EL0yP5pF1hMAl4voG64oxL2a6q6zNFLeRV2+RnVCA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:49.418Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'pr-review'
+description: 'Review the current PR diff across one or more dimensions: security (OWASP), architecture (boundaries & design), code quality (DRY, type safety, conventions), performance (rendering, queries, bundle), and accessibility (WCAG 2.1 AA). Use when user says ''review PR'', ''pr review'', ''security review'', ''architecture review'', ''code quality review'', ''performance review'', ''accessibility review'', or ''/pr-review''.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'PR Review'
+  dossier.version: '1.0.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Multi-dimensional review of a PR diff across security, architecture, code quality, performance, and accessibility — run one lens or all of them'
+  dossier.category: '["review"]'
+  dossier.tags: '["pr-review","security","architecture","code-quality","performance","accessibility","owasp","wcag","skill"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.inputs: '{"optional":[{"default":"all","description":"Which review lens(es) to run: security | architecture | quality | performance | accessibility | all. Accepts a comma-separated list. Defaults to all.","example":"security,performance","name":"dimension","type":"string"},{"default":"","description":"PR number to review. If omitted, reviews the current branch diff against the default branch.","example":"1640","name":"target","type":"string"},{"default":"main","description":"Base branch to diff against when no PR number is given.","example":"develop","name":"base_branch","type":"string"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"b4e4ca526bd697410a68dd6a12501ab4cc6202ee5d3df92004fc0709bc4c11e0"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"svb7nbeWCcmAy1cwR4cPBTWaqgUK5HGi5eXoNHae8sOqYzWydJCXmZWRUM1LpZ4NiH136fTm4d5ZYtHYstoSCg==","signed_at":"2026-10-07T12:00:42.649Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # PR Review
