@@ -1,72 +1,24 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "batch-issues",
-  "title": "Batch Issue Orchestration — SUPERSEDED (pre-RFC-0001)",
-  "version": "2.1.1",
-  "protocol_version": "1.0",
-  "status": "Deprecated",
-  "last_updated": "2026-09-08",
-  "objective": "SUPERSEDED. Pre-RFC-0001 batch orchestration via headless agents, predating the batch-cycles programme entirely. For batching issues into ONE PR with one verification run use imboard-ai/skills/batch-cycle-skill. For N issues to N PRs use imboard-ai/skills/fleet-cycle-skill. Kept for reference only.",
-  "category": [
-    "development",
-    "orchestration"
-  ],
-  "tags": [
-    "github",
-    "issues",
-    "batch",
-    "parallel",
-    "sequential",
-    "epic",
-    "orchestration",
-    "autonomous",
-    "agent-friendly"
-  ],
-  "risk_level": "high",
-  "risk_factors": [
-    "modifies_files",
-    "network_access",
-    "creates_pull_request",
-    "merges_code"
-  ],
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "content_scope": "references-external",
-  "external_references": [
-    {
-      "url": "https://github.com/imboard-ai/ai-dossier/blob/main/scripts/batch-issues.sh",
-      "description": "Legacy batch-issues driver script (pre-RFC-0001)",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    },
-    {
-      "url": "https://raw.githubusercontent.com/imboard-ai/ai-dossier/main/scripts/batch-issues.sh",
-      "description": "Raw legacy batch-issues driver script (pre-RFC-0001)",
-      "type": "documentation",
-      "trust_level": "trusted",
-      "required": false
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "f8d175b07c41905b5ca0cb8d40aac8742ea789ef2216890fda1608cfb9be0365"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "E0ko/UwL4Bs3W/uJ2Tiy3+X6o3gnZ/dcs2sz+hCCtrkPjZZPgVM41TDM/KZ4ZdEzN2wAZyXBadL+8IM+59tGAQ==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-09-08T22:47:02.952Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'batch-issues'
+description: 'SUPERSEDED. Pre-RFC-0001 batch orchestration via headless agents, predating the batch-cycles programme entirely. For batching issues into ONE PR with one verification run use imboard-ai/skills/batch-cycle-skill. For N issues to N PRs use imboard-ai/skills/fleet-cycle-skill. Kept for reference only.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Batch Issue Orchestration — SUPERSEDED (pre-RFC-0001)'
+  dossier.version: '2.1.2'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Deprecated'
+  dossier.last_updated: '2026-09-08'
+  dossier.objective: 'SUPERSEDED. Pre-RFC-0001 batch orchestration via headless agents, predating the batch-cycles programme entirely. For batching issues into ONE PR with one verification run use imboard-ai/skills/batch-cycle-skill. For N issues to N PRs use imboard-ai/skills/fleet-cycle-skill. Kept for reference only.'
+  dossier.category: '["development","orchestration"]'
+  dossier.tags: '["github","issues","batch","parallel","sequential","epic","orchestration","autonomous","agent-friendly"]'
+  dossier.risk_level: 'high'
+  dossier.risk_factors: '["modifies_files","network_access","creates_pull_request","merges_code"]'
+  dossier.requires_approval: 'false'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Legacy batch-issues driver script (pre-RFC-0001)","required":false,"trust_level":"trusted","type":"documentation","url":"https://github.com/imboard-ai/ai-dossier/blob/main/scripts/batch-issues.sh"},{"description":"Raw legacy batch-issues driver script (pre-RFC-0001)","required":false,"trust_level":"trusted","type":"documentation","url":"https://raw.githubusercontent.com/imboard-ai/ai-dossier/main/scripts/batch-issues.sh"}]'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"f8d175b07c41905b5ca0cb8d40aac8742ea789ef2216890fda1608cfb9be0365"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"PfVb4ZnKmttb2GOjyYtXG2OK0U+9jBr6lZGwx2MuPX8gnP9IXaCAGp4tAYpGGBBYFtN72Cux0NloT0LPNwqXDg==","signed_at":"2026-10-07T11:57:49.796Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Batch Issue Orchestration
