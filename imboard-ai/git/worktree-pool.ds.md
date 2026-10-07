@@ -1,51 +1,23 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "title": "Worktree Pool",
-  "name": "worktree-pool",
-  "version": "1.0.1",
-  "protocol_version": "1.0",
-  "status": "Stable",
-  "last_updated": "2026-03-07",
-  "objective": "Manage a pool of pre-warmed git worktrees for instant issue setup — claim a ready worktree in ~2 seconds instead of ~3-5 minutes of cold start",
-  "category": [
-    "development"
-  ],
-  "tags": [
-    "worktree",
-    "pool",
-    "git",
-    "pre-warm",
-    "performance"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "risk_factors": [
-    "modifies_files"
-  ],
-  "destructive_operations": [
-    "Creates and removes git worktrees",
-    "Creates and deletes temporary git branches"
-  ],
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "c28ea16b5e9197fe29db7cb2adcc776ff428ed06d0d07360cdab477c881c4038"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "4tX+AytkHq93Ts4QnZKfEZI6CeItv7KfuzZpTONB3UW1SHmE6dUq3Cb1qSZWmBupc22kfGE7CEvDf3AtqevFBA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:48:30.448Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'worktree-pool'
+description: 'Manage a pool of pre-warmed git worktrees for instant issue setup — claim a ready worktree in ~2 seconds instead of ~3-5 minutes of cold start'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Worktree Pool'
+  dossier.version: '1.0.2'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Stable'
+  dossier.last_updated: '2026-03-07'
+  dossier.objective: 'Manage a pool of pre-warmed git worktrees for instant issue setup — claim a ready worktree in ~2 seconds instead of ~3-5 minutes of cold start'
+  dossier.category: '["development"]'
+  dossier.tags: '["worktree","pool","git","pre-warm","performance"]'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["modifies_files"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Creates and removes git worktrees","Creates and deletes temporary git branches"]'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"c28ea16b5e9197fe29db7cb2adcc776ff428ed06d0d07360cdab477c881c4038"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"indB09aDoP9Xgh+rNbihYopMx3XQ9rWVkB/1K/4yj6PORdOJZAzb5KlOufnY7KxTBAhH/WjjotTwtj9lz8YfDA==","signed_at":"2026-10-07T12:02:55.232Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 # Worktree Pool
 
