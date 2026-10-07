@@ -1014,8 +1014,9 @@
     {
       "name": "imboard-ai/imboard/warm-worktree-pnpm-ssm",
       "title": "Imboard Warm Worktree (pnpm + SSM)",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "path": "imboard-ai/imboard/warm-worktree-pnpm-ssm.ds.md",
+      "description": "Prepare a fresh imboard-monorepo worktree for development using pnpm content-addressable store and AWS SSM secrets — no .env copying needed",
       "category": [
         "development"
       ],
@@ -1029,7 +1030,9 @@
         {
           "name": "Yuval Dimnik"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:03:10.823Z"
     },
     {
       "name": "imboard-ai/issue-triage",
