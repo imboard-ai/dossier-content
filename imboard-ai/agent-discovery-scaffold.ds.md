@@ -1,104 +1,26 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "agent-discovery-scaffold",
-  "title": "Agent Discovery Scaffold",
-  "version": "1.1.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Make any project instantly discoverable by external AI agents by generating structured manifests of capabilities, reusable modules, and entry points",
-  "description": "Analyze a project and generate structured entry-point documentation (AGENTS.md + module catalog) so external AI agents can understand capabilities without full codebase exploration",
-  "category": [
-    "documentation",
-    "development"
-  ],
-  "tags": [
-    "agent-discovery",
-    "documentation",
-    "agents-md",
-    "module-catalog",
-    "onboarding",
-    "reusability"
-  ],
-  "tools_required": [
-    {
-      "name": "node",
-      "check_command": "node --version"
-    },
-    {
-      "name": "git",
-      "check_command": "git --version"
-    }
-  ],
-  "estimated_duration": {
-    "min_minutes": 3,
-    "max_minutes": 10
-  },
-  "risk_level": "low",
-  "risk_factors": [
-    "modifies_files"
-  ],
-  "requires_approval": false,
-  "destructive_operations": [
-    "Creates or overwrites AGENTS.md in project root",
-    "Creates docs/modules/ directory with module catalog files"
-  ],
-  "inputs": {
-    "required": [
-      {
-        "name": "project_dir",
-        "description": "Absolute path to the project root directory",
-        "type": "string",
-        "example": "/home/user/projects/my-project"
-      }
-    ],
-    "optional": [
-      {
-        "name": "output_format",
-        "description": "Output format: 'agents-md' (single AGENTS.md), 'catalog' (AGENTS.md + per-module docs), 'both' (default)",
-        "type": "string",
-        "default": "both",
-        "example": "agents-md"
-      },
-      {
-        "name": "existing_claude_md",
-        "description": "If true, incorporate existing CLAUDE.md content rather than duplicating it",
-        "type": "boolean",
-        "default": true
-      }
-    ]
-  },
-  "outputs": {
-    "files": [
-      {
-        "path": "AGENTS.md",
-        "description": "Structured project manifest for external AI agent consumption"
-      },
-      {
-        "path": "docs/modules/README.md",
-        "description": "Module catalog index with reusability assessment"
-      }
-    ]
-  },
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "5d1ed68587b9725d444be747692d23d81c320938a908aa5a9557a445a43cbe4e"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "TTxvMjbHywEJRcHvvyOZ9O01X3RzrMPK4MYWofmKqGLcv66QdVpnFDzG4x1L5DmUXBTa8tkNpEqVR/Rjhm8LDg==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:46:30.429Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'agent-discovery-scaffold'
+description: 'Analyze a project and generate structured entry-point documentation (AGENTS.md + module catalog) so external AI agents can understand capabilities without full codebase exploration'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Agent Discovery Scaffold'
+  dossier.version: '1.1.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Make any project instantly discoverable by external AI agents by generating structured manifests of capabilities, reusable modules, and entry points'
+  dossier.category: '["documentation","development"]'
+  dossier.tags: '["agent-discovery","documentation","agents-md","module-catalog","onboarding","reusability"]'
+  dossier.tools_required: '[{"check_command":"node --version","name":"node"},{"check_command":"git --version","name":"git"}]'
+  dossier.estimated_duration: '{"max_minutes":10,"min_minutes":3}'
+  dossier.risk_level: 'low'
+  dossier.risk_factors: '["modifies_files"]'
+  dossier.requires_approval: 'false'
+  dossier.destructive_operations: '["Creates or overwrites AGENTS.md in project root","Creates docs/modules/ directory with module catalog files"]'
+  dossier.inputs: '{"optional":[{"default":"both","description":"Output format: ''agents-md'' (single AGENTS.md), ''catalog'' (AGENTS.md + per-module docs), ''both'' (default)","example":"agents-md","name":"output_format","type":"string"},{"default":true,"description":"If true, incorporate existing CLAUDE.md content rather than duplicating it","name":"existing_claude_md","type":"boolean"}],"required":[{"description":"Absolute path to the project root directory","example":"/home/user/projects/my-project","name":"project_dir","type":"string"}]}'
+  dossier.outputs: '{"files":[{"description":"Structured project manifest for external AI agent consumption","path":"AGENTS.md"},{"description":"Module catalog index with reusability assessment","path":"docs/modules/README.md"}]}'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"5d1ed68587b9725d444be747692d23d81c320938a908aa5a9557a445a43cbe4e"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"SVcmFH0zb0XuMDZFdFlJ/rPaQHQFTAyBATtp78eTFPXdcXpW8NcEz7V0M41biflnitZJcxRek0H/2u5DQ3d5Cg==","signed_at":"2026-10-07T11:56:01.662Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Agent Discovery Scaffold
