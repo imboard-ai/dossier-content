@@ -1,36 +1,21 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "name": "project-exploration",
-  "title": "Project Exploration",
-  "version": "1.0.2",
-  "protocol_version": "1.0",
-  "status": "Draft",
-  "objective": "Map a project's structure (routes, controllers, models, types) to enable onboarding, refactoring, and gap analysis. Generates both human-readable Markdown and machine-readable JSON outputs.",
-  "category": [
-    "development"
-  ],
-  "risk_level": "low",
-  "requires_approval": false,
-  "authors": [
-    {
-      "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-    }
-  ],
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "7423e2aea48e0de4999bbd8cf394d18c014008d791420843829e63d43e3bf0ee"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "Vis9NtycFvxxvrap/OcTAim3GfCsomMQ5tnaABZnIgrKasKrN2QFX6P3amGceVWxdR3vg5NZ3oFT8GqGlrPwAA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-07-26T12:47:46.171Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'project-exploration'
+description: 'Map a project''s structure (routes, controllers, models, types) to enable onboarding, refactoring, and gap analysis. Generates both human-readable Markdown and machine-readable JSON outputs.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Project Exploration'
+  dossier.version: '1.0.3'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Map a project''s structure (routes, controllers, models, types) to enable onboarding, refactoring, and gap analysis. Generates both human-readable Markdown and machine-readable JSON outputs.'
+  dossier.category: '["development"]'
+  dossier.risk_level: 'low'
+  dossier.requires_approval: 'false'
+  dossier.content_scope: 'references-external'
+  dossier.external_references: '[{"description":"Documentation link mentioned in the body: expressjs.com","required":false,"trust_level":"trusted","type":"documentation","url":"https://expressjs.com/en/guide/routing.html"},{"description":"Documentation link mentioned in the body: docs.nestjs.com","required":false,"trust_level":"trusted","type":"documentation","url":"https://docs.nestjs.com/controllers"},{"description":"Documentation link mentioned in the body: mongoosejs.com","required":false,"trust_level":"trusted","type":"documentation","url":"https://mongoosejs.com/docs/guide.html"},{"description":"Documentation link mentioned in the body: ts-ast-viewer.com","required":false,"trust_level":"trusted","type":"documentation","url":"https://ts-ast-viewer.com/"}]'
+  dossier.authors: '[{"name":"Yuval Dimnik <yuval.dimnik@gmail.com>"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"68fbf717534b127a17e99d9db20b5c5150541641c1055042c082d53e43d6673d"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"P4DQhxClVNZLFOsexXZB5iayHkz0p8609qOAlkbHd3OmLQKmT0yUnO/B1zIKh9w7Du5JWr4R0NhBkKwSSQ/KBA==","signed_at":"2026-10-07T12:11:06.481Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Project Exploration
