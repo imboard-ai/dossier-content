@@ -804,8 +804,9 @@
     {
       "name": "imboard-ai/git/runbook-generator",
       "title": "Runbook & Ops Checklist Generator",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "path": "imboard-ai/git/runbook-generator.ds.md",
+      "description": "Generate service runbooks and ops checklists for oncall readiness",
       "category": [
         "development"
       ],
@@ -813,7 +814,9 @@
         {
           "name": "yuvaldim"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T12:01:30.766Z"
     },
     {
       "name": "imboard-ai/git/setup-issue-workflow",
