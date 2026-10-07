@@ -212,8 +212,9 @@
     {
       "name": "imboard-ai/git/architecture-patterns-review",
       "title": "Architecture & Pattern Consistency",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "path": "imboard-ai/git/architecture-patterns-review.ds.md",
+      "description": "Identify inconsistent patterns, duplicate approaches, and architectural drift in the codebase",
       "category": [
         "development"
       ],
@@ -221,7 +222,9 @@
         {
           "name": "Yuval Dimnik <yuval.dimnik@gmail.com>"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:57:25.322Z"
     },
     {
       "name": "imboard-ai/git/autopilot-loop",
