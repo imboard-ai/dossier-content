@@ -1,47 +1,20 @@
----dossier
-{
-  "dossier_schema_version": "1.0.0",
-  "protocol_version": "1.0",
-  "name": "fleet-cycle-skill",
-  "title": "Fleet Cycle",
-  "version": "1.1.4",
-  "status": "Draft",
-  "objective": "Take a SET of GitHub issues to merged PRs via dependency-aware waves of background full-cycle runs",
-  "description": "Orchestrate multiple issues at once. Builds a dependency-aware wave plan and dispatches full-cycle-issue across background agents — parallel where safe, serial where dependent. Use when the user says 'fleet cycle', 'full cycle issues 1,2,3', 'full cycle issues 1..9', 'batch issues', 'map these issues and run them', 'run these issues in parallel/serial', or gives a LIST or RANGE of issues to take to merged PRs.",
-  "authors": [
-    {
-      "name": "Yuval Dimnik"
-    }
-  ],
-  "category": [
-    "skills"
-  ],
-  "tags": [
-    "github",
-    "workflow",
-    "autonomous",
-    "orchestration",
-    "batch",
-    "parallel",
-    "fleet",
-    "skill"
-  ],
-  "risk_level": "high",
-  "requires_approval": false,
-  "checksum": {
-    "algorithm": "sha256",
-    "hash": "ca3f93f09ea22f59ca5250a3e6eafc2eaa2a0d252b47e7078dc2c14c4b975876"
-  },
-  "signature": {
-    "algorithm": "ed25519",
-    "signature": "lGj+xEBbCWQJhmezrxarAKmNcWE22SkKsx0bKZIVzwDWheSqgW/T8FO1ApY1p5plWHzigJy1A4pnF7763FVMCA==",
-    "public_key": "m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=",
-    "signed_at": "2026-08-23T05:16:12.907Z",
-    "covers": "frontmatter+body",
-    "key_id": "imboard-ai",
-    "signed_by": "Yuval Dimnik <yuval.dimnik@gmail.com>"
-  }
-}
+---
+name: 'fleet-cycle-skill'
+description: 'Orchestrate multiple issues at once. Builds a dependency-aware wave plan and dispatches full-cycle-issue across background agents — parallel where safe, serial where dependent. Use when the user says ''fleet cycle'', ''full cycle issues 1,2,3'', ''full cycle issues 1..9'', ''batch issues'', ''map these issues and run them'', ''run these issues in parallel/serial'', or gives a LIST or RANGE of issues to take to merged PRs.'
+metadata:
+  dossier.dossier_schema_version: '1.0.0'
+  dossier.title: 'Fleet Cycle'
+  dossier.version: '1.1.5'
+  dossier.protocol_version: '"1.0"'
+  dossier.status: 'Draft'
+  dossier.objective: 'Take a SET of GitHub issues to merged PRs via dependency-aware waves of background full-cycle runs'
+  dossier.category: '["skills"]'
+  dossier.tags: '["github","workflow","autonomous","orchestration","batch","parallel","fleet","skill"]'
+  dossier.risk_level: 'high'
+  dossier.requires_approval: 'false'
+  dossier.authors: '[{"name":"Yuval Dimnik"}]'
+  dossier.checksum: '{"algorithm":"sha256","hash":"ca3f93f09ea22f59ca5250a3e6eafc2eaa2a0d252b47e7078dc2c14c4b975876"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"1rrCsZDHJekWQxwn/JJpPw3sNeuKM3JOMcLwwYsLzFcXC589QeY/h5xC152cE/BQALH6G7DgkzBHUoWUs/h5Dg==","signed_at":"2026-10-07T12:05:51.904Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Fleet Cycle
