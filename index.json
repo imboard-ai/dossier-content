@@ -458,8 +458,9 @@
     {
       "name": "imboard-ai/git/git-sync",
       "title": "Git Sync — Reconcile Local State with Origin",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "path": "imboard-ai/git/git-sync.ds.md",
+      "description": "Triage untracked and modified files and reconcile local branch state with origin: gitignore obvious junk, commit and push real work, surface ambiguous items, and report stray branches and worktrees.",
       "category": [
         "development"
       ],
@@ -484,7 +485,9 @@
         {
           "name": "gh"
         }
-      ]
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-07T11:54:52.784Z"
     },
     {
       "name": "imboard-ai/git/git-sync-skill",
