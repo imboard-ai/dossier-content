@@ -313,8 +313,9 @@
     {
       "name": "imboard-ai/git/batch-issues-preparation",
       "title": "Batch Issues Preparation — classify, DAG, compose batches, enqueue",
-      "version": "3.5.1",
+      "version": "3.5.2",
       "path": "imboard-ai/git/batch-issues-preparation.ds.md",
+      "description": "Turn an issue list/range into admitted, classified, batched scheduler queue entries: free batch compose over the whole set first, body-readiness screen + backfill to min_members, decision-grade classify only admitted members, review-floor issues as review=full members (at most 2 per batch; over-cap picks held for the next run, slot backfilled light), no batch under 2 members, then anchor, audit, claim and enqueue with a per-member review level",
       "category": [
         "development"
       ],
@@ -333,7 +334,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-06T06:26:44.570Z"
+      "published_at": "2026-10-07T11:58:05.253Z"
     },
     {
       "name": "imboard-ai/git/code-refactoring-abstraction",
