@@ -843,7 +843,7 @@
     {
       "name": "imboard-ai/git/ship-issue",
       "title": "Ship Issue — Commit, PR, Merge, Deploy, Teardown",
-      "version": "1.18.3",
+      "version": "1.19.0",
       "path": "imboard-ai/git/ship-issue.ds.md",
       "description": "Commit changes, push, create a PR, then either drive it to a confirmed merge and deploy (attached) or park it on auto-merge and stop (detached); in batch mode (batch_id set): ship the batch PR from the batch branch — per-member PR sections, Closes #N per member, rebase-merged so one commit per member issue lands on the base branch",
       "category": [
@@ -864,7 +864,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-07T12:01:51.359Z"
+      "published_at": "2026-10-09T06:00:01.401Z"
     },
     {
       "name": "imboard-ai/git/slot-cycle",
