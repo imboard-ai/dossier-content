@@ -993,6 +993,31 @@
       "published_at": "2026-10-07T12:02:45.952Z"
     },
     {
+      "name": "imboard-ai/git/worktree-hygiene",
+      "title": "Worktree Hygiene — Reclaim Leaked Pool Slots",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/worktree-hygiene.ds.md",
+      "description": "Reclaim leaked worktree-pool slots (closed + merged issues), clear pool debris and report stale worktrees; skips if it succeeded within the last hour; lock-serialized with a timestamped audit log",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "worktree",
+        "pool",
+        "cleanup",
+        "hygiene",
+        "git",
+        "fleet"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-09T21:36:35.958Z"
+    },
+    {
       "name": "imboard-ai/git/worktree-pool",
       "title": "Worktree Pool",
       "version": "1.0.2",
