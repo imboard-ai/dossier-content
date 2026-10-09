@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/review-issue",
-  "version": "1.17.3",
+  "version": "1.18.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "fddb5c4e59968060bd473c1d2d5c559da383da372723ef5f5bf613dcbbd6424c"
+    "hash": "43a3d4ccf118b8d2de9af69e53d547cef2e3ed250ef588bef6f63a4950868e4d"
   },
   "entries": [
     {
