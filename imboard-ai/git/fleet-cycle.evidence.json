@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/fleet-cycle",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "76863d05303c69d4cd2e9a62a1212529121b5a6403ca5556abd6b414298d76aa"
+    "hash": "89befed7ed4eb0128fafd9e41bdec67a596a75e90ebe9d8df5b00cda154bba4d"
   },
   "entries": [
     {
