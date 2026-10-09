@@ -4,20 +4,20 @@ description: 'Manage a pool of pre-warmed git worktrees for instant issue setup 
 metadata:
   dossier.dossier_schema_version: '1.0.0'
   dossier.title: 'Worktree Pool'
-  dossier.version: '1.0.2'
+  dossier.version: '1.0.3'
   dossier.protocol_version: '"1.0"'
   dossier.status: 'Stable'
-  dossier.last_updated: '2026-03-07'
+  dossier.last_updated: '2026-10-09'
   dossier.objective: 'Manage a pool of pre-warmed git worktrees for instant issue setup — claim a ready worktree in ~2 seconds instead of ~3-5 minutes of cold start'
   dossier.category: '["development"]'
   dossier.tags: '["worktree","pool","git","pre-warm","performance"]'
-  dossier.risk_level: 'low'
+  dossier.risk_level: 'medium'
   dossier.risk_factors: '["modifies_files"]'
   dossier.requires_approval: 'false'
   dossier.destructive_operations: '["Creates and removes git worktrees","Creates and deletes temporary git branches"]'
   dossier.authors: '[{"name":"Yuval Dimnik"}]'
-  dossier.checksum: '{"algorithm":"sha256","hash":"c28ea16b5e9197fe29db7cb2adcc776ff428ed06d0d07360cdab477c881c4038"}'
-  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"indB09aDoP9Xgh+rNbihYopMx3XQ9rWVkB/1K/4yj6PORdOJZAzb5KlOufnY7KxTBAhH/WjjotTwtj9lz8YfDA==","signed_at":"2026-10-07T12:02:55.232Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
+  dossier.checksum: '{"algorithm":"sha256","hash":"25cf4fae3e56e71bb5cdc6682460105f02f32de2e608a648910b3bd49e055900"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"GaR/VbN5p6Mvh4gJL0yCUxYeAR8XQgF2kxiL/Nxf0jtVWbCDSHE46bFzWu7P1zU5+0lTlOXs16M15oEVGn+pBg==","signed_at":"2026-10-09T21:38:03.388Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 # Worktree Pool
 
@@ -144,6 +144,9 @@ Orphans = state entries without a directory on disk, or directories not tracked 
 
 **Issue**: `claim` says "No warm worktrees available"
 **Solution**: Run `npx worktree-pool replenish` first to pre-warm spares.
+
+**Issue**: The pool is "at capacity" but the assigned issues are already merged
+**Solution**: Runs exited without returning their slots. Run `ai-dossier run imboard-ai/git/worktree-hygiene`: it returns slots whose issues are closed, merged, clean and unpushed, logs every decision with full timestamps, and is safe to run repeatedly.
 
 **Issue**: Lock timeout error
 **Solution**: Check if another process is running. If not, remove the `.pool-lock` directory inside the pool dir.
