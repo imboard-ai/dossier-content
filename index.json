@@ -1042,6 +1042,33 @@
       "published_at": "2026-10-09T21:38:20.723Z"
     },
     {
+      "name": "imboard-ai/git/zero-trust-full-cycle",
+      "title": "Zero-Trust Full Cycle",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/zero-trust-full-cycle.ds.md",
+      "description": "Drive the zero-trust contribution engine (zt-run) from one public upstream GitHub issue to a contributor-submitted pull request: preflight, config, start, a decision for every durable stop, revisions, cancellation and the kill switch. The agent never writes upstream; every public action is the human contributor's.",
+      "category": [
+        "development"
+      ],
+      "tags": [
+        "github",
+        "open-source",
+        "contribution",
+        "zero-trust",
+        "full-cycle",
+        "sandbox",
+        "vm",
+        "pull-request"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-10-14T07:01:46.046Z"
+    },
+    {
       "name": "imboard-ai/imboard/warm-worktree-pnpm-ssm",
       "title": "Imboard Warm Worktree (pnpm + SSM)",
       "version": "1.4.1",
