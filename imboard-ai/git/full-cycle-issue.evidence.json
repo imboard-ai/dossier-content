@@ -1,16 +1,16 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/full-cycle-issue",
-  "version": "3.19.0",
+  "version": "3.19.1",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "6f1fb456abd46fb944a27bf46fe05f0fba80497817db367549a4b9086de26a32"
+    "hash": "d4dc6b605d1ba0b124f5864d870208f05ea93b56c542aeb35f513a8d9facdfa4"
   },
   "entries": [
     {
       "anchor": "Phase 2: Plan",
-      "rationale": "Phase 2 hard-coded imboard's own mongodb-prod MCP / production-cluster binding as prod_data_access, overriding plan-issue's generic default for every external user and implying production DB credentials are needed (ai-dossier#1216). Now passed through only when the caller sets it.",
-      "created_at": "2026-10-14T11:56:06.163Z",
+      "rationale": "Documents prod_data_access=none (plan-issue 1.9.0) and clarifies that only reachability escalations always hand off, so projects without production access opt out explicitly instead of hitting an unverifiable hand-off on every new-state issue (ai-dossier#1216).",
+      "created_at": "2026-10-14T12:23:21.760Z",
       "evidence": [
         {
           "provider": "claude-code",
