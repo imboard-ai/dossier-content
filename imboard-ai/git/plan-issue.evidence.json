@@ -1,0 +1,22 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/plan-issue",
+  "version": "1.9.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "b57295136deb8546e1ee4b364b6e6a223504035b0db18ea4d0dd06c3ffde79cf"
+  },
+  "entries": [
+    {
+      "anchor": "Step 4b: Reachability Check (REQUIRED before planning any new state/flow)",
+      "rationale": "The prod_data_access default said escalate when no production access exists while the decision rule said no prod access means N/A and proceed; runs could pick either outcome (ai-dossier#1216 open question). Cases A-D are now exclusive and ordered, the none opt-out is matched exactly, and an uncountable trigger is unverifiable rather than 0 occurrences.",
+      "created_at": "2026-10-14T12:23:21.041Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "56500a28-f80c-423a-a26d-73183c9718e0"
+        }
+      ]
+    }
+  ]
+}
