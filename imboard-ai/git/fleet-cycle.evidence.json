@@ -1,20 +1,20 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/fleet-cycle",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "889968b080dc9b98679faa1d061a7b7ea4ec4322905f7ca289045ac3eb6fda73"
+    "hash": "567940b42280c37067ed318166eef1a78e950a64945a85817280cfd30516aa75"
   },
   "entries": [
     {
-      "anchor": "4. Supervise the wave",
-      "rationale": "ai-dossier#874: supervision must not read a ship_mode=attached awaiting-merge milestone as a parked PR, and native auto-merge is viable only after autoMergeRequest reads back non-null.",
-      "created_at": "2026-09-29T13:21:52.307Z",
+      "anchor": "Phase 4",
+      "rationale": "full-cycle-issue no longer hard-codes a production data binding (ai-dossier#1216); fleet-cycle must pass a caller-supplied prod_data_access through to each child run, like warmup_dossier, or fleet runs silently lose the project's reachability binding.",
+      "created_at": "2026-10-14T12:02:41.051Z",
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "70692bc2-c309-4234-8c44-0557e7f633eb"
+          "session": "56500a28-f80c-423a-a26d-73183c9718e0"
         }
       ]
     }
