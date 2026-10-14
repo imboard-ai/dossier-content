@@ -1,7 +1,7 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/fleet-cycle",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "checksum": {
     "algorithm": "sha256",
     "hash": "567940b42280c37067ed318166eef1a78e950a64945a85817280cfd30516aa75"
@@ -9,8 +9,8 @@
   "entries": [
     {
       "anchor": "Phase 4",
-      "rationale": "full-cycle-issue no longer hard-codes a production data binding (ai-dossier#1216); fleet-cycle must pass a caller-supplied prod_data_access through to each child run, like warmup_dossier, or fleet runs silently lose the project's reachability binding.",
-      "created_at": "2026-10-14T12:02:41.051Z",
+      "rationale": "Documents the prod_data_access=none opt-out on the fleet pass-through input so fleet operators can discover it (ai-dossier#1216).",
+      "created_at": "2026-10-14T12:23:22.453Z",
       "evidence": [
         {
           "provider": "claude-code",
