@@ -1,20 +1,20 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/full-cycle-issue",
-  "version": "3.18.0",
+  "version": "3.19.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "065cbf0e5c174147ea6bb20d5e2530ed5d5d2019b559c5384f695b5b2ffb31b9"
+    "hash": "6f1fb456abd46fb944a27bf46fe05f0fba80497817db367549a4b9086de26a32"
   },
   "entries": [
     {
-      "anchor": "### Phase 5: Ship",
-      "rationale": "ai-dossier#887/#874: detached ship parked PRs on an inert label in repos with no watcher (sched only waits). Detached is now a request honored only when ship-issue confirms a merge mechanism; otherwise attached, with the chosen mode and evidence on the ship runstate.",
-      "created_at": "2026-09-29T13:21:50.911Z",
+      "anchor": "Phase 2: Plan",
+      "rationale": "Phase 2 hard-coded imboard's own mongodb-prod MCP / production-cluster binding as prod_data_access, overriding plan-issue's generic default for every external user and implying production DB credentials are needed (ai-dossier#1216). Now passed through only when the caller sets it.",
+      "created_at": "2026-10-14T11:56:06.163Z",
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "70692bc2-c309-4234-8c44-0557e7f633eb"
+          "session": "56500a28-f80c-423a-a26d-73183c9718e0"
         }
       ]
     }
