@@ -416,7 +416,7 @@
     {
       "name": "imboard-ai/git/fleet-cycle",
       "title": "Fleet Cycle — Orchestrate Multiple Issues",
-      "version": "1.11.0",
+      "version": "1.12.0",
       "path": "imboard-ai/git/fleet-cycle.ds.md",
       "description": "Take a SET of GitHub issues to merged PRs by building a dependency-aware wave plan, dispatching full-cycle-issue runs across background agents (detached where the repo can merge a parked PR, attached otherwise), and supervising every PR through merge — serial, parallel, or mixed",
       "category": [
@@ -440,7 +440,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-09T21:38:06.496Z"
+      "published_at": "2026-10-14T12:03:00.206Z"
     },
     {
       "name": "imboard-ai/git/full-cycle-issue",
