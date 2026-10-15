@@ -1,20 +1,20 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/issue-workflows-guide",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "4cc19d5b0b729240bf53eab378600a93bfbcee8d64e30c662fd9f83d1c99269c"
+    "hash": "ab9eaa57caf7c4f9c6c4d515c14a6c4081868beb44e5247de468520607783765"
   },
   "entries": [
     {
-      "anchor": "npx -y @ai-dossier/worktree-pool@^0.7.2",
-      "rationale": "Pinned ^0.5.1 resolves to 0.5.3; its claim handed out a warm pool entry whose directory was deleted outside the pool, running git with a missing cwd -> 'spawnSync git ENOENT' (hit during imboard #4164 setup, reproduced on 0.5.3 and 0.7.1). Fixed in worktree-pool 0.7.2 (ai-dossier#767); a 0.x caret range never leaves its minor, so the pin must move explicitly.",
-      "created_at": "2026-09-23T21:24:37.806Z",
+      "anchor": "Rename-then-repair.",
+      "rationale": "The guide said a pathless git worktree repair fixes a renamed worktree; probed: it leaves the admin gitdir naming the old folder and the next git worktree prune deletes the admin dir, corrupting the checkout (ai-dossier#443/#1232).",
+      "created_at": "2026-10-15T07:05:47.807Z",
       "evidence": [
         {
           "provider": "claude-code",
-          "session": "c7bed163-2a0a-4a39-91d9-72256ca56f5c"
+          "session": "56500a28-f80c-423a-a26d-73183c9718e0"
         }
       ]
     }
