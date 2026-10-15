@@ -1,0 +1,22 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/ship-issue",
+  "version": "1.19.1",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "46153a2f958c2e98c0ffa9f166ebb03c80ef5540d7f1377622e7eae0d52a71c6"
+  },
+  "entries": [
+    {
+      "anchor": "Batch Step 1: Commit — nothing to commit",
+      "rationale": "review-issue 1.17.0 lands per-member fix: batch-review fixes (#N) commits plus at most one batch-level commit; the old 'at most one' wording could make an agent treat a per-member fix commit as an anomaly or extra member (#946).",
+      "created_at": "2026-10-15T15:10:32.276Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "5a9463b4-4fe2-42c0-88c7-c9332f08f739"
+        }
+      ]
+    }
+  ]
+}
