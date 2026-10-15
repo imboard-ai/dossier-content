@@ -1,0 +1,22 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/implement-issue",
+  "version": "1.8.3",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "9ac0ae0360eb18033c809fb4a9899eaa4945a263cc08cae750345c8331cd7d01"
+  },
+  "entries": [
+    {
+      "anchor": "Item 3b — bug issues only: red-before-green evidence (REQUIRED).",
+      "rationale": "Item 3b offered a bare git worktree prune to reconcile a leftover temp worktree; that prune also deletes the admin dir of any other moved-but-unrepaired worktree (ai-dossier#1232). git worktree remove --force clears a leftover even when its folder is gone, so prune is never needed here.",
+      "created_at": "2026-10-15T06:49:17.460Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "56500a28-f80c-423a-a26d-73183c9718e0"
+        }
+      ]
+    }
+  ]
+}
