@@ -826,7 +826,7 @@
     {
       "name": "imboard-ai/git/setup-issue-workflow",
       "title": "Setup Issue Workflow",
-      "version": "1.14.7",
+      "version": "1.14.8",
       "path": "imboard-ai/git/setup-issue-workflow.ds.md",
       "description": "Create a workflow for GitHub issues: fetch issue details, create appropriately named branches, set up git worktrees with environment warmup (or claim from a pre-warmed pool), and generate planning files; in batch mode (batch_id) it creates the shared batch branch for the batch anchor instead",
       "category": [
@@ -838,7 +838,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-15T07:06:30.535Z"
+      "published_at": "2026-10-15T07:07:46.239Z"
     },
     {
       "name": "imboard-ai/git/ship-issue",
