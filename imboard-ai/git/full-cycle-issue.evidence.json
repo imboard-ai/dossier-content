@@ -1,16 +1,27 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/full-cycle-issue",
-  "version": "3.19.1",
+  "version": "3.19.2",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "d4dc6b605d1ba0b124f5864d870208f05ea93b56c542aeb35f513a8d9facdfa4"
+    "hash": "da4b3e00a667721057bcdc3acb9d28e9502db70d843e09329e4045c75f254d4e"
   },
   "entries": [
     {
       "anchor": "Phase 2: Plan",
       "rationale": "Documents prod_data_access=none (plan-issue 1.9.0) and clarifies that only reachability escalations always hand off, so projects without production access opt out explicitly instead of hitting an unverifiable hand-off on every new-state issue (ai-dossier#1216).",
       "created_at": "2026-10-14T12:23:21.760Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "56500a28-f80c-423a-a26d-73183c9718e0"
+        }
+      ]
+    },
+    {
+      "anchor": "Never run a bare `git worktree prune`.",
+      "rationale": "Phase 1 said a bare prune is always safe; it deleted the admin dirs of two renamed-but-unrepaired worktrees, corrupting both checkouts (ai-dossier#1232). The safe prune repairs every listed entry that still has a folder and prunes only what is truly gone.",
+      "created_at": "2026-10-15T06:49:16.658Z",
       "evidence": [
         {
           "provider": "claude-code",
