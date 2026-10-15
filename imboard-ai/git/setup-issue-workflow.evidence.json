@@ -1,12 +1,34 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/setup-issue-workflow",
-  "version": "1.14.7",
+  "version": "1.14.8",
   "checksum": {
     "algorithm": "sha256",
     "hash": "8646f02203a885d2179d0ae1d56ac1c68a4fe61fa31302315d38d25406a436e4"
   },
   "entries": [
+    {
+      "anchor": "Pool CLI invocation",
+      "rationale": "Pinned ^0.5.1 resolves to 0.5.3; its claim handed out a warm pool entry whose directory was deleted outside the pool, running git with a missing cwd -> 'spawnSync git ENOENT' (hit during imboard #4164 setup, reproduced on 0.5.3 and 0.7.1). Fixed in worktree-pool 0.7.2 (ai-dossier#767); a 0.x caret range never leaves its minor, so the pin must move explicitly.",
+      "created_at": "2026-09-23T21:24:36.272Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "c7bed163-2a0a-4a39-91d9-72256ca56f5c"
+        }
+      ]
+    },
+    {
+      "anchor": "Pool claim fails with `spawnSync git ENOENT`",
+      "rationale": "Troubleshooting row for the claim ENOENT failure mode so a future run recognises it instead of debugging PATH; see ai-dossier#767.",
+      "created_at": "2026-09-23T21:24:37.300Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "c7bed163-2a0a-4a39-91d9-72256ca56f5c"
+        }
+      ]
+    },
     {
       "anchor": "Step 5b: Other Modes (Options 2, 3, 4)",
       "rationale": "Option 2 renamed the worktree folder then ran a pathless git worktree repair, which leaves the admin gitdir naming the old folder; probed: the next git worktree prune deletes the admin dir and the repurposed checkout is corrupted (ai-dossier#443/#1232). Repair by the new path.",
