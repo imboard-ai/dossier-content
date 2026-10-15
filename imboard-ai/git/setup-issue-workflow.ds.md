@@ -4,7 +4,7 @@ description: 'Create a workflow for GitHub issues: fetch issue details, create a
 metadata:
   dossier.dossier_schema_version: '1.0.0'
   dossier.title: 'Setup Issue Workflow'
-  dossier.version: '1.14.7'
+  dossier.version: '1.14.8'
   dossier.protocol_version: '"1.0"'
   dossier.status: 'Stable'
   dossier.last_updated: '2026-10-15'
@@ -18,7 +18,7 @@ metadata:
   dossier.inputs: '{"optional":[{"default":"imboard-ai/git/warm-worktree","description":"Which warm-worktree dossier to run for worktree warmup. Override this to use a project-specific warmup (e.g., imboard-ai/imboard/warm-worktree-pnpm-ssm for pnpm+SSM projects).","name":"warmup_dossier","type":"string"},{"default":"auto","description":"Target branch to branch from and merge into. Overrides issue body parsing (''merges into `<branch>`''). Use for epic sub-issues or when the target is not main.","name":"base_branch","type":"string"},{"description":"Runstate run id minted by gate-issue; pass through unchanged. In batch mode this is the batch''s run id (minted against the anchor issue).","name":"run_id","type":"string"},{"description":"Batch id slug (e.g. b-2026-08-29-01). When set, run in BATCH MODE: one run per batch against the batch ANCHOR issue — creates the shared branch batch/<batch_id>-<date> from base, skips per-issue branch naming and the planning scaffold, and posts phase=batch-setup on the anchor. Unset = ordinary per-issue mode.","name":"batch_id","type":"string"}]}'
   dossier.authors: '[{"name":"Yuval Dimnik"}]'
   dossier.checksum: '{"algorithm":"sha256","hash":"8646f02203a885d2179d0ae1d56ac1c68a4fe61fa31302315d38d25406a436e4"}'
-  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"7/97gHFQ541pXYv5/oQWCHZFrL6osKJM+2okGgctm4MeTZD7pHdD9XmIKPWwvc0mg+gGN+uZZVWlep8VmVvhDQ==","signed_at":"2026-10-15T07:05:54.389Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"d8EBWZl4pSM++MQ/ExAv3yNGcgrTbSKZg8sqDxae4t+kpaC4cAv7CSr/KxIcQpdM8EmtLiwaM0e1eY3hw+OrDA==","signed_at":"2026-10-15T07:07:41.010Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Setup Issue Workflow
