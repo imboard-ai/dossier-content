@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/full-cycle-issue",
-  "version": "3.19.2",
+  "version": "3.20.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "da4b3e00a667721057bcdc3acb9d28e9502db70d843e09329e4045c75f254d4e"
+    "hash": "c40da2ced976316707270947532d6a367a0186b3610f84fdd7b766c8396c68b3"
   },
   "entries": [
     {
@@ -26,6 +26,17 @@
         {
           "provider": "claude-code",
           "session": "56500a28-f80c-423a-a26d-73183c9718e0"
+        }
+      ]
+    },
+    {
+      "anchor": "Resuming at ship",
+      "rationale": "gate_tree= on the implement and ship milestones lets a resumed full cycle reuse a passing ci-parity run instead of re-running the ~30 min matrix (ai-dossier#1259).",
+      "created_at": "2026-10-16T17:43:23.103Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "a850b5ab-ff5f-48ae-a940-d3d019746b6c"
         }
       ]
     }
