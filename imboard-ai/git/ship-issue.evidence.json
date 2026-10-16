@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/ship-issue",
-  "version": "1.19.1",
+  "version": "1.20.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "46153a2f958c2e98c0ffa9f166ebb03c80ef5540d7f1377622e7eae0d52a71c6"
+    "hash": "0b84e5a8a3909b8fc5b6fa56f1d8d4c24f0e0ac224bb0fae9f31334413da2615"
   },
   "entries": [
     {
@@ -15,6 +15,17 @@
         {
           "provider": "claude-code",
           "session": "5a9463b4-4fe2-42c0-88c7-c9332f08f739"
+        }
+      ]
+    },
+    {
+      "anchor": "0. The ci-parity gate — once per tree (ai-dossier#1259)",
+      "rationale": "Ship Step 1 re-ran the full ci-parity matrix even when review applied no fixes. It now skips only when the clean HEAD^{tree} equals a recorded passing gate_tree (local stamp or trusted runstate), logging ci_parity=cached; it runs before the planning-doc removal so the tree is clean.",
+      "created_at": "2026-10-16T17:43:22.308Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "a850b5ab-ff5f-48ae-a940-d3d019746b6c"
         }
       ]
     }
