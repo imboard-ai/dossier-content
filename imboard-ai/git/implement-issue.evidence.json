@@ -1,0 +1,22 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/implement-issue",
+  "version": "1.9.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "56494ff0ff199a60c464db05114efbfb8e9d0d918569b2fce01e470eaf0f6268"
+  },
+  "entries": [
+    {
+      "anchor": "The once-per-tree ci-parity gate (ai-dossier#1259)",
+      "rationale": "The full ci-parity gate (~30 min backend matrix on imboard) ran up to three times per issue on near-identical trees (imboard#4682/#4685: implement 69-74 min). A passing run is now stamped by tree hash and reused; dirty or mismatched trees always re-run.",
+      "created_at": "2026-10-16T17:43:32.440Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "a850b5ab-ff5f-48ae-a940-d3d019746b6c"
+        }
+      ]
+    }
+  ]
+}
