@@ -4,10 +4,10 @@ description: 'Drive the zero-trust contribution engine (zt-run) from one public 
 metadata:
   dossier.dossier_schema_version: '1.0.0'
   dossier.title: 'Zero-Trust Full Cycle'
-  dossier.version: '1.0.0'
+  dossier.version: '1.0.1'
   dossier.protocol_version: '"1.0"'
   dossier.status: 'Draft'
-  dossier.last_updated: '2026-10-14'
+  dossier.last_updated: '2026-11-06'
   dossier.objective: 'Take one public upstream GitHub issue to a pull request the human contributor submits, by driving the zero-trust engine (zt-run) through its durable stops and handing every public action to the human'
   dossier.category: '["development"]'
   dossier.tags: '["github","open-source","contribution","zero-trust","full-cycle","sandbox","vm","pull-request"]'
@@ -19,8 +19,8 @@ metadata:
   dossier.external_references: '[{"description":"Zero-trust contributions user guide (the human-facing source this blueprint follows)","required":true,"trust_level":"trusted","type":"documentation","url":"https://github.com/imboard-ai/ai-dossier/blob/main/docs/guides/zero-trust-contributions.md"},{"description":"PRD-ZTFC-001, the zero-trust full-cycle specification","required":false,"trust_level":"trusted","type":"documentation","url":"https://github.com/imboard-ai/ai-dossier/blob/main/docs/features/zero-trust-full-cycle/prd.md"},{"description":"Package README, the implementer spec of record","required":false,"trust_level":"trusted","type":"documentation","url":"https://github.com/imboard-ai/ai-dossier/blob/main/packages/zero-trust/README.md"}]'
   dossier.inputs: '{"optional":[{"description":"Required for a new run. Finite ceiling for one session: currency, ceilingMinor, cleanupAllowanceMinor, tokenLimit, activeMinutes. Never invent it; ask the human.","name":"budget","type":"object"},{"description":"executionProfile: provider local-qemu, profileDir, stateDir, accelerator (auto|kvm|tcg), proxyEndpointsFile. Required for a new run; taken from the human''s existing setup.","name":"execution_profile","type":"object"},{"description":"modelProfile: phases.planning and phases.implementing (optional repair), each openai-compatible with model, endpoint and apiKeyEnv, plus a rate for every model and a zero-priced local-qemu rate.","name":"model_profile","type":"object"},{"default":"[]","description":"Subset of plan, patch, verification. Default none. Engagement and publication are always human hand-offs regardless.","name":"checkpoints","type":"array"},{"description":"vcpus, memoryMiB, diskGiB, commandTimeoutMs, activeMinutes. Each may only lower the default (4, 8192, 20, 1200000, 120).","name":"limits","type":"object"},{"description":"An existing run ID (ztc-<16 hex>-run-1) to continue with zt-run resume instead of starting a new run. Identity, issue, upstream and fork cannot change inside a run.","name":"resume_run_id","type":"string"},{"description":"Path to a checkout of imboard-ai/ai-dossier at a trusted ref (main or a release tag, never a fork or PR branch) containing packages/zero-trust. Default: ask the human.","name":"engine_checkout","type":"string"}],"required":[{"description":"Full URL of one public GitHub issue (https://github.com/<owner>/<repo>/issues/<n>). One issue per run.","name":"issue_url","type":"string"},{"description":"The human contributor''s GitHub login: owns the fork, authorizes the App, and submits the comment and pull request.","name":"contributor","type":"string"}]}'
   dossier.authors: '[{"name":"Yuval Dimnik"}]'
-  dossier.checksum: '{"algorithm":"sha256","hash":"5da3816bb5bb492924ae5181aa4ecb2d3d43c44c10b7a22179cb980decbfb460"}'
-  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"GCFtwWMZ2GSh9z/Lf9hYpwzY+XTbZ+t2UPeYV6vIZZ5g7eFQiegFguWiUnG3yJ8X12fsRzM6wkMKijtKu6AOCw==","signed_at":"2026-10-14T07:01:37.735Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
+  dossier.checksum: '{"algorithm":"sha256","hash":"dcfaf427f83c8bb0c0b27973d19c9c92ca20f3e47e71031086fbc330deb33907"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"pWhjOM4ZreLvG8MGxr0keU/b44MsdCLCsM1D7Q/s5oi0OWPWmnAvnt5YByPSVYGt1je+bcz1PB+fYvUeEGiVCw==","signed_at":"2026-11-06T08:37:15.772Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 
 # Zero-Trust Full Cycle
@@ -69,7 +69,7 @@ If `budget`, the model, or the execution profile is unknown, **ask the human**. 
 The human owns these one-time steps. Check them (Step 1) and, for anything missing, tell the human exactly what to do using the user guide's [One-time setup](https://github.com/imboard-ai/ai-dossier/blob/main/docs/guides/zero-trust-contributions.md#one-time-setup) section. Do not perform account-level steps (creating the App, the fork, the installation) yourself.
 
 - Linux x86_64 host; KVM recommended (`/dev/kvm` read/write), otherwise TCG (slow). Other OS/arch ends `unsupported`.
-- `qemu-system-x86_64`, `qemu-img`, and `genisoimage`/`mkisofs`/`xorrisofs` on `PATH`; Git at `/usr/bin/git`; `prlimit` and `flock` in `/usr/bin`; Node.js 20+; Docker (for the package proxy only).
+- `qemu-system-x86_64`, `qemu-img`, and `genisoimage`/`mkisofs`/`xorrisofs` on `PATH`; Git at `/usr/bin/git`; `prlimit` and `flock` in `/usr/bin`; Node.js 22.23.4 or later; Docker (for the package proxy only).
 - A baked VM profile (`zt-vm.mjs bake`, then `smoke`).
 - The package proxy running (`zt-proxy.mjs up`) and a private (`0600`) proxy endpoints file written by hand in the documented shape. The proxy's inspection CA lasts 24 hours from `up`.
 - A GitHub App with **Contents: read and write** and **Metadata: read** only, expiring user tokens enabled, loopback `/callback` URL, installed on **the fork only** ("Only select repositories").
@@ -98,7 +98,7 @@ test -r /dev/kvm && test -w /dev/kvm && echo kvm-ok || echo kvm-missing   # miss
 command -v qemu-system-x86_64 qemu-img node docker
 command -v genisoimage || command -v mkisofs || command -v xorrisofs
 ls -l /usr/bin/git /usr/bin/prlimit /usr/bin/flock
-node --version                              # >= 20
+node --version                              # >= v22.23.4
 stat -c '%a %U' <signerKeyFile> <proxyEndpointsFile>   # expect 600 and the current user
 ```
 
@@ -289,7 +289,7 @@ From `node scripts/zt-run.mjs --help`; every command also takes `--root <stateDi
 
 Reasons are at most 500 characters and notes at most 2,000. Unknown, repeated or missing flags exit 3.
 
-**Exit codes:** `0` a durable stop, including every hand-off; `2` blocked, failed, unsupported, cancelled, cleanup blocked, or the operation was unavailable; `3` invalid input (`error: <code>` plus usage); `4` another controller holds the run store (`store_locked`) or is busy. Errors print as `error: <code>` and never include secrets. Common codes: `invalid_config`, `unknown_key`, `missing_rate`, `invalid_limits`, `invalid_signer_key`, `author_confirmation_required`, `checkpoint_stale`, `checkpoint_closed`, `nothing_to_pause`, `cleanup_required`, `action_pending`, `action_unavailable`, `revision_unavailable`, `invalid_reviewer`, `snapshot_expired`, `incident_active`, `store_locked`. On exit 3 fix the input; on exit 4 wait for the other controller (do not delete locks); on exit 2 read `status`.
+**Exit codes:** `0` a durable stop, including every hand-off; `1` output could not be written after cleanup finished (read `status`); `2` blocked, failed, unsupported, cancelled, cleanup blocked, or the operation was unavailable; `3` invalid input (`error: <code>` plus usage); `4` another controller holds the run store (`store_locked`) or is busy. Errors print as `error: <code>` and never include secrets. Common codes: `invalid_config`, `unknown_key`, `missing_rate`, `invalid_limits`, `invalid_signer_key`, `author_confirmation_required`, `checkpoint_stale`, `checkpoint_closed`, `nothing_to_pause`, `cleanup_required`, `action_pending`, `action_unavailable`, `revision_unavailable`, `invalid_reviewer`, `snapshot_expired`, `incident_active`, `store_locked`. On exit 3 fix the input; on exit 4 wait for the other controller (do not delete locks); on exit 1 or 2 read `status`.
 
 ## Validation
 
