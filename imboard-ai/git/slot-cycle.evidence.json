@@ -1,0 +1,22 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "dossier": "imboard-ai/git/slot-cycle",
+  "version": "1.2.0",
+  "checksum": {
+    "algorithm": "sha256",
+    "hash": "36aeb9415aba48e33d7ff4d78e92938e81f29dad5b5f544e80102d72f1219239"
+  },
+  "entries": [
+    {
+      "anchor": "Focused tests",
+      "rationale": "A test.focused decline means the change needs broader verification than a focused run, but the routing sent it to 'run only the test files covering the change' — narrower than what the decline asked for (ai-dossier#1284). A decline now records focused=declined, runs only the member's own new/edited tests, and defers to the batch gate.",
+      "created_at": "2026-11-17T06:06:53.288Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "127d9886-7b56-4370-80f2-5a65e5263233"
+        }
+      ]
+    }
+  ]
+}
