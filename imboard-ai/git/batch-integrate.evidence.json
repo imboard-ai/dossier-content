@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/batch-integrate",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "fda5311c6c63c208b1ee806c62777e97219a936e9ffd886485720576bb809f5a"
+    "hash": "8822e5d52e3ffbaa17cf63ed52ee5882f2743d114b77a04a288ff75170ba95f8"
   },
   "entries": [
     {
@@ -145,6 +145,17 @@
         {
           "provider": "claude-code",
           "session": "e529de77-f8f1-4580-9264-12c09cd46cb6"
+        }
+      ]
+    },
+    {
+      "anchor": "Step 3: Run the expensive verification ONCE, and read its result in four states",
+      "rationale": "A tail agent's re-gate after a rebase read a declining gate.batch (capability-unavailable with a non-null exit_code) as 'not declared' and proceeded, while the scheduler's batch-validate blocked the same decline; a batch could ship on a tree no gate verified (ai-dossier#1284). A decline now BLOCKs; only exit_code null is absence.",
+      "created_at": "2026-11-17T06:06:36.181Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "127d9886-7b56-4370-80f2-5a65e5263233"
         }
       ]
     }
