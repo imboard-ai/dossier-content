@@ -1,10 +1,10 @@
 {
   "evidence_schema_version": "1.0.0",
   "dossier": "imboard-ai/git/review-issue",
-  "version": "1.18.0",
+  "version": "1.19.0",
   "checksum": {
     "algorithm": "sha256",
-    "hash": "43a3d4ccf118b8d2de9af69e53d547cef2e3ed250ef588bef6f63a4950868e4d"
+    "hash": "1b107adfd23f3b42ee7e38d7c0b35f9c50d567da987c24b9cf81759d1b83ce20"
   },
   "entries": [
     {
@@ -26,6 +26,17 @@
         {
           "provider": "claude-code",
           "session": "e529de77-f8f1-4580-9264-12c09cd46cb6"
+        }
+      ]
+    },
+    {
+      "anchor": "Gate discipline — one gate per distinct tree, over committed code, in this turn (#920, #928).",
+      "rationale": "Item 4 recorded gate=capability-unavailable and moved on for any capability-unavailable, so a gate.batch that declined the rebased/fixed tree let the batch ship unverified (ai-dossier#1284). It now distinguishes a decline (non-null exit_code, BLOCK reason=gate-declined) from an undeclared capability (exit_code null).",
+      "created_at": "2026-11-17T06:06:37.137Z",
+      "evidence": [
+        {
+          "provider": "claude-code",
+          "session": "127d9886-7b56-4370-80f2-5a65e5263233"
         }
       ]
     }
