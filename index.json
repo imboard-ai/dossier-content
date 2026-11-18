@@ -339,6 +339,35 @@
       "published_at": "2026-10-07T11:58:05.253Z"
     },
     {
+      "name": "imboard-ai/git/chief-of-staff",
+      "title": "Chief of Staff — One Decision at a Time",
+      "version": "1.0.0",
+      "path": "imboard-ai/git/chief-of-staff.ds.md",
+      "description": "Sweep every in-flight effort (sessions, worktrees, PRs, issue runstate trails, claims), do the safe mechanical follow-through yourself, and bring the owner exactly ONE decision at a time as a numbered choice with a recommendation, looping until nothing needs them",
+      "category": [
+        "maintenance",
+        "development"
+      ],
+      "tags": [
+        "owner",
+        "triage",
+        "cognitive-load",
+        "sessions",
+        "fleet",
+        "github",
+        "runstate",
+        "priorities",
+        "one-at-a-time"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-11-18T21:02:39.502Z"
+    },
+    {
       "name": "imboard-ai/git/code-refactoring-abstraction",
       "title": "Code Refactoring & Abstraction Analysis",
       "version": "1.1.1",
