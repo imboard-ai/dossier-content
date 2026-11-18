@@ -341,7 +341,7 @@
     {
       "name": "imboard-ai/git/chief-of-staff",
       "title": "Chief of Staff — One Decision at a Time",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "path": "imboard-ai/git/chief-of-staff.ds.md",
       "description": "Sweep every in-flight effort (sessions, worktrees, PRs, issue runstate trails, claims), do the safe mechanical follow-through yourself, and bring the owner exactly ONE decision at a time as a numbered choice with a recommendation, looping until nothing needs them",
       "category": [
@@ -365,7 +365,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-11-18T21:02:39.502Z"
+      "published_at": "2026-11-18T21:14:54.426Z"
     },
     {
       "name": "imboard-ai/git/code-refactoring-abstraction",
