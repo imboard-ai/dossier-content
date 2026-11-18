@@ -4,7 +4,7 @@ description: 'Sweep every in-flight effort (sessions, worktrees, PRs, issue runs
 metadata:
   dossier.dossier_schema_version: '1.0.0'
   dossier.title: 'Chief of Staff — One Decision at a Time'
-  dossier.version: '1.0.0'
+  dossier.version: '1.1.0'
   dossier.protocol_version: '"1.0"'
   dossier.status: 'Draft'
   dossier.last_updated: '2026-11-18'
@@ -15,10 +15,10 @@ metadata:
   dossier.risk_factors: '["modifies_files","network_access"]'
   dossier.requires_approval: 'false'
   dossier.destructive_operations: '["Closes issues whose work is verified on the base branch","Removes in-progress claims that no live run holds","Delegates worktree cleanup to imboard-ai/git/worktree-hygiene (branches are never deleted)","Executes the option the owner picks for each surfaced item"]'
-  dossier.inputs: '{"optional":[{"default":"auto","description":"Repository to sweep (owner/name). auto = the current checkout''s origin.","name":"repo","type":"string"},{"default":"memory","description":"Where the owner''s stated priorities live. memory = the agent''s persistent project memory (read at start, updated whenever the owner states or changes a priority).","name":"priorities_source","type":"string"},{"default":0,"description":"Stop after surfacing this many items (0 = keep going until nothing needs the owner).","name":"max_items","type":"number"},{"default":"mechanical","description":"What may happen without asking. mechanical = only the safe follow-through listed under Constraints. none = sweep and surface only, change nothing.","name":"authority","type":"string"}]}'
+  dossier.inputs: '{"optional":[{"default":"auto","description":"Repository to sweep (owner/name). auto = the current checkout''s origin.","name":"repo","type":"string"},{"default":"shared-memory","description":"Where the owner''s stated priorities live. shared-memory = the persistent memory store every machine and session can reach (search it for ''owner priorities current order''); fall back to local project memory only when no shared store is configured. Read at start; update the same record whenever the owner states or changes a priority.","name":"priorities_source","type":"string"},{"default":0,"description":"Stop after surfacing this many items (0 = keep going until nothing needs the owner).","name":"max_items","type":"number"},{"default":"mechanical","description":"What may happen without asking. mechanical = only the safe follow-through listed under Constraints. none = sweep and surface only, change nothing.","name":"authority","type":"string"}]}'
   dossier.authors: '[{"name":"Yuval Dimnik"}]'
-  dossier.checksum: '{"algorithm":"sha256","hash":"5a79207c231ac810e2c8a5155a3545f9d608b7307d7d1897f6dda25797af3adb"}'
-  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"NHCUreWOqBSwFbBUD/0SaCAtpL/sQZJFQZKEe936Kj+GShhqL6z9+Jyhy7QVr24debGfNCgM0qifwOvCCcvEBQ==","signed_at":"2026-11-18T21:02:23.457Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
+  dossier.checksum: '{"algorithm":"sha256","hash":"1eded52227c5c769d501a27f0cd9764695167d4bf81dd9457b132c8b278189af"}'
+  dossier.signature: '{"algorithm":"ed25519","covers":"spec-frontmatter+body","key_id":"imboard-ai","public_key":"m97FPrnq/zKlQArLvJl3bTZCUMWWpp/d0UJ/OfUKZeE=","signature":"kQEAyuHW0NjBgKwc+GCp39dqjZXNmkxVFmYhNIvo/44BXFsVIncAyo4LiSRGKdGNTcYVmsHu0JuCseX9zf7VBA==","signed_at":"2026-11-18T21:14:51.956Z","signed_by":"Yuval Dimnik <yuval.dimnik@gmail.com>"}'
 ---
 # Chief of Staff — One Decision at a Time
 
@@ -59,7 +59,7 @@ When the owner answers, the agent carries out that choice, verifies the outcome,
   - the session roster.
 - Labels, chat summaries and "I'm waiting on X" reports from agents are claims: verify them before relying on them.
 - **"Done" means verified on the base branch.** A merged PR does not make its issue done. Before closing, check the issue's acceptance criteria against the code on the base branch, and read the latest progress comment: issues split into parts often stay open on purpose.
-- **The owner's stated priorities** (from `priorities_source`) decide the order of surfaced items. When the owner states or changes a priority, persist it immediately so every later session inherits it.
+- **The owner's stated priorities** (from `priorities_source`) decide the order of surfaced items. They must live in **one place every machine reaches**, a shared memory store, never a per-machine file: a priority recorded on one box is invisible to sessions on another. When the owner states or changes a priority, update that single record immediately, so every later session on every machine inherits it.
 
 ### What may happen without asking (`authority=mechanical`)
 
