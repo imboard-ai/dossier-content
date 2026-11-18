@@ -1640,6 +1640,31 @@
       "published_at": "2026-10-07T12:05:38.008Z"
     },
     {
+      "name": "imboard-ai/skills/chief-of-staff-skill",
+      "title": "Chief of Staff",
+      "version": "1.0.0",
+      "path": "imboard-ai/skills/chief-of-staff-skill.ds.md",
+      "description": "Reduce the owner's cognitive load across many parallel sessions: sweep all in-flight work, quietly finish the safe follow-through, and bring back ONE decision at a time as a 1/2/3 choice with a recommendation. Use when the user says 'where am I', 'what needs me', 'chief of staff', 'I'm lost between sessions', 'map my efforts', 'what's going on', 'next decision', or asks to triage/prioritize current work.",
+      "category": [
+        "skills"
+      ],
+      "tags": [
+        "owner",
+        "triage",
+        "cognitive-load",
+        "sessions",
+        "priorities",
+        "skill"
+      ],
+      "authors": [
+        {
+          "name": "Yuval Dimnik"
+        }
+      ],
+      "published_by": "yuvaldim",
+      "published_at": "2026-11-18T21:02:44.628Z"
+    },
+    {
       "name": "imboard-ai/skills/feature-to-issues-skill",
       "title": "Feature to Issues",
       "version": "1.0.4",
