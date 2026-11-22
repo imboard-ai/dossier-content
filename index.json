@@ -787,7 +787,7 @@
     {
       "name": "imboard-ai/git/report-issue",
       "title": "Report Issue — Rich Completion Summary",
-      "version": "1.8.2",
+      "version": "1.9.0",
       "path": "imboard-ai/git/report-issue.ds.md",
       "description": "Generate a comprehensive completion report covering what changed, user-facing implications, dev/ops implications, and review results — posted to both conversation and PR comment; in batch mode (batch_id set): one batch report on the anchor plus one short completion comment per member issue",
       "category": [
@@ -807,7 +807,7 @@
         }
       ],
       "published_by": "yuvaldim",
-      "published_at": "2026-10-07T12:01:09.620Z"
+      "published_at": "2026-11-22T10:55:45.959Z"
     },
     {
       "name": "imboard-ai/git/review-issue",
